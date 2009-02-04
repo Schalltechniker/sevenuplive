@@ -7,6 +7,7 @@
 	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/libProMandoMidiJNILib.jar"/>
 	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/oscP5.jar"/>
 	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/proxml.jar"/>
-	<classpathentry kind="lib" path="lib"/>
+	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/promidi.jar"/>
+	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/jklabs.monomic.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
