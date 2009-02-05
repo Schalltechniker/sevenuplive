@@ -1,0 +1,7 @@
+-Bug in melodizer code where the first note may not be played directly after recording a sequence and another note is held down
+-Switch to promidi sequences for midi events and recording
+-Explore ideas of collapsing entire patterns into single buttons.  Same for melodies.
+-Send note OFFS when switching patches mid-stride
+-External controller to start/stop recording
+-Tilt control
+-Loop length multiplier in UI for longer loops
