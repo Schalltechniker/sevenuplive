@@ -7,10 +7,6 @@ import mtn.sevenuplive.main.*;
 public class LoopRecorder extends Mode {
 
 	CtrlSequence loopSequences[];
-	private int stopped = mtn.sevenuplive.main.MonomeUp.stopped;
-	private int playing = mtn.sevenuplive.main.MonomeUp.playing;
-	private int cued = mtn.sevenuplive.main.MonomeUp.cued;
-	private int recording = mtn.sevenuplive.main.MonomeUp.recording;
 	private MonomeUp m;
 	private Boolean gateLoopChokes = true;
 	
@@ -29,26 +25,26 @@ public class LoopRecorder extends Mode {
 		for(int i=0;i<7;i++)
 		{
 			if(m.looper.getLoop(i).isPlaying())
-				displayGrid[i][m.looper.getLoop(i).getStep()] = solid;
+				displayGrid[i][m.looper.getLoop(i).getStep()] = MonomeUp.SOLID;
 		}
 	}
 	
 	public void updateNavGrid()
 	{
 		clearNavGrid();
-		navGrid[myNavRow] = solid;
+		navGrid[myNavRow] = MonomeUp.SOLID;
 		
 		for(int i=0;i<7;i++)
 		{
 			//Set to fastblink if playing
-			if(m.looper.getLoop(i).isPlaying() || loopSequences[i].getStatus() == mtn.sevenuplive.main.MonomeUp.playing)
+			if(m.looper.getLoop(i).isPlaying() || loopSequences[i].getStatus() == MonomeUp.PLAYING)
 			{
-				navGrid[getYCoordFromSubMenu(i)] = fastBlink;
+				navGrid[getYCoordFromSubMenu(i)] = MonomeUp.FASTBLINK;
 			}
 				
 			//Set to slowblink if cueing or recording
-			if(loopSequences[i].getStatus() == cued || loopSequences[i].getStatus() == recording)
-				navGrid[getYCoordFromSubMenu(i)] = slowBlink;
+			if(loopSequences[i].getStatus() == MonomeUp.CUED || loopSequences[i].getStatus() == MonomeUp.RECORDING)
+				navGrid[getYCoordFromSubMenu(i)] = MonomeUp.SLOWBLINK;
 			
 			//System.out.println("LoopSeq " + i + " status is " + loopSequences[i].getStatus());
 		}
@@ -56,7 +52,7 @@ public class LoopRecorder extends Mode {
 	
 	public void press(int x, int y)
 	{
-		if(x == navCol)
+		if(x == MonomeUp.NAVCOL)
 			pressNavCol(y);
 		else
 			pressDisplay(x,y);
@@ -81,7 +77,7 @@ public class LoopRecorder extends Mode {
 						m.looper.stopLoopsOnNextStep[k] = true;
 				
 					//All of the loops in the same choke group will start recording at the same time
-					if(loopSequences[x].getStatus() == mtn.sevenuplive.main.MonomeUp.cued && loopSequences[k].getStatus() == mtn.sevenuplive.main.MonomeUp.cued)
+					if(loopSequences[x].getStatus() == MonomeUp.CUED && loopSequences[k].getStatus() == MonomeUp.CUED)
 					loopSequences[k].startRecording();
 				}
 			}
@@ -95,20 +91,20 @@ public class LoopRecorder extends Mode {
 	
 	private void pressNavCol(int y)
 	{
-		if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == stopped )
+		if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.STOPPED)
 		{
 			loopSequences[getSubMenuFromYCoord(y)].beginCue();
 		}
-		else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == cued)
+		else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.CUED)
 		{
 			loopSequences[getSubMenuFromYCoord(y)].stop();
 		}
-		else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == playing)
+		else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.PLAYING)
 		{
 			loopSequences[getSubMenuFromYCoord(y)].stop();
 			m.looper.stopLoop(getSubMenuFromYCoord(y));
 		}
-		else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == recording)
+		else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.RECORDING)
 		{
 			loopSequences[getSubMenuFromYCoord(y)].endRecording();
 			m.looper.stopLoop(getSubMenuFromYCoord(y));

@@ -1,6 +1,9 @@
 package mtn.sevenuplive.modes;
 
 import java.util.*;
+
+import mtn.sevenuplive.main.MonomeUp;
+
 import org.jdom.*;
 
 public class CtrlSequence {
@@ -9,11 +12,8 @@ public class CtrlSequence {
 	private int length;
 	private int index;
 	private int status;
-	private int stopped = mtn.sevenuplive.main.MonomeUp.stopped;
-	private int playing = mtn.sevenuplive.main.MonomeUp.playing;
-	private int cued = mtn.sevenuplive.main.MonomeUp.cued;
-	private int recording = mtn.sevenuplive.main.MonomeUp.recording;
 	private boolean doQuantize = false;
+	
 	//Hashtable of keys (metronome count) and Integer loop positions
 	private Hashtable<Integer, Integer> events;
 
@@ -34,14 +34,14 @@ public class CtrlSequence {
 	
 	private void initialize()
 	{
-		status = stopped;
+		status = MonomeUp.STOPPED;
 		events = new Hashtable<Integer, Integer>();	
 	}
 	
 	public void beginCue()
 	{
 		initialize();
-		status = cued;
+		status = MonomeUp.CUED;
 	}
 	
 	public void endRecording()
@@ -70,7 +70,7 @@ public class CtrlSequence {
 		else
 			length = counter - 1;
 		
-		status = stopped;
+		status = MonomeUp.STOPPED;
 		//System.out.println("Sequence - " + index + " length = " + length);
 	}
 	
@@ -84,14 +84,14 @@ public class CtrlSequence {
 		}
 		
 		//Advance counter if sequence is playing or recording
-		if(status == playing || status == recording)
+		if(status == MonomeUp.PLAYING || status == MonomeUp.RECORDING)
 		{
 			counter ++;
 			//System.out.println("Sequence - " + _index + ": count = " + counter);
 		}
 		
 		//Send Integer if isPlaying and there is an event at the current count
-		if(status == playing)
+		if(status == MonomeUp.PLAYING)
 		{
 			//Reset counter to beginning if it reaches the length
 			if(counter > length)
@@ -113,21 +113,21 @@ public class CtrlSequence {
 	public void startRecording()
 	{
 		//Start recording even if no ctrlValue was sent. Use -1
-		status = recording;
+		status = MonomeUp.RECORDING;
 		counter = 1;
 		events.put(counter, -1);
 	}
 	
 	public void addEvent(Integer ctrlValue)
 	{
-		if(status == cued)
+		if(status == MonomeUp.CUED)
 		{
-			status = recording;
+			status = MonomeUp.RECORDING;
 			counter = 1;
 			events.put(counter, ctrlValue);
 			//System.out.println("Sequencer " + index + " - Adding ctrlValue " + ctrlValue + " to " + counter);
 		}
-		else if(status == recording)
+		else if(status == MonomeUp.RECORDING)
 		{
 			if(doQuantize)
 			{
@@ -155,13 +155,13 @@ public class CtrlSequence {
 	
 	public void play()
 	{
-		status = playing;
+		status = MonomeUp.PLAYING;
 		counter = 0;
 	}
 	
 	public void stop()
 	{
-		status = stopped;
+		status = MonomeUp.STOPPED;
 	}
 	
 	public int getStatus()

@@ -2,13 +2,15 @@ package mtn.sevenuplive.modes;
 
 
 import promidi.*;
+import mtn.sevenuplive.main.MonomeUp;
+
 import org.jdom.*;
 import java.util.*;
 
 public class Patternizer extends Mode {
 	
 	private int patternGrids[][][];
-	private int basePitch = mtn.sevenuplive.main.MonomeUp.c3;
+	private int basePitch = MonomeUp.C3;
 	private int pressedNavButtons[];
 	public int selectedPattern = 0;
 	public int curPatternRow = 0;
@@ -28,8 +30,8 @@ public class Patternizer extends Mode {
 	{
 		//Update navcol
 		super.clearNavGrid();
-		navGrid[getYCoordFromSubMenu(selectedPattern)] = fastBlink;
-		navGrid[myNavRow] = solid;
+		navGrid[getYCoordFromSubMenu(selectedPattern)] = MonomeUp.FASTBLINK;
+		navGrid[myNavRow] = MonomeUp.SOLID;
 		
 		//Update display grid
 		displayGrid = patternGrids[selectedPattern];
@@ -37,17 +39,17 @@ public class Patternizer extends Mode {
 	
 	public void press(int x, int y)
 	{
-		if(x == navCol)
+		if(x == MonomeUp.NAVCOL)
 			pressNavCol(y);
 		else
 		{
 			//If pressed, change from off to fast, or fast to solid, or solid to off
-			 if (patternGrids[selectedPattern][x][y] == off)
-				 patternGrids[selectedPattern][x][y] = fastBlink;
-			 else if (patternGrids[selectedPattern][x][y] == fastBlink)
-				 patternGrids[selectedPattern][x][y] = solid;
-			 else if (patternGrids[selectedPattern][x][y] == solid)
-				 patternGrids[selectedPattern][x][y] = off;
+			 if (patternGrids[selectedPattern][x][y] == MonomeUp.OFF)
+				 patternGrids[selectedPattern][x][y] = MonomeUp.FASTBLINK;
+			 else if (patternGrids[selectedPattern][x][y] == MonomeUp.FASTBLINK)
+				 patternGrids[selectedPattern][x][y] = MonomeUp.SOLID;
+			 else if (patternGrids[selectedPattern][x][y] == MonomeUp.SOLID)
+				 patternGrids[selectedPattern][x][y] = MonomeUp.OFF;
 		}
 	}
 	
@@ -73,7 +75,7 @@ public class Patternizer extends Mode {
 		//If they are changing patterns unselect current and select the new pattern
 		if(selectedPattern != getSubMenuFromYCoord(y))
 		{
-			navGrid[getYCoordFromSubMenu(selectedPattern)] = off;
+			navGrid[getYCoordFromSubMenu(selectedPattern)] = MonomeUp.OFF;
 			selectedPattern = getSubMenuFromYCoord(y);
 	        updateDisplayGrid();
 		}
@@ -107,7 +109,7 @@ public class Patternizer extends Mode {
 			//Play pattern samples
 	        for(int x = 0; x < 7; x++)
 	        {
-	          if(patternGrids[i][x][curPatternRow] != off)
+	          if(patternGrids[i][x][curPatternRow] != MonomeUp.OFF)
 	          {
 	            //set pitch
 	            switch(x)
@@ -122,7 +124,7 @@ public class Patternizer extends Mode {
 	              default: sendPitch = basePitch;
 	            }
 	
-	            if (patternGrids[i][x][curPatternRow] == fastBlink)
+	            if (patternGrids[i][x][curPatternRow] == MonomeUp.FASTBLINK)
 	            	sendVel = 42;
 	            else sendVel = 126;
 	
@@ -162,7 +164,7 @@ public class Patternizer extends Mode {
 		 		{
 		 			for(int k=0;k<patternGrids[i][j].length;k++)
 		 			{
-		 				if(patternGrids[i][j][k] != mtn.sevenuplive.main.MonomeUp.off)
+		 				if(patternGrids[i][j][k] != MonomeUp.OFF)
 		 				{
 		 					xmlKeyPress = new Element("keyPress");
 		 					xmlKeyPress.setAttribute(new Attribute("col", ((Integer)j).toString()));

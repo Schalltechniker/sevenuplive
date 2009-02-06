@@ -28,7 +28,7 @@ public class NoteSequence {
 	//Create hashtable of keys (metronome count) and ArrayList<Note>(notes played at that event position)
 	private Hashtable<Integer, ArrayList<Note>> events;
 	private ArrayList<Integer> notesOn;
-	private int recMode = MonomeUp.melOnButtonPress;
+	private int recMode = MonomeUp.MEL_ON_BUTTON_PRESS;
 	
 	NoteSequence(int _index){
 		initialize();
@@ -56,7 +56,7 @@ public class NoteSequence {
 	 */
 	public void endRecording()
 	{
-		if(recMode == MonomeUp.melQuantized)
+		if(recMode == MonomeUp.MEL_QUANTIZED)
 			//Wait for a locatorEvent before actually ending the recording
 			status = cuedStop;
 		else
@@ -175,7 +175,7 @@ public class NoteSequence {
 		ArrayList<Note> noteList;
 		
 		//Ensures that the user can add events to the first beat of a quantized recording
-		if(status == cued && recMode == MonomeUp.melQuantized)
+		if(status == cued && recMode == MonomeUp.MEL_QUANTIZED)
 		{
 			
 			noteList = new ArrayList<Note>();
@@ -185,7 +185,7 @@ public class NoteSequence {
 			notesOn.add(note.getPitch());
 		}
 		//Else if the recMode is on button press, begin recording immediately
-		else if(status == cued && recMode == MonomeUp.melOnButtonPress)
+		else if(status == cued && recMode == MonomeUp.MEL_ON_BUTTON_PRESS)
 		{
 			
 			noteList = new ArrayList<Note>();
@@ -394,7 +394,7 @@ public class NoteSequence {
 	 * when to actually start or stop recording after being cued to do so
 	 */
 	public void locatorEvent() {
-		if(recMode == MonomeUp.melQuantized)
+		if(recMode == MonomeUp.MEL_QUANTIZED)
 		{
 			if(status == cuedStop)
 			{

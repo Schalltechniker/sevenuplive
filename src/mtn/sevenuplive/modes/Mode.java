@@ -1,23 +1,19 @@
 package mtn.sevenuplive.modes;
 
+import mtn.sevenuplive.main.MonomeUp;
+
 public abstract class Mode {
 	
 	protected int myNavRow;
 	protected int displayGrid[][];
 	protected int navGrid[];
 	
-	protected int off = mtn.sevenuplive.main.MonomeUp.off;
-	protected int solid = mtn.sevenuplive.main.MonomeUp.solid;
-	protected int slowBlink = mtn.sevenuplive.main.MonomeUp.slowBlink;
-	protected int fastBlink = mtn.sevenuplive.main.MonomeUp.fastBlink;
-	protected int navCol = mtn.sevenuplive.main.MonomeUp.navCol;
-	
 	public Mode(int _navRow)
 	{
 		myNavRow = _navRow;
 		displayGrid = new int[7][8];
 		navGrid = new int[8];
-		navGrid[myNavRow] = solid;
+		navGrid[myNavRow] = MonomeUp.SOLID;
 	}
 	
 	public int[][] getDisplayGrid()
@@ -34,13 +30,13 @@ public abstract class Mode {
 	{
 		for(int i=0;i<displayGrid.length;i++)
 			for(int j=0;j<displayGrid[0].length;j++)
-				displayGrid[i][j] = off;
+				displayGrid[i][j] = MonomeUp.OFF;
 	}
 	
 	protected void clearNavGrid()
 	{
 		for(int i=0;i<navGrid.length;i++)
-			navGrid[i] = off;
+			navGrid[i] = MonomeUp.OFF;
 	}
 	
 	protected int getYCoordFromSubMenu(int subMenuNum)

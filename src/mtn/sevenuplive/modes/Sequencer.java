@@ -1,5 +1,7 @@
 package mtn.sevenuplive.modes;
 
+import mtn.sevenuplive.main.MonomeUp;
+
 import org.jdom.*;
 import java.util.*;
 
@@ -56,7 +58,7 @@ public class Sequencer extends Mode {
 	public void press(int x, int y)
 	{
 		
-		if(x == navCol)
+		if(x == MonomeUp.NAVCOL)
 		{
 			//Change sequence banks
 			nextSequence = getSubMenuFromYCoord(y);
@@ -80,17 +82,17 @@ public class Sequencer extends Mode {
 	{
 		//Update navcol
 		super.clearNavGrid();
-		navGrid[getYCoordFromSubMenu(curSequenceBank)] = fastBlink;
-		navGrid[myNavRow] = solid;
+		navGrid[getYCoordFromSubMenu(curSequenceBank)] = MonomeUp.FASTBLINK;
+		navGrid[myNavRow] = MonomeUp.SOLID;
 		
 		//Update display grid
 		super.clearDisplayGrid();
 		for(int i=0;i<8;i++)
 			for(int j=0;j<7;j++)
 				if(sequenceBanks[curSequenceBank].getRow(i)[j])
-					displayGrid[j][i] = solid;
+					displayGrid[j][i] = MonomeUp.SOLID;
 				else
-					displayGrid[j][i] = off;
+					displayGrid[j][i] = MonomeUp.OFF;
 	}
 	
 	public boolean isPatternPlaying(int patNum)

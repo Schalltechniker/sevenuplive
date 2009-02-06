@@ -119,9 +119,9 @@ public class SevenUpPanel extends JPanel implements ActionListener
         			public void actionPerformed(ActionEvent e) {
         				JComboBox cb = (JComboBox)e.getSource();
         				if(cb.getSelectedItem().toString().equals("On Button Press"))
-	        				sevenUpApplet.setMelRecMode(MonomeUp.melOnButtonPress);
+	        				sevenUpApplet.setMelRecMode(MonomeUp.MEL_ON_BUTTON_PRESS);
         				else 
-        					sevenUpApplet.setMelRecMode(MonomeUp.melQuantized);
+        					sevenUpApplet.setMelRecMode(MonomeUp.MEL_QUANTIZED);
         			}
         		}
         );

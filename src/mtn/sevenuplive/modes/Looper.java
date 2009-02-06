@@ -53,14 +53,14 @@ public class Looper extends Mode {
 	private void updateNavGrid()
 	{
 		clearNavGrid();
-		navGrid[myNavRow] = solid;
+		navGrid[myNavRow] = MonomeUp.SOLID;
 	   //Iterate through the loops and set them all to their coordesponding values
  	   for(int i=0;i<loops.length;i++)
        {
      			 if(looperViewModes[i] == playViewMode)
-     				  navGrid[getYCoordFromSubMenu(i)] = fastBlink;
+     				  navGrid[getYCoordFromSubMenu(i)] = MonomeUp.FASTBLINK;
      			 else if(looperViewModes[i] == resViewMode)
-     				  navGrid[getYCoordFromSubMenu(i)] = off;
+     				  navGrid[getYCoordFromSubMenu(i)] = MonomeUp.OFF;
        }
 	}
 	
@@ -74,14 +74,14 @@ public class Looper extends Mode {
 		   if(looperViewModes[i] == playViewMode)
 		   {
 			   if(loops[i].isPlaying())
-				   displayGrid[i][loops[i].getStep()] = solid;
+				   displayGrid[i][loops[i].getStep()] = MonomeUp.SOLID;
 		   }
 		   else if(looperViewModes[i] == resViewMode)
 		   {
 			   //Display resolution
 			   for(int k=7;k>=0;k--)
 	  				if(7 - k <=  loops[i].getResolution())
-	  					displayGrid[i][k]=solid;	 
+	  					displayGrid[i][k] = MonomeUp.SOLID;	 
 		   }
 	    }
 	}
@@ -119,7 +119,7 @@ public class Looper extends Mode {
 		else
 			looperViewModes[loopIndex] = playViewMode;
 
-		midiOut.sendNoteOff(new Note(mtn.sevenuplive.main.MonomeUp.c3+loopIndex,127, 0));
+		midiOut.sendNoteOff(new Note(MonomeUp.C3+loopIndex,127, 0));
 	}
 	
 	public boolean isLoopPlaying(int loopNum)
@@ -130,7 +130,7 @@ public class Looper extends Mode {
 	public void stopLoop(int loopNum)
 	{
 		loops[loopNum].stop();
-		midiOut.sendNoteOff(new Note(mtn.sevenuplive.main.MonomeUp.c3+loopNum,127, 0));
+		midiOut.sendNoteOff(new Note(MonomeUp.C3+loopNum,127, 0));
 	}
 	
 	public void setLoopStopOnNextStep(int loopNum)
@@ -243,7 +243,7 @@ public class Looper extends Mode {
         		if((resCounter == 0) && (step == 0 || pressedRow > -1))
         		{
         			if(!muteNotes)
-        				midiOut.sendNoteOn(new Note(mtn.sevenuplive.main.MonomeUp.c3+i,127, 0));	
+        				midiOut.sendNoteOn(new Note(MonomeUp.C3+i,127, 0));	
         			pressedRow = -1;
         		}
         		

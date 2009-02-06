@@ -1,5 +1,7 @@
 package mtn.sevenuplive.modes;
 import promidi.*;
+import mtn.sevenuplive.main.MonomeUp;
+
 import org.jdom.*;
 import java.util.*;
 
@@ -21,7 +23,7 @@ public class Controller extends Mode {
 	       for(int j=0;j<7;j++)
 	           controls[i][j] = -1;
 	     
-	     navGrid[curControlBank] = fastBlink;
+	     navGrid[curControlBank] = MonomeUp.FASTBLINK;
 	     updateDisplay();
 	}
 	
@@ -34,15 +36,15 @@ public class Controller extends Mode {
 			//Only set the display if the control is > 0
 			if(controls[curControlBank][i] > 0)
 				for(int j=7;j>=8-controls[curControlBank][i];j--)
-					displayGrid[i][j] = solid;
+					displayGrid[i][j] = MonomeUp.SOLID;
 		}
 	}
 	
 	private void updateNavGrid()
 	{
 		super.clearNavGrid();
-		navGrid[getYCoordFromSubMenu(curControlBank)] = fastBlink;
-		navGrid[myNavRow] = solid;
+		navGrid[getYCoordFromSubMenu(curControlBank)] = MonomeUp.FASTBLINK;
+		navGrid[myNavRow] = MonomeUp.SOLID;
 	}
 	
 	/*
@@ -59,7 +61,7 @@ public class Controller extends Mode {
 	 */
 	public void press(int x, int y)
 	{
-		if (x == navCol)
+		if (x == MonomeUp.NAVCOL)
 		{
 			curControlBank = getSubMenuFromYCoord(y);
 			updateNavGrid();
