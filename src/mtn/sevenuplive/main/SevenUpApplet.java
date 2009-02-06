@@ -9,15 +9,15 @@
  */
 
 package mtn.sevenuplive.main;
-import javax.swing.JPanel;
-
-import promidi.*;
-//import javax.sound.midi.*;
 import mtn.sevenuplive.scales.Scale;
 import mtn.sevenuplive.scales.ScaleName;
-import org.jdom.*;
+
+import org.jdom.Document;
+
 import oscP5.OscMessage;
-import proxml.*;
+import promidi.MidiIO;
+import promidi.Note;
+import proxml.XMLInOut;
 
 public class SevenUpApplet extends processing.core.PApplet
 {

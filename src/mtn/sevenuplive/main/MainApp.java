@@ -19,6 +19,8 @@ import org.jdom.output.*;
 public class MainApp extends JFrame
                                implements ActionListener
 {
+	private static final long serialVersionUID = -5398755465771631845L;
+	
 	JMenu menu;
 	SevenUpPanel sevenUpPanel;
 	JFileChooser fc;

@@ -157,14 +157,11 @@ public class Controller extends Mode {
 		return xmlController;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void loadJDOMXMLElement(Element xmlController)
 	{
-		List xmlControlBanks;
-		List xmlControlValues;
-		Element xmlControlBank;
-		Element xmlControlValue;
-		Iterator itrControlBanks;
-		Iterator itrControlValues;
+		List<Element> xmlControlBanks;
+		List<Element> xmlControlValues;
 		Integer controlBankPosition;
 		Integer controlValuePosition;
 		Integer controlValueValue;
@@ -172,18 +169,15 @@ public class Controller extends Mode {
 		startingController = Integer.parseInt(xmlController.getAttributeValue("startingController"));
 		
 		xmlControlBanks = xmlController.getChildren();
-		itrControlBanks = xmlControlBanks.iterator();
 		
-		while(itrControlBanks.hasNext())
+		for (Element xmlControlBank : xmlControlBanks)
 		{
-			xmlControlBank = (Element)itrControlBanks.next();
 			controlBankPosition = Integer.parseInt(xmlControlBank.getAttributeValue("position"));
 			
 			xmlControlValues = xmlControlBank.getChildren();
-			itrControlValues = xmlControlValues.iterator();
-			while(itrControlValues.hasNext())
+			
+			for (Element xmlControlValue: xmlControlValues)
 			{
-				xmlControlValue = (Element)itrControlValues.next();
 				controlValuePosition = Integer.parseInt(xmlControlValue.getAttributeValue("position"));
 				controlValueValue = Integer.parseInt(xmlControlValue.getAttributeValue("value"));
 				

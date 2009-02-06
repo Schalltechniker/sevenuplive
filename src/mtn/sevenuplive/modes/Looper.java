@@ -3,6 +3,7 @@ package mtn.sevenuplive.modes;
 import promidi.*;
 import mtn.sevenuplive.main.*;
 import org.jdom.*;
+
 import java.util.*;
 
 public class Looper extends Mode {
@@ -185,7 +186,8 @@ public class Looper extends Mode {
     	}
 	}
 	
-	private int getSizeOfStoppedLoopsInChokeGroup(int chokeGroup)
+	// NOTE: Not used
+	/*private int getSizeOfStoppedLoopsInChokeGroup(int chokeGroup)
 	{
 		int size = 0;
 		for(int i=0;i<7;i++)
@@ -206,7 +208,7 @@ public class Looper extends Mode {
 				size++;
 		}
 		return size;
-	}
+	}*/
 
 	public void step()
 	{
@@ -268,21 +270,18 @@ public class Looper extends Mode {
 		return xmlLooper;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void loadJDOMXMLElement(Element xmlLooper)
 	{	
-		List xmlLoops;
-		Element xmlLoop;
-		Iterator itrLoops;
+		List<Element> xmlLoops;
 		Integer loopIndex;
 		
 		gateLoopChokes = Boolean.parseBoolean(xmlLooper.getAttributeValue("gateLoopChokes"));
 		
 		xmlLoops = xmlLooper.getChildren();
-		itrLoops = xmlLoops.iterator();
 		
-		while(itrLoops.hasNext())
+		for (Element xmlLoop : xmlLoops)
 		{
-			xmlLoop = (Element)itrLoops.next();
 			loopIndex = Integer.parseInt(xmlLoop.getAttributeValue("index"));
 			loops[loopIndex].loadJDOMXMLElement(xmlLoop);		
 		}

@@ -7,13 +7,25 @@
  */
 
 package mtn.sevenuplive.main;
-import jklabs.monomic.*;
-import java.util.*;
-import javax.swing.JPanel;
-import promidi.*;
-import mtn.sevenuplive.modes.*;
-import mtn.sevenuplive.scales.*;
-import org.jdom.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import jklabs.monomic.MonomeOSC;
+import mtn.sevenuplive.modes.LoopRecorder;
+import mtn.sevenuplive.modes.Looper;
+import mtn.sevenuplive.modes.Masterizer;
+import mtn.sevenuplive.modes.Melodizer;
+import mtn.sevenuplive.modes.Patternizer;
+import mtn.sevenuplive.scales.Scale;
+
+import org.jdom.Attribute;
+import org.jdom.Document;
+import org.jdom.Element;
+
+import promidi.MidiIO;
+import promidi.MidiOut;
+import promidi.Note;
 
 public final class MonomeUp extends MonomeOSC {
 	
@@ -121,7 +133,6 @@ public final class MonomeUp extends MonomeOSC {
 	 ////////////////////////////////////////
 	 private MidiIO midiIO;
 	 private MidiOut midiSampleOut;
-	 private Note noteSend;
 	 ////////////////////////////////////
 
 	 private ConnectionSettings sevenUpConnections;
@@ -171,8 +182,8 @@ public final class MonomeUp extends MonomeOSC {
 	     patternizer = new Patternizer(patternMode, midiSampleOut);
 	     controller = new mtn.sevenuplive.modes.Controller(controlMode, midiSampleOut, startingController);
 	     sequencer = new mtn.sevenuplive.modes.Sequencer(seqMode, this);
-	     melodizer1 = new mtn.sevenuplive.modes.Melodizer(melodyMode,midiMelodyOut,  this);
-	     melodizer2 = new mtn.sevenuplive.modes.Melodizer(melody2Mode,midiMelody2Out,  this);
+	     melodizer1 = new mtn.sevenuplive.modes.Melodizer(melodyMode,midiMelodyOut);
+	     melodizer2 = new mtn.sevenuplive.modes.Melodizer(melody2Mode,midiMelody2Out);
 	     looper = new mtn.sevenuplive.modes.Looper(loopMode, midiLoopOut, this);
 	     loopRecorder = new mtn.sevenuplive.modes.LoopRecorder(loopRecordMode, this);
 	     masterizer = new mtn.sevenuplive.modes.Masterizer(masterMode, midiMelodyOut, midiMelody2Out, midiMasterOut, this);
@@ -600,7 +611,9 @@ public final class MonomeUp extends MonomeOSC {
 	  * @param xmlDoc
 	  * @return Returns whether or not the xml file loaded is a PatchPack (as opposed to a single patch)
 	  */
-	 public boolean loadXML(Document xmlDoc)
+	 
+	@SuppressWarnings("unchecked")
+	public boolean loadXML(Document xmlDoc)
 	 {
 		 if(xmlDoc.getRootElement().getName().equals("SevenUpPatch"))
 		 {
@@ -615,7 +628,6 @@ public final class MonomeUp extends MonomeOSC {
 			 String patchName;
 			 Iterator<Element> itr = xmlDoc.getRootElement().getChildren().iterator();
 			 while (itr.hasNext()) {
-				 
 				 Patch = (Element)itr.next();
 				 patchName = Patch.getAttributeValue("patchName");
 				 System.out.println("Appending patch: " + patchName);
@@ -633,7 +645,9 @@ public final class MonomeUp extends MonomeOSC {
 		 }
 	 }
 	 
-	 public void loadXMLPatch(Element patch)
+	 
+	@SuppressWarnings("unchecked")
+	public void loadXMLPatch(Element patch)
 	 {
 		 Element xmlState = patch;
 
@@ -648,14 +662,10 @@ public final class MonomeUp extends MonomeOSC {
 			patchTitle = "";
 		}
 
-		List xmlStateChildren = xmlState.getChildren();
-		Element xmlStateChild;
+		List<Element> xmlStateChildren = xmlState.getChildren();
 		
-		Iterator itr = xmlStateChildren.iterator();
-		while (itr.hasNext()) {
+		for  (Element xmlStateChild: xmlStateChildren) {
 		
-			xmlStateChild = (Element) itr.next();
-			
 			if(xmlStateChild.getName().equals("patternizer"))
 			{
 				System.out.println("Loading PATTERNIZER...");

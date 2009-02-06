@@ -3,6 +3,7 @@ package mtn.sevenuplive.modes;
 import java.util.*;
 import mtn.sevenuplive.main.MonomeUp;
 import org.jdom.*;
+
 import promidi.*;
 
 /***
@@ -96,7 +97,7 @@ public class NoteSequence {
 		
 		//Check to see if there are any events AFTER the length and add them to the final event
 		int eventIndex;
-		for(Enumeration els = events.keys();els.hasMoreElements();)
+		for(Enumeration<Integer> els = events.keys();els.hasMoreElements();)
 		{
 			eventIndex = Integer.class.cast(els.nextElement());
 			if(eventIndex > length)
@@ -319,7 +320,7 @@ public class NoteSequence {
 		xmlSequence.setAttribute(new Attribute("length", length.toString()));
 		xmlSequence.setAttribute(new Attribute("index", index.toString()));
 
-		for(Enumeration els = events.keys();els.hasMoreElements();)
+		for(Enumeration<Integer> els = events.keys();els.hasMoreElements();)
 		{
 			xmlEvent = new Element("event");
 			eventIndex = Integer.class.cast(els.nextElement());
@@ -340,6 +341,7 @@ public class NoteSequence {
 		return xmlSequence;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void loadJDOMXMLElement(Element xmlSequence)
 	{
 		initialize();
@@ -347,32 +349,24 @@ public class NoteSequence {
 		//Load XML
 		length = Integer.parseInt(xmlSequence.getAttributeValue("length"));
 		
-		Element xmlEvent;
 		Integer eventIndex;
-		List xmlEvents;
-		Iterator itrEvents;
-		Element xmlNote;
+		List<Element> xmlEvents;
 		Integer velocity;
 		Integer pitch;
-		List xmlNotes;
-		Iterator itrNotes;
-		
+		List<Element> xmlNotes;
 		ArrayList<Note> notes;
 		Note note;
 		
 		xmlEvents = xmlSequence.getChildren();
-		itrEvents = xmlEvents.iterator();
-		while(itrEvents.hasNext())
+		
+		for (Element xmlEvent: xmlEvents)
 		{
-			xmlEvent = (Element)itrEvents.next();
 			eventIndex = Integer.parseInt(xmlEvent.getAttributeValue("index"));
 			notes = new ArrayList<Note>();
 			
 			xmlNotes = xmlEvent.getChildren();
-			itrNotes = xmlNotes.iterator();
-			while(itrNotes.hasNext())
+			for(Element xmlNote : xmlNotes)
 			{
-				xmlNote = (Element)itrNotes.next();
 				velocity = Integer.parseInt(xmlNote.getAttributeValue("velocity"));
 				pitch = Integer.parseInt(xmlNote.getAttributeValue("pitch"));
 				note = new Note(pitch,velocity, 0);
@@ -386,7 +380,7 @@ public class NoteSequence {
 	public ArrayList<Note> getHeldNotes() {
 		ArrayList<Note> heldNotesArray = new ArrayList<Note>();
 		Integer index;
-		for(Enumeration els = heldNotesPlaying.keys();els.hasMoreElements();)
+		for(Enumeration<Integer> els = heldNotesPlaying.keys();els.hasMoreElements();)
 		{
 			index = Integer.class.cast(els.nextElement());
 			heldNotesArray.add(heldNotesPlaying.get(index));

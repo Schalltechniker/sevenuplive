@@ -1,12 +1,19 @@
 package mtn.sevenuplive.modes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
-import mtn.sevenuplive.main.*;
-import mtn.sevenuplive.scales.*;
-import proxml.*;
-import promidi.*;
+import mtn.sevenuplive.main.MonomeUp;
+import mtn.sevenuplive.scales.Scale;
+import mtn.sevenuplive.scales.ScaleName;
 
-import org.jdom.*;
+import org.jdom.Attribute;
+import org.jdom.DataConversionException;
+import org.jdom.Element;
+
+import promidi.MidiOut;
+import promidi.Note;
 
 /**
  * @author Adam Ribaudo
@@ -19,7 +26,6 @@ public class Melodizer extends Mode {
 	public int key[];
 	public Hashtable <Integer, NoteSequence> sequences;
 	private int cuedIndex;
-	private mtn.sevenuplive.main.MonomeUp m;
 	private boolean isRecording;
 	private int curSeqBank;
 	private int displayNote[]; //Array of ints holding [pitch] of notes being played back in a sequence
@@ -31,10 +37,9 @@ public class Melodizer extends Mode {
 	private int recMode = MonomeUp.melOnButtonPress;
 	public Boolean clipMode = false;
 
-	public Melodizer(int _navRow, MidiOut _midiMelodyOut[], mtn.sevenuplive.main.MonomeUp _m){
+	public Melodizer(int _navRow, MidiOut _midiMelodyOut[]){
 		super(_navRow);
 		midiMelodyOut = _midiMelodyOut;
-		m = _m;
 		key = new int[7];
 		cuedIndex = -1;
 		sequences = new Hashtable<Integer, NoteSequence>();
@@ -320,7 +325,7 @@ public class Melodizer extends Mode {
 		Integer index;
 		
 		//loop through sequences and perform heartbeat on each.  packaging up each note that is returned
-		for(Enumeration els = sequences.keys();els.hasMoreElements();)
+		for(Enumeration<Integer> els = sequences.keys();els.hasMoreElements();)
 		{
 			index = Integer.class.cast(els.nextElement());
 			s = sequences.get(index);
@@ -336,7 +341,7 @@ public class Melodizer extends Mode {
 		 Note note;
 
 		 //Loop through and send all notes in the notePackage
-		 for(Enumeration els = notePackage.keys();els.hasMoreElements();)
+		 for(Enumeration<Integer> els = notePackage.keys();els.hasMoreElements();)
 			{
 				index = Integer.class.cast(els.nextElement());
 				noteList = notePackage.get(index);
@@ -456,7 +461,7 @@ public class Melodizer extends Mode {
 		int seqIndex;
 		NoteSequence sequence;
 		
-		for(Enumeration els = sequences.keys();els.hasMoreElements();)
+		for(Enumeration<Integer> els = sequences.keys();els.hasMoreElements();)
 		{
 			seqIndex = Integer.class.cast(els.nextElement());
 			sequence = sequences.get(seqIndex);
@@ -468,6 +473,7 @@ public class Melodizer extends Mode {
 		return xmlMelodizer;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void loadXMLElement(Element xmlMelodizer)
 	{
 		//Clear current info
@@ -498,18 +504,14 @@ public class Melodizer extends Mode {
 				System.out.println("Error: No key attribute found in XML file");
 			} finally
 			{
-				List xmlSequences;
-				Iterator itrSequences;
-				Element xmlSequence;
+				List<Element> xmlSequences;
 				NoteSequence sequence;
 				Integer index;
 				
 				xmlSequences = xmlMelodizer.getChildren();
-				itrSequences = xmlSequences.iterator();
 				
-				while(itrSequences.hasNext())
+				for (Element xmlSequence : xmlSequences)
 				{
-					xmlSequence = (Element)itrSequences.next();
 					index = Integer.parseInt(xmlSequence.getAttributeValue("index"));	
 					key[index] = Integer.parseInt(xmlSequence.getAttributeValue("key"));
 					sequence = new NoteSequence(index);
@@ -577,7 +579,7 @@ public class Melodizer extends Mode {
 		//Set all sequences to the new rec Mode
 		recMode = _recMode;
 		Integer sequenceIndex;
-		for(Enumeration els = sequences.keys();els.hasMoreElements();)
+		for(Enumeration<Integer> els = sequences.keys();els.hasMoreElements();)
 		{
 			sequenceIndex = Integer.class.cast(els.nextElement());
 			sequences.get(sequenceIndex).setMelRecMode(recMode);

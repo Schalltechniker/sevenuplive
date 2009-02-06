@@ -1,9 +1,9 @@
 package mtn.sevenuplive.modes;
 
-import java.util.Iterator;
 import java.util.List;
 
-import org.jdom.*;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 public class SequenceBank {
 	
@@ -42,31 +42,24 @@ public class SequenceBank {
 		return rowPatterns[rowNum][patNum];
 	}
 
+	@SuppressWarnings("unchecked")
 	public void loadXml(Element xmlSequenceBank) {
 		
 		//Clear current patterns
 		rowPatterns = new boolean[8][7];
 
-		List xmlRows;
-		List xmlPatterns;
-		Iterator itrRows;
-		Iterator itrPatterns;
-		Element xmlRow;
-		Element xmlPattern;
+		List<Element> xmlRows;
+		List<Element> xmlPatterns;
 		Integer rowNum;
 		Integer patternNum;
 		
 		xmlRows = xmlSequenceBank.getChildren();
-		itrRows = xmlRows.iterator();
-		while(itrRows.hasNext())
+		for (Element xmlRow : xmlRows)
 		{
-			xmlRow = (Element)itrRows.next();
 			rowNum = Integer.parseInt(xmlRow.getAttributeValue("row"));
 			xmlPatterns = xmlRow.getChildren();
-			itrPatterns = xmlPatterns.iterator();
-			while(itrPatterns.hasNext())
+			for (Element xmlPattern : xmlPatterns)
 			{
-				xmlPattern = (Element)itrPatterns.next();
 				patternNum = Integer.parseInt(xmlPattern.getAttributeValue("patternNum"));
 				rowPatterns[rowNum][patternNum] = true;
 			}

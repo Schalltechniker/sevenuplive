@@ -191,6 +191,7 @@ public class LoopRecorder extends Mode {
 		return xmlLoopRecorder;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void loadJDOMXMLElement(Element xmlLoopRecorder)
 	{
 		//Clear current info
@@ -198,18 +199,14 @@ public class LoopRecorder extends Mode {
 		for(int i=0;i<7;i++)
 			loopSequences[i] = new CtrlSequence(i);
 		
-		List xmlSequences;
-		Iterator itrSequences;
+		List<Element> xmlSequences;
 		Integer index;
-		Element xmlSequence;
 		CtrlSequence sequence;
 		
 		xmlSequences = xmlLoopRecorder.getChildren();
-		itrSequences = xmlSequences.iterator();
 		
-		while(itrSequences.hasNext())
+		for (Element xmlSequence: xmlSequences)
 		{
-			xmlSequence = (Element)itrSequences.next();
 			index = Integer.parseInt(xmlSequence.getAttributeValue("index"));
 			sequence = new CtrlSequence(index);
 			sequence.loadJDOMXMLElement(xmlSequence);

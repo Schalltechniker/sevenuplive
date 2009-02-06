@@ -180,34 +180,28 @@ public class Patternizer extends Mode {
 		return xmlPatternizer;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void loadJDOMXMLElement(Element xmlPatternizer)
 	{
 		//Clear current values
 		patternGrids = new int[7][7][8];
 		
-		List xmlPatterns;
-		List xmlKeyPresses;
-		Iterator itrKeyPresses;
+		List<Element> xmlPatterns;
+		List<Element> xmlKeyPresses;
 		Integer col;
 		Integer row;
 		Integer value;
-		Element xmlPattern;
-		Element xmlKeyPress;
 		 
 		selectedPattern = Integer.parseInt(xmlPatternizer.getAttribute("selectedPattern").getValue());
 		 
 		xmlPatterns = xmlPatternizer.getChildren();
-		Iterator itrPatterns = xmlPatterns.iterator();
-		while(itrPatterns.hasNext())
+		for (Element xmlPattern : xmlPatterns)
 		{
-			xmlPattern = (Element)itrPatterns.next();
 			Integer patternNum = Integer.parseInt(xmlPattern.getAttribute("patternNum").getValue());
 			
 			xmlKeyPresses = xmlPattern.getChildren();
-			itrKeyPresses = xmlKeyPresses.iterator();
-			while(itrKeyPresses.hasNext())
+			for(Element xmlKeyPress : xmlKeyPresses)
 			{
-				xmlKeyPress = (Element)itrKeyPresses.next();
 				col = Integer.parseInt(xmlKeyPress.getAttributeValue("col"));
 				row = Integer.parseInt(xmlKeyPress.getAttributeValue("row"));
 				value = Integer.parseInt(xmlKeyPress.getAttributeValue("value"));

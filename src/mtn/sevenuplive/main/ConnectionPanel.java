@@ -15,6 +15,8 @@ import promidi.*;
 public class ConnectionPanel extends JPanel 
 							     implements ActionListener{
 	
+	private static final long serialVersionUID = -2961359562232170547L;
+	
 	mtn.sevenuplive.main.MainApp mainApp;
 	JTextField txtOscPrefix;
 	JTextField txtOscHostAddress;

@@ -117,22 +117,19 @@ public class Sequencer extends Mode {
 		return xmlSequencer;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void loadJDOMXMLElement(Element xmlSequencer)
 	{
-		List xmlSequences;
-		Iterator itrSequences;
-		Element xmlSequenceBank;
+		List<Element> xmlSequences;
 		Integer sequenceNum; 
 		
 		curSequenceBank = Integer.parseInt(xmlSequencer.getAttributeValue("curSequence"));
 		nextSequence = Integer.parseInt(xmlSequencer.getAttributeValue("nextSequence"));
 	 	
 		xmlSequences = xmlSequencer.getChildren();
-		itrSequences = xmlSequences.iterator();
 		
-		while(itrSequences.hasNext())
+		for (Element xmlSequenceBank : xmlSequences)
 		{
-			xmlSequenceBank = (Element)itrSequences.next();
 			sequenceNum = Integer.parseInt(xmlSequenceBank.getAttributeValue("sequenceBankNum"));
 			
 			sequenceBanks[sequenceNum].loadXml(xmlSequenceBank);

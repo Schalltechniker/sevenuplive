@@ -182,7 +182,7 @@ public class CtrlSequence {
 		xmlSequence.setAttribute(new Attribute("length", ((Integer)length).toString()));
 		xmlSequence.setAttribute(new Attribute("index", ((Integer)index).toString()));
 
-		for(Enumeration els = events.keys();els.hasMoreElements();)
+		for(Enumeration<Integer> els = events.keys();els.hasMoreElements();)
 		{
 			xmlEvent = new Element("event");
 			eventIndex = Integer.class.cast(els.nextElement());
@@ -197,24 +197,21 @@ public class CtrlSequence {
 		return xmlSequence;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void loadJDOMXMLElement(Element xmlSequence)
 	{
 		initialize();
 		
 		length = Integer.parseInt(xmlSequence.getAttributeValue("length"));
 		
-		List xmlEvents;
-		Element xmlEvent;
-		Iterator itrEvents;
+		List<Element> xmlEvents;
 		Integer ctrlValue;
 		Integer index;
 		
 		xmlEvents = xmlSequence.getChildren();
-		itrEvents = xmlEvents.iterator();
 		
-		while(itrEvents.hasNext())
+		for (Element xmlEvent :  xmlEvents)
 		{
-			xmlEvent = (Element)itrEvents.next();
 			ctrlValue = Integer.parseInt(xmlEvent.getAttributeValue("ctrlValue"));
 			index = Integer.parseInt(xmlEvent.getAttributeValue("index"));
 			events.put(index, ctrlValue);
