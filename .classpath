@@ -2,12 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/core.jar"/>
-	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/jdom.jar"/>
-	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/libProMandoMidiJNILib.jar"/>
-	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/oscP5.jar"/>
-	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/proxml.jar"/>
-	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/promidi.jar"/>
-	<classpathentry kind="lib" path="I:/DOCS/Eclipse/SevenUpLive/lib/jklabs.monomic.jar"/>
+	<classpathentry kind="var" path="SEVENUP_HOME/lib/core.jar"/>
+	<classpathentry kind="var" path="SEVENUP_HOME/lib/jdom.jar"/>
+	<classpathentry kind="var" path="SEVENUP_HOME/lib/jklabs.monomic.jar"/>
+	<classpathentry kind="var" path="SEVENUP_HOME/lib/libProMandoMidiJNILib.jar"/>
+	<classpathentry kind="var" path="SEVENUP_HOME/lib/oscP5.jar"/>
+	<classpathentry kind="var" path="SEVENUP_HOME/lib/promidi.jar"/>
+	<classpathentry kind="var" path="SEVENUP_HOME/lib/proxml.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
