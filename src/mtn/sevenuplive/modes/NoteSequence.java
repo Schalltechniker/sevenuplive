@@ -1,10 +1,16 @@
 package mtn.sevenuplive.modes;
 
-import java.util.*;
-import mtn.sevenuplive.main.MonomeUp;
-import org.jdom.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
-import promidi.*;
+import mtn.sevenuplive.main.MonomeUp;
+
+import org.jdom.Attribute;
+import org.jdom.Element;
+
+import promidi.Note;
 
 /***
  * A sequence of notes that may be recorded live and played back.  
@@ -24,7 +30,7 @@ public class NoteSequence {
 	//Create hashtable of keys (metronome count) and ArrayList<Note>(notes played at that event position)
 	private Hashtable<Integer, ArrayList<Note>> events;
 	private ArrayList<Integer> notesOn;
-	private int recMode = MonomeUp.MEL_ON_BUTTON_PRESS;
+	private int recMode = ModeConstants.MEL_ON_BUTTON_PRESS;
 	
 	NoteSequence(int _index){
 		initialize();
@@ -52,7 +58,7 @@ public class NoteSequence {
 	 */
 	public void endRecording()
 	{
-		if(recMode == MonomeUp.MEL_QUANTIZED)
+		if(recMode == ModeConstants.MEL_QUANTIZED)
 			//Wait for a locatorEvent before actually ending the recording
 			status = MonomeUp.CUEDSTOP;
 		else
@@ -171,7 +177,7 @@ public class NoteSequence {
 		ArrayList<Note> noteList;
 		
 		//Ensures that the user can add events to the first beat of a quantized recording
-		if(status == MonomeUp.CUED && recMode == MonomeUp.MEL_QUANTIZED)
+		if(status == MonomeUp.CUED && recMode == ModeConstants.MEL_QUANTIZED)
 		{
 			
 			noteList = new ArrayList<Note>();
@@ -181,7 +187,7 @@ public class NoteSequence {
 			notesOn.add(note.getPitch());
 		}
 		//Else if the recMode is on button press, begin recording immediately
-		else if(status == MonomeUp.CUED && recMode == MonomeUp.MEL_ON_BUTTON_PRESS)
+		else if(status == MonomeUp.CUED && recMode == ModeConstants.MEL_ON_BUTTON_PRESS)
 		{
 			
 			noteList = new ArrayList<Note>();
@@ -343,7 +349,7 @@ public class NoteSequence {
 		initialize();
 		
 		//Load XML
-		length = Integer.parseInt(xmlSequence.getAttributeValue("length"));
+		length = xmlSequence.getAttributeValue("length") == null ? length : Integer.parseInt(xmlSequence.getAttributeValue("length"));
 		
 		Integer eventIndex;
 		List<Element> xmlEvents;
@@ -355,21 +361,25 @@ public class NoteSequence {
 		
 		xmlEvents = xmlSequence.getChildren();
 		
+		int outerindex = 0;
 		for (Element xmlEvent: xmlEvents)
 		{
-			eventIndex = Integer.parseInt(xmlEvent.getAttributeValue("index"));
+			eventIndex = xmlEvent.getAttributeValue("index") == null ? outerindex : Integer.parseInt(xmlEvent.getAttributeValue("index"));
 			notes = new ArrayList<Note>();
 			
 			xmlNotes = xmlEvent.getChildren();
+			
 			for(Element xmlNote : xmlNotes)
 			{
-				velocity = Integer.parseInt(xmlNote.getAttributeValue("velocity"));
-				pitch = Integer.parseInt(xmlNote.getAttributeValue("pitch"));
+				// @TODO Give a default velocity and pitch if not set
+				velocity = xmlNote.getAttributeValue("velocity") == null ? new Integer(ModeConstants.NOT_SET) : Integer.parseInt(xmlNote.getAttributeValue("velocity"));
+				pitch = xmlNote.getAttributeValue("pitch") == null ? new Integer(ModeConstants.NOT_SET) : Integer.parseInt(xmlNote.getAttributeValue("pitch"));
 				note = new Note(pitch,velocity, 0);
 				notes.add(note);
 			}
 			
 			events.put(eventIndex, notes);
+			outerindex++;
 		}	
 	}
 
@@ -390,7 +400,7 @@ public class NoteSequence {
 	 * when to actually start or stop recording after being cued to do so
 	 */
 	public void locatorEvent() {
-		if(recMode == MonomeUp.MEL_QUANTIZED)
+		if(recMode == ModeConstants.MEL_QUANTIZED)
 		{
 			if(status == MonomeUp.CUEDSTOP)
 			{

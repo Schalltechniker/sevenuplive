@@ -1,10 +1,14 @@
 package mtn.sevenuplive.modes;
 
-import promidi.*;
-import mtn.sevenuplive.main.*;
-import org.jdom.*;
+import java.util.List;
 
-import java.util.*;
+import mtn.sevenuplive.main.MonomeUp;
+
+import org.jdom.Attribute;
+import org.jdom.Element;
+
+import promidi.MidiOut;
+import promidi.Note;
 
 public class Looper extends Mode {
 	
@@ -22,8 +26,8 @@ public class Looper extends Mode {
 
 	public boolean[] stopLoopsOnNextStep;
 	
-	public Looper(int _navRow, MidiOut _midiOut, mtn.sevenuplive.main.MonomeUp _m) {
-		super(_navRow);
+	public Looper(int _navRow, MidiOut _midiOut, mtn.sevenuplive.main.MonomeUp _m, int grid_width, int grid_height) {
+		super(_navRow, grid_width, grid_height);
 		
 		looperViewModes = new int[7];
 		stopLoopsOnNextStep = new boolean[7];
@@ -251,7 +255,7 @@ public class Looper extends Mode {
         			pressedRow = -1;
         		}
         		
-        		loops[i].increaseResCount();
+        		loops[i].nextResCount();
         	}
         }
 	}
@@ -280,14 +284,15 @@ public class Looper extends Mode {
 		List<Element> xmlLoops;
 		Integer loopIndex;
 		
-		gateLoopChokes = Boolean.parseBoolean(xmlLooper.getAttributeValue("gateLoopChokes"));
+		gateLoopChokes = xmlLooper.getAttributeValue("gateLoopChokes") == null ? gateLoopChokes : Boolean.parseBoolean(xmlLooper.getAttributeValue("gateLoopChokes"));
 		
 		xmlLoops = xmlLooper.getChildren();
 		
 		for (Element xmlLoop : xmlLoops)
 		{
-			loopIndex = Integer.parseInt(xmlLoop.getAttributeValue("index"));
-			loops[loopIndex].loadJDOMXMLElement(xmlLoop);		
+			loopIndex = xmlLoop.getAttributeValue("index") == null ? NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("index"));
+			if (loopIndex != NOT_SET)
+				loops[loopIndex].loadJDOMXMLElement(xmlLoop);		
 		}
 	}
 	

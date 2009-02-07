@@ -1,8 +1,10 @@
 package mtn.sevenuplive.modes;
 
-import java.util.*;
-import org.jdom.*;
-import mtn.sevenuplive.main.*;
+import java.util.List;
+
+import mtn.sevenuplive.main.MonomeUp;
+
+import org.jdom.Element;
 
 public class LoopRecorder extends Mode {
 
@@ -10,8 +12,8 @@ public class LoopRecorder extends Mode {
 	private MonomeUp m;
 	private Boolean gateLoopChokes = true;
 	
-	public LoopRecorder(int _navRow, MonomeUp _m) {
-		super(_navRow);
+	public LoopRecorder(int _navRow, MonomeUp _m, int grid_width, int grid_height) {
+		super(_navRow, grid_width, grid_height);
 		m = _m;
 		loopSequences = new CtrlSequence[7];
 		for(int i=0;i<7;i++)
@@ -201,12 +203,14 @@ public class LoopRecorder extends Mode {
 		
 		xmlSequences = xmlLoopRecorder.getChildren();
 		
+		int defaultindex = 0;
 		for (Element xmlSequence: xmlSequences)
 		{
-			index = Integer.parseInt(xmlSequence.getAttributeValue("index"));
+			index = xmlSequence.getAttributeValue("index") == null ? defaultindex : Integer.parseInt(xmlSequence.getAttributeValue("index"));
 			sequence = new CtrlSequence(index);
 			sequence.loadJDOMXMLElement(xmlSequence);
 			loopSequences[index] = sequence;
+			defaultindex++;
 		}
 	}
 	

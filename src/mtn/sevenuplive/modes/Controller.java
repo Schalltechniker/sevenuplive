@@ -1,9 +1,12 @@
 package mtn.sevenuplive.modes;
-import promidi.*;
+import java.util.List;
+
 import mtn.sevenuplive.main.MonomeUp;
 
-import org.jdom.*;
-import java.util.*;
+import org.jdom.Attribute;
+import org.jdom.Element;
+
+import promidi.MidiOut;
 
 public class Controller extends Mode {
 
@@ -12,8 +15,8 @@ public class Controller extends Mode {
 	private Integer controls[][];
 	private Integer startingController;
 	
-	public Controller(int _navRow, MidiOut _midiControlOut, int _startingController) {
-		super(_navRow);
+	public Controller(int _navRow, MidiOut _midiControlOut, int _startingController, int grid_width, int grid_height) {
+		super(_navRow, grid_width, grid_height);
 		midiControlOut = _midiControlOut;
 		controls = new Integer[7][7];
 		startingController = _startingController;
@@ -168,23 +171,27 @@ public class Controller extends Mode {
 		Integer controlValuePosition;
 		Integer controlValueValue;
 		
-		startingController = Integer.parseInt(xmlController.getAttributeValue("startingController"));
+		startingController = xmlController.getAttributeValue("startingController") == null ? startingController : Integer.parseInt(xmlController.getAttributeValue("startingController"));
 		
 		xmlControlBanks = xmlController.getChildren();
 		
+		int outerindex = 0;
 		for (Element xmlControlBank : xmlControlBanks)
 		{
-			controlBankPosition = Integer.parseInt(xmlControlBank.getAttributeValue("position"));
+			controlBankPosition = xmlControlBank.getAttributeValue("position") == null ? outerindex : Integer.parseInt(xmlControlBank.getAttributeValue("position"));
 			
 			xmlControlValues = xmlControlBank.getChildren();
 			
+			int innerindex = 0;
 			for (Element xmlControlValue: xmlControlValues)
 			{
-				controlValuePosition = Integer.parseInt(xmlControlValue.getAttributeValue("position"));
-				controlValueValue = Integer.parseInt(xmlControlValue.getAttributeValue("value"));
+				controlValuePosition = xmlControlValue.getAttributeValue("position") == null ? innerindex : Integer.parseInt(xmlControlValue.getAttributeValue("position"));
+				controlValueValue = xmlControlValue.getAttributeValue("value") == null ? NOT_SET : Integer.parseInt(xmlControlValue.getAttributeValue("value"));
 				
 				controls[controlBankPosition][controlValuePosition] = controlValueValue;
+				innerindex++;
 			}
+			outerindex++;
 		}
 		
 		updateDisplay();

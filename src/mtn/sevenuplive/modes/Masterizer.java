@@ -3,7 +3,8 @@ package mtn.sevenuplive.modes;
 import java.util.ArrayList;
 
 import mtn.sevenuplive.main.MonomeUp;
-import promidi.*;
+import promidi.MidiOut;
+import promidi.Note;
 
 public class Masterizer extends Mode {
 	//PATTERN
@@ -32,7 +33,7 @@ public class Masterizer extends Mode {
 	private MidiOut midiMelodyOut[];
 	private final static int MELODY_COL = 5;
 	private int melodyRows[];
-	private int melRecMode = MonomeUp.MEL_ON_BUTTON_PRESS;
+	private int melRecMode = ModeConstants.MEL_ON_BUTTON_PRESS;
 	private boolean mel1Cue[];
 
 	//MELODY2
@@ -46,9 +47,9 @@ public class Masterizer extends Mode {
 	
 	private mtn.sevenuplive.main.MonomeUp m;
 	
-	public Masterizer(int _navRow, MidiOut _midiMelodyOut[], MidiOut _midiMelody2Out[],MidiOut _midiMasterOut, mtn.sevenuplive.main.MonomeUp _m)
+	public Masterizer(int _navRow, MidiOut _midiMelodyOut[], MidiOut _midiMelody2Out[],MidiOut _midiMasterOut, mtn.sevenuplive.main.MonomeUp _m,  int grid_width, int grid_height)
 	{
-		super(_navRow);
+		super(_navRow, grid_width, grid_height);
 		m = _m;
 		displayGrid = new int[7][8];
 		
@@ -133,14 +134,14 @@ public class Masterizer extends Mode {
 			seqStatus = m.melodizer1.getSeqStatus(y);
    		 	if(seqStatus == MonomeUp.PLAYING)
    		 	{
-   		 		if(melRecMode == MonomeUp.MEL_ON_BUTTON_PRESS)
+   		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
    		 			stopMel1Seq(y);
    		 		else
    		 			mel1Cue[y] = true;
    		 	}
    		 	else if(seqStatus == MonomeUp.STOPPED)
    		 	{
-   		 		if(melRecMode == MonomeUp.MEL_ON_BUTTON_PRESS)
+   		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
    		 			m.melodizer1.playSeq(y);
 		 		else
 		 			mel1Cue[y] = true;
@@ -152,14 +153,14 @@ public class Masterizer extends Mode {
 			seqStatus = m.melodizer2.getSeqStatus(y);
    		 	if(seqStatus == MonomeUp.PLAYING)
    		 	{	
-   		 		if(melRecMode == MonomeUp.MEL_ON_BUTTON_PRESS)
+   		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
 		 			stopMel2Seq(y);
 		 		else
 		 			mel2Cue[y] = true;
    		 	}
    		 	else if(seqStatus == MonomeUp.STOPPED)
    		 	{
-   		 		if(melRecMode == MonomeUp.MEL_ON_BUTTON_PRESS)
+   		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
    		 			m.melodizer2.playSeq(y);
 		 		else
 		 			mel2Cue[y] = true;
@@ -248,7 +249,7 @@ public class Masterizer extends Mode {
 				melodyRows[i] = MonomeUp.SOLID;
 			else melodyRows[i] = MonomeUp.OFF;
 			
-			if(RECMODE == MonomeUp.MEL_QUANTIZED && mel1Cue[i])
+			if(RECMODE == ModeConstants.MEL_QUANTIZED && mel1Cue[i])
 				melodyRows[i] = MonomeUp.SLOWBLINK;
 		}
 		
@@ -262,7 +263,7 @@ public class Masterizer extends Mode {
 				melody2Rows[i] = MonomeUp.SOLID;
 			else melody2Rows[i] = MonomeUp.OFF;
 			
-			if(RECMODE == MonomeUp.MEL_QUANTIZED && mel2Cue[i])
+			if(RECMODE == ModeConstants.MEL_QUANTIZED && mel2Cue[i])
 				melody2Rows[i] = MonomeUp.SLOWBLINK;
 		}
 		

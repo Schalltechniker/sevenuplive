@@ -1,11 +1,22 @@
 package mtn.sevenuplive.main;
 
-import javax.swing.*;
-import java.awt.event.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import mtn.sevenuplive.modes.ModeConstants;
 import mtn.sevenuplive.scales.Scale;
-import org.jdom.*;
-import java.util.*;
+
+import org.jdom.Document;
 
 public class SevenUpPanel extends JPanel implements ActionListener
 						  {
@@ -116,9 +127,9 @@ public class SevenUpPanel extends JPanel implements ActionListener
         			public void actionPerformed(ActionEvent e) {
         				JComboBox cb = (JComboBox)e.getSource();
         				if(cb.getSelectedItem().toString().equals("On Button Press"))
-	        				sevenUpApplet.setMelRecMode(MonomeUp.MEL_ON_BUTTON_PRESS);
+	        				sevenUpApplet.setMelRecMode(ModeConstants.MEL_ON_BUTTON_PRESS);
         				else 
-        					sevenUpApplet.setMelRecMode(MonomeUp.MEL_QUANTIZED);
+        					sevenUpApplet.setMelRecMode(ModeConstants.MEL_QUANTIZED);
         			}
         		}
         );

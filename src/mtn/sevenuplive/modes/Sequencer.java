@@ -1,9 +1,11 @@
 package mtn.sevenuplive.modes;
 
+import java.util.List;
+
 import mtn.sevenuplive.main.MonomeUp;
 
-import org.jdom.*;
-import java.util.*;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 public class Sequencer extends Mode {
 	
@@ -17,8 +19,8 @@ public class Sequencer extends Mode {
 	mtn.sevenuplive.main.MonomeUp m;
 	Patternizer patternizer;
 	
-	public Sequencer(int _navRow, mtn.sevenuplive.main.MonomeUp _m) {
-		super(_navRow);
+	public Sequencer(int _navRow, mtn.sevenuplive.main.MonomeUp _m, int grid_width, int grid_height) {
+		super(_navRow, grid_width, grid_height);
 		
 		sequenceBanks = new SequenceBank[7];
 		for(int i=0; i<7;i++)
@@ -125,16 +127,18 @@ public class Sequencer extends Mode {
 		List<Element> xmlSequences;
 		Integer sequenceNum; 
 		
-		curSequenceBank = Integer.parseInt(xmlSequencer.getAttributeValue("curSequence"));
-		nextSequence = Integer.parseInt(xmlSequencer.getAttributeValue("nextSequence"));
+		curSequenceBank = xmlSequencer.getAttributeValue("curSequence") == null ? 0 : Integer.parseInt(xmlSequencer.getAttributeValue("curSequence"));
+		nextSequence = xmlSequencer.getAttributeValue("nextSequence") == null ? 0 : Integer.parseInt(xmlSequencer.getAttributeValue("nextSequence"));
 	 	
 		xmlSequences = xmlSequencer.getChildren();
 		
+		int index = 0;
 		for (Element xmlSequenceBank : xmlSequences)
 		{
-			sequenceNum = Integer.parseInt(xmlSequenceBank.getAttributeValue("sequenceBankNum"));
+			sequenceNum = xmlSequenceBank.getAttributeValue("sequenceBankNum") == null ? index : Integer.parseInt(xmlSequenceBank.getAttributeValue("sequenceBankNum"));
 			
 			sequenceBanks[sequenceNum].loadXml(xmlSequenceBank);
+			index++;
 		}
 		
 		updateDisplay();

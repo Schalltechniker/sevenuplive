@@ -1,38 +1,54 @@
 package mtn.sevenuplive.modes;
 
-import org.jdom.*;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 public class Loop {
-	private int resolution =1;
+	
+	/** Value indicating the loop is not playing */ 
+	public static final int NOT_PLAYING = -1;
+	
+	/** Value indicating choke group is off */ 
+	public static final int NO_CHOKE_GROUP = -1;
+	
+	/** Loop resolution which can be from (1 * resMultiplier) to (8 * resMultiplier) measures long */
+	private int resolution = DEFAULT_RESOLUTION;
+	private final static int DEFAULT_RESOLUTION = 1;
+	
+	/** Multiplier for loop resolution. Multiplies the full range of the loops resolution */
+	private int resMultiplier = 1;
+	private final static int DEFAULT_RES_MULTIPLIER = 1;
+	
+	/** Current step index or {@link #NOT_PLAYING} */
 	private int step;
 	private int startOffset;
 	private int resCounter;
-	private int pressedRow;
-	private int chokeGroup;
 	
-	//Specifies where a loop's loop can start and end
-	//private int loopStartStep;
-	//private int loopEndStep;
+	private int pressedRow;
+	
+	/** Current chokeGroup or {@link #NO_CHOKE_GROUP} */
+	private int chokeGroup;
 	
 	public Loop()
 	{
-		step = -1; //not playing currently
-		chokeGroup = -1; //Default to no choke group
+		step = NOT_PLAYING; //not playing currently
+		chokeGroup = NO_CHOKE_GROUP; //Default to no choke group
 	}
 	
 	public boolean isPlaying()
 	{
-		return step != -1;
+		return step != NOT_PLAYING;
 	}
 	
 	public int getStep()
 	{
+		System.out.println("Current step is [" + Integer.toString(step) + "]");
 		return step;
 	}
 		
 	public void stop()
 	{
-		step = -1;
+		step = NOT_PLAYING;
 	}
 
 	public int getResolution()
@@ -40,18 +56,34 @@ public class Loop {
 		return resolution;
 	}
 	
-	public void setResolution(int _resolution)
+	public void setResolution(int resolution)
 	{
-		resolution = _resolution;
+		this.resolution = resolution;
 	}
 	
-	public void setStep(int _step)
+	/**
+	 * Increment to the next step.
+	 * This sets the current step to the new value.
+	 * @param step
+	 */
+	public void nextStep() {
+		step++;
+		if(this.step > 7)
+			this.step = 0;
+		
+	}
+	
+	/**
+	 * Sets the current step
+	 * 
+	 * @param step
+	 */
+	public void setStep(int step)
 	{
-		step = _step;
-
-		resCounter = 0;
-		if(step > 7)
-			step = 0;
+		if (step > 7)
+			throw new IndexOutOfBoundsException("Step [" + Integer.toString(step) + "] is out of range: [0-" + Integer.toString(7) + "]"); 
+			
+		this.step = step;
 	}
 	
 	public int getStartOffset()
@@ -59,34 +91,55 @@ public class Loop {
 		return startOffset;
 	}
 	
-	public void setStartOffset(int _startOffset)
+	public void setStartOffset(int startOffset)
 	{
-		startOffset = _startOffset;
+		this.startOffset = startOffset;
 	}
 	
-	public void increaseResCount()
+	public int getResCounter() {
+		return resCounter;
+	}
+	
+	public int getChokeGroup()
+	{
+		return chokeGroup;
+	}
+	
+	public void setChokeGroup(int chokeGroup)
+	{
+		this.chokeGroup = chokeGroup;
+	}
+	
+	/**
+	 * Go to the next resCount.
+	 * This will cycle back to zero when we hit the end.
+	 */
+	public void nextResCount()
 	{
 		resCounter++;
-		if (resCounter % (resolution +1) == 0)
+		if (resCounter % ((resolution + 1) * resMultiplier) == 0)
 		{
 			resCounter = 0;
-			setStep(step + 1);
+			nextStep();
 		}
 	}
-	
-	public int getResCounter()
-	{
-		return resCounter; 
+
+	public int getResMultiplier() {
+		return resMultiplier;
 	}
-	
+
+	public void setResMultiplier(int resMultiplier) {
+		this.resMultiplier = resMultiplier;
+	}
+
 	public int getPressedRow()
 	{
 		return pressedRow;
 	}
 	
-	public void setPressedRow(int _pressedRow)
+	public void setPressedRow(int pressedRow)
 	{
-		pressedRow = _pressedRow;
+		this.pressedRow = pressedRow;
 	}
 
 	
@@ -95,6 +148,7 @@ public class Loop {
 		Element xmlLoop = new Element("loop");
 		
 		xmlLoop.setAttribute(new Attribute("resolution", ((Integer)resolution).toString()));
+		xmlLoop.setAttribute(new Attribute("resmultiplier", ((Integer)resMultiplier).toString()));
 		xmlLoop.setAttribute(new Attribute("startOffset",((Integer)startOffset).toString()));
 		xmlLoop.setAttribute(new Attribute("resCounter",((Integer)resCounter).toString()));
 		xmlLoop.setAttribute(new Attribute("pressedRow",((Integer)pressedRow).toString()));
@@ -105,32 +159,16 @@ public class Loop {
 	
 	public void loadJDOMXMLElement(Element xmlLoop)
 	{
-		step = -1; //not playing currently
+		step = NOT_PLAYING; //not playing currently
 		
-		resolution = Integer.parseInt(xmlLoop.getAttributeValue("resolution"));
-		startOffset = Integer.parseInt(xmlLoop.getAttributeValue("startOffset"));
-		resCounter = Integer.parseInt(xmlLoop.getAttributeValue("resCounter"));
-		pressedRow = Integer.parseInt(xmlLoop.getAttributeValue("pressedRow"));
-		try
-		{
-			chokeGroup = Integer.parseInt(xmlLoop.getAttributeValue("chokeGroup"));
-		}catch(Exception e)
-		{
-			System.out.println("Missing chokeGroup Param");
-		}
+		resolution = xmlLoop.getAttributeValue("resolution") == null ? DEFAULT_RESOLUTION : Integer.parseInt(xmlLoop.getAttributeValue("resolution"));
+		resMultiplier = xmlLoop.getAttributeValue("resMultiplier") == null ? DEFAULT_RES_MULTIPLIER : Integer.parseInt(xmlLoop.getAttributeValue("resMultiplier"));
+		startOffset = xmlLoop.getAttributeValue("startOffset") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("startOffset"));
+		resCounter = xmlLoop.getAttributeValue("resCounter") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("resCounter"));
+		pressedRow = xmlLoop.getAttributeValue("pressedRow") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("pressedRow"));
+		chokeGroup = xmlLoop.getAttributeValue("chokeGroup") == null ? NO_CHOKE_GROUP: Integer.parseInt(xmlLoop.getAttributeValue("chokeGroup"));
+		
 		
 	}
-	
-	public int getChokeGroup()
-	{
-		return chokeGroup;
-	}
-	
-	public void setChokeGroup(int _chokeGroup)
-	{
-		chokeGroup = _chokeGroup;
-	}
-	
-	
 	
 }

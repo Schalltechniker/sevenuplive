@@ -54,16 +54,21 @@ public class SequenceBank {
 		Integer patternNum;
 		
 		xmlRows = xmlSequenceBank.getChildren();
+		
+		int outerindex = 0;
 		for (Element xmlRow : xmlRows)
 		{
-			rowNum = Integer.parseInt(xmlRow.getAttributeValue("row"));
+			rowNum = xmlRow.getAttributeValue("row") == null ? outerindex : Integer.parseInt(xmlRow.getAttributeValue("row"));
 			xmlPatterns = xmlRow.getChildren();
+			
+			int innerindex = 0;
 			for (Element xmlPattern : xmlPatterns)
 			{
-				patternNum = Integer.parseInt(xmlPattern.getAttributeValue("patternNum"));
+				patternNum = xmlPattern.getAttributeValue("patternNum") == null ? innerindex : Integer.parseInt(xmlPattern.getAttributeValue("patternNum"));
 				rowPatterns[rowNum][patternNum] = true;
+				innerindex++;
 			}
-			
+			outerindex++;
 		}
 	}
 	

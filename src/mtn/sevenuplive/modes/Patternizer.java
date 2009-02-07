@@ -1,11 +1,15 @@
 package mtn.sevenuplive.modes;
 
 
-import promidi.*;
+import java.util.List;
+
 import mtn.sevenuplive.main.MonomeUp;
 
-import org.jdom.*;
-import java.util.*;
+import org.jdom.Attribute;
+import org.jdom.Element;
+
+import promidi.MidiOut;
+import promidi.Note;
 
 public class Patternizer extends Mode {
 	
@@ -16,8 +20,8 @@ public class Patternizer extends Mode {
 	public int curPatternRow = 0;
 	private MidiOut midiSampleOut;
 
-	public Patternizer(int _navRow, promidi.MidiOut _midiSampleOut) {
-		super(_navRow);
+	public Patternizer(int _navRow, promidi.MidiOut _midiSampleOut, int grid_width, int grid_height) {
+		super(_navRow, grid_width, grid_height);
 		
 		midiSampleOut = _midiSampleOut;
 		patternGrids = new int[7][7][8];

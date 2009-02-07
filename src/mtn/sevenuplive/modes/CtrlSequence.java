@@ -1,10 +1,13 @@
 package mtn.sevenuplive.modes;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
 import mtn.sevenuplive.main.MonomeUp;
 
-import org.jdom.*;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 public class CtrlSequence {
 	
@@ -202,7 +205,7 @@ public class CtrlSequence {
 	{
 		initialize();
 		
-		length = Integer.parseInt(xmlSequence.getAttributeValue("length"));
+		length = xmlSequence.getAttributeValue("length") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlSequence.getAttributeValue("length"));
 		
 		List<Element> xmlEvents;
 		Integer ctrlValue;
@@ -210,11 +213,13 @@ public class CtrlSequence {
 		
 		xmlEvents = xmlSequence.getChildren();
 		
+		int defaultindex = 0;
 		for (Element xmlEvent :  xmlEvents)
 		{
-			ctrlValue = Integer.parseInt(xmlEvent.getAttributeValue("ctrlValue"));
-			index = Integer.parseInt(xmlEvent.getAttributeValue("index"));
+			ctrlValue = xmlEvent.getAttributeValue("ctrlValue") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlEvent.getAttributeValue("ctrlValue"));
+			index = xmlEvent.getAttributeValue("index") == null ? defaultindex : Integer.parseInt(xmlEvent.getAttributeValue("index"));
 			events.put(index, ctrlValue);
+			defaultindex++;
 		}
 	}
 	

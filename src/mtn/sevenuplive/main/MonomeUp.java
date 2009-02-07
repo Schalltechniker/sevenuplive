@@ -16,6 +16,7 @@ import mtn.sevenuplive.modes.LoopRecorder;
 import mtn.sevenuplive.modes.Looper;
 import mtn.sevenuplive.modes.Masterizer;
 import mtn.sevenuplive.modes.Melodizer;
+import mtn.sevenuplive.modes.ModeConstants;
 import mtn.sevenuplive.modes.Patternizer;
 import mtn.sevenuplive.scales.Scale;
 
@@ -143,24 +144,12 @@ public final class MonomeUp extends MonomeOSC {
 	 //Interface modes
 	 ////////////////////////////////////
 	 private int menuLevel;
-	 private int mainMenu = 0;
-	 private int subMenu = 1;
+	 private final static int MAINMENU = 0;
+	 private final static int SUBMENU = 1;
 	 private int curMode;
 	 
-	 public static final int PATTERN_MODE = 0;
-	 public static final int SEQ_MODE = 1;
-	 public static final int CONTROL_MODE = 2;
-	 public static final int LOOP_MODE = 3;
-	 public static final int LOOP_RECORD_MODE = 4;
-	 public static final int MELODY_MODE = 5;
-	 public static final int MELODY2_MODE = 6;
-	 public static final int MASTER_MODE = 7;
-	 
-	 public static final int MEL_ON_BUTTON_PRESS = 1;
-	 public static final int MEL_QUANTIZED = 2;
-	 
-	 public static final int SAMPLE_MODE = 31;
-	 public static final int CHOPPER_MODE = 41;
+	 public static final int GRID_WIDTH = 8;
+	 public static final int GRID_HEIGHT = 8;
 	 ////////////////////////////////////
 	 
 	 SevenUpApplet SevenUpApplet;
@@ -177,19 +166,19 @@ public final class MonomeUp extends MonomeOSC {
 
 	     //Pressed buttons
 	     pressedButtonsLength = new int[8][8];
-	     menuLevel = subMenu;
+	     menuLevel = SUBMENU;
 	     
 	     initializeMidi(listener);
 	     
-	     patternizer = new Patternizer(PATTERN_MODE, midiSampleOut);
-	     controller = new mtn.sevenuplive.modes.Controller(CONTROL_MODE, midiSampleOut, STARTING_CONTROLLER);
-	     sequencer = new mtn.sevenuplive.modes.Sequencer(SEQ_MODE, this);
-	     melodizer1 = new mtn.sevenuplive.modes.Melodizer(MELODY_MODE,midiMelodyOut);
-	     melodizer2 = new mtn.sevenuplive.modes.Melodizer(MELODY2_MODE,midiMelodyOut);
-	     melodizer2 = new mtn.sevenuplive.modes.Melodizer(MELODY2_MODE,midiMelody2Out);
-	     looper = new mtn.sevenuplive.modes.Looper(LOOP_MODE, midiLoopOut, this);
-	     loopRecorder = new mtn.sevenuplive.modes.LoopRecorder(LOOP_RECORD_MODE, this);
-	     masterizer = new mtn.sevenuplive.modes.Masterizer(MASTER_MODE, midiMelodyOut, midiMelody2Out, midiMasterOut, this);
+	     patternizer = new Patternizer(ModeConstants.PATTERN_MODE, midiSampleOut, GRID_WIDTH, GRID_HEIGHT);
+	     controller = new mtn.sevenuplive.modes.Controller(ModeConstants.CONTROL_MODE, midiSampleOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT);
+	     sequencer = new mtn.sevenuplive.modes.Sequencer(ModeConstants.SEQ_MODE, this, GRID_WIDTH, GRID_HEIGHT);
+	     melodizer1 = new mtn.sevenuplive.modes.Melodizer(ModeConstants.MELODY_MODE,midiMelodyOut, GRID_WIDTH, GRID_HEIGHT);
+	     melodizer2 = new mtn.sevenuplive.modes.Melodizer(ModeConstants.MELODY2_MODE,midiMelodyOut, GRID_WIDTH, GRID_HEIGHT);
+	     melodizer2 = new mtn.sevenuplive.modes.Melodizer(ModeConstants.MELODY2_MODE,midiMelody2Out, GRID_WIDTH, GRID_HEIGHT);
+	     looper = new mtn.sevenuplive.modes.Looper(ModeConstants.LOOP_MODE, midiLoopOut, this, GRID_WIDTH, GRID_HEIGHT);
+	     loopRecorder = new mtn.sevenuplive.modes.LoopRecorder(ModeConstants.LOOP_RECORD_MODE, this, GRID_WIDTH, GRID_HEIGHT);
+	     masterizer = new mtn.sevenuplive.modes.Masterizer(ModeConstants.MASTER_MODE, midiMelodyOut, midiMelody2Out, midiMasterOut, this, GRID_WIDTH, GRID_HEIGHT);
 	     
 	     //Set initial display grid
 	     curDisplayGrid = patternizer.getDisplayGrid();
@@ -336,12 +325,12 @@ public final class MonomeUp extends MonomeOSC {
 	 
 	 void triggerButtonHeld(int x, int y)
 	 {
-		 if(curMode == PATTERN_MODE && x == NAVCOL && y>0)
+		 if(curMode == ModeConstants.PATTERN_MODE && x == NAVCOL && y>0)
 		 {
 			patternizer.triggerButtonHeld(x, y);
 			curDisplayGrid = patternizer.getDisplayGrid();
 		 }
-		 else if(curMode == CONTROL_MODE && x == NAVCOL && navGrid[y] == FASTBLINK)
+		 else if(curMode == ModeConstants.CONTROL_MODE && x == NAVCOL && navGrid[y] == FASTBLINK)
 			 controller.clearControlBank(y);
 	 }
 	 
@@ -353,28 +342,28 @@ public final class MonomeUp extends MonomeOSC {
 	   //Handle pressing navbar button
 	   if (x == NAVCOL)
 	   {
-	     if(menuLevel == mainMenu)
+	     if(menuLevel == MAINMENU)
 	     {
 	       //If they hit the same menu mode then move back to submenu
 	       if (y == curMode)
 	       {
 	           navGrid = new int[8];
 	           navGrid[curMode] = SOLID;
-	           menuLevel = subMenu;
+	           menuLevel = SUBMENU;
 	           
-	           if (curMode == PATTERN_MODE)
+	           if (curMode == ModeConstants.PATTERN_MODE)
 	               navGrid = patternizer.getNavGrid();
-	           else if (curMode == CONTROL_MODE)
+	           else if (curMode == ModeConstants.CONTROL_MODE)
 	        	   navGrid = controller.getNavGrid();
-	           else if (curMode == SEQ_MODE)
+	           else if (curMode == ModeConstants.SEQ_MODE)
 	               navGrid = sequencer.getNavGrid();
-	           else if (curMode == LOOP_MODE)
+	           else if (curMode == ModeConstants.LOOP_MODE)
 	        	   navGrid = looper.getNavGrid();
-	           else if (curMode == LOOP_RECORD_MODE)
+	           else if (curMode == ModeConstants.LOOP_RECORD_MODE)
 	        	   navGrid = loopRecorder.getNavGrid();
-	           else if (curMode == MELODY_MODE)
+	           else if (curMode == ModeConstants.MELODY_MODE)
 	        	   navGrid = melodizer1.getNavGrid();
-	           else if (curMode == MELODY2_MODE)
+	           else if (curMode == ModeConstants.MELODY2_MODE)
 	        	   navGrid = melodizer2.getNavGrid();
 	       }
 	       //Else they are changing modes
@@ -382,48 +371,48 @@ public final class MonomeUp extends MonomeOSC {
 	       {
 	            navGrid = new int[8];
 	            curMode = y;
-	            menuLevel = subMenu;
-	            if(y == PATTERN_MODE)
+	            menuLevel = SUBMENU;
+	            if(y == ModeConstants.PATTERN_MODE)
 	            {
 	              curDisplayGrid = patternizer.getDisplayGrid();
 	              navGrid = patternizer.getNavGrid();
 	            }
-	            else if(y == CONTROL_MODE)
+	            else if(y == ModeConstants.CONTROL_MODE)
 	            {
 	              curDisplayGrid = controller.getDisplayGrid();
 	              navGrid = controller.getNavGrid();
 	            }
-	            else if(y == SEQ_MODE)
+	            else if(y == ModeConstants.SEQ_MODE)
 	            {
 		          curDisplayGrid = sequencer.getDisplayGrid();
 		          navGrid = sequencer.getNavGrid();
 	            }
-	            else if(y == LOOP_MODE)
+	            else if(y == ModeConstants.LOOP_MODE)
 	            {
 	              looper.updateDisplayGrid();
 	              curDisplayGrid = looper.getDisplayGrid();
 	              navGrid = looper.getNavGrid();
 	            }
-	            else if(y == LOOP_RECORD_MODE)
+	            else if(y == ModeConstants.LOOP_RECORD_MODE)
 	            {
 	              loopRecorder.updateDisplayGrid();
 	              loopRecorder.updateNavGrid();
 	              curDisplayGrid = loopRecorder.getDisplayGrid();
 	              navGrid = loopRecorder.getNavGrid();
 	            }
-	            else if(y == MELODY_MODE)
+	            else if(y == ModeConstants.MELODY_MODE)
 	            {
 	            	melodizer1.updateDisplayGrid();
 	            	curDisplayGrid = melodizer1.getDisplayGrid();
 	            	navGrid = melodizer1.getNavGrid();
 	            }
-	            else if(y == MELODY2_MODE)
+	            else if(y == ModeConstants.MELODY2_MODE)
 	            {
 	            	melodizer2.updateDisplayGrid();
 	            	curDisplayGrid = melodizer2.getDisplayGrid();
 	            	navGrid = melodizer2.getNavGrid();
 	            }
-	            else if(y == MASTER_MODE)
+	            else if(y == ModeConstants.MASTER_MODE)
 	            {
 	            	masterizer.updateDisplayGrid();
 	            	curDisplayGrid = masterizer.getDisplayGrid();
@@ -431,51 +420,51 @@ public final class MonomeUp extends MonomeOSC {
 	            }
 	       }
 	     }
-	     else if(menuLevel == subMenu)
+	     else if(menuLevel == SUBMENU)
 	     {
 	       //if they hit the curMenuPoint button again, change back main menu
 	       if (y == curMode)
 	       {
 	          navGrid = new int[8];
 	          navGrid[curMode] = SOLID;
-	          menuLevel = mainMenu;
+	          menuLevel = MAINMENU;
 	       }
 	       //Else they are moving between sub-menu items
 	       else
 	       {
-	          if(curMode == PATTERN_MODE)
+	          if(curMode == ModeConstants.PATTERN_MODE)
 	          {
 	        	 patternizer.press(x, y);
 	        	 //TODO how do i get it to keep the display grid as a reference?
 	        	 curDisplayGrid = patternizer.getDisplayGrid();
 	          }
-	          else if(curMode == CONTROL_MODE)
+	          else if(curMode == ModeConstants.CONTROL_MODE)
 	          {
 	        	 controller.press(x, y);
 	          }
-	          else if(curMode == SEQ_MODE)
+	          else if(curMode == ModeConstants.SEQ_MODE)
 	          {
 	             sequencer.press(x, y);
 	             //TODO how do i get it to keep the display grid as a reference?
 	             curDisplayGrid = sequencer.getDisplayGrid();
 	          }
-	          else if(curMode == LOOP_MODE)
+	          else if(curMode == ModeConstants.LOOP_MODE)
 	          {
 	        	  looper.press(x, y);
 	          }
-	          else if(curMode == LOOP_RECORD_MODE)
+	          else if(curMode == ModeConstants.LOOP_RECORD_MODE)
 	          {
 	        	  loopRecorder.press(x, y);
 	          }
-	          else if(curMode == MELODY_MODE)
+	          else if(curMode == ModeConstants.MELODY_MODE)
 	          {
 	        	 melodizer1.press(x, y);
 	          }
-	          else if(curMode == MELODY2_MODE)
+	          else if(curMode == ModeConstants.MELODY2_MODE)
 	          {
 	        	 melodizer2.press(x, y);
 	          }
-	          else if(curMode == MASTER_MODE)
+	          else if(curMode == ModeConstants.MASTER_MODE)
 	        	  masterizer.press(x, y);
 	        }
 	     }
@@ -486,45 +475,45 @@ public final class MonomeUp extends MonomeOSC {
 	   ////////////////////////////////////
 	   else
 	   {
-	     if (curMode == PATTERN_MODE)
+	     if (curMode == ModeConstants.PATTERN_MODE)
 	     {
 	    	 patternizer.press(x, y);
 	     }
-	     else if(curMode == CONTROL_MODE)
+	     else if(curMode == ModeConstants.CONTROL_MODE)
 	     {
 	         controller.press(x, y);
 	     }
 	     // seq mode
-	     else if(curMode == SEQ_MODE)
+	     else if(curMode == ModeConstants.SEQ_MODE)
 	     {
 	       sequencer.press(x, y);
 	     }
-	     else if(curMode == LOOP_MODE)
+	     else if(curMode == ModeConstants.LOOP_MODE)
 	    	looper.press(x, y);
-         else if(curMode == LOOP_RECORD_MODE)
+         else if(curMode == ModeConstants.LOOP_RECORD_MODE)
        	  loopRecorder.press(x, y);
-	     else if (curMode == MELODY_MODE)
+	     else if (curMode == ModeConstants.MELODY_MODE)
 	       melodizer1.press(x, y);
-	     else if (curMode == MELODY2_MODE)
+	     else if (curMode == ModeConstants.MELODY2_MODE)
 		       melodizer2.press(x, y);
-	     else if(curMode == MASTER_MODE)
+	     else if(curMode == ModeConstants.MASTER_MODE)
 	    	masterizer.press(x, y);
 	   }
 	 }
 
 	 void monomeReleased(int x, int y)
 	 {
-		 if(curMode == PATTERN_MODE)
+		 if(curMode == ModeConstants.PATTERN_MODE)
 		 {
 			 patternizer.release(x, y);
 		 }
 	   //If user releases within the melodizer play area
-	   else if(curMode == MELODY_MODE && x != NAVCOL)
+	   else if(curMode == ModeConstants.MELODY_MODE && x != NAVCOL)
 	   {
 		   if(y<6 || melodizer1.clipMode)
 			   melodizer1.release(x, y);
 	   }
-	   else if(curMode == MELODY2_MODE && x != NAVCOL)
+	   else if(curMode == ModeConstants.MELODY2_MODE && x != NAVCOL)
 	   {
 		   if(y<6 || melodizer2.clipMode)
 			   melodizer2.release(x, y);
@@ -549,16 +538,16 @@ public final class MonomeUp extends MonomeOSC {
 		  if (noteOnPitch == C7)
 	      {
 	    	 //Only show the beat blips in current pattern mode
-	        if ((curMode == PATTERN_MODE && sequencer.isPatternPlaying(patternizer.selectedPattern)) )
+	        if ((curMode == ModeConstants.PATTERN_MODE && sequencer.isPatternPlaying(patternizer.selectedPattern)) )
 	        {
 	        	super.invertRow(patternizer.curPatternRow);
 	        }
-	        else if(curMode == MASTER_MODE)
+	        else if(curMode == ModeConstants.MASTER_MODE)
 	        {
 		      //blip the masterizer
 	        	masterizer.updatePatternBeat(patternizer.curPatternRow);
 	        }
-	        else if(curMode == SEQ_MODE && patternizer.curPatternRow % 4 == 0)
+	        else if(curMode == ModeConstants.SEQ_MODE && patternizer.curPatternRow % 4 == 0)
 	        {
 	        	// 	show bar blips in sequence mode
 	        	super.invertRow(sequencer.curSeqRow);
@@ -566,7 +555,7 @@ public final class MonomeUp extends MonomeOSC {
 	        
 	        sequencer.step(noteOnPitch);
 	        
-	        if(curMode == MASTER_MODE)
+	        if(curMode == ModeConstants.MASTER_MODE)
 	        	masterizer.updateDisplayGrid();
 	      }
 	      else if(noteOnPitch == E7)

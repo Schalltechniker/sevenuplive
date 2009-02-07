@@ -1,15 +1,23 @@
 package mtn.sevenuplive.main;
 
 import java.awt.GridLayout;
-import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
-import promidi.*;
+import java.util.ArrayList;
+import java.util.Properties;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import promidi.MidiIO;
 
 
 public class ConnectionPanel extends JPanel 

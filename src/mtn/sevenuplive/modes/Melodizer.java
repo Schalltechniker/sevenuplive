@@ -34,11 +34,11 @@ public class Melodizer extends Mode {
 	private boolean newHeldNote[];
 	private MidiOut midiMelodyOut[];
 	private Scale melodyScale;
-	private int recMode = MonomeUp.MEL_ON_BUTTON_PRESS;
+	private int recMode = ModeConstants.MEL_ON_BUTTON_PRESS;
 	public Boolean clipMode = false;
 
-	public Melodizer(int _navRow, MidiOut _midiMelodyOut[]){
-		super(_navRow);
+	public Melodizer(int _navRow, MidiOut _midiMelodyOut[], int grid_width, int grid_height){
+		super(_navRow, grid_width, grid_height);
 		midiMelodyOut = _midiMelodyOut;
 		key = new int[7];
 		cuedIndex = -1;
