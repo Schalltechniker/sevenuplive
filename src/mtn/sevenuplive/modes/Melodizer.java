@@ -184,7 +184,7 @@ public class Melodizer extends Mode {
 	  if (pressedSeq == curSeqBank && isRecording == false)
   	  {
 		//TODO send note offs only to the notes that are currently playing in this sequence
-		if(getSeqStatus(pressedSeq) == NoteSequence.playing)
+		if(getSeqStatus(pressedSeq) == MonomeUp.PLAYING)
 		{
 			ArrayList<Note> noteList;
 			Note note;

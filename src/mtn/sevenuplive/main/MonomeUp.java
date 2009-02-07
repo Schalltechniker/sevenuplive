@@ -40,11 +40,11 @@ public final class MonomeUp extends MonomeOSC {
 	 private static final int FRAMES = 10;
 	 private static final int FASTBLINKFRAME = 1;
 	 private static final  int SLOWBLINKFRAME = 10;
-	 private int frmCount;
 	 public static final int OFF = 0;
 	 public static final int SOLID = 3;
 	 public static final int SLOWBLINK = 1;
 	 public static final int FASTBLINK = 2;
+	 private int frmCount;
 	 ////////////////////////////////////////
 	 
 	
@@ -54,12 +54,14 @@ public final class MonomeUp extends MonomeOSC {
 	 private int curDisplayGrid[][];
 	 private int navGrid[];
 	 private int pressedButtonsLength[][];
+	 
 	 //Int specifying which column the navbar will be located
 	 public static final int NAVCOL = 7;
 	 public static final int STOPPED = 0;
 	 public static final int PLAYING = 1;
-	 public static final int CUED =2;
+	 public static final int CUED = 2;
 	 public static final int RECORDING = 3;
+	 public static final int CUEDSTOP = 4;
 	 ////////////////////////////////////////
 	 
 	 //////////////////////////////////////

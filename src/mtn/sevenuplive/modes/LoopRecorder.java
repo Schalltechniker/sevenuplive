@@ -6,7 +6,7 @@ import mtn.sevenuplive.main.*;
 
 public class LoopRecorder extends Mode {
 
-	CtrlSequence loopSequences[];
+	private CtrlSequence loopSequences[];
 	private MonomeUp m;
 	private Boolean gateLoopChokes = true;
 	

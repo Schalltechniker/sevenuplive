@@ -20,11 +20,7 @@ public class NoteSequence {
 	private Integer index;	//Sequence index out of all possible NoteSequences for printout in XML
 	private int status;  //Current status of the sequence
 	private Hashtable <Integer, Note> heldNotesPlaying;  //Hashtable keeping track of currently held notes
-	public final static int stopped = 0;
-	public final static int playing = 1;
-	public final static int cued = 2;
-	public final static int recording = 3;
-	public final static int cuedStop = 4;
+	
 	//Create hashtable of keys (metronome count) and ArrayList<Note>(notes played at that event position)
 	private Hashtable<Integer, ArrayList<Note>> events;
 	private ArrayList<Integer> notesOn;
@@ -39,7 +35,7 @@ public class NoteSequence {
 	
 	private void initialize()
 	{
-		status = stopped;
+		status = MonomeUp.STOPPED;
 		counter = 0;
 		events = new Hashtable<Integer, ArrayList<Note>>();	
 		notesOn = new ArrayList<Integer>();
@@ -48,7 +44,7 @@ public class NoteSequence {
 	public void beginCue()
 	{
 		initialize();
-		status = cued;
+		status = MonomeUp.CUED;
 	}
 	
 	/***
@@ -58,7 +54,7 @@ public class NoteSequence {
 	{
 		if(recMode == MonomeUp.MEL_QUANTIZED)
 			//Wait for a locatorEvent before actually ending the recording
-			status = cuedStop;
+			status = MonomeUp.CUEDSTOP;
 		else
 			endAllRecording();
 	}
@@ -106,7 +102,7 @@ public class NoteSequence {
 		}
 		
 		events.put(length, notesOnSend);
-		status = stopped;
+		status = MonomeUp.STOPPED;
 	}
 
 	/**
@@ -123,11 +119,11 @@ public class NoteSequence {
 		}
 		
 		//Advance counter if sequence is playing or recording
-		if(status == playing || status == recording || status == cuedStop)
+		if(status == MonomeUp.PLAYING || status == MonomeUp.RECORDING || status == MonomeUp.CUEDSTOP)
 			counter ++;
 		
 		//Send note if isPlaying and there is an event at the current count
-		if(status == playing)
+		if(status == MonomeUp.PLAYING)
 		{
 			//Reset counter to beginning if it reaches the length
 			if(counter > length)
@@ -175,7 +171,7 @@ public class NoteSequence {
 		ArrayList<Note> noteList;
 		
 		//Ensures that the user can add events to the first beat of a quantized recording
-		if(status == cued && recMode == MonomeUp.MEL_QUANTIZED)
+		if(status == MonomeUp.CUED && recMode == MonomeUp.MEL_QUANTIZED)
 		{
 			
 			noteList = new ArrayList<Note>();
@@ -185,20 +181,20 @@ public class NoteSequence {
 			notesOn.add(note.getPitch());
 		}
 		//Else if the recMode is on button press, begin recording immediately
-		else if(status == cued && recMode == MonomeUp.MEL_ON_BUTTON_PRESS)
+		else if(status == MonomeUp.CUED && recMode == MonomeUp.MEL_ON_BUTTON_PRESS)
 		{
 			
 			noteList = new ArrayList<Note>();
 			noteList.add(note);
 			
-			status = recording;
+			status = MonomeUp.RECORDING;
 			counter = 1;
 			events.put(counter, noteList);
 			notesOn.add(note.getPitch());
 			//System.out.println("Sequencer " + _index + " - Adding note " + note.getPitch() + " to " + counter);
 		}
 		//If currently recording, just add a note to the sequence
-		else if(status == recording)
+		else if(status == MonomeUp.RECORDING)
 		{
 			//Quantizing!
 			int modCount = (counter - 1) % 4;
@@ -290,16 +286,16 @@ public class NoteSequence {
 	
 	public void play()
 	{
-		if(!(status == cuedStop))
+		if(!(status == MonomeUp.CUEDSTOP))
 		{
-			status = playing;
+			status = MonomeUp.PLAYING;
 			counter = 0;
 		}
 	}
 	
 	public void stop()
 	{
-		status = stopped;
+		status = MonomeUp.STOPPED;
 	}
 	
 	public int getStatus()
@@ -396,17 +392,17 @@ public class NoteSequence {
 	public void locatorEvent() {
 		if(recMode == MonomeUp.MEL_QUANTIZED)
 		{
-			if(status == cuedStop)
+			if(status == MonomeUp.CUEDSTOP)
 			{
 				//System.out.println("Quantized Sequence " + index + " is STOPPED");
 				endAllRecording();
-				status = stopped;
+				status = MonomeUp.STOPPED;
 				//Immediately begin playback
 				play();
 			}
-			if(status == cued)
+			if(status == MonomeUp.CUED)
 			{	
-				status = recording;
+				status = MonomeUp.RECORDING;
 				counter = 1;
 				if(!events.containsKey(counter))
 					events.put(counter, new ArrayList<Note>());

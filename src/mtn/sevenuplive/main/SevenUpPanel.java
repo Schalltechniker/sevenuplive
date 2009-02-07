@@ -10,9 +10,6 @@ import java.util.*;
 public class SevenUpPanel extends JPanel implements ActionListener
 						  {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	SevenUpApplet sevenUpApplet;
 	JComboBox drpScaleChoices1;

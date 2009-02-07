@@ -21,9 +21,6 @@ import proxml.XMLInOut;
 
 public class SevenUpApplet extends processing.core.PApplet
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private MonomeUp m;
 	private XMLInOut xmlIO;

@@ -7,33 +7,31 @@ import promidi.*;
 
 public class Masterizer extends Mode {
 	//PATTERN
-	int patternCol = 0;
+	private final static int PATTERN_COL = 0;
 	
 	//SEQUENCER
-	int sequencerCol = 1;
+	private final static int SEQUENCER_COL = 1;
 	int sequencerRows[];
 	
 	//CONROLLER
-	int controllerCol = 2;
+	private final static int CONTROLER_COL = 2;
 	int curControlBank = -1;
 	
 	//TRANSPORT LOCATOR
-	private int playMode = 1;
-	private int recMode = 2;
-	private int locatorMode = playMode;
-	private int locatorCol = 3;
+	private final static int PLAYMODE = 1;
+	private final static int RECMODE = 2;
+	private final static int LOCATOR_COL = 3;
 	private int locatorRows[];
+	private int locatorMode = PLAYMODE;
 	
 	//LOOPING
-	int looperCol = 4;
+	private final static int LOOPER_COL = 4;
 	int looperRows[]; 
 	
 	//MELODY
 	private MidiOut midiMelodyOut[];
-	private int melodyCol = 5;
+	private final static int MELODY_COL = 5;
 	private int melodyRows[];
-	private int stopped = 0;
-	private int playing = 1;
 	private int melRecMode = MonomeUp.MEL_ON_BUTTON_PRESS;
 	private boolean mel1Cue[];
 
@@ -92,11 +90,11 @@ public class Masterizer extends Mode {
 				midiMasterOut.sendNoteOn(new Note(MonomeUp.C5 + y,127, 0));
 			}
 		}
-		else if(x == patternCol)
+		else if(x == PATTERN_COL)
 		{
 			m.patternizer.curPatternRow = y;
 		}
-		else if(x == sequencerCol)
+		else if(x == SEQUENCER_COL)
 		{
 			//Ignore 7th row
 			if(y < 7)
@@ -111,7 +109,7 @@ public class Masterizer extends Mode {
 				}
 			}
 		}
-		else if(x == looperCol)
+		else if(x == LOOPER_COL)
 		{
 			if(y < m.looper.getNumLoops())
 			{
@@ -130,17 +128,17 @@ public class Masterizer extends Mode {
 				}
 			}
 		}
-		else if(x == melodyCol)
+		else if(x == MELODY_COL)
    	 	{
 			seqStatus = m.melodizer1.getSeqStatus(y);
-   		 	if(seqStatus == playing)
+   		 	if(seqStatus == MonomeUp.PLAYING)
    		 	{
    		 		if(melRecMode == MonomeUp.MEL_ON_BUTTON_PRESS)
    		 			stopMel1Seq(y);
    		 		else
    		 			mel1Cue[y] = true;
    		 	}
-   		 	else if(seqStatus == stopped)
+   		 	else if(seqStatus == MonomeUp.STOPPED)
    		 	{
    		 		if(melRecMode == MonomeUp.MEL_ON_BUTTON_PRESS)
    		 			m.melodizer1.playSeq(y);
@@ -152,14 +150,14 @@ public class Masterizer extends Mode {
 		else if(x == melody2Col)
    	 	{
 			seqStatus = m.melodizer2.getSeqStatus(y);
-   		 	if(seqStatus == playing)
+   		 	if(seqStatus == MonomeUp.PLAYING)
    		 	{	
    		 		if(melRecMode == MonomeUp.MEL_ON_BUTTON_PRESS)
 		 			stopMel2Seq(y);
 		 		else
 		 			mel2Cue[y] = true;
    		 	}
-   		 	else if(seqStatus == stopped)
+   		 	else if(seqStatus == MonomeUp.STOPPED)
    		 	{
    		 		if(melRecMode == MonomeUp.MEL_ON_BUTTON_PRESS)
    		 			m.melodizer2.playSeq(y);
@@ -167,7 +165,7 @@ public class Masterizer extends Mode {
 		 			mel2Cue[y] = true;
    		 	}
    	 	}
-		else if(x == controllerCol && y < 7)
+		else if(x == CONTROLER_COL && y < 7)
 		{
 			if(m.controller.isBankEnabled(y))
 			{
@@ -205,12 +203,12 @@ public class Masterizer extends Mode {
 		for(int i=0;i<7;i++)
 		{
 			if(m.controller.isBankEnabled(i))
-				displayGrid[controllerCol][i] = MonomeUp.FASTBLINK;
+				displayGrid[CONTROLER_COL][i] = MonomeUp.FASTBLINK;
 			else
-				displayGrid[controllerCol][i] = MonomeUp.OFF;
+				displayGrid[CONTROLER_COL][i] = MonomeUp.OFF;
 		}
 		if(curControlBank > -1)
-			displayGrid[controllerCol][curControlBank] = MonomeUp.SOLID;
+			displayGrid[CONTROLER_COL][curControlBank] = MonomeUp.SOLID;
 				
 		//SEQUENCER
 		//Light up the current sequence
@@ -250,7 +248,7 @@ public class Masterizer extends Mode {
 				melodyRows[i] = MonomeUp.SOLID;
 			else melodyRows[i] = MonomeUp.OFF;
 			
-			if(recMode == MonomeUp.MEL_QUANTIZED && mel1Cue[i])
+			if(RECMODE == MonomeUp.MEL_QUANTIZED && mel1Cue[i])
 				melodyRows[i] = MonomeUp.SLOWBLINK;
 		}
 		
@@ -264,22 +262,22 @@ public class Masterizer extends Mode {
 				melody2Rows[i] = MonomeUp.SOLID;
 			else melody2Rows[i] = MonomeUp.OFF;
 			
-			if(recMode == MonomeUp.MEL_QUANTIZED && mel2Cue[i])
+			if(RECMODE == MonomeUp.MEL_QUANTIZED && mel2Cue[i])
 				melody2Rows[i] = MonomeUp.SLOWBLINK;
 		}
 		
-		displayGrid[sequencerCol] = sequencerRows;
-		displayGrid[locatorCol] = locatorRows;
-		displayGrid[looperCol] = looperRows;
-		displayGrid[melodyCol] = melodyRows;
+		displayGrid[SEQUENCER_COL] = sequencerRows;
+		displayGrid[LOCATOR_COL] = locatorRows;
+		displayGrid[LOOPER_COL] = looperRows;
+		displayGrid[MELODY_COL] = melodyRows;
 		displayGrid[melody2Col] = melody2Rows;
 		
 	}
 	
 	public void updatePatternBeat(int patternRow)
 	{
-		displayGrid[patternCol] = new int[8];
-		displayGrid[patternCol][patternRow] = MonomeUp.SOLID;
+		displayGrid[PATTERN_COL] = new int[8];
+		displayGrid[PATTERN_COL][patternRow] = MonomeUp.SOLID;
 	}
 	
 	/***
@@ -291,7 +289,7 @@ public class Masterizer extends Mode {
 		if(noteValue == MonomeUp.C4)
 		{
 			//Begin play for locator mode
-			locatorMode = playMode;
+			locatorMode = PLAYMODE;
 			locatorRows = new int[8];
 			locatorRows[0] = MonomeUp.SOLID;
 			
@@ -300,7 +298,7 @@ public class Masterizer extends Mode {
 			{
 				if(mel1Cue[i] == true)
 				{
-					if(m.melodizer1.getSeqStatus(i) == playing)
+					if(m.melodizer1.getSeqStatus(i) == MonomeUp.PLAYING)
 						stopMel1Seq(i);
 					else
 						m.melodizer1.playSeq(i);
@@ -310,7 +308,7 @@ public class Masterizer extends Mode {
 			
 				if(mel2Cue[i] == true)
 				{
-					if(m.melodizer2.getSeqStatus(i) == playing)
+					if(m.melodizer2.getSeqStatus(i) == MonomeUp.PLAYING)
 						stopMel2Seq(i);
 					else
 						m.melodizer2.playSeq(i);
@@ -324,7 +322,7 @@ public class Masterizer extends Mode {
 		else if(noteValue == MonomeUp.CSHARP4)
 		{
 			//Begin a record mode (length of record shows by speed of steps)
-			locatorMode = recMode;
+			locatorMode = RECMODE;
 			locatorRows = new int[8];
 			locatorRows[0] = MonomeUp.FASTBLINK;
 		}
@@ -342,9 +340,9 @@ public class Masterizer extends Mode {
 			if(currentStep > -1)
 			{	
 				locatorRows = new int[8];
-				if(locatorMode == playMode)
+				if(locatorMode == PLAYMODE)
 					locatorRows[(currentStep + 1) % 8] = MonomeUp.SOLID;
-				else if(locatorMode == recMode)
+				else if(locatorMode == RECMODE)
 					locatorRows[(currentStep + 1) % 8] = MonomeUp.FASTBLINK;
 			}
 		}
