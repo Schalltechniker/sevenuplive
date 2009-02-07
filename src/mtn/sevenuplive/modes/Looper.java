@@ -176,15 +176,17 @@ public class Looper extends Mode {
     	else
     	{
     		//Set loop res to the inverse of y
+    		//TODO add looper multiplier here to allow for longer loops
     		loops[x].setResolution(7 - y);
     		
+    		//No longer send res controller values (ableton live doesnt have a knob for it)
+    		//In the future this could be used to sync up the loop lengths with ableton 8's looper?
+    		/*
     		//Send midi controls for x
     		int loopFitCtrlVal = (7 - y+1) * 8 ;
-    		
-   			loopFitCtrlVal = (int)(loopFitCtrlVal);
-    		
-   			//No longer send res controller values (ableton live doesnt have a knob for it)
-    		//midiOut.sendController(new promidi.Controller(resStartCtrl+x, loopFitCtrlVal ));
+    		loopFitCtrlVal = (int)(loopFitCtrlVal);
+    		midiOut.sendController(new promidi.Controller(resStartCtrl+x, loopFitCtrlVal ));
+    		*/
     	}
 	}
 	
