@@ -78,7 +78,7 @@ public class MainApp extends JFrame
     	this.setContentPane(sevenUpPanel);
     	//Enable load and save
     	menu.getItem(0).setEnabled(true);
-    	menu.getItem(1).setEnabled(true);
+    	menu.getItem(2).setEnabled(true);
     	
     	// Now we can display recent files
     	loadRecentFileList();
