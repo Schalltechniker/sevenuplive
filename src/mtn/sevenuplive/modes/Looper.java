@@ -175,12 +175,12 @@ public class Looper extends Mode {
 			stopLoopsOnNextStep[x] = false;
 			playLoop(x, y);
 			
+			
 			System.out.println("Gate loops is " + gateLoopChokes);
 		}
     	else
     	{
     		//Set loop res to the inverse of y
-    		//TODO add looper multiplier here to allow for longer loops
     		loops[x].setResolution(7 - y);
     		
     		//No longer send res controller values (ableton live doesnt have a knob for it)

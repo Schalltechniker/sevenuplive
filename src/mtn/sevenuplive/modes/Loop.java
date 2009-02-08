@@ -79,9 +79,11 @@ public class Loop {
 	 */
 	public void setStep(int step)
 	{
+		
 		if (step > 7)
 			throw new IndexOutOfBoundsException("Step [" + Integer.toString(step) + "] is out of range: [0-" + Integer.toString(7) + "]"); 
-			
+		
+		resCounter = 0;	
 		this.step = step;
 	}
 	
