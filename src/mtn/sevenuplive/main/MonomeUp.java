@@ -820,6 +820,10 @@ public final class MonomeUp extends MonomeOSC {
 		melodizer2.setMelRecMode(melRecMode);
 		masterizer.setMelRecMode(melRecMode);
 	}
+	
+	public void setLoopMultiplier(int loopNum, int multiplier) {
+		looper.getLoop(loopNum).setResMultiplier(multiplier);
+	}
 
 	public void extNoteOn(Note note, int channel) {
 		melodizer2.extNoteOn(note, channel);

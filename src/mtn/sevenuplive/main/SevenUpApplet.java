@@ -327,6 +327,10 @@ public class SevenUpApplet extends processing.core.PApplet
 		m.setMelRecMode(melRecMode);
 	}
 	
+	public void setLoopMultiplier(int loopNum, int multiplier) {
+		m.setLoopMultiplier(loopNum, multiplier);
+	}
+	
 	
 }
 		

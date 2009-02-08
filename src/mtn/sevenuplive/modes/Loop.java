@@ -42,7 +42,6 @@ public class Loop {
 	
 	public int getStep()
 	{
-		System.out.println("Current step is [" + Integer.toString(step) + "]");
 		return step;
 	}
 		
