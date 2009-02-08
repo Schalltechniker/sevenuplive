@@ -28,8 +28,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
@@ -98,7 +96,6 @@ public class MainApp extends JFrame
         menuBar.add(menu);
 
         JMenuItem menuItem;
-        JMenuItem subMenuItem;
         
         //Open menu item
         menuItem = new JMenuItem("Open 7up Patch...");

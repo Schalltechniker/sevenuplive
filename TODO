@@ -5,3 +5,4 @@
 -External controller to start/stop recording
 -Tilt control
 -Loop length multiplier in UI for longer loops
+-Possible switch to allow multiple active lines in sequencer or not 

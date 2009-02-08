@@ -416,7 +416,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 		public void componentMoved(ComponentEvent e) {}
 
 		public void componentResized(ComponentEvent e) {
-			SevenUpPanel source = (SevenUpPanel)e.getSource();
+			//SevenUpPanel source = (SevenUpPanel)e.getSource();
 			//System.out.println("new size width:" + source.getSize().width + " height:" + source.getSize().height);
 		}
 

@@ -63,26 +63,30 @@ public class Loop {
 	/**
 	 * Increment to the next step.
 	 * This sets the current step to the new value.
+	 * and also resets resCounter to 0
 	 * @param step
 	 */
 	public void nextStep() {
+		// When we change a step, res needs to reset to 0.
+		resCounter = 0;
+		
 		step++;
 		if(this.step > 7)
 			this.step = 0;
-		
 	}
 	
 	/**
 	 * Sets the current step
-	 * 
+	 * resets resCounter to 0
 	 * @param step
 	 */
 	public void setStep(int step)
 	{
-		
+		// Check for out of bounds
 		if (step > 7)
 			throw new IndexOutOfBoundsException("Step [" + Integer.toString(step) + "] is out of range: [0-" + Integer.toString(7) + "]"); 
 		
+		// When we change a step, res needs to reset to 0.
 		resCounter = 0;	
 		this.step = step;
 	}
@@ -120,7 +124,7 @@ public class Loop {
 		resCounter++;
 		if (resCounter % ((resolution + 1) * resMultiplier) == 0)
 		{
-			resCounter = 0;
+			// Move to next step which also resets resCounter to 0
 			nextStep();
 		}
 	}
