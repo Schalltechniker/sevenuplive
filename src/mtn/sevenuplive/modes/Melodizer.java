@@ -47,7 +47,7 @@ public class Melodizer extends Mode {
 		curSeqBank = 0;
 	    heldNote = new boolean[128];
 	    displayNote = new int[128];
-	    clipNotes = new int[6][128];
+	    clipNotes = new int[7][128];
 	    newHeldNote = new boolean[128];
 	    melodyScale = new Scale(ScaleName.Major);
 	    
