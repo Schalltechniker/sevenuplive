@@ -28,6 +28,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
@@ -248,9 +250,10 @@ public class MainApp extends JFrame
      * event-dispatching thread.
      */
     private static void createAndShowGUI() {
-        //Make sure we have nice window decorations.
+    	
+    	//Make sure we have nice window decorations.
         JFrame.setDefaultLookAndFeelDecorated(true);
-
+        
         //Create and set up the window.
         MainApp frame = new MainApp();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -260,6 +263,27 @@ public class MainApp extends JFrame
     }
 
     public static void main(String[] args) {
+    	
+    
+    	// Make OS X look better
+		String lcOSName = System.getProperty("os.name").toLowerCase();
+		boolean mac = lcOSName.startsWith("mac os x");
+		
+		// If it's a Mac then let's do a few things to make it look better
+		if (mac) {
+			
+			// take the menu bar off the jframe
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			
+			// set the name of the application menu item
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "SevenUpLive");
+			
+			// a border is added to the bottom of the JFrame so that the grow box can't sit on top of any components contained in the JFrame
+			System.setProperty("com.apple.mrj.application.growbox.intrudes", "false");
+			
+		}
+		
+	
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
