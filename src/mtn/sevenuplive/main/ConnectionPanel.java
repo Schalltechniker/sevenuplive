@@ -71,9 +71,6 @@ public class ConnectionPanel extends JPanel
 	private static final String MELODIZER2_OUTPUT_DEVICE = "Melodizer 2 Output Device";
 	private static final String MELODIZER2_OUTPUT_DEVICE_PROP = "melodizer.2.output.device";
 	
-	private static final String SEVENUP_PROPERTIES = "sevenup.properties";
-	private static final String SEVENUP_PROPERTIES_COMMENTS = "SevenUpLive startup parameters";
-	
 	public ConnectionPanel(mtn.sevenuplive.main.MainApp parentFrame)
 	{
 		super(new GridLayout(0,2));  //X rows, 2 columns
@@ -243,7 +240,7 @@ public class ConnectionPanel extends JPanel
 			sevenUpConnections.melod1OutputDeviceName = drpMidiMelder1Output.getSelectedItem().toString();
 			sevenUpConnections.melod2OutputDeviceName = drpMidiMelder2Output.getSelectedItem().toString();
 			
-			writeConnections(sevenUpConnections, new Properties());
+			writeConnections(sevenUpConnections);
 			
 			mainApp.ShowSevenUp(sevenUpConnections);
 		}
@@ -278,7 +275,8 @@ public class ConnectionPanel extends JPanel
 		return midiOutputs;
 	}
 	
-	protected static void writeConnections(ConnectionSettings connections, Properties props) {
+	protected static void writeConnections(ConnectionSettings connections) {
+		Properties props = MainApp.getProperties();
 		props.setProperty(OSC_PREFIX_PROP, connections.oscPrefix);
 		props.setProperty(OSC_HOST_ADDR_PROP, connections.oscHostAddress);
 		props.setProperty(OSC_HOST_PORT_PROP, Integer.toString(connections.oscHostPort));
@@ -290,17 +288,17 @@ public class ConnectionPanel extends JPanel
 		props.setProperty(MELODIZER2_OUTPUT_DEVICE_PROP, connections.melod2OutputDeviceName);
 		
 		try {
-			writeProperties(props);
+			MainApp.writeProperties();
 		} catch (Exception e) {
 			System.err.println("Could not load sevenup settings from property file: cause: " + e);
 		}
 	}
 	
-	protected static void readConnections(ConnectionSettings connections) {
+	protected static Properties readConnections(ConnectionSettings connections) {
 		Properties props = new Properties();
 		
 		try {
-			props = readProperties();
+			props = MainApp.readProperties();
 		} catch (Exception e) {
 			System.err.println("Could not load sevenup settings from property file: cause: " + e);
 		}
@@ -315,29 +313,7 @@ public class ConnectionPanel extends JPanel
 		connections.melod1OutputDeviceName = props.getProperty(MELODIZER1_OUTPUT_DEVICE_PROP);
 		connections.melod2OutputDeviceName = props.getProperty(MELODIZER2_OUTPUT_DEVICE_PROP);
 
-	}
-	
-	private static Properties readProperties() throws FileNotFoundException, IOException {
-		File propFile = new File(SEVENUP_PROPERTIES);
-		
-		// Only created if not exists
-		propFile.createNewFile();
-		
-		Properties props = new Properties();
-		FileInputStream fs = new FileInputStream(propFile);
-		props.load(fs);
-		fs.close();
 		return props;
-	}
-	
-	private static void writeProperties(Properties props) throws IOException {
-		File propFile = new File(SEVENUP_PROPERTIES);
-		
-		// Only created if not exists
-		propFile.createNewFile();
-		FileOutputStream fs = new FileOutputStream(propFile);		
-		props.store(fs, SEVENUP_PROPERTIES_COMMENTS);
-		fs.close();
 	}
 
 }

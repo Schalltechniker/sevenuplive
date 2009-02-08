@@ -14,7 +14,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Properties;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -32,14 +38,30 @@ public class MainApp extends JFrame
 {
 	private static final long serialVersionUID = -5398755465771631845L;
 	
+	/** Property were we store last used directory */
+	private final static String LAST_DIRECTORY_PROP_NAME = "last.directory"; 
+	
+	/** Last directory read or stored to */
+	File lastDirectory;
+	
 	JMenu menu;
 	SevenUpPanel sevenUpPanel;
 	JFileChooser fc;
+	JMenu recentsMenu;
+	
+	/** Application settings */
+	private static Properties properties = new Properties(); 
+	
+	LinkedList<String> recentFiles = new LinkedList<String>();
+
+	static final String SEVENUP_PROPERTIES_COMMENTS = "SevenUpLive startup parameters";
+
+	static final String SEVENUP_PROPERTIES = "sevenup.properties";
 	
 	//Sevenup Properties
 	public MainApp() {
         super("7up");
-
+        
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(screenSize.width / 2,screenSize.height / 2,350,300);
  
@@ -47,8 +69,9 @@ public class MainApp extends JFrame
 
         setJMenuBar(createMenuBar());
         this.setContentPane(new ConnectionPanel(this));
+        
     }
-    
+	
     public void ShowSevenUp(ConnectionSettings sevenUpConnections)
     {
     	sevenUpPanel = new SevenUpPanel(sevenUpConnections, this);
@@ -56,6 +79,12 @@ public class MainApp extends JFrame
     	//Enable load and save
     	menu.getItem(0).setEnabled(true);
     	menu.getItem(1).setEnabled(true);
+    	
+    	// Now we can display recent files
+    	loadRecentFileList();
+    	
+    	// This also updates the menu
+    	this.storeAndUpdateRecents();     
     }
 
     protected JMenuBar createMenuBar() {
@@ -67,6 +96,7 @@ public class MainApp extends JFrame
         menuBar.add(menu);
 
         JMenuItem menuItem;
+        JMenuItem subMenuItem;
         
         //Open menu item
         menuItem = new JMenuItem("Open 7up Patch...");
@@ -74,6 +104,11 @@ public class MainApp extends JFrame
         menuItem.setEnabled(false);
         menuItem.addActionListener(this);
         menu.add(menuItem);
+        
+        //Create recents menu item..it gets populated later
+        recentsMenu = new JMenu("Open Recent");
+        recentsMenu.setEnabled(false);
+        menu.add(recentsMenu);
         
         //Save patch menu item
         menuItem = new JMenuItem("Save Patch as...");
@@ -96,26 +131,28 @@ public class MainApp extends JFrame
 
     //React to menu selections.
     public void actionPerformed(ActionEvent e) {
-    	if ("open".equals(e.getActionCommand())) {
+    	// If command in format "recent.x" then we are processing recent file list
+    	if (e.getActionCommand().split("\\.").length > 1) {
+    		String[] parts = e.getActionCommand().split("\\.");
+    		if (parts[0].equalsIgnoreCase("recent")) {
+    			int index = Integer.parseInt(parts[1]);
+    			java.io.File file = new File(recentFiles.get(index));
+    			if (!file.exists())
+    				return; // do nothing
+    			
+    			loadPatch(file); // load the patch
+    		}
+    	} else if ("open".equals(e.getActionCommand())) {
     		int returnVal = fc.showOpenDialog(this);
     		if (returnVal == JFileChooser.APPROVE_OPTION) {
                java.io.File file = fc.getSelectedFile();
-               SAXBuilder builder = new SAXBuilder();
-               try
-               {
-            	   Document doc = builder.build(file);
-            	   sevenUpPanel.loadJDOMXMLDocument(doc);
-                   //this.setTitle("7up - " + file.getName());
-                   fc.setCurrentDirectory(new File(file.getParent()));
-               }
-               catch(Exception ex)
-               {
-            	   ex.printStackTrace();   
-               }
+               loadPatch(file); // load the patch
             }	
-        }
-          else if ("saveas".equals(e.getActionCommand())) {
-            try {
+        } else if ("saveas".equals(e.getActionCommand())) {
+        	
+        	java.io.FileWriter fileWriter = null;
+        	
+        	try {
         		int returnVal = fc.showSaveDialog(this);
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
         			java.io.File file = fc.getSelectedFile();
@@ -123,20 +160,86 @@ public class MainApp extends JFrame
                     org.jdom.Document doc = sevenUpPanel.toJDOMXMLDocument(file.getName());
                     org.jdom.output.XMLOutputter fmt = new XMLOutputter();
                     
-        			java.io.FileWriter fileWriter = new FileWriter(file);
+        			fileWriter = new FileWriter(file);
         			fmt.output(doc, fileWriter);
-        			fileWriter.close();
-        			fc.setCurrentDirectory(new File(file.getParent()));
-        		
+        			lastDirectory = new File(file.getParent());
+        			fc.setCurrentDirectory(lastDirectory);
+        			addToRecents(file);
         		}
             } catch (Exception ex) {
                 ex.printStackTrace();
+            } finally { // standard java closing resources in finally
+            	if (fileWriter != null)
+					try {
+						fileWriter.close();
+					} catch (IOException e1) {
+						// drop it
+					}
             }
             
         } else if ("quit".equals(e.getActionCommand())) {
-        	 sevenUpPanel.quit();
+        	if (sevenUpPanel != null)
+        		sevenUpPanel.quit();
         	 System.exit(0);
         } 
+    }
+    
+    /**
+     * Load up the patch or patch pack
+     * must exist
+     * @param file
+     */
+    private void loadPatch(File file) {
+    	SAXBuilder builder = new SAXBuilder();
+        try
+        {
+     	   Document doc = builder.build(file);
+     	   sevenUpPanel.loadJDOMXMLDocument(doc);
+           fc.setCurrentDirectory(new File(file.getParent()));
+           addToRecents(file);
+        }
+        catch(Exception ex)
+        {
+     	   ex.printStackTrace();   
+        }
+    }
+    
+    /**
+     * Add a file to the recents list
+     * cull the list of duplicates 
+     * @param recent
+     */
+    private void addToRecents(File recent) {
+    	recentFiles.addFirst(recent.getAbsolutePath());
+    	
+    	boolean culled = false;
+    	boolean found = false;
+    	
+    	// Keep iterating until culled
+    	while (!culled) {
+    		String head = recentFiles.peek();
+        	int index = 0;
+        	
+	    	for (String name : recentFiles) {
+	    		if (index == 0) {
+	    			index++;
+	    			continue;
+	    		}
+	    		if (name.equals(head)) {
+	    			recentFiles.remove(index);
+	    			found = true;
+	    			break; // go back to while
+	    		}
+	    		index++;
+	    	}
+	    	// When we make it here..we are culled..since nothing was matched anymore
+	    	if (!found) 
+	    		culled = true;
+	    	
+	    	found = false;
+    	} 
+    	// Make sure we store it
+    	storeAndUpdateRecents();
     }
 
     /**
@@ -165,4 +268,135 @@ public class MainApp extends JFrame
             }
         });
     }
+    
+    /**
+     * Load the recent file list from sevenup.properties
+     * Also load last directory used
+     */
+    private void loadRecentFileList() {
+    	Properties props = null;
+    	
+    	try {
+			props = MainApp.readProperties();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	
+		Integer index = 10;
+		
+		if (props != null) {
+			while (--index >= 0) {
+				String name = props.getProperty("recent." + index);
+				if (name != null && name.length() > 0) {
+					File file = new File(name);
+					if (file.exists())
+						recentFiles.add(name);
+				}
+			}
+		}
+		
+		lastDirectory = props.getProperty(LAST_DIRECTORY_PROP_NAME) == null ? null : new File(props.getProperty(LAST_DIRECTORY_PROP_NAME));
+    }
+    	
+    /**
+     * Store the recents list
+     * Also update the JMenu
+     * 
+     */
+    private void storeAndUpdateRecents() {
+    	Properties props = null;
+    	recentsMenu.removeAll();
+    	JMenuItem subMenuItem = null;
+    	
+    	try {
+			props = MainApp.readProperties();
+			
+			// Store the last directory we used as well
+			if (lastDirectory != null && lastDirectory.exists()) {
+				props.setProperty(LAST_DIRECTORY_PROP_NAME, lastDirectory.getAbsolutePath());
+			}
+		
+			Integer index = 0;
+			String propnm;
+			for (String name : recentFiles) {
+				propnm = "recent." + index;
+				
+				props.setProperty(propnm, name);
+				
+				// Populate the menu
+				subMenuItem = new JMenuItem(name);
+		        subMenuItem.setActionCommand("recent." + index);
+		        subMenuItem.setEnabled(true);
+		        subMenuItem.addActionListener(this);
+		        recentsMenu.add(subMenuItem);
+		        recentsMenu.setEnabled(true);
+				
+				index++;
+			}	
+			recentsMenu.invalidate(); // refresh
+			
+			// Store them back
+			MainApp.writeProperties();
+			
+    	} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+    }
+    
+    /**
+     * Read sevenup.properties and store with this class
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static Properties readProperties() throws FileNotFoundException, IOException {
+		File propFile = new File(MainApp.SEVENUP_PROPERTIES);
+		
+		// Only created if not exists
+		propFile.createNewFile();
+		
+		Properties props = new Properties();
+		FileInputStream fs = null;
+		
+		try {
+			fs= new FileInputStream(propFile);
+			props.load(fs);
+		} finally {
+			fs.close();
+		}
+		setProperties(props);
+		return props;
+	}
+	
+	/**
+	 * Write sevenup.properties and store with this class
+	 * @param props
+	 * @throws IOException
+	 */
+	public static void writeProperties() throws IOException {
+		File propFile = new File(MainApp.SEVENUP_PROPERTIES);
+		
+		// Only created if not exists
+		propFile.createNewFile();
+		FileOutputStream fs = null;
+		try {
+			fs = new FileOutputStream(propFile);		
+			properties.store(fs, MainApp.SEVENUP_PROPERTIES_COMMENTS);
+		} finally {	
+			fs.close();
+		}
+	}
+	
+	public static Properties getProperties() {
+		return properties;
+	}
+
+	public static void setProperties(Properties properties) {
+		MainApp.properties = properties;
+	}
+
 }

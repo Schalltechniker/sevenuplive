@@ -83,7 +83,6 @@ public class SevenUpPanel extends JPanel implements ActionListener
 			
 			JPanel firstPanel = new JPanel(twocolumn);
 			JPanel secondPanel = new JPanel(fourcolumn);
-			//JPanel thirdPanel = new JPanel(twocolumn);
 			JPanel thirdPanel = new JPanel(twocolumnstraight);
 			
 			//Scale
