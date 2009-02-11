@@ -167,7 +167,7 @@ public class Loop {
 		step = NOT_PLAYING; //not playing currently
 		
 		resolution = xmlLoop.getAttributeValue("resolution") == null ? DEFAULT_RESOLUTION : Integer.parseInt(xmlLoop.getAttributeValue("resolution"));
-		resMultiplier = xmlLoop.getAttributeValue("resMultiplier") == null ? DEFAULT_RES_MULTIPLIER : Integer.parseInt(xmlLoop.getAttributeValue("resMultiplier"));
+		resMultiplier = xmlLoop.getAttributeValue("resmultiplier") == null ? DEFAULT_RES_MULTIPLIER : Integer.parseInt(xmlLoop.getAttributeValue("resmultiplier"));
 		startOffset = xmlLoop.getAttributeValue("startOffset") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("startOffset"));
 		resCounter = xmlLoop.getAttributeValue("resCounter") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("resCounter"));
 		pressedRow = xmlLoop.getAttributeValue("pressedRow") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("pressedRow"));

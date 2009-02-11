@@ -40,6 +40,10 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	JCheckBox chkMuteLooper;
 	JFrame parentFrame;
 	
+	JComboBox[] chokecontrols = new JComboBox[7];
+	JComboBox[] multipliercontrols = new JComboBox[7];
+	
+	
     public SevenUpPanel(ConnectionSettings sevenUpConnections, JFrame _parent) 
     {
     	super();  
@@ -193,6 +197,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	            lblSetLoopGate.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	            String[] chokeChoices = { "Nope", "1", "2", "3", "4", "5", "6", "7"};
 	            drpLoopChoke = new JComboBox(chokeChoices);
+	            chokecontrols[i] = drpLoopChoke;
 	            drpLoopChoke.setName(i.toString());
 	            drpLoopChoke.setSelectedIndex(0);
 	            drpLoopChoke.addActionListener(
@@ -211,6 +216,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	            lblSetLoopMultiplier.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	            String[] multiplierChoices = { "1", "2", "3", "4", "5", "6", "7", "8"};
 	            drpLoopMultiplier = new JComboBox(multiplierChoices);
+	            multipliercontrols[i] = drpLoopMultiplier;
 	            drpLoopMultiplier.setName(i.toString());
 	            drpLoopMultiplier.setSelectedIndex(0);
 	            drpLoopMultiplier.addActionListener(
@@ -314,6 +320,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
     private void updateGui()
     {
     	int chokeGroup;
+    	int loopMultiplier;
     	boolean gateLoopChokes;
     	
     	//Update melody 1 gui based on patch settings
@@ -347,14 +354,13 @@ public class SevenUpPanel extends JPanel implements ActionListener
     	{
     		chokeGroup = sevenUpApplet.getLoopChokeGroup(i);
     		if(chokeGroup == -1)chokeGroup = 0;
-    		for(int k=0; k<this.getComponentCount();k++)
-    			if(this.getComponent(k).getName() != null)
-    			if(this.getComponent(k).getName().equals(i.toString()))
-    			{
-    				drpLoopChoke = (JComboBox)this.getComponent(k);
-    				drpLoopChoke.setSelectedIndex(chokeGroup);
-    			}    		
-    	}
+    		chokecontrols[i].setSelectedIndex(chokeGroup);
+    		
+    		loopMultiplier = sevenUpApplet.getLoopMultiplier(i);
+    		if(loopMultiplier == -1)loopMultiplier = 0;
+    		multipliercontrols[i].setSelectedIndex(loopMultiplier);
+    	}	
+    		
     	
     	gateLoopChokes = sevenUpApplet.getGateLoopChokes();
     	if(gateLoopChokes)

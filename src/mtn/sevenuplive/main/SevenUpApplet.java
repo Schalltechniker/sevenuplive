@@ -274,6 +274,11 @@ public class SevenUpApplet extends processing.core.PApplet
 		return m.getLoopChokeGroup(loopNum);
 	}
 	
+	public int getLoopMultiplier(int loopNum)
+	{
+		return m.getLoopMultiplier(loopNum);
+	}
+	
 	public void quit()
 	{
 		//Redundant

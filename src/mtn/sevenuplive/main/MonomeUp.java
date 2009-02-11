@@ -726,6 +726,11 @@ public final class MonomeUp extends MonomeOSC {
 		 return looper.getLoop(loopNum).getChokeGroup();
 	 }
 	 
+	 public int getLoopMultiplier(int loopNum)
+	 {
+		 return looper.getLoop(loopNum).getResMultiplier();
+	 }
+	 
 	 public Document toXMLDocument(String fileName)
 	 {
 		 //Add logic to convert all grids to XML data here
