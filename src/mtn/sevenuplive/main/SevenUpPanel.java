@@ -320,7 +320,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
     private void updateGui()
     {
     	int chokeGroup;
-    	int loopMultiplier;
+    	int loopMultiplier = 0;
     	boolean gateLoopChokes;
     	
     	//Update melody 1 gui based on patch settings
@@ -357,8 +357,8 @@ public class SevenUpPanel extends JPanel implements ActionListener
     		chokecontrols[i].setSelectedIndex(chokeGroup);
     		
     		loopMultiplier = sevenUpApplet.getLoopMultiplier(i);
-    		if(loopMultiplier == -1)loopMultiplier = 0;
-    		multipliercontrols[i].setSelectedIndex(loopMultiplier);
+    		if(loopMultiplier == -1)loopMultiplier = 1;
+    		multipliercontrols[i].setSelectedIndex(loopMultiplier-1);
     	}	
     		
     	
