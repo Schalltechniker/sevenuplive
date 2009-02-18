@@ -9,6 +9,7 @@
  */
 
 package mtn.sevenuplive.main;
+import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.scales.Scale;
 import mtn.sevenuplive.scales.ScaleName;
 
@@ -29,6 +30,8 @@ public class SevenUpApplet extends processing.core.PApplet
 	private ConnectionSettings sevenUpConnections;
 	private SevenUpPanel parentPanel;
 	
+	private int monomeType = MonomeUp.MONOME_64;
+	
 	public SevenUpApplet(ConnectionSettings _sevenUpConnections, SevenUpPanel _parentPanel)
 	{
 		sevenUpConnections = _sevenUpConnections;
@@ -46,7 +49,30 @@ public class SevenUpApplet extends processing.core.PApplet
 	   midiIO = MidiIO.getInstance(this);
 	   midiIO.printDevices();
 	   monomeScale = new Scale(ScaleName.Major);
-	   m = new MonomeUp(this, sevenUpConnections, monomeScale, midiIO, parentPanel);
+	   
+	   // Get the type of monome selected
+	   monomeType = sevenUpConnections.monomeType;
+		   
+	   // Figure out dimensions of monome grid
+	   int x_grids = 1;
+	   int y_grids = 1;
+	   switch (monomeType) {
+	   case 0:
+		   x_grids=1; y_grids=1;
+		   break;
+	   case 1:
+		   x_grids=2; y_grids=1;
+		   break;
+	   case 2:
+		   x_grids=1; y_grids=2;
+		   break;
+	   case 3:
+		   x_grids=2; y_grids=2;
+		   break;
+			   
+	   };
+	   
+	   m = new MonomeUp(this, x_grids, y_grids, sevenUpConnections, monomeScale, midiIO, parentPanel);
 	   m.lightsOff();
 	   this.online = false;
 	   
@@ -99,6 +125,8 @@ public class SevenUpApplet extends processing.core.PApplet
 			newScale = new Scale(ScaleName.UltraLocrian);
 		else if(scaleName.equals("Mullnixian"))
 			newScale = new Scale(ScaleName.Mullnixian);
+		else if(scaleName.equals("Yorkian"))
+			newScale = new Scale(ScaleName.Yorkian);
 		else
 			newScale = new Scale(ScaleName.Chromatic);
 		
@@ -187,8 +215,11 @@ public class SevenUpApplet extends processing.core.PApplet
 	}
 
 	public void noteOn(Note note){
-		//144 = noteOn
-		if (note.getStatus() == 144)
+		//status 144 = noteOn
+		//status 128 = noteOff? note 123 = stop?
+		if(note.getPitch() == 123 && note.getStatus() == 128)
+			m.reset();
+		else if (note.getStatus() == 144)
 			m.noteOn(note.getPitch());
 	}
 	
@@ -274,11 +305,6 @@ public class SevenUpApplet extends processing.core.PApplet
 		return m.getLoopChokeGroup(loopNum);
 	}
 	
-	public int getLoopMultiplier(int loopNum)
-	{
-		return m.getLoopMultiplier(loopNum);
-	}
-	
 	public void quit()
 	{
 		//Redundant
@@ -307,20 +333,28 @@ public class SevenUpApplet extends processing.core.PApplet
 	public String getPatchTitle() {
 		return m.getPatchTitle();
 	}
+	
+	public void setMonomeType(int monomeType) {
+		this.monomeType = monomeType;
+	}
+	
+	public int getMonomeType() {
+		return monomeType;
+	}
 
 	public void setMelody1ClipMode(boolean b) {
-		m.melodizer1.clipMode = b;
+		AllModes.getInstance().getMelodizer1().clipMode = b;
 	}
 	public void setMelody2ClipMode(boolean b) {
-		m.melodizer2.clipMode = b;
+		AllModes.getInstance().getMelodizer2().clipMode = b;
 	}
 	public boolean getMelody1ClipMode()
 	{
-		return m.melodizer1.clipMode;
+		return AllModes.getInstance().getMelodizer1().clipMode;
 	}
 	public boolean getMelody2ClipMode()
 	{
-		return m.melodizer2.clipMode;
+		return AllModes.getInstance().getMelodizer2().clipMode;
 	}
 
 	public void setLooperMute(boolean mute) {
@@ -332,8 +366,13 @@ public class SevenUpApplet extends processing.core.PApplet
 		m.setMelRecMode(melRecMode);
 	}
 	
-	public void setLoopMultiplier(int loopNum, int multiplier) {
-		m.setLoopMultiplier(loopNum, multiplier);
+	public void setLoopLength(int loopNum, float length) {
+		m.setLoopLength(loopNum, length);
+	}
+	
+	public float getLoopLength(int loopNum )
+	{
+		return m.getLoopLength(loopNum);
 	}
 	
 	

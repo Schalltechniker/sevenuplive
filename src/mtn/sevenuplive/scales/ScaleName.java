@@ -46,5 +46,6 @@ public enum ScaleName {
 	Billian,
 	Minor,
 	Chromatic,
-	Mullnixian;
+	Mullnixian,
+	Yorkian;
 }

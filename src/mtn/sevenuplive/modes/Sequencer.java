@@ -2,8 +2,6 @@ package mtn.sevenuplive.modes;
 
 import java.util.List;
 
-import mtn.sevenuplive.main.MonomeUp;
-
 import org.jdom.Attribute;
 import org.jdom.Element;
 
@@ -16,25 +14,20 @@ public class Sequencer extends Mode {
 	
 	private SequenceBank[] sequenceBanks;
 	
-	mtn.sevenuplive.main.MonomeUp m;
-	Patternizer patternizer;
-	
-	public Sequencer(int _navRow, mtn.sevenuplive.main.MonomeUp _m, int grid_width, int grid_height) {
+	public Sequencer(int _navRow, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
 		
 		sequenceBanks = new SequenceBank[7];
 		for(int i=0; i<7;i++)
 			sequenceBanks[i] = new SequenceBank();
 		displayGrid = new int[7][8];
-		patternizer = _m.patternizer;
-		m = _m;
 		updateDisplay();
 	}
 	
-	public void step(int pitch)
+	public void step()
 	{			
 		//Step through patterns.  If the pattern rolls over, increment sequence row
-		if(patternizer.step(sequenceBanks[curSequenceBank].getRow(curSeqRow)))
+		if(AllModes.patternizer.step(sequenceBanks[curSequenceBank].getRow(curSeqRow)))
 		{
 			//If a next sequence was externally set, change to that sequence rather than incrementing through sequence rows
 			if(nextSequence != curSequenceBank)
@@ -60,7 +53,7 @@ public class Sequencer extends Mode {
 	public void press(int x, int y)
 	{
 		
-		if(x == MonomeUp.NAVCOL)
+		if(x == DisplayGrid.NAVCOL)
 		{
 			//Change sequence banks
 			nextSequence = getSubMenuFromYCoord(y);
@@ -77,24 +70,24 @@ public class Sequencer extends Mode {
 	
 	public void reset()
 	{
-		patternizer.curPatternRow = 0;
+		AllModes.patternizer.curPatternRow = 0;
 	}
 	
 	private void updateDisplay()
 	{
 		//Update navcol
 		super.clearNavGrid();
-		navGrid[getYCoordFromSubMenu(curSequenceBank)] = MonomeUp.FASTBLINK;
-		navGrid[myNavRow] = MonomeUp.SOLID;
+		navGrid[getYCoordFromSubMenu(curSequenceBank)] = DisplayGrid.FASTBLINK;
+		navGrid[myNavRow] = DisplayGrid.SOLID;
 		
 		//Update display grid
 		super.clearDisplayGrid();
-		for(int i=0;i<8;i++)
-			for(int j=0;j<7;j++)
+		for(int i=0;i<grid_height;i++)
+			for(int j=0;j<grid_width-1;j++)
 				if(sequenceBanks[curSequenceBank].getRow(i)[j])
-					displayGrid[j][i] = MonomeUp.SOLID;
+					displayGrid[j][i] = DisplayGrid.SOLID;
 				else
-					displayGrid[j][i] = MonomeUp.OFF;
+					displayGrid[j][i] = DisplayGrid.OFF;
 	}
 	
 	public boolean isPatternPlaying(int patNum)

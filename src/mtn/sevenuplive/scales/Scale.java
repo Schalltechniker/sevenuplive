@@ -86,6 +86,17 @@ public class Scale {
 			Degrees[5] = 9;
 			Degrees[6] = 11;
 			break;
+		case Yorkian:
+			Name = ScaleName.Yorkian;
+			label = "Yorkian";
+			Degrees[0] = 0;
+			Degrees[1] = 2;
+			Degrees[2] = 4;
+			Degrees[3] = 5;
+			Degrees[4] = 7;
+			Degrees[5] = 9;
+			Degrees[6] = 10;
+			break;
 		case MinorSeven:
 			Name = ScaleName.MinorSeven;
 			label = "Minor Seven";

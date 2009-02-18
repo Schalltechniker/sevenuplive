@@ -11,14 +11,10 @@ public class Loop {
 	/** Value indicating choke group is off */ 
 	public static final int NO_CHOKE_GROUP = -1;
 	
-	/** Loop resolution which can be from (1 * resMultiplier) to (8 * resMultiplier) measures long */
+	/** Loop resolution which can be from (1 to 32) measures long */
 	private int resolution = DEFAULT_RESOLUTION;
-	private final static int DEFAULT_RESOLUTION = 1;
-	
-	/** Multiplier for loop resolution. Multiplies the full range of the loops resolution */
-	private int resMultiplier = 1;
-	private final static int DEFAULT_RES_MULTIPLIER = 1;
-	
+	private final static int DEFAULT_RESOLUTION = 2;
+
 	/** Current step index or {@link #NOT_PLAYING} */
 	private int step;
 	private int startOffset;
@@ -53,11 +49,6 @@ public class Loop {
 	public int getResolution()
 	{
 		return resolution;
-	}
-	
-	public void setResolution(int resolution)
-	{
-		this.resolution = resolution;
 	}
 	
 	/**
@@ -122,19 +113,17 @@ public class Loop {
 	public void nextResCount()
 	{
 		resCounter++;
-		if (resCounter % ((resolution + 1) * resMultiplier) == 0)
+		if (resCounter % (resolution) == 0)
 		{
 			// Move to next step which also resets resCounter to 0
 			nextStep();
 		}
 	}
 
-	public int getResMultiplier() {
-		return resMultiplier;
-	}
-
-	public void setResMultiplier(int resMultiplier) {
-		this.resMultiplier = resMultiplier;
+	public void setLength(Float length) {
+		//resolution of 0 + 1 = 1/2 measure
+		//Meaning, stepping every 1 16th note will produce 1/2 measure in 8 steps
+		this.resolution = new Float(length * 2).intValue();
 	}
 
 	public int getPressedRow()
@@ -153,7 +142,6 @@ public class Loop {
 		Element xmlLoop = new Element("loop");
 		
 		xmlLoop.setAttribute(new Attribute("resolution", ((Integer)resolution).toString()));
-		xmlLoop.setAttribute(new Attribute("resmultiplier", ((Integer)resMultiplier).toString()));
 		xmlLoop.setAttribute(new Attribute("startOffset",((Integer)startOffset).toString()));
 		xmlLoop.setAttribute(new Attribute("resCounter",((Integer)resCounter).toString()));
 		xmlLoop.setAttribute(new Attribute("pressedRow",((Integer)pressedRow).toString()));
@@ -167,13 +155,13 @@ public class Loop {
 		step = NOT_PLAYING; //not playing currently
 		
 		resolution = xmlLoop.getAttributeValue("resolution") == null ? DEFAULT_RESOLUTION : Integer.parseInt(xmlLoop.getAttributeValue("resolution"));
-		resMultiplier = xmlLoop.getAttributeValue("resmultiplier") == null ? DEFAULT_RES_MULTIPLIER : Integer.parseInt(xmlLoop.getAttributeValue("resmultiplier"));
 		startOffset = xmlLoop.getAttributeValue("startOffset") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("startOffset"));
 		resCounter = xmlLoop.getAttributeValue("resCounter") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("resCounter"));
 		pressedRow = xmlLoop.getAttributeValue("pressedRow") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("pressedRow"));
 		chokeGroup = xmlLoop.getAttributeValue("chokeGroup") == null ? NO_CHOKE_GROUP: Integer.parseInt(xmlLoop.getAttributeValue("chokeGroup"));
-		
-		
 	}
-	
+
+	public float getLength() {
+		return new Float(this.resolution / 2.0);
+	}
 }

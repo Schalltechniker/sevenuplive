@@ -13,14 +13,10 @@ import promidi.Note;
 public class Looper extends Mode {
 	
 	private Loop[] loops;
-	private int[] looperViewModes;
 	
-	private final static int PLAY_VIEW_MODE = 0;
-	private final static int RES_VIEW_MODE = 1;
 	private final static int OFFSET_START_CTRL = 96;
 	
 	private MidiOut midiOut;
-	private MonomeUp m;
 	private Boolean gateLoopChokes = true;
 	private boolean muteNotes = false;
 
@@ -29,7 +25,6 @@ public class Looper extends Mode {
 	public Looper(int _navRow, MidiOut _midiOut, mtn.sevenuplive.main.MonomeUp _m, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
 		
-		looperViewModes = new int[7];
 		stopLoopsOnNextStep = new boolean[7];
 		
 		loops = new Loop[7];
@@ -37,13 +32,6 @@ public class Looper extends Mode {
 			loops[i] = new Loop();
 		
 		midiOut = _midiOut;
-	
-		m = _m;
-		
-		//Set default res for a couple loops for the default SevenUp Live Template pack
-		loops[6].setResolution(7);
-		loops[5].setResolution(3);
-		loops[4].setResolution(7);
 	}
 	
 	public int getNumLoops()
@@ -59,14 +47,14 @@ public class Looper extends Mode {
 	private void updateNavGrid()
 	{
 		clearNavGrid();
-		navGrid[myNavRow] = MonomeUp.SOLID;
+		navGrid[myNavRow] = DisplayGrid.SOLID;
 	   //Iterate through the loops and set them all to their coordesponding values
  	   for(int i=0;i<loops.length;i++)
        {
-     			 if(looperViewModes[i] == PLAY_VIEW_MODE)
-     				  navGrid[getYCoordFromSubMenu(i)] = MonomeUp.FASTBLINK;
-     			 else if(looperViewModes[i] == RES_VIEW_MODE)
-     				  navGrid[getYCoordFromSubMenu(i)] = MonomeUp.OFF;
+     			 if(loops[i].isPlaying())
+     				  navGrid[getYCoordFromSubMenu(i)] = DisplayGrid.FASTBLINK;
+     			 else 
+     				  navGrid[getYCoordFromSubMenu(i)] = DisplayGrid.OFF;
        }
 	}
 	
@@ -76,19 +64,8 @@ public class Looper extends Mode {
 		
 		for(int i=0;i<loops.length;i++)
 	    {
-		   //Display play mode (current step)
-		   if(looperViewModes[i] == PLAY_VIEW_MODE)
-		   {
-			   if(loops[i].isPlaying())
-				   displayGrid[i][loops[i].getStep()] = MonomeUp.SOLID;
-		   }
-		   else if(looperViewModes[i] == RES_VIEW_MODE)
-		   {
-			   //Display resolution
-			   for(int k=7;k>=0;k--)
-	  				if(7 - k <=  loops[i].getResolution())
-	  					displayGrid[i][k] = MonomeUp.SOLID;	 
-		   }
+		      if(loops[i].isPlaying())
+				   displayGrid[i][loops[i].getStep()] = DisplayGrid.SOLID;
 	    }
 	}
 	
@@ -101,7 +78,7 @@ public class Looper extends Mode {
 	public void press(int x, int y)
 	{
 	  
-		if(x == MonomeUp.NAVCOL)
+		if(x == DisplayGrid.NAVCOL)
 		{
 			pressNavCol(y);
 			updateNavGrid();
@@ -110,22 +87,25 @@ public class Looper extends Mode {
 			pressDisplay(x,y);
 
 		updateDisplayGrid();
+		//updateNavGrid(); // @TODO clloyd not needed, done in play and stop functions
 	}
 	
 	private void pressNavCol(int y)
 	{
 		int loopIndex = getSubMenuFromYCoord(y);
 		//Inverse the mode of the corresponding loop
-		if(looperViewModes[loopIndex] == PLAY_VIEW_MODE)
+		if(AllModes.getInstance().getLoopRecorder().isLoopSequencePlaying(loopIndex) || loops[loopIndex].isPlaying())
 		{
-			if(!m.loopRecorder.isLoopSequencePlaying(loopIndex))
-				loops[loopIndex].stop();
-			looperViewModes[loopIndex] = RES_VIEW_MODE;
+			loops[loopIndex].stop();
+			AllModes.getInstance().getLoopRecorder().stopLoopSequence(loopIndex);
+			midiOut.sendNoteOff(new Note(MonomeUp.C3+loopIndex,127, 0));
 		}
 		else
-			looperViewModes[loopIndex] = PLAY_VIEW_MODE;
-
-		midiOut.sendNoteOff(new Note(MonomeUp.C3+loopIndex,127, 0));
+		{
+			playLoop(loopIndex, 0);
+		}
+		
+		
 	}
 	
 	public boolean isLoopPlaying(int loopNum)
@@ -136,6 +116,8 @@ public class Looper extends Mode {
 	public void stopLoop(int loopNum)
 	{
 		loops[loopNum].stop();
+		updateNavGrid();
+		AllModes.loopRecorder.updateNavGrid();
 		midiOut.sendNoteOff(new Note(MonomeUp.C3+loopNum,127, 0));
 	}
 	
@@ -148,16 +130,12 @@ public class Looper extends Mode {
 	{
 		loops[loopNum].setStep(step);
 		loops[loopNum].setPressedRow(step);
-		
-		//In buzz you have to send the controller as soon as it's pressed
-		//midiOut.sendController(new promidi.Controller(offsetStartCtrl+loopNum, loops[loopNum].getStep() * 16));
-		//System.out.println("Loop " + loopNum + " sending ctrl " + (loops[loopNum].getStep() * 16));
+		updateNavGrid();
+		AllModes.loopRecorder.updateNavGrid();
 	}
 	
 	private void pressDisplay(int x, int y)
 	{
-		if ( looperViewModes[x] == PLAY_VIEW_MODE)
-    	{
 			//Choke loops in the same choke group
 			int curChokeGroup = loops[x].getChokeGroup();
 			if(curChokeGroup > -1)
@@ -175,23 +153,7 @@ public class Looper extends Mode {
 			stopLoopsOnNextStep[x] = false;
 			playLoop(x, y);
 			
-			
-			System.out.println("Gate loops is " + gateLoopChokes);
-		}
-    	else
-    	{
-    		//Set loop res to the inverse of y
-    		loops[x].setResolution(7 - y);
-    		
-    		//No longer send res controller values (ableton live doesnt have a knob for it)
-    		//In the future this could be used to sync up the loop lengths with ableton 8's looper?
-    		/*
-    		//Send midi controls for x
-    		int loopFitCtrlVal = (7 - y+1) * 8 ;
-    		loopFitCtrlVal = (int)(loopFitCtrlVal);
-    		midiOut.sendController(new promidi.Controller(resStartCtrl+x, loopFitCtrlVal ));
-    		*/
-    	}
+			//System.out.println("Gate loops is " + gateLoopChokes);
 	}
 	
 	// NOTE: Not used

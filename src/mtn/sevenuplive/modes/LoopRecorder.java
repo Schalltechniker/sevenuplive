@@ -9,12 +9,10 @@ import org.jdom.Element;
 public class LoopRecorder extends Mode {
 
 	private CtrlSequence loopSequences[];
-	private MonomeUp m;
 	private Boolean gateLoopChokes = true;
 	
 	public LoopRecorder(int _navRow, MonomeUp _m, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
-		m = _m;
 		loopSequences = new CtrlSequence[7];
 		for(int i=0;i<7;i++)
 			loopSequences[i] = new CtrlSequence(i);
@@ -26,27 +24,27 @@ public class LoopRecorder extends Mode {
 		
 		for(int i=0;i<7;i++)
 		{
-			if(m.looper.getLoop(i).isPlaying())
-				displayGrid[i][m.looper.getLoop(i).getStep()] = MonomeUp.SOLID;
+			if(AllModes.getInstance().getLooper().getLoop(i).isPlaying())
+				displayGrid[i][AllModes.getInstance().getLooper().getLoop(i).getStep()] = DisplayGrid.SOLID;
 		}
 	}
 	
 	public void updateNavGrid()
 	{
 		clearNavGrid();
-		navGrid[myNavRow] = MonomeUp.SOLID;
+		navGrid[myNavRow] = DisplayGrid.SOLID;
 		
 		for(int i=0;i<7;i++)
 		{
 			//Set to fastblink if playing
-			if(m.looper.getLoop(i).isPlaying() || loopSequences[i].getStatus() == MonomeUp.PLAYING)
+			if(AllModes.getInstance().getLooper().getLoop(i).isPlaying() || loopSequences[i].getStatus() == MonomeUp.PLAYING)
 			{
-				navGrid[getYCoordFromSubMenu(i)] = MonomeUp.FASTBLINK;
+				navGrid[getYCoordFromSubMenu(i)] = DisplayGrid.FASTBLINK;
 			}
 				
 			//Set to slowblink if cueing or recording
 			if(loopSequences[i].getStatus() == MonomeUp.CUED || loopSequences[i].getStatus() == MonomeUp.RECORDING)
-				navGrid[getYCoordFromSubMenu(i)] = MonomeUp.SLOWBLINK;
+				navGrid[getYCoordFromSubMenu(i)] = DisplayGrid.SLOWBLINK;
 			
 			//System.out.println("LoopSeq " + i + " status is " + loopSequences[i].getStatus());
 		}
@@ -54,7 +52,7 @@ public class LoopRecorder extends Mode {
 	
 	public void press(int x, int y)
 	{
-		if(x == MonomeUp.NAVCOL)
+		if(x == DisplayGrid.NAVCOL)
 			pressNavCol(y);
 		else
 			pressDisplay(x,y);
@@ -65,18 +63,18 @@ public class LoopRecorder extends Mode {
 	
 	private void pressDisplay(int x,int y)
 	{
-		int curChokeGroup = m.looper.getLoop(x).getChokeGroup();
+		int curChokeGroup = AllModes.getInstance().getLooper().getLoop(x).getChokeGroup();
 		
 		if(curChokeGroup > -1)
 		{
 			for(int k=0;k<7;k++)
 			{
-				if(k!=x && m.looper.getLoop(k).getChokeGroup() == curChokeGroup)
+				if(k!=x && AllModes.getInstance().getLooper().getLoop(k).getChokeGroup() == curChokeGroup)
 				{
 					if(gateLoopChokes)
-						m.looper.stopLoop(k);
+						AllModes.getInstance().getLooper().stopLoop(k);
 					else
-						m.looper.stopLoopsOnNextStep[k] = true;
+						AllModes.getInstance().getLooper().stopLoopsOnNextStep[k] = true;
 				
 					//All of the loops in the same choke group will start recording at the same time
 					if(loopSequences[x].getStatus() == MonomeUp.CUED && loopSequences[k].getStatus() == MonomeUp.CUED)
@@ -86,8 +84,8 @@ public class LoopRecorder extends Mode {
 		}
 		
 		loopSequences[x].addEvent(y);
-		m.looper.stopLoopsOnNextStep[x] = false;
-		m.looper.playLoop(x, y);
+		AllModes.getInstance().getLooper().stopLoopsOnNextStep[x] = false;
+		AllModes.getInstance().getLooper().playLoop(x, y);
 		//System.out.println("Playing loop " + x);
 	}
 	
@@ -104,18 +102,18 @@ public class LoopRecorder extends Mode {
 		else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.PLAYING)
 		{
 			loopSequences[getSubMenuFromYCoord(y)].stop();
-			m.looper.stopLoop(getSubMenuFromYCoord(y));
+			AllModes.getInstance().getLooper().stopLoop(getSubMenuFromYCoord(y));
 		}
 		else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.RECORDING)
 		{
 			loopSequences[getSubMenuFromYCoord(y)].endRecording();
-			m.looper.stopLoop(getSubMenuFromYCoord(y));
+			AllModes.getInstance().getLooper().stopLoop(getSubMenuFromYCoord(y));
 			loopSequences[getSubMenuFromYCoord(y)].play();
 			//Play the first offset
 			Integer sequencedStep = loopSequences[getSubMenuFromYCoord(y)].heartbeat();
 			if(sequencedStep != null && sequencedStep != -1)
 			{
-				m.looper.playLoop(getSubMenuFromYCoord(y), sequencedStep);
+				AllModes.getInstance().getLooper().playLoop(getSubMenuFromYCoord(y), sequencedStep);
 			}
 		}
 	}
@@ -132,19 +130,19 @@ public class LoopRecorder extends Mode {
 			if(sequencedStep != null && sequencedStep != -1)
 			{
 				//If using gating, only 1 loop can play per step.  Determine that loop.  Play it and stop the others.
-				curChokeGroup = m.looper.getLoop(i).getChokeGroup();
+				curChokeGroup = AllModes.getInstance().getLooper().getLoop(i).getChokeGroup();
 				if(curChokeGroup > -1)
 				{
-					m.looper.playLoop(i, sequencedStep);
+					AllModes.getInstance().getLooper().playLoop(i, sequencedStep);
 					for(int k=0;k<7;k++)
 					{
-						if(k!=i && m.looper.getLoop(k).getChokeGroup() == curChokeGroup)
-							m.looper.setLoopStopOnNextStep(k);
+						if(k!=i && AllModes.getInstance().getLooper().getLoop(k).getChokeGroup() == curChokeGroup)
+							AllModes.getInstance().getLooper().setLoopStopOnNextStep(k);
 					}
 					
 				}
 				else
-					m.looper.playLoop(i, sequencedStep);
+					AllModes.getInstance().getLooper().playLoop(i, sequencedStep);
 			}
 		}
 	}
@@ -165,7 +163,7 @@ public class LoopRecorder extends Mode {
 		Integer sequencedStep = loopSequences[loopIndex].heartbeat();
 		if(sequencedStep != null)
 		{
-			m.looper.playLoop(loopIndex, sequencedStep);
+			AllModes.getInstance().getLooper().playLoop(loopIndex, sequencedStep);
 		}
 	}
 	

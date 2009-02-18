@@ -63,45 +63,45 @@ public class Melodizer extends Mode {
 		if(!clipMode)
 			{
 			//Show keys
-			displayGrid[0][7] = MonomeUp.FASTBLINK; // C
-			displayGrid[1][6] = MonomeUp.FASTBLINK; // C#
-			displayGrid[1][7] = MonomeUp.FASTBLINK; // D
-			displayGrid[2][6] = MonomeUp.FASTBLINK; // D#
-			displayGrid[2][7] = MonomeUp.FASTBLINK; // E
-			displayGrid[3][7] = MonomeUp.FASTBLINK; // F
-			displayGrid[4][6] = MonomeUp.FASTBLINK; // F#
-			displayGrid[4][7] = MonomeUp.FASTBLINK; // G
-			displayGrid[5][6] = MonomeUp.FASTBLINK; // G#
-			displayGrid[5][7] = MonomeUp.FASTBLINK; // A
-			displayGrid[6][6] = MonomeUp.FASTBLINK; // A#
-			displayGrid[6][7] = MonomeUp.FASTBLINK; // B	
+			displayGrid[0][7] = DisplayGrid.FASTBLINK; // C
+			displayGrid[1][6] = DisplayGrid.FASTBLINK; // C#
+			displayGrid[1][7] = DisplayGrid.FASTBLINK; // D
+			displayGrid[2][6] = DisplayGrid.FASTBLINK; // D#
+			displayGrid[2][7] = DisplayGrid.FASTBLINK; // E
+			displayGrid[3][7] = DisplayGrid.FASTBLINK; // F
+			displayGrid[4][6] = DisplayGrid.FASTBLINK; // F#
+			displayGrid[4][7] = DisplayGrid.FASTBLINK; // G
+			displayGrid[5][6] = DisplayGrid.FASTBLINK; // G#
+			displayGrid[5][7] = DisplayGrid.FASTBLINK; // A
+			displayGrid[6][6] = DisplayGrid.FASTBLINK; // A#
+			displayGrid[6][7] = DisplayGrid.FASTBLINK; // B	
 			
 			//Set current key
 			switch(key[curSeqBank])
 			{
-				case 0: displayGrid[0][7] = MonomeUp.SOLID; // C
+				case 0: displayGrid[0][7] = DisplayGrid.SOLID; // C
 				break;
-				case 1: displayGrid[1][6] = MonomeUp.SOLID; // C#
+				case 1: displayGrid[1][6] = DisplayGrid.SOLID; // C#
 				break;
-				case 2: displayGrid[1][7] = MonomeUp.SOLID; // D
+				case 2: displayGrid[1][7] = DisplayGrid.SOLID; // D
 				break;
-				case 3: displayGrid[2][6] = MonomeUp.SOLID; // D#
+				case 3: displayGrid[2][6] = DisplayGrid.SOLID; // D#
 				break;
-				case 4: displayGrid[2][7] = MonomeUp.SOLID; // E
+				case 4: displayGrid[2][7] = DisplayGrid.SOLID; // E
 				break;
-				case 5: displayGrid[3][7] = MonomeUp.SOLID; // F
+				case 5: displayGrid[3][7] = DisplayGrid.SOLID; // F
 				break;
-				case 6: displayGrid[4][6] = MonomeUp.SOLID; // F#
+				case 6: displayGrid[4][6] = DisplayGrid.SOLID; // F#
 				break;
-				case 7: displayGrid[4][7] = MonomeUp.SOLID; // G
+				case 7: displayGrid[4][7] = DisplayGrid.SOLID; // G
 				break;
-				case 8: displayGrid[5][6] = MonomeUp.SOLID; // G#
+				case 8: displayGrid[5][6] = DisplayGrid.SOLID; // G#
 				break;
-				case 9: displayGrid[5][7] = MonomeUp.SOLID; // A
+				case 9: displayGrid[5][7] = DisplayGrid.SOLID; // A
 				break;
-				case 10: displayGrid[6][6] = MonomeUp.SOLID; // A#
+				case 10: displayGrid[6][6] = DisplayGrid.SOLID; // A#
 				break;
-				case 11: displayGrid[6][7] = MonomeUp.SOLID; // B	
+				case 11: displayGrid[6][7] = DisplayGrid.SOLID; // B	
 				break;
 			}
 		}
@@ -115,7 +115,7 @@ public class Melodizer extends Mode {
 					for(int k=0;k<6;k++)
 					{
 						noteStatus = displayNote[(((8-k) * 12 - 12) + melodyScale.Degrees[j] + key[curSeqBank])];
-						if(noteStatus != MonomeUp.OFF)
+						if(noteStatus != DisplayGrid.OFF)
 							displayGrid[j][k] = noteStatus;
 					}
 				}	
@@ -129,7 +129,7 @@ public class Melodizer extends Mode {
 					for(int k=0;k<8;k++)
 					{
 						noteStatus = clipNotes[curSeqBank][(((8-k) * 12 - 12) + melodyScale.Degrees[j] + key[curSeqBank])];
-						if(noteStatus != MonomeUp.OFF)
+						if(noteStatus != DisplayGrid.OFF)
 							displayGrid[j][k] = noteStatus;
 					}
 				}	
@@ -140,18 +140,18 @@ public class Melodizer extends Mode {
 	{
 		clearNavGrid();
 		
-		navGrid[myNavRow] = MonomeUp.SOLID;
+		navGrid[myNavRow] = DisplayGrid.SOLID;
 
 		if(isRecording)
-			navGrid[getYCoordFromSubMenu(curSeqBank)] = MonomeUp.SLOWBLINK;
+			navGrid[getYCoordFromSubMenu(curSeqBank)] = DisplayGrid.SLOWBLINK;
 		else
-			navGrid[getYCoordFromSubMenu(curSeqBank)] = MonomeUp.FASTBLINK;
+			navGrid[getYCoordFromSubMenu(curSeqBank)] = DisplayGrid.FASTBLINK;
 	}
 	
 	public void press(int x, int y)
 	{
 	  
-		if(x == MonomeUp.NAVCOL)
+		if(x == DisplayGrid.NAVCOL)
 		{
 			pressNavCol(y);
 			updateNavGrid();
@@ -168,7 +168,7 @@ public class Melodizer extends Mode {
 	   melodyPitch = ((8-y) * 12 - 12) + melodyScale.Degrees[x] + key[curSeqBank];
 	   heldNote[melodyPitch] = false;
 	   if(!clipMode)
-		   displayNote[melodyPitch] = MonomeUp.OFF;
+		   displayNote[melodyPitch] = DisplayGrid.OFF;
 	   Note melodyRelease;
 	   melodyRelease = new Note(melodyPitch,0, 0);
        midiMelodyOut[curSeqBank].sendNoteOff(melodyRelease);
@@ -195,7 +195,7 @@ public class Melodizer extends Mode {
 				note = noteList.get(i);
 				midiMelodyOut[pressedSeq].sendNoteOff(note);
 				if(pressedSeq == curSeqBank)
-					displayNote[note.getPitch()] = MonomeUp.OFF;
+					displayNote[note.getPitch()] = DisplayGrid.OFF;
 			}
 		}
 	 	//Reset displayNote container
@@ -236,7 +236,7 @@ public class Melodizer extends Mode {
     	 melodySend = new Note(melodyPitch,100, 0);
     	 heldNote[melodyPitch] = true;
     	 if(!clipMode)
-    		 displayNote[melodyPitch] = MonomeUp.SOLID;
+    		 displayNote[melodyPitch] = DisplayGrid.SOLID;
          midiMelodyOut[curSeqBank].sendNoteOn(melodySend);
          addEvent(melodySend);
    	 }
@@ -262,7 +262,7 @@ public class Melodizer extends Mode {
    	    			midiMelodyOut[curSeqBank].sendNoteOff(melodyRelease);
    	    			addEvent(melodyRelease);
    	    			heldNote[i] = false;
-   	    			displayNote[i] = MonomeUp.OFF;
+   	    			displayNote[i] = DisplayGrid.OFF;
    	    			newHeldNote[i-keyDif]=true;
    	    			
    	    			//System.out.println("  Killing " + i);
@@ -289,7 +289,7 @@ public class Melodizer extends Mode {
    	    			midiMelodyOut[curSeqBank].sendNoteOn(melodySend);
    	    			addEvent(melodySend);
    	    			heldNote[i]=true;
-   	    			displayNote[i] = MonomeUp.SOLID;
+   	    			displayNote[i] = DisplayGrid.SOLID;
    	    			newHeldNote[i]=false;
    	    			//System.out.println("Sending " + i);
    	    		}
@@ -354,14 +354,14 @@ public class Melodizer extends Mode {
 						//System.out.println("Playing note " + note.getPitch());
 						midiMelodyOut[index].sendNoteOn(note);
 						if(index == curSeqBank)
-							displayNote[note.getPitch()] = MonomeUp.SOLID;
+							displayNote[note.getPitch()] = DisplayGrid.SOLID;
 					}
 					else
 					{
 						//System.out.println("Releasing note " + note.getPitch());
 						midiMelodyOut[index].sendNoteOff(note);
 						if(index == curSeqBank)
-							displayNote[note.getPitch()] = MonomeUp.SOLID;
+							displayNote[note.getPitch()] = DisplayGrid.OFF;
 					}
 					if(index == curSeqBank)
 						updateDisplayGrid();
@@ -533,12 +533,12 @@ public class Melodizer extends Mode {
 	public void clipLaunch(int pitch, int vel, int channel) {
 			if(vel == 0)
 			{
-				clipNotes[channel][pitch] = MonomeUp.OFF;
+				clipNotes[channel][pitch] = DisplayGrid.OFF;
 				System.out.println("Setting " + pitch + " OFF for channel " + channel);
 			}
 			else if(vel == 126)
 			{
-				clipNotes[channel][pitch] = MonomeUp.SLOWBLINK;
+				clipNotes[channel][pitch] = DisplayGrid.SLOWBLINK;
 				//System.out.println("Setting " + pitch + " SLOWBLINK");
 			}	
 			else if(vel == 127)
@@ -548,10 +548,10 @@ public class Melodizer extends Mode {
 				for(int i = pitch;i>=0;i-=12)
 					lowestPitch = i;
 				for(int i = lowestPitch;i<=127;i+=12)
-					clipNotes[channel][i] = MonomeUp.OFF;
+					clipNotes[channel][i] = DisplayGrid.OFF;
 				
 				//Turn on the note that actually plays
-				clipNotes[channel][pitch] = MonomeUp.SOLID;
+				clipNotes[channel][pitch] = DisplayGrid.SOLID;
 			}
 			//TODO add something for vel 1 (continue)
 			if(channel == curSeqBank)
@@ -599,7 +599,7 @@ public class Melodizer extends Mode {
 			heldNote[note.getPitch()] = true;
 			midiMelodyOut[melodizerChannel].sendNoteOn(note);
 			if(melodizerChannel == curSeqBank)
-				displayNote[note.getPitch()] = MonomeUp.SOLID;
+				displayNote[note.getPitch()] = DisplayGrid.SOLID;
 			addEvent(note);
 		}
 		else
@@ -608,7 +608,7 @@ public class Melodizer extends Mode {
 			midiMelodyOut[melodizerChannel].sendNoteOff(releaseNote);
 			heldNote[note.getPitch()] = false;
 			if(melodizerChannel == curSeqBank)
-				displayNote[note.getPitch()] = MonomeUp.OFF;
+				displayNote[note.getPitch()] = DisplayGrid.OFF;
 			addEvent(releaseNote);
 		}
    	 	

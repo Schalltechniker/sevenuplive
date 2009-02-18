@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -30,6 +31,7 @@ public class ConnectionPanel extends JPanel
 	JComboBox drpMidiLooperOutput;
 	JComboBox drpMidiMelder1Output;
 	JComboBox drpMidiMelder2Output;
+	JComboBox drpMonomeChoices;
 	
 	private ConnectionSettings sevenUpConnections = new ConnectionSettings();
 	
@@ -66,6 +68,9 @@ public class ConnectionPanel extends JPanel
 	private static final String MELODIZER2_OUTPUT_DEVICE = "Melodizer 2 Output Device";
 	private static final String MELODIZER2_OUTPUT_DEVICE_PROP = "melodizer.2.output.device";
 	
+	private static final String MONOME_TYPE = "Monome";
+	private static final String MONOME_TYPE_PROP = "monome.type";
+	
 	public ConnectionPanel(mtn.sevenuplive.main.MainApp parentFrame)
 	{
 		super(new GridLayout(0,2));  //X rows, 2 columns
@@ -75,6 +80,26 @@ public class ConnectionPanel extends JPanel
 		// Read our connections at startup
 		readConnections(sevenUpConnections);
 		
+		JLabel lblSetMonomeType = new JLabel(MONOME_TYPE);
+		lblSetMonomeType.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
+		Vector<String> monomeChoices = new Vector<String>();
+        monomeChoices.add("64");
+        monomeChoices.add("128H");
+        monomeChoices.add("128V");
+        monomeChoices.add("256");
+        drpMonomeChoices = new JComboBox(monomeChoices);
+        drpMonomeChoices.setSelectedIndex(sevenUpConnections.monomeType);
+        drpMonomeChoices.addActionListener(
+        		new ActionListener(){
+        			public void actionPerformed(ActionEvent e) {
+        				JComboBox cb = (JComboBox)e.getSource();
+        				sevenUpConnections.monomeType = cb.getSelectedIndex();
+        			}
+        		}
+        );
+        super.add(lblSetMonomeType);
+		super.add(drpMonomeChoices);
+        
 		JLabel lblOscPrefix = new JLabel(OSC_PREFIX);
 		lblOscPrefix.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 		txtOscPrefix = new JTextField(sevenUpConnections.oscPrefix);
@@ -234,6 +259,7 @@ public class ConnectionPanel extends JPanel
 			sevenUpConnections.looperOuputDeviceName = drpMidiLooperOutput.getSelectedItem().toString();
 			sevenUpConnections.melod1OutputDeviceName = drpMidiMelder1Output.getSelectedItem().toString();
 			sevenUpConnections.melod2OutputDeviceName = drpMidiMelder2Output.getSelectedItem().toString();
+			sevenUpConnections.monomeType = drpMonomeChoices.getSelectedIndex();
 			
 			writeConnections(sevenUpConnections);
 			
@@ -281,6 +307,7 @@ public class ConnectionPanel extends JPanel
 		props.setProperty(LOOPER_OUTPUT_DEVICE_PROP, connections.looperOuputDeviceName);
 		props.setProperty(MELODIZER1_OUTPUT_DEVICE_PROP, connections.melod1OutputDeviceName);
 		props.setProperty(MELODIZER2_OUTPUT_DEVICE_PROP, connections.melod2OutputDeviceName);
+		props.setProperty(MONOME_TYPE_PROP, Integer.toString(connections.monomeType));
 		
 		try {
 			MainApp.writeProperties();
@@ -307,6 +334,11 @@ public class ConnectionPanel extends JPanel
 		connections.looperOuputDeviceName = props.getProperty(LOOPER_OUTPUT_DEVICE_PROP);
 		connections.melod1OutputDeviceName = props.getProperty(MELODIZER1_OUTPUT_DEVICE_PROP);
 		connections.melod2OutputDeviceName = props.getProperty(MELODIZER2_OUTPUT_DEVICE_PROP);
+		try {
+			connections.monomeType = new Integer(props.getProperty(MONOME_TYPE_PROP, "0"));
+		} catch (NumberFormatException e) {
+			connections.monomeType = 0;
+		}
 
 		return props;
 	}

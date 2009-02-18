@@ -1,6 +1,7 @@
 package mtn.sevenuplive.main;
 
 public class ConnectionSettings {
+	public int monomeType=0; // 64 default
 	public String oscPrefix;
 	public int oscHostPort;
 	public int oscListenPort;

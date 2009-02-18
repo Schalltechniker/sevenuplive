@@ -4,5 +4,6 @@
 -Send note OFFS when switching patches mid-stride
 -External controller to start/stop recording
 -Tilt control
--Loop length multiplier in UI for longer loops
--Possible switch to allow multiple active lines in sequencer or not 
+-Switch back to only 1 stepper sequence at a time
+BUGS
+-clearing a melodizer pattern should remove it's blinking light from the masterizer

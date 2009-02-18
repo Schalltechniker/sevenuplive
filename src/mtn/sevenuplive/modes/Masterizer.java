@@ -45,12 +45,9 @@ public class Masterizer extends Mode {
 	//MASTER
 	private MidiOut midiMasterOut;
 	
-	private mtn.sevenuplive.main.MonomeUp m;
-	
 	public Masterizer(int _navRow, MidiOut _midiMelodyOut[], MidiOut _midiMelody2Out[],MidiOut _midiMasterOut, mtn.sevenuplive.main.MonomeUp _m,  int grid_width, int grid_height)
 	{
 		super(_navRow, grid_width, grid_height);
-		m = _m;
 		displayGrid = new int[7][8];
 		
 		sequencerRows = new int[8];
@@ -83,55 +80,55 @@ public class Masterizer extends Mode {
 		{
 			//Send live MIDI notes that can be used for transport control or anything else
 			//Force users to double tap the button to ensure no accidental changes of transport controls
-			if(navGrid[y] == MonomeUp.OFF)
-				navGrid[y] = MonomeUp.SLOWBLINK;
-			else if(navGrid[y] == MonomeUp.SLOWBLINK)
+			if(navGrid[y] == DisplayGrid.OFF)
+				navGrid[y] = DisplayGrid.SLOWBLINK;
+			else if(navGrid[y] == DisplayGrid.SLOWBLINK)
 			{
-				navGrid[y] = MonomeUp.OFF;
+				navGrid[y] = DisplayGrid.OFF;
 				midiMasterOut.sendNoteOn(new Note(MonomeUp.C5 + y,127, 0));
 			}
 		}
 		else if(x == PATTERN_COL)
 		{
-			m.patternizer.curPatternRow = y;
+			AllModes.patternizer.curPatternRow = y;
 		}
 		else if(x == SEQUENCER_COL)
 		{
 			//Ignore 7th row
 			if(y < 7)
 			{
-				if(y != m.sequencer.curSequenceBank)
-					m.sequencer.nextSequence = y;
+				if(y != AllModes.sequencer.curSequenceBank)
+					AllModes.sequencer.nextSequence = y;
 				else
 				{
-						m.sequencer.curSeqRow = 0;
+						AllModes.sequencer.curSeqRow = 0;
 						//Play pattern from beginning
-						m.patternizer.curPatternRow = 0;
+						AllModes.patternizer.curPatternRow = 0;
 				}
 			}
 		}
 		else if(x == LOOPER_COL)
 		{
-			if(y < m.looper.getNumLoops())
+			if(y < AllModes.looper.getNumLoops())
 			{
 				
-				if(m.looper.isLoopPlaying(y) || m.loopRecorder.isLoopSequencePlaying(y))
+				if(AllModes.looper.isLoopPlaying(y) || AllModes.loopRecorder.isLoopSequencePlaying(y))
 				{
-					m.looper.stopLoop(y);
-					m.loopRecorder.stopLoopSequence(y);
+					AllModes.looper.stopLoop(y);
+					AllModes.loopRecorder.stopLoopSequence(y);
 				}
 				else
 				{
-					if(m.loopRecorder.loopSequenceExists(y))
-						m.loopRecorder.playLoopSequence(y);
+					if(AllModes.loopRecorder.loopSequenceExists(y))
+						AllModes.loopRecorder.playLoopSequence(y);
 					else
-						m.looper.playLoop(y, 0);
+						AllModes.looper.playLoop(y, 0);
 				}
 			}
 		}
 		else if(x == MELODY_COL)
    	 	{
-			seqStatus = m.melodizer1.getSeqStatus(y);
+			seqStatus = AllModes.melodizer1.getSeqStatus(y);
    		 	if(seqStatus == MonomeUp.PLAYING)
    		 	{
    		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
@@ -142,7 +139,7 @@ public class Masterizer extends Mode {
    		 	else if(seqStatus == MonomeUp.STOPPED)
    		 	{
    		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
-   		 			m.melodizer1.playSeq(y);
+   		 			AllModes.melodizer1.playSeq(y);
 		 		else
 		 			mel1Cue[y] = true;
    		 	}
@@ -150,7 +147,7 @@ public class Masterizer extends Mode {
    	 	}
 		else if(x == melody2Col)
    	 	{
-			seqStatus = m.melodizer2.getSeqStatus(y);
+			seqStatus = AllModes.melodizer2.getSeqStatus(y);
    		 	if(seqStatus == MonomeUp.PLAYING)
    		 	{	
    		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
@@ -161,16 +158,16 @@ public class Masterizer extends Mode {
    		 	else if(seqStatus == MonomeUp.STOPPED)
    		 	{
    		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
-   		 			m.melodizer2.playSeq(y);
+   		 			AllModes.melodizer2.playSeq(y);
 		 		else
 		 			mel2Cue[y] = true;
    		 	}
    	 	}
 		else if(x == CONTROLER_COL && y < 7)
 		{
-			if(m.controller.isBankEnabled(y))
+			if(AllModes.controller.isBankEnabled(y))
 			{
-				m.controller.sendMidiControlBank(y);
+				AllModes.controller.sendMidiControlBank(y);
 				curControlBank = y;
 			}
 		}
@@ -178,20 +175,20 @@ public class Masterizer extends Mode {
 	}
 	
 	private void stopMel2Seq(int y) {
-		m.melodizer2.stopSeq(y);
+		AllModes.melodizer2.stopSeq(y);
   		
 		 	ArrayList<Note> noteList;
-		noteList = m.melodizer2.sequences.get(y).getHeldNotes();
+		noteList = AllModes.melodizer2.sequences.get(y).getHeldNotes();
 		//Loop through heldnotes and send note off for each
 		for(int i=0;i<noteList.size();i++)
 			midiMelody2Out[y].sendNoteOff(noteList.get(i));
 	}
 
 	private void stopMel1Seq(int y) {
-	 		m.melodizer1.stopSeq(y);
+	 		AllModes.melodizer1.stopSeq(y);
 		
 		 	ArrayList<Note> noteList;
-		 	noteList = m.melodizer1.sequences.get(y).getHeldNotes();
+		 	noteList = AllModes.melodizer1.sequences.get(y).getHeldNotes();
 		 	//Loop through heldnotes and send note off for each
 		 	for(int i=0;i<noteList.size();i++)
 		 		midiMelodyOut[y].sendNoteOff(noteList.get(i));
@@ -203,68 +200,68 @@ public class Masterizer extends Mode {
 		//Light up the enabled control banks
 		for(int i=0;i<7;i++)
 		{
-			if(m.controller.isBankEnabled(i))
-				displayGrid[CONTROLER_COL][i] = MonomeUp.FASTBLINK;
+			if(AllModes.controller.isBankEnabled(i))
+				displayGrid[CONTROLER_COL][i] = DisplayGrid.FASTBLINK;
 			else
-				displayGrid[CONTROLER_COL][i] = MonomeUp.OFF;
+				displayGrid[CONTROLER_COL][i] = DisplayGrid.OFF;
 		}
 		if(curControlBank > -1)
-			displayGrid[CONTROLER_COL][curControlBank] = MonomeUp.SOLID;
+			displayGrid[CONTROLER_COL][curControlBank] = DisplayGrid.SOLID;
 				
 		//SEQUENCER
 		//Light up the current sequence
 		for(int i=0;i<8;i++)
 		{
 			//Slow blink the next sequence. Make the current seq solid
-			if(i == m.sequencer.nextSequence || i == m.sequencer.curSequenceBank)
+			if(i == AllModes.sequencer.nextSequence || i == AllModes.sequencer.curSequenceBank)
 			{
-				if(i == m.sequencer.nextSequence)
-					sequencerRows[i] = MonomeUp.SLOWBLINK;
-				if(i == m.sequencer.curSequenceBank)
-					sequencerRows[i] = MonomeUp.SOLID;
+				if(i == AllModes.sequencer.nextSequence)
+					sequencerRows[i] = DisplayGrid.SLOWBLINK;
+				if(i == AllModes.sequencer.curSequenceBank)
+					sequencerRows[i] = DisplayGrid.SOLID;
 			}
 			else
-				sequencerRows[i] = MonomeUp.OFF;
+				sequencerRows[i] = DisplayGrid.OFF;
 		}
 		
 		//LOOPER
-		for(int i=0;i<m.looper.getNumLoops();i++)
+		for(int i=0;i<AllModes.looper.getNumLoops();i++)
 		{
-			if(m.looper.isLoopPlaying(i) || m.loopRecorder.isLoopSequencePlaying(i))
-				looperRows[i] = MonomeUp.SOLID;
-			else if(m.loopRecorder.loopSequenceExists(i))
-				looperRows[i] = MonomeUp.FASTBLINK;
+			if(AllModes.looper.isLoopPlaying(i) || AllModes.loopRecorder.isLoopSequencePlaying(i))
+				looperRows[i] = DisplayGrid.SOLID;
+			else if(AllModes.loopRecorder.loopSequenceExists(i))
+				looperRows[i] = DisplayGrid.FASTBLINK;
 			else
-				looperRows[i] = MonomeUp.OFF;
+				looperRows[i] = DisplayGrid.OFF;
 		}
 
 		//MELODY
 		int seqStatus;
 		for(int i=0;i<8;i++)
 		{
-			seqStatus = m.melodizer1.getSeqStatus(i);
+			seqStatus = AllModes.melodizer1.getSeqStatus(i);
 			if(seqStatus == 0)
-				melodyRows[i] = MonomeUp.FASTBLINK;
+				melodyRows[i] = DisplayGrid.FASTBLINK;
 			else if(seqStatus == 1)
-				melodyRows[i] = MonomeUp.SOLID;
-			else melodyRows[i] = MonomeUp.OFF;
+				melodyRows[i] = DisplayGrid.SOLID;
+			else melodyRows[i] = DisplayGrid.OFF;
 			
 			if(RECMODE == ModeConstants.MEL_QUANTIZED && mel1Cue[i])
-				melodyRows[i] = MonomeUp.SLOWBLINK;
+				melodyRows[i] = DisplayGrid.SLOWBLINK;
 		}
 		
 		//MELODY2
 		for(int i=0;i<8;i++)
 		{
-			seqStatus = m.melodizer2.getSeqStatus(i);
+			seqStatus = AllModes.melodizer2.getSeqStatus(i);
 			if(seqStatus == 0)
-				melody2Rows[i] = MonomeUp.FASTBLINK;
+				melody2Rows[i] = DisplayGrid.FASTBLINK;
 			else if(seqStatus == 1)
-				melody2Rows[i] = MonomeUp.SOLID;
-			else melody2Rows[i] = MonomeUp.OFF;
+				melody2Rows[i] = DisplayGrid.SOLID;
+			else melody2Rows[i] = DisplayGrid.OFF;
 			
 			if(RECMODE == ModeConstants.MEL_QUANTIZED && mel2Cue[i])
-				melody2Rows[i] = MonomeUp.SLOWBLINK;
+				melody2Rows[i] = DisplayGrid.SLOWBLINK;
 		}
 		
 		displayGrid[SEQUENCER_COL] = sequencerRows;
@@ -278,7 +275,7 @@ public class Masterizer extends Mode {
 	public void updatePatternBeat(int patternRow)
 	{
 		displayGrid[PATTERN_COL] = new int[8];
-		displayGrid[PATTERN_COL][patternRow] = MonomeUp.SOLID;
+		displayGrid[PATTERN_COL][patternRow] = DisplayGrid.SOLID;
 	}
 	
 	/***
@@ -292,27 +289,27 @@ public class Masterizer extends Mode {
 			//Begin play for locator mode
 			locatorMode = PLAYMODE;
 			locatorRows = new int[8];
-			locatorRows[0] = MonomeUp.SOLID;
+			locatorRows[0] = DisplayGrid.SOLID;
 			
 			//If cued, trigger melodizer start or stop
 			for(int i=0;i<8;i++)
 			{
 				if(mel1Cue[i] == true)
 				{
-					if(m.melodizer1.getSeqStatus(i) == MonomeUp.PLAYING)
+					if(AllModes.melodizer1.getSeqStatus(i) == MonomeUp.PLAYING)
 						stopMel1Seq(i);
 					else
-						m.melodizer1.playSeq(i);
+						AllModes.melodizer1.playSeq(i);
 					mel1Cue[i]=false;
 					
 				}
 			
 				if(mel2Cue[i] == true)
 				{
-					if(m.melodizer2.getSeqStatus(i) == MonomeUp.PLAYING)
+					if(AllModes.melodizer2.getSeqStatus(i) == MonomeUp.PLAYING)
 						stopMel2Seq(i);
 					else
-						m.melodizer2.playSeq(i);
+						AllModes.melodizer2.playSeq(i);
 					
 					mel2Cue[i] = false;
 				}
@@ -325,7 +322,7 @@ public class Masterizer extends Mode {
 			//Begin a record mode (length of record shows by speed of steps)
 			locatorMode = RECMODE;
 			locatorRows = new int[8];
-			locatorRows[0] = MonomeUp.FASTBLINK;
+			locatorRows[0] = DisplayGrid.FASTBLINK;
 		}
 		else if(noteValue == MonomeUp.DSHARP4)
 		{
@@ -334,7 +331,7 @@ public class Masterizer extends Mode {
 			//Step in current mode
 			//Find the current step
 			for(int i =0; i<locatorRows.length;i++)
-				if(locatorRows[i]!=MonomeUp.OFF)
+				if(locatorRows[i]!=DisplayGrid.OFF)
 					currentStep = i;
 			
 			//Only if the locator knows where the current step is do we step forward
@@ -342,9 +339,9 @@ public class Masterizer extends Mode {
 			{	
 				locatorRows = new int[8];
 				if(locatorMode == PLAYMODE)
-					locatorRows[(currentStep + 1) % 8] = MonomeUp.SOLID;
+					locatorRows[(currentStep + 1) % 8] = DisplayGrid.SOLID;
 				else if(locatorMode == RECMODE)
-					locatorRows[(currentStep + 1) % 8] = MonomeUp.FASTBLINK;
+					locatorRows[(currentStep + 1) % 8] = DisplayGrid.FASTBLINK;
 			}
 		}
 	}
