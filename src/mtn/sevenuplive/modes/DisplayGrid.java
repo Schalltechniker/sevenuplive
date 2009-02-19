@@ -369,7 +369,15 @@ public class DisplayGrid {
 		//Only show the beat blips in current pattern mode
         if ((curMode == ModeConstants.PATTERN_MODE && allmodes.getSequencer().isPatternPlaying(allmodes.getPatternizer().selectedPattern)) )
         {
-        	monome.invertRowByte(allmodes.getPatternizer().curPatternRow + start_row, Math.abs(start_column / 8)); 
+        	for (int x = start_column; x < start_column + grid_width; x++) {
+        		if (monome.isLit(x, AllModes.patternizer.curPatternRow + start_row)) { 
+        			monome.setValue(x, AllModes.patternizer.curPatternRow + start_row, 0);  
+        		} else {
+        			monome.setValue(x, AllModes.patternizer.curPatternRow + start_row, 1);
+        		}
+        	}
+        	// @TODO clloyd fix this 
+        	//monome.invertRowByte(allmodes.getPatternizer().curPatternRow + start_row, Math.abs(start_column / 8)); 
         }
         else if(curMode == ModeConstants.MASTER_MODE)
         {
@@ -378,7 +386,15 @@ public class DisplayGrid {
         }
         else if(curMode == ModeConstants.SEQ_MODE && allmodes.getPatternizer().curPatternRow % 4 == 0)
         {
-        	monome.invertRowByte(allmodes.getSequencer().curSeqRow + start_row, Math.abs(start_column / 8)); 	
+        	for (int x = start_column; x < start_column + grid_width; x++) {
+        		if (monome.isLit(x, AllModes.sequencer.curSeqRow + start_row)) { 
+        			monome.setValue(x, AllModes.sequencer.curSeqRow + start_row, 0);  
+        		} else {
+        			monome.setValue(x, AllModes.sequencer.curSeqRow + start_row, 1);
+        		}
+        	}
+        	//@TODO clloyd fix this
+        	//monome.invertRowByte(allmodes.getSequencer().curSeqRow + start_row, Math.abs(start_column / 8)); 	
         }
         
         if(curMode == ModeConstants.MASTER_MODE)
