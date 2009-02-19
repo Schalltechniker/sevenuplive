@@ -63,8 +63,18 @@ public class Sequencer extends Mode {
 		else
 		//Pressing display area
 		{
-			sequenceBanks[curSequenceBank].switchPatternAtRow(y, x);
-			updateDisplay();
+			if(sequenceBanks[curSequenceBank].isPatternEnabledAtRow(x, y)){
+				AllModes.patternizer.curPatternRow = 0;
+				AllModes.sequencer.curSeqRow = y;
+			}
+			else
+			{
+				for(int i=0;i<7;i++)
+					AllModes.sequencer.sequenceBanks[curSequenceBank].disablePatternAtRow(y, i);
+				AllModes.sequencer.sequenceBanks[curSequenceBank].enablePatternAtRow(y, x);
+				AllModes.sequencer.updateDisplay();
+			}
+			
 		}
 	}
 	
