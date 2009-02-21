@@ -1,11 +1,10 @@
 package jklabs.monomic;
 
 import netP5.NetAddress;
-import oscP5.OscIn;
 import oscP5.OscMessage;
 import oscP5.OscP5;
 
-public class MonomeOSC extends Monome {
+public class MonomeOSC extends Monome implements MonomeOSCCallback {
 
 	// oscP5 instance for the osc communication
 	private OscP5 oscP5;
@@ -26,40 +25,75 @@ public class MonomeOSC extends Monome {
 	private NetAddress myRemoteLocation;
 	
 	// osc addresses for this instance
-	private String led, row, col, shutdown, button, test, adc, adc_enable, intensity;
+	protected String led, row, col, shutdown, button, test, adc, adc_enable, intensity;
+	
+	protected MonomeOSCCallback callback;
 
 	public MonomeOSC() {
 		this(null, "box");
 	}
 	
-	public MonomeOSC(Object listener) {
-		this(listener, "box");
+	/**
+	 *  8x8 Monome on localhost sendPort 8080 receivePort 8000
+	 * @param boxName
+	 */
+	public MonomeOSC(String boxName) {
+		this(boxName, "127.0.0.1");
 	}
 
-	public MonomeOSC(Object listener, String boxName) {
-		this(listener, boxName, "127.0.0.1");
+	/**
+	 * Construct a 1 byte x 1 byte or 8x8 monome 
+	 * @param boxName prefix to use "box" or "mlr" etc
+	 * @param host host, port default to sendPort 8080 and receivePort 8000 
+	 */
+	public MonomeOSC(String boxName, String host) {
+		this(1, 1, boxName, host, 8080, 8000);
 	}
 
-	public MonomeOSC(Object listener, String boxName, String host) {
-		this(listener, 8, 8, boxName, host, 8080, 8000);
-	}
-
-	public MonomeOSC(Object listener, int x_dim, int y_dim, String boxName, String host, int sendPort, int receivePort) {
-		super(listener, x_dim, y_dim);
-		initOsc(host, sendPort, receivePort);
+	/**
+	 * Construct any monome grid in byte(8) button increments
+	 * @param x_bytes size of monome width in bytes, 1 byte = 8 buttons  
+	 * @param y_bytes size of monome height in bytes, 1 byte = 8 buttons
+	 * @param boxName prefix to use "box" or "mlr" etc
+	 * @param host IP address of the host
+	 * @param sendPort port to send on
+	 * @param receivePort port to receive on
+	 */
+	public MonomeOSC(int x_bytes, int y_bytes, String boxName, String host, int sendPort, int receivePort) {
+		super(x_bytes, y_bytes);
 		
-		// @TODO remove as unnecessary dependency on MonomeSerial
-		/*if (boxName == null) {
-			String[] monomes = MonomeSerial.getMonomes();
-			if (monomes.length > 0)
-				boxName = monomes[0];
-		}*/
+		initOsc(host, sendPort, receivePort);
 		
 		setBoxName(boxName);
 		super.init();
 	}
 
-	private void setBoxName(String boxName) {
+	/**
+	 * Construct any monome grid in byte(8) button increments
+	 * @param callback callback class for events
+	 * @param x_bytes size of monome width in bytes, 1 byte = 8 buttons  
+	 * @param y_bytes size of monome height in bytes, 1 byte = 8 buttons
+	 * @param boxName prefix to use "box" or "mlr" etc
+	 * @param host IP address of the host
+	 * @param sendPort port to send on
+	 * @param receivePort port to receive on
+	 */
+	public MonomeOSC(MonomeOSCCallback callback, int x_bytes, int y_bytes, String boxName, String host, int sendPort, int receivePort) {
+		super(x_bytes, y_bytes);
+		
+		this.callback = callback;
+		
+		initOsc(host, sendPort, receivePort);
+		
+		setBoxName(boxName);
+		super.init();
+	}
+
+	public String getBoxName() {
+		return boxName;
+	}
+	
+	public void setBoxName(String boxName) {
 		this.boxName = boxName;
 
 		// set osc addresses
@@ -150,16 +184,16 @@ public class MonomeOSC extends Monome {
 
 	private void initOsc(String host, int sendPort, int receivePort) {
 		myRemoteLocation = new NetAddress(host, sendPort);
-		oscP5 = new OscP5(this.listener, receivePort);
+		oscP5 = new OscP5(new OSCReceiver(this), receivePort);
 	}
-
-	public void oscEvent(OscIn oscIn) {
+	
+	public void oscEvent(OscMessage oscIn) {
 		if (debug == FINE) 
 			System.out.println("received a message ... forwarding to unpackMessage(OscIn)");
 		unpackMessage(oscIn);
 	}
 
-	void unpackMessage(OscIn oscIn) {
+	public void unpackMessage(OscMessage oscIn) {
 		if (boxName == null) {
 			String a = oscIn.getAddrPattern();
 			if (a.indexOf("m40h") != -1) {
@@ -170,15 +204,15 @@ public class MonomeOSC extends Monome {
 		}
 		if (oscIn.checkAddrPattern(button)) {
 			if (oscIn.checkTypetag("iii")) {
-				int x = oscIn.getInt(0);
-				int y = oscIn.getInt(1);
-				int value = oscIn.getInt(2);
+				int x = oscIn.get(0).intValue();
+				int y = oscIn.get(1).intValue();
+				int value = oscIn.get(2).intValue();
 				handleInputEvent(x, y, value);
 			}
 		} else if (oscIn.checkAddrPattern(adc)) {
 			if (oscIn.checkTypetag("if")) {
-				int port = oscIn.getInt(0);
-				float value = oscIn.getFloat(1);
+				int port = oscIn.get(0).intValue();
+				float value = oscIn.get(1).floatValue();
 				handleAdcInput(port, value);
 			}
 		} else {
@@ -192,6 +226,36 @@ public class MonomeOSC extends Monome {
 			}
 		}
 	}
+	
+	/**
+	 * Override or implement in your listener class 
+	 * @param x
+	 * @param y
+	 */
+	public void monomePressed(int x, int y) {
+		if (callback != null)
+			callback.monomePressed(x, y);
+	}
+	
+	/**
+	 * Override or implement in your listener class
+	 * @param x
+	 * @param y
+	 */
+	public void monomeReleased(int x, int y) {
+		if (callback != null)
+			callback.monomeReleased(x, y)
+;	}
+	
+	/**
+	 * Override or implement in your listener class
+	 * @param x
+	 * @param value
+	 */
+	public void monomeAdc(int x, float value) {
+		if (callback != null)
+			callback.monomeAdc(x, value);
+	}
 
 	////////////////////////////////////////////////// cleanup
 
@@ -199,6 +263,23 @@ public class MonomeOSC extends Monome {
 		oscP5.disconnectFromTEMP();                                                                                                                
 		oscP5 = null;
 		super.finalize();
+	}
+	
+	/**
+	 * The only reason this class is here is to wrap "this" MonomeOSC instance
+	 * as the OSC event receiver. For some unknown reason OscP5 refuses to 
+	 * notify us directly
+	 */
+	public class OSCReceiver {
+		MonomeOSC parent;
+		
+		public OSCReceiver(MonomeOSC parent) {
+			this.parent = parent;
+		}
+		
+		void oscEvent(OscMessage oscIn) {
+			parent.oscEvent(oscIn);
+		}
 	}
 
 }

@@ -15,7 +15,6 @@ import mtn.sevenuplive.scales.ScaleName;
 
 import org.jdom.Document;
 
-import oscP5.OscMessage;
 import promidi.MidiIO;
 import promidi.Note;
 import proxml.XMLInOut;
@@ -72,7 +71,7 @@ public class SevenUpApplet extends processing.core.PApplet
 			   
 	   };
 	   
-	   m = new MonomeUp(this, x_grids, y_grids, sevenUpConnections, monomeScale, midiIO, parentPanel);
+	   m = new MonomeUp(x_grids, y_grids, sevenUpConnections, monomeScale, midiIO, parentPanel);
 	   m.lightsOff();
 	   this.online = false;
 	   
@@ -176,44 +175,12 @@ public class SevenUpApplet extends processing.core.PApplet
 		m.draw();
 	}
 	
-	public void monomePressed(int x, int y)
-	{
-		m.monomePressed(x, y);
-	}
-	
-	public void monomeReleased(int x, int y)
-	{
-		m.monomeReleased(x, y); 
-	}
-	
 	public void finalize()
 	{
 		m.lightsOff();
 		m = null;
 	}
 	
-	/***
-	 * This event was originally in the JKlabs MonomeOSC class.  However, the event was not firing so I moved it here and it seems to work.
-	 * @param oscIn
-	 */
-	void   oscEvent(OscMessage oscIn) {
-		if (oscIn.checkAddrPattern("/" + sevenUpConnections.oscPrefix + "/press")) {
-			
-			if (oscIn.checkTypetag("iii")) {
-				int x = oscIn.get(0).intValue();
-				int y = oscIn.get(1).intValue();
-				int value = oscIn.get(2).intValue();
-				if(value == 1)
-				{
-					monomePressed(x, y);
-				}
-				else
-					monomeReleased(x, y);
-				
-				}
-		}
-	}
-
 	public void noteOn(Note note){
 		//status 144 = noteOn
 		//status 128 = noteOff? note 123 = stop?

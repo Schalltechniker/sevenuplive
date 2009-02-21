@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import jklabs.monomic.MonomeOSC;
+import jklabs.monomic.MonomeOSCCallback;
 import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.modes.Controller;
 import mtn.sevenuplive.modes.DisplayGrid;
@@ -34,7 +35,7 @@ import promidi.MidiIO;
 import promidi.MidiOut;
 import promidi.Note;
 
-public final class MonomeUp extends MonomeOSC {
+public final class MonomeUp extends MonomeOSC implements MonomeOSCCallback {
 	
 	 private SevenUpPanel parentPanel;
 	 private ArrayList<Element> xmlPatches;
@@ -117,13 +118,10 @@ public final class MonomeUp extends MonomeOSC {
 	 public static final int GRID_HEIGHT = 8;
 	 ////////////////////////////////////
 	 
-	 SevenUpApplet SevenUpApplet;
-	 
 	 private DisplayGrid[] grids;
 	 
-	 MonomeUp (processing.core.PApplet listener, int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, promidi.MidiIO _midiIO, SevenUpPanel _parentPanel) {
-	     super(listener, x_grids, y_grids, _sevenUpConnections.oscPrefix, _sevenUpConnections.oscHostAddress, _sevenUpConnections.oscHostPort, _sevenUpConnections.oscListenPort);
-	     SevenUpApplet = (SevenUpApplet)listener;
+	 MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, promidi.MidiIO _midiIO, SevenUpPanel _parentPanel) {
+	     super(x_grids, y_grids, _sevenUpConnections.oscPrefix, _sevenUpConnections.oscHostAddress, _sevenUpConnections.oscHostPort, _sevenUpConnections.oscListenPort);
 	     sevenUpConnections = _sevenUpConnections;
 	     
 	     xmlPatches = new ArrayList<Element>();
@@ -132,7 +130,7 @@ public final class MonomeUp extends MonomeOSC {
 	     midiIO = _midiIO;
 	     
 	     // Init midi communications
-	     initializeMidi(listener);
+	     initializeMidi();
 	     
 	     allmodes = new AllModes(new Patternizer(ModeConstants.PATTERN_MODE, midiSampleOut, GRID_WIDTH, GRID_HEIGHT), 
 	    		 new Controller(ModeConstants.CONTROL_MODE, midiSampleOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT),
@@ -193,7 +191,7 @@ public final class MonomeUp extends MonomeOSC {
 	     //this.setDebug(Monome.FINE);
 	 } 
 	 
-	 private void initializeMidi(processing.core.PApplet listener)
+	 private void initializeMidi()
 	 {
 		 	//Sample/Loop/Masterizer out on channel 8
 		    midiSampleOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
@@ -237,7 +235,7 @@ public final class MonomeUp extends MonomeOSC {
 			*/ 
 	 }
 	
-	 void monomePressed(int raw_x, int raw_y)
+	 public void monomePressed(int raw_x, int raw_y)
 	 {
 		 GridCoordinateTarget targetd = Displays.translate(grids, raw_x, raw_y);
 		 int x = targetd.getX_translated();
@@ -246,7 +244,7 @@ public final class MonomeUp extends MonomeOSC {
 		 targetd.getDisplay().monomePressed(x, y);
 	 }
 
-	 void monomeReleased(int raw_x, int raw_y)
+	 public void monomeReleased(int raw_x, int raw_y)
 	 {
 		 GridCoordinateTarget targetd = Displays.translate(grids, raw_x, raw_y);
 		 int x = targetd.getX_translated();

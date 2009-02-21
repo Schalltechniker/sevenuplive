@@ -19,9 +19,6 @@ public class Monome {
 	private byte[][] buttonVals;
 	private byte[][] ledVals;
 
-	/** Listener that will receive OSC events from the monome */ 
-	protected Object listener;
-
 	// for efficient method calling using reflection
 	private Integer[] buttonLoc = { null, null };
 	private Object[] adcValues = {null, null};
@@ -36,15 +33,10 @@ public class Monome {
 	boolean tempRow[];
 
 	protected Monome() {
-		this(null, 8, 8); // default to 40h monome, need to set listener on init
+		this(1, 1); // default to 40h monome
 	}
 	
-	protected Monome(Object listener) {
-		this(listener, 8, 8); // default to 40h monome
-	}
-	
-	protected Monome(Object listener, int y_bytes, int x_bytes) {
-		this.listener = listener;
+	protected Monome(int y_bytes, int x_bytes) {
 		this.x_dim = x_bytes * 8;
 		this.y_dim = y_bytes * 8;
 		
@@ -63,7 +55,7 @@ public class Monome {
 		
 		initMatrices();
 		
-		getMethods(listener == null ? this : listener);
+		getMethods(this);
 	}
 	
 	/**
@@ -86,9 +78,7 @@ public class Monome {
 	protected void init() {
 		testPattern(false);
 		lightsOff();
-		setLedIntensity(10f);
 		for (int i=0; i<4; i++) disableADC(i);
-		setLowPower(false);
 	}
 
 	protected void getMethods(Object parent) {
@@ -336,7 +326,7 @@ public class Monome {
 		adcValues[1] = new Float(value);
 		
 		try {
-			adcInputMethod.invoke(listener, adcValues);
+			adcInputMethod.invoke(this, adcValues);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -355,7 +345,7 @@ public class Monome {
 		buttonLoc[0] = INTS[x];
 		buttonLoc[1] = INTS[y];
 		try {
-			m.invoke(listener, buttonLoc);
+			m.invoke(this, buttonLoc);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -431,4 +421,5 @@ public class Monome {
 		}
 		return s;
 	}
+	
 }
