@@ -24,11 +24,11 @@ public class MonomeOSC extends Monome implements MonomeCallback {
 	// Address for P5Osc
 	private NetAddress myRemoteLocation;
 	
+	private MonomeCallback callback;
+	
 	// osc addresses for this instance
 	protected String led, row, col, shutdown, button, test, adc, adc_enable, intensity;
 	
-	protected MonomeCallback callback;
-
 	public MonomeOSC() {
 		this(null, "box");
 	}

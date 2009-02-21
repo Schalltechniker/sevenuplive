@@ -18,10 +18,6 @@ public class Monome {
 	private byte[][] buttonVals;
 	private byte[][] ledVals;
 
-	// for efficient method calling using reflection
-	private Integer[] buttonLoc = { null, null };
-	private Object[] adcValues = {null, null};
-
 	private Method buttonPressedMethod;
 	private Method buttonReleasedMethod;
 	private Method adcInputMethod;
@@ -30,14 +26,18 @@ public class Monome {
 	boolean[][] buttonValues;
 	
 	boolean tempRow[];
-
+	
 	protected Monome() {
 		this(1, 1); // default to 40h monome
 	}
 	
+	protected Monome(MonomeCallback callback) {
+		this(callback, 1, 1); // default to 40h monome
+	}
+	
 	protected Monome(int y_bytes, int x_bytes) {
-		this.x_dim = x_bytes * 8;
-		this.y_dim = y_bytes * 8;
+		Monome.x_dim = x_bytes * 8;
+		Monome.y_dim = y_bytes * 8;
 		
 		if (y_dim > 8) {
 			this.ledVals = new byte[y_dim][2];
@@ -56,6 +56,29 @@ public class Monome {
 		
 		getMethods(this);
 	}
+	
+	protected Monome(MonomeCallback callback, int y_bytes, int x_bytes) {
+		Monome.x_dim = x_bytes * 8;
+		Monome.y_dim = y_bytes * 8;
+		
+		if (y_dim > 8) {
+			this.ledVals = new byte[y_dim][2];
+			this.buttonVals = new byte[y_dim][2];
+		} else {
+			this.ledVals = new byte[y_dim][1];
+			this.buttonVals = new byte[y_dim][1];
+		}
+		
+		
+		this.ledValues = new boolean[y_dim][x_dim];
+		this.buttonValues = new boolean[y_dim][x_dim];
+		this.tempRow = new boolean[y_dim];
+		
+		initMatrices();
+		
+		getMethods(callback);
+	}
+
 	
 	/**
 	 * create ALL_ON and ALL_OFF matrices
