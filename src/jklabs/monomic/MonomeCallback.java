@@ -1,6 +1,6 @@
 package jklabs.monomic;
 
-public interface MonomeOSCCallback {
+public interface MonomeCallback {
 
 	/**
 	 * Implement in your listener class 

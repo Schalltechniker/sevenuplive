@@ -4,7 +4,7 @@ import netP5.NetAddress;
 import oscP5.OscMessage;
 import oscP5.OscP5;
 
-public class MonomeOSC extends Monome implements MonomeOSCCallback {
+public class MonomeOSC extends Monome implements MonomeCallback {
 
 	// oscP5 instance for the osc communication
 	private OscP5 oscP5;
@@ -27,7 +27,7 @@ public class MonomeOSC extends Monome implements MonomeOSCCallback {
 	// osc addresses for this instance
 	protected String led, row, col, shutdown, button, test, adc, adc_enable, intensity;
 	
-	protected MonomeOSCCallback callback;
+	protected MonomeCallback callback;
 
 	public MonomeOSC() {
 		this(null, "box");
@@ -78,7 +78,7 @@ public class MonomeOSC extends Monome implements MonomeOSCCallback {
 	 * @param sendPort port to send on
 	 * @param receivePort port to receive on
 	 */
-	public MonomeOSC(MonomeOSCCallback callback, int x_bytes, int y_bytes, String boxName, String host, int sendPort, int receivePort) {
+	public MonomeOSC(MonomeCallback callback, int x_bytes, int y_bytes, String boxName, String host, int sendPort, int receivePort) {
 		super(x_bytes, y_bytes);
 		
 		this.callback = callback;
