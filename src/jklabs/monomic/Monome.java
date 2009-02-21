@@ -9,8 +9,7 @@ public class Monome {
 	private static int y_dim;
 	private static int[][] ALL_ON;
 	private static int[][] ALL_OFF;
-	private static Integer[] INTS;
-
+	
 	public static int NONE = 99;
 	public static int FINE = 1;
 	public static int WARNING = 2;
@@ -59,19 +58,17 @@ public class Monome {
 	}
 	
 	/**
-	 * create ALL_ON and ALL_OFF matrices, INT array
+	 * create ALL_ON and ALL_OFF matrices
 	 */
 	private void initMatrices() {
-		// create ALL_ON and ALL_OFF matrices, INT array
+		// create ALL_ON and ALL_OFF matrices
 		ALL_ON = new int[x_dim][y_dim];
 		ALL_OFF = new int[x_dim][y_dim];
-		INTS = new Integer[x_dim];
 		for (int i = 0; i < x_dim; i++) {
 			for (int j = 0; j < y_dim; j++) {
 				ALL_ON[i][j] = 1;
 				ALL_OFF[i][j] = 0;
 			}
-			INTS[i] = new Integer(i);
 		}
 	}
 	
@@ -322,11 +319,8 @@ public class Monome {
 		if (debug == FINE) System.out.println("adc input: port " + port + ": " + value);
 		if (adcInputMethod == null) return;
 		
-		adcValues[0] = INTS[port];
-		adcValues[1] = new Float(value);
-		
 		try {
-			adcInputMethod.invoke(this, adcValues);
+			adcInputMethod.invoke(this, Integer.valueOf(port), Float.valueOf(value));
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -342,10 +336,8 @@ public class Monome {
 		Method m = (value == 1) ? buttonPressedMethod : buttonReleasedMethod;
 		if (m == null) // || x>x_dim-1 || y>y_dim-1 || x<0 || y<0)
 			return;
-		buttonLoc[0] = INTS[x];
-		buttonLoc[1] = INTS[y];
 		try {
-			m.invoke(this, buttonLoc);
+			m.invoke(this, Integer.valueOf(x), Integer.valueOf(y));
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
