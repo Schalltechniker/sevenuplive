@@ -14,27 +14,6 @@ import promidi.Note;
 
 public class CtrlSequence {
 	
-	//Inner class for control values that have an ID and value assigned
-	public class ControlValue{
-		private int id;
-		private int value;
-		
-		public ControlValue(int id, int value)
-		{
-			this.id = id;
-			this.value = value;
-		}
-		
-		public int getId(){
-			return this.id;
-		}
-		
-		public int getValue(){
-			return this.value;
-		}
-		
-	}
-	
 	private int counter;
 	private int length;
 	private int index;
@@ -61,7 +40,7 @@ public class CtrlSequence {
 	private void initialize()
 	{
 		status = MonomeUp.STOPPED;
-		events = new Hashtable<Integer, ArrayList<Integer>>();	
+		events = new Hashtable<Integer, ArrayList<ControlValue>>();	
 	}
 	
 	public void beginCue()
@@ -77,7 +56,7 @@ public class CtrlSequence {
 		//System.out.println("Sequence - " + index + " length = " + length);
 	}
 	
-	public ArrayList<Integer> heartbeat()
+	public ArrayList<ControlValue> heartbeat()
 	{
 		//account for recording never stopping
 		if(counter == Integer.MAX_VALUE - 1)
@@ -89,11 +68,11 @@ public class CtrlSequence {
 		//Advance counter if sequence is playing or recording
 		if(status == MonomeUp.PLAYING || status == MonomeUp.RECORDING)
 		{
-			counter ++;
+			counter++;
 			//System.out.println("Sequence - " + _index + ": count = " + counter);
 		}
 		
-		//Send Integer if isPlaying and there is an event at the current count
+		//Send ControlValue if isPlaying and there is an event at the current count
 		if(status == MonomeUp.PLAYING)
 		{
 			//Reset counter to beginning if it reaches the length
@@ -117,10 +96,10 @@ public class CtrlSequence {
 	 * Accepts an arraylist of integers that represent a bund of ctrlValues to fire at the event time
 	 * @param ctrlValue
 	 */
-	public void addEvent(Integer ctrlValue)
+	public void addEvent(Integer ctrlId, Integer ctrlValue)
 	{
-		ArrayList<Integer> ctrlValues = new ArrayList<Integer>();
-		ctrlValues.add(ctrlValue);
+		ArrayList<ControlValue> ctrlValues = new ArrayList<ControlValue>();
+		ctrlValues.add(new ControlValue(ctrlId, ctrlValue));
 		
 		//Sequence is cued, just add the note
 		if(status == MonomeUp.CUED)
@@ -133,7 +112,7 @@ public class CtrlSequence {
 		else if(status == MonomeUp.RECORDING)
 		{
 			if(events.containsKey(counter))
-				events.get(counter).add(ctrlValue);
+				events.get(counter).add(new ControlValue(ctrlId, ctrlValue));
 			else
 				events.put(counter, ctrlValues);
 		}
@@ -164,7 +143,7 @@ public class CtrlSequence {
 		Element xmlControlValue;
 		
 		Integer eventIndex;
-		ArrayList<Integer> ctrlValue;
+		ArrayList<ControlValue> ctrlValue;
 
 		xmlSequence.setAttribute(new Attribute("length", ((Integer)length).toString()));
 		xmlSequence.setAttribute(new Attribute("index", ((Integer)index).toString()));
@@ -177,10 +156,11 @@ public class CtrlSequence {
 			
 			ctrlValue = events.get(eventIndex);
 			
-			for(Integer i : ctrlValue)
+			for(ControlValue curControlValue : ctrlValue)
 			{
 				xmlControlValue = new Element("controlValue");
-				xmlControlValue.setAttribute(new Attribute("value", i.toString()));
+				xmlControlValue.setAttribute(new Attribute("value", Integer.toString(curControlValue.getValue())));
+				xmlControlValue.setAttribute(new Attribute("id", Integer.toString(curControlValue.getId())));
 				xmlEvent.addContent(xmlControlValue);
 			}
 			
