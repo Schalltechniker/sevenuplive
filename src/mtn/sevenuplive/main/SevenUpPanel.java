@@ -15,7 +15,6 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -89,7 +88,6 @@ public class SevenUpPanel extends JPanel implements ActionListener
 			
 			//Scale
 	        JLabel lblSetScale = new JLabel("Melodizer 1 scale");
-	        setSizeSmall(lblSetScale);
 	        lblSetScale.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	        
 	        Vector<String> scaleChoices = new Vector<String>();
@@ -108,7 +106,6 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        scaleChoices.add("Ultra Locrian");
 	        
 	        drpScaleChoices1 = new JComboBox(scaleChoices);
-	        setSizeSmall(drpScaleChoices1);
 	        drpScaleChoices1.setSelectedIndex(5);
 	        
 	        drpScaleChoices1.addActionListener(
@@ -134,7 +131,6 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        
 			//Melodizer 2 Scale
 	        lblSetScale = new JLabel("Melodizer 2 scale");
-	        setSizeSmall(lblSetScale);
 	        lblSetScale.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	        
 	        //Remove clip launch option
@@ -153,7 +149,6 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        scaleChoices.add("Ultra Locrian");
 	        
 	        drpScaleChoices2 = new JComboBox(scaleChoices);
-	        setSizeSmall(drpScaleChoices2);
 	        drpScaleChoices2.setSelectedIndex(4);
 	        
 	        drpScaleChoices2.addActionListener(
@@ -171,13 +166,11 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        
 	        //Melodizer record mode
 	        JLabel lblMelRecMode = new JLabel("Melodizer Rec Mode");
-	        setSizeSmall(lblMelRecMode);
 	        lblMelRecMode.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	        Vector<String> recModeChoices = new Vector<String>();
 	        recModeChoices.add("On Button Press");
 	        recModeChoices.add("Quantized");
 	        drpMelRecMode = new JComboBox(recModeChoices);
-	        setSizeSmall(drpMelRecMode);
 	        drpMelRecMode.addActionListener(
 	        		new ActionListener(){
 	        			public void actionPerformed(ActionEvent e) {
@@ -199,11 +192,9 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        for(Integer i=0; i<7;i++)
 	        {
 	        	lblSetLoopGate = new JLabel("Loop " + (i+1) + "  Choke Group");
-	        	setSizeSmall(lblSetLoopGate);
 	            lblSetLoopGate.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	            String[] chokeChoices = { "Nope", "1", "2", "3", "4", "5", "6", "7"};
 	            drpLoopChoke = new JComboBox(chokeChoices);
-	            setSizeSmall(drpLoopChoke);
 	            drpLoopChoke.setName(i.toString() + "choke");
 	            drpLoopChoke.setSelectedIndex(0);
 	            drpLoopChoke.addActionListener(
@@ -219,11 +210,9 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	            );
 	            // Loop length choices
 	            lblSetLoopLength = new JLabel("Length");
-	            setSizeSmall(lblSetLoopLength);
 	            lblSetLoopLength.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	            String[] lengthChoices = { ".5", "1", "2", "4", "8", "16", "32"};
 	            drpLoopLength = new JComboBox(lengthChoices);
-	            setSizeSmall(drpLoopLength);
 	            drpLoopLength.setName(i.toString()+"length");
 	            drpLoopLength.setSelectedIndex(1);
 	            drpLoopLength.addActionListener(
@@ -241,14 +230,12 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        }
 	        
 	        JLabel lblGateLoopChoke = new JLabel("Gate choked loops?");
-	        setSizeSmall(lblGateLoopChoke);
 	        lblGateLoopChoke.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	    	
 	        Vector<String> gateChoices = new Vector<String>();
 	        gateChoices.add("Ok");
 	        gateChoices.add("Nope");
 	        drpGateLoopChoke = new JComboBox(gateChoices);
-	        setSizeSmall(drpGateLoopChoke);
 	        drpGateLoopChoke.addActionListener(
 	        		new ActionListener(){
 	        			public void actionPerformed(ActionEvent e) {
@@ -262,11 +249,9 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        
 	        //Add mute looper checkbox
 	        JLabel lblMuteLooper = new JLabel("Mute Looper (to assign MIDI)");
-	        setSizeSmall(lblMuteLooper);
 	        lblMuteLooper.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	    	
 	        chkMuteLooper = new JCheckBox();
-	        setSizeSmall(chkMuteLooper);
 	        chkMuteLooper.addActionListener(
 	        		new ActionListener(){
 	        			public void actionPerformed(ActionEvent e) {
@@ -281,13 +266,11 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        
 	        //Add prev/next patch buttons
 	        btnPrevPatch = new JButton("<< Prev Patch");
-	        btnPrevPatch.putClientProperty("JButton.buttonType", "gradient");
 	        btnPrevPatch.addActionListener(this);
 	        btnPrevPatch.setEnabled(false);
 	        thirdPanel.add(btnPrevPatch, BorderLayout.WEST);
 	        
 	        btnNextPatch = new JButton("Next Patch >>");
-	        btnNextPatch.putClientProperty("JButton.buttonType", "gradient");
 	        btnNextPatch.addActionListener(this);
 	        btnNextPatch.setEnabled(false);
 	        thirdPanel.add(btnNextPatch, BorderLayout.EAST);
@@ -453,11 +436,6 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	private void setTitle(String title)
 	{
 		parentFrame.setTitle("7up - " + title);
-	}
-
-	public void setSizeSmall(JComponent component) {
-		// Disable for now
-		//component.putClientProperty("JComponent.sizeVariant", "small");
 	}
 	
 	class ResizeListener implements ComponentListener {

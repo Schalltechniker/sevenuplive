@@ -10,6 +10,7 @@ public class LoopRecorder extends Mode {
 
 	private CtrlSequence loopSequences[];
 	private Boolean gateLoopChokes = true;
+	private int curSequence = 0;
 	
 	public LoopRecorder(int _navRow, MonomeUp _m, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
@@ -75,10 +76,6 @@ public class LoopRecorder extends Mode {
 						AllModes.getInstance().getLooper().stopLoop(k);
 					else
 						AllModes.getInstance().getLooper().stopLoopsOnNextStep[k] = true;
-				
-					//All of the loops in the same choke group will start recording at the same time
-					if(loopSequences[x].getStatus() == MonomeUp.CUED && loopSequences[k].getStatus() == MonomeUp.CUED)
-					loopSequences[k].startRecording();
 				}
 			}
 		}
@@ -86,34 +83,43 @@ public class LoopRecorder extends Mode {
 		loopSequences[x].addEvent(y);
 		AllModes.getInstance().getLooper().stopLoopsOnNextStep[x] = false;
 		AllModes.getInstance().getLooper().playLoop(x, y);
-		//System.out.println("Playing loop " + x);
 	}
 	
 	private void pressNavCol(int y)
 	{
-		if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.STOPPED)
+		//If changing to a different sequence
+		if(curSequence != getSubMenuFromYCoord(y))
 		{
-			loopSequences[getSubMenuFromYCoord(y)].beginCue();
+			curSequence = getSubMenuFromYCoord(y);
 		}
-		else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.CUED)
+		else
 		{
-			loopSequences[getSubMenuFromYCoord(y)].stop();
-		}
-		else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.PLAYING)
-		{
-			loopSequences[getSubMenuFromYCoord(y)].stop();
-			AllModes.getInstance().getLooper().stopLoop(getSubMenuFromYCoord(y));
-		}
-		else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.RECORDING)
-		{
-			loopSequences[getSubMenuFromYCoord(y)].endRecording();
-			AllModes.getInstance().getLooper().stopLoop(getSubMenuFromYCoord(y));
-			loopSequences[getSubMenuFromYCoord(y)].play();
-			//Play the first offset
-			Integer sequencedStep = loopSequences[getSubMenuFromYCoord(y)].heartbeat();
-			if(sequencedStep != null && sequencedStep != -1)
+			if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.STOPPED)
 			{
-				AllModes.getInstance().getLooper().playLoop(getSubMenuFromYCoord(y), sequencedStep);
+				loopSequences[getSubMenuFromYCoord(y)].beginCue();
+			}
+			else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.CUED)
+			{
+				//If cued and then stopped, clear the sequence
+				loopSequences[getSubMenuFromYCoord(y)] = new CtrlSequence(getSubMenuFromYCoord(y));
+			}
+			else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.PLAYING)
+			{
+				//If playing, stop, clear, and cue the sequence
+				loopSequences[getSubMenuFromYCoord(y)].stop();
+				loopSequences[getSubMenuFromYCoord(y)] = new CtrlSequence(getSubMenuFromYCoord(y));
+				loopSequences[getSubMenuFromYCoord(y)].beginCue();
+			}
+			else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.RECORDING)
+			{
+				loopSequences[getSubMenuFromYCoord(y)].endRecording();
+				loopSequences[getSubMenuFromYCoord(y)].play();
+				//Play the first offset
+				Integer sequencedStep = loopSequences[getSubMenuFromYCoord(y)].heartbeat();
+				if(sequencedStep != null && sequencedStep != -1)
+				{
+					AllModes.getInstance().getLooper().playLoop(getSubMenuFromYCoord(y), sequencedStep);
+				}
 			}
 		}
 	}
