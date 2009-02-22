@@ -6,6 +6,7 @@
   	<echo>Usage: ant &lt;target&gt;</echo>
   	<echo>Targets:</echo>
   	<echo>build: build the code</echo>
+  	<echo>jar: build the jar file</echo>
   	<echo>clean: clean the build</echo>
   </target>	
   
@@ -19,6 +20,7 @@
   	<echo>Sources=${src.folder}</echo>
   	<echo>Libraries=${lib.folder}</echo>
   	<echo>Binaries=${bin.folder}</echo>
+  	<echo>Distribution=${dist.folder}</echo>
   	<echo></echo>
   	
   	<echo>Libraries in build</echo>
@@ -49,6 +51,21 @@
 
   <target name="clean" depends="_init">
     <delete quiet="false" dir="${bin.folder}" />
+    <delete quiet="false" dir="${dist.folder}" />
+  </target>
+  
+  <target name="jar" depends="build">
+    <mkdir dir="${dist.folder}"/>
+    <jar jarfile="${dist.folder}/SevenUpLive.jar">
+        <fileset dir="${bin.folder}"/>
+        <manifest>
+            <attribute name="Class-Path" value="core.jar jdom.jar libProMandoMidiJNILib.jar oscP5.jar promidi.jar proxml.jar"/>
+            <attribute name="Main-Class" value="mtn.sevenuplive.main.MainApp"/>
+        </manifest>
+    </jar>
+    <copy todir="${dist.folder}" flatten="false">
+			<fileset dir="${lib.folder}"/>
+    </copy>
   </target>
   
 </project>

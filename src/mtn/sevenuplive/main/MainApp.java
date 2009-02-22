@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Properties;
 
-import javax.swing.JFileChooser;
+import java.awt.FileDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -43,10 +43,11 @@ public class MainApp extends JFrame
 	
 	/** Last directory read or stored to */
 	File lastDirectory;
+	File lastFile;
 	
 	JMenu menu;
 	SevenUpPanel sevenUpPanel;
-	JFileChooser fc;
+	FileDialog fc;
 	JMenu recentsMenu;
 	
 	/** Application settings */
@@ -65,7 +66,7 @@ public class MainApp extends JFrame
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(screenSize.width / 2,screenSize.height / 2,350,300);
  
-        fc = new JFileChooser();
+        fc = new FileDialog(this);
 
         setJMenuBar(createMenuBar());
         this.setContentPane(new ConnectionPanel(this));
@@ -78,7 +79,7 @@ public class MainApp extends JFrame
     	this.setContentPane(sevenUpPanel);
     	//Enable load and save
     	menu.getItem(0).setEnabled(true);
-    	menu.getItem(2).setEnabled(true);
+    	menu.getItem(3).setEnabled(true);
     	
     	// Now we can display recent files
     	loadRecentFileList();
@@ -90,6 +91,9 @@ public class MainApp extends JFrame
     protected JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
+        // Handle different OS accelerators
+        int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+        
         //Set up the menu.
         menu = new JMenu("File");
         menu.setMnemonic(KeyEvent.VK_D);
@@ -98,7 +102,7 @@ public class MainApp extends JFrame
         JMenuItem menuItem;
         
         //Open menu item
-        menuItem = new JMenuItem("Open 7up Patch...");
+        menuItem = new JMenuItem("Open Patch...");
         menuItem.setActionCommand("open");
         menuItem.setEnabled(false);
         menuItem.addActionListener(this);
@@ -106,12 +110,28 @@ public class MainApp extends JFrame
         
         //Create recents menu item..it gets populated later
         recentsMenu = new JMenu("Open Recent");
+        menuItem.setAccelerator(
+                KeyStroke.getKeyStroke( 
+                KeyEvent.VK_O, mask));
         recentsMenu.setEnabled(false);
         menu.add(recentsMenu);
         
         //Save patch menu item
-        menuItem = new JMenuItem("Save Patch as...");
+        menuItem = new JMenuItem("Save");
+        menuItem.setActionCommand("save");
+        menuItem.setAccelerator( 
+                KeyStroke.getKeyStroke( 
+                KeyEvent.VK_S, mask)); 
+        menuItem.setEnabled(false);
+        menuItem.addActionListener(this);
+        menu.add(menuItem);
+
+        //Save patch menu item
+        menuItem = new JMenuItem("Save As...");
         menuItem.setActionCommand("saveas");
+        menuItem.setAccelerator( 
+        KeyStroke.getKeyStroke( 
+        KeyEvent.VK_S, mask + KeyEvent.SHIFT_MASK)); 
         menuItem.setEnabled(false);
         menuItem.addActionListener(this);
         menu.add(menuItem);
@@ -142,27 +162,59 @@ public class MainApp extends JFrame
     			loadPatch(file); // load the patch
     		}
     	} else if ("open".equals(e.getActionCommand())) {
-    		int returnVal = fc.showOpenDialog(this);
-    		if (returnVal == JFileChooser.APPROVE_OPTION) {
-               java.io.File file = fc.getSelectedFile();
-               loadPatch(file); // load the patch
-            }	
-        } else if ("saveas".equals(e.getActionCommand())) {
-        	
+    		fc.setMode(FileDialog.LOAD);
+    		fc.setVisible(true);
+    		String filename = fc.getFile() == null ? null : fc.getDirectory() + fc.getFile();
+    		if (filename != null) {
+    			lastFile = new File(filename); 
+    			lastDirectory = new File(fc.getDirectory());
+    			loadPatch(lastFile); // load the patch
+    		}	
+        } else if ("save".equals(e.getActionCommand())) {
         	java.io.FileWriter fileWriter = null;
         	
         	try {
-        		int returnVal = fc.showSaveDialog(this);
-        		if (returnVal == JFileChooser.APPROVE_OPTION) {
-        			java.io.File file = fc.getSelectedFile();
+        		String filename = fc.getFile() == null ? null : fc.getDirectory() + fc.getFile();
+        		if (filename != null) {
+        			java.io.File file = new File(filename);
         			
                     org.jdom.Document doc = sevenUpPanel.toJDOMXMLDocument(file.getName());
                     org.jdom.output.XMLOutputter fmt = new XMLOutputter();
                     
         			fileWriter = new FileWriter(file);
         			fmt.output(doc, fileWriter);
-        			lastDirectory = new File(file.getParent());
-        			fc.setCurrentDirectory(lastDirectory);
+        		}
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally { // standard java closing resources in finally
+            	if (fileWriter != null)
+					try {
+						fileWriter.close();
+					} catch (IOException e1) {
+						// drop it
+					}
+            }
+        } else if ("saveas".equals(e.getActionCommand())) {
+        	
+        	java.io.FileWriter fileWriter = null;
+        	
+        	try {
+        		fc.setMode(FileDialog.SAVE);
+        		if (lastFile != null && lastFile.exists())
+        			fc.setFile(lastFile.getName());
+        		if (lastDirectory != null && lastDirectory.exists())
+        			fc.setDirectory(lastDirectory.getAbsolutePath());
+        		fc.setVisible(true);
+        		String filename = fc.getFile() == null ? null : fc.getDirectory() + fc.getFile();
+        		if (filename != null) {
+        			java.io.File file = new File(filename);
+        			
+                    org.jdom.Document doc = sevenUpPanel.toJDOMXMLDocument(file.getName());
+                    org.jdom.output.XMLOutputter fmt = new XMLOutputter();
+                    
+        			fileWriter = new FileWriter(file);
+        			fmt.output(doc, fileWriter);
+        			lastDirectory = new File(fc.getDirectory());
         			addToRecents(file);
         		}
             } catch (Exception ex) {
@@ -181,6 +233,10 @@ public class MainApp extends JFrame
         		sevenUpPanel.quit();
         	 System.exit(0);
         } 
+    	
+    	if (lastFile != null && lastDirectory != null && lastFile.exists() && lastDirectory.exists()) {
+    		menu.getItem(2).setEnabled(true); // enable Save
+    	}
     }
     
     /**
@@ -194,7 +250,7 @@ public class MainApp extends JFrame
         {
      	   Document doc = builder.build(file);
      	   sevenUpPanel.loadJDOMXMLDocument(doc);
-           fc.setCurrentDirectory(new File(file.getParent()));
+           fc.setDirectory(file.getParent());
            addToRecents(file);
         }
         catch(Exception ex)
@@ -337,6 +393,12 @@ public class MainApp extends JFrame
 			// Store the last directory we used as well
 			if (lastDirectory != null && lastDirectory.exists()) {
 				props.setProperty(LAST_DIRECTORY_PROP_NAME, lastDirectory.getAbsolutePath());
+			} else {
+				String lastdir = props.getProperty(LAST_DIRECTORY_PROP_NAME);
+				
+				if (lastdir != null)
+					lastDirectory = new File(lastdir);
+				
 			}
 		
 			Integer index = 0;

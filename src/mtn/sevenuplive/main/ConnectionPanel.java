@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -81,6 +82,7 @@ public class ConnectionPanel extends JPanel
 		readConnections(sevenUpConnections);
 		
 		JLabel lblSetMonomeType = new JLabel(MONOME_TYPE);
+		setSizeSmall(lblSetMonomeType);
 		lblSetMonomeType.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 		Vector<String> monomeChoices = new Vector<String>();
         monomeChoices.add("64");
@@ -95,6 +97,7 @@ public class ConnectionPanel extends JPanel
         monomeChoices.add("9 x 64");
         monomeChoices.add("10 x 64");
         drpMonomeChoices = new JComboBox(monomeChoices);
+        setSizeSmall(drpMonomeChoices);
         drpMonomeChoices.setSelectedIndex(sevenUpConnections.monomeType);
         drpMonomeChoices.addActionListener(
         		new ActionListener(){
@@ -108,56 +111,74 @@ public class ConnectionPanel extends JPanel
 		super.add(drpMonomeChoices);
         
 		JLabel lblOscPrefix = new JLabel(OSC_PREFIX);
+		setSizeSmall(lblOscPrefix);
 		lblOscPrefix.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 		txtOscPrefix = new JTextField(sevenUpConnections.oscPrefix);
+		setSizeSmall(txtOscPrefix);
 		super.add(lblOscPrefix);
 		super.add(txtOscPrefix);
 		
 		JLabel lblOscHostAddress = new JLabel(OSC_HOST_ADDR);
+		setSizeSmall(lblOscHostAddress);
 		lblOscHostAddress.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 		txtOscHostAddress = new JTextField(sevenUpConnections.oscHostAddress);
+		setSizeSmall(txtOscHostAddress);
 		super.add(lblOscHostAddress);
 		super.add(txtOscHostAddress);
 		
 		JLabel lblOscHostPort = new JLabel(OSC_HOST_PORT);
+		setSizeSmall(lblOscHostPort);
 		lblOscHostPort.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 		txtOscHostPort = new JTextField(sevenUpConnections.oscHostPort > 0 ? Integer.toString(sevenUpConnections.oscHostPort) : OSC_HOST_PORT_DEFAULT);
+		setSizeSmall(txtOscHostPort);
 		super.add(lblOscHostPort);
 		super.add(txtOscHostPort);
 		
 		JLabel lblOscListenPort = new JLabel(OSC_LISTEN_PORT);
+		setSizeSmall(lblOscListenPort);
 		lblOscListenPort.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 		txtOscListenPort = new JTextField(sevenUpConnections.oscListenPort > 0 ? Integer.toString(sevenUpConnections.oscListenPort) : OSC_LISTEN_PORT_DEFAULT);
+		setSizeSmall(txtOscListenPort);
 		super.add(lblOscListenPort);
 		super.add(txtOscListenPort);
 		
 		JLabel lblMidiInput = new JLabel(MIDI_INPUT_DEVICE);	
+		setSizeSmall(lblMidiInput);
 		lblMidiInput.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 		drpMidiInputs = new JComboBox(getMidiInputs().toArray());
+		setSizeSmall(drpMidiInputs);
 		super.add(lblMidiInput);
 		super.add(drpMidiInputs);
 		
 		JLabel lblStepperInput = new JLabel(STEPPER_OUTPUT_DEVICE);	
+		setSizeSmall(lblStepperInput);
 		lblStepperInput.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
-			drpMidiStepperOutput = new JComboBox(getMidiOutputs().toArray());
+		drpMidiStepperOutput = new JComboBox(getMidiOutputs().toArray());
+		setSizeSmall(drpMidiStepperOutput);
 		super.add(lblStepperInput);
 		super.add(drpMidiStepperOutput);
 		
 		JLabel lblLooperInput = new JLabel(LOOPER_OUTPUT_DEVICE);	
+		setSizeSmall(lblLooperInput);
 		lblLooperInput.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
-			drpMidiLooperOutput = new JComboBox(getMidiOutputs().toArray());
+		drpMidiLooperOutput = new JComboBox(getMidiOutputs().toArray());
+		setSizeSmall(drpMidiLooperOutput);
 		super.add(lblLooperInput);
 		super.add(drpMidiLooperOutput);
 		
 		JLabel lblMelder1Input = new JLabel(MELODIZER1_OUTPUT_DEVICE);	
+		setSizeSmall(lblMelder1Input);
 		lblMelder1Input.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
-			drpMidiMelder1Output = new JComboBox(getMidiOutputs().toArray());
+		drpMidiMelder1Output = new JComboBox(getMidiOutputs().toArray());
+		setSizeSmall(drpMidiMelder1Output);
 		super.add(lblMelder1Input);
 		super.add(drpMidiMelder1Output);
 		
 		JLabel lblMelder2Input = new JLabel(MELODIZER2_OUTPUT_DEVICE);	
+		setSizeSmall(lblMelder2Input);
 		lblMelder2Input.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
-			drpMidiMelder2Output = new JComboBox(getMidiOutputs().toArray());
+		drpMidiMelder2Output = new JComboBox(getMidiOutputs().toArray());
+		setSizeSmall(drpMidiMelder2Output);
 		super.add(lblMelder2Input);
 		super.add(drpMidiMelder2Output);
 
@@ -233,6 +254,7 @@ public class ConnectionPanel extends JPanel
 		}
 
 		JButton btnInitialize = new JButton();
+		btnInitialize.putClientProperty("JButton.buttonType", "gradient");
 		btnInitialize = new JButton("Initialize");
 		btnInitialize.addActionListener(this);
 		super.add(btnInitialize);
@@ -349,5 +371,11 @@ public class ConnectionPanel extends JPanel
 
 		return props;
 	}
+	
+	public void setSizeSmall(JComponent component) {
+		// Disable for now  
+		//component.putClientProperty("JComponent.sizeVariant", "small");
+	}
+
 
 }
