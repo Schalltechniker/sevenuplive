@@ -56,34 +56,37 @@ public class SevenUpApplet extends processing.core.PApplet
 	   int x_grids = 1;
 	   int y_grids = 1;
 	   switch (monomeType) {
-	   case 0:
+	   case 0: //1 x 64
 		   x_grids=1; y_grids=1;
 		   break;
-	   case 1:
+	   case 1: //128H
 		   x_grids=2; y_grids=1;
 		   break;
-	   case 2:
+	   case 2: //128V
 		   x_grids=1; y_grids=2;
 		   break;
-	   case 3:
+	   case 3: //3 x 64's
+		   x_grids=1; y_grids=3;
+		   break;
+	   case 4: //256
 		   x_grids=2; y_grids=2;
 		   break;
-	   case 4:
+	   case 5:
 		   x_grids = 1; y_grids = 5;
 		   break;
-	   case 5:
+	   case 6:
 		   x_grids = 1; y_grids = 6;
 		   break;
-	   case 6:
+	   case 7:
 		   x_grids = 1; y_grids = 7;
 		   break;
-	   case 7:
+	   case 8:
 		   x_grids = 1; y_grids = 8;
 		   break;
-	   case 8:
+	   case 9:
 		   x_grids = 1; y_grids = 9;
 		   break;
-	   case 9:
+	   case 10: //10 x 64's
 		   x_grids = 1; y_grids = 10;
 		   break;
 	   };
