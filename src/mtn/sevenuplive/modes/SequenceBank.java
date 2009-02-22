@@ -32,9 +32,15 @@ public class SequenceBank {
 		rowPatterns[rowNum][patNum] = !rowPatterns[rowNum][patNum];
 	}
 	
-	public boolean[] getRow(int rowNum)
+	public int getEnabledPatternInRow(int rowNum)
 	{
-		return rowPatterns[rowNum];
+		for(int i=0;i<7;i++)
+		{
+			if(rowPatterns[rowNum][i])
+				return i;
+		}
+		
+		return 0;
 	}
 	
 	public boolean isPatternEnabledAtRow(int patNum, int rowNum)

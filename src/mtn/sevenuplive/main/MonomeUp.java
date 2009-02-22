@@ -22,7 +22,8 @@ import mtn.sevenuplive.modes.Looper;
 import mtn.sevenuplive.modes.Masterizer;
 import mtn.sevenuplive.modes.Melodizer;
 import mtn.sevenuplive.modes.ModeConstants;
-import mtn.sevenuplive.modes.Patternizer;
+import mtn.sevenuplive.modes.PatternizerModel;
+import mtn.sevenuplive.modes.PatternizerView;
 import mtn.sevenuplive.modes.Sequencer;
 import mtn.sevenuplive.modes.Displays.GridCoordinateTarget;
 import mtn.sevenuplive.scales.Scale;
@@ -132,7 +133,16 @@ public final class MonomeUp extends MonomeOSC implements MonomeCallback {
 	     // Init midi communications
 	     initializeMidi();
 	     
-	     allmodes = new AllModes(new Patternizer(ModeConstants.PATTERN_MODE, midiSampleOut, GRID_WIDTH, GRID_HEIGHT), 
+	     int totalGrids = x_grids * y_grids;
+	     //Create the same number of patternizer views as there are grids
+	     PatternizerModel patternizerModel = new PatternizerModel(ModeConstants.PATTERN_MODE, midiSampleOut, GRID_WIDTH, GRID_HEIGHT);
+	     PatternizerView[] patternizerViews = new PatternizerView[totalGrids];
+	     for(int i=0;i<patternizerViews.length;i++)
+	     {
+	    	 patternizerViews[i] = new PatternizerView(ModeConstants.PATTERN_MODE, GRID_WIDTH, GRID_HEIGHT, patternizerModel);
+	     }
+	     
+	     allmodes = new AllModes(patternizerModel, patternizerViews, 
 	    		 new Controller(ModeConstants.CONTROL_MODE, midiSampleOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT),
 	    		 new Sequencer(ModeConstants.SEQ_MODE, GRID_WIDTH, GRID_HEIGHT), 
 	    		 new Melodizer(ModeConstants.MELODY_MODE,midiMelodyOut, GRID_WIDTH, GRID_HEIGHT), // Melodizer 1 
@@ -142,7 +152,6 @@ public final class MonomeUp extends MonomeOSC implements MonomeCallback {
 	    		 new Masterizer(ModeConstants.MASTER_MODE, midiMelodyOut, midiMelody2Out, midiMasterOut, this, GRID_WIDTH, GRID_HEIGHT));
 
 	     //Set initial display grids
-	     int totalGrids = x_grids * y_grids;
 	     grids = new DisplayGrid[totalGrids];
 	     for(int i=0;i<grids.length;i++)
 	     {
@@ -163,7 +172,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeCallback {
 	    		 startCol = i * 8;
 	    	 }
 	    	 
-	    	 grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizer());
+	    	 grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i);
 	     }
 	     
 	    
@@ -357,7 +366,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeCallback {
 			if(xmlStateChild.getName().equals("patternizer"))
 			{
 				System.out.println("Loading PATTERNIZER...");
-				allmodes.getPatternizer().loadJDOMXMLElement(xmlStateChild);
+				allmodes.getPatternizerModel().loadJDOMXMLElement(xmlStateChild);
 			}
 			else if(xmlStateChild.getName().equals("controller"))
 			{
@@ -431,7 +440,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeCallback {
 		 xmlState.setAttribute(new Attribute("patchName", fileName));	
 		 
 		 //Create PATTERNIZER
-		 Element xmlPatternizer = allmodes.getPatternizer().toJDOMXMLElement();
+		 Element xmlPatternizer = allmodes.getPatternizerModel().toJDOMXMLElement();
 		 
 	 	 //Create CONTROLLER
 		 Element xmlController = allmodes.getController().toJDOMXMLElement();
@@ -554,7 +563,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeCallback {
 			}	
 		}
 			
-		allmodes.getPatternizer().curPatternRow = 0;
+		allmodes.getPatternizerModel().curPatternRow = 0;
 		allmodes.getSequencer().curSeqRow = 0;
 	}
 

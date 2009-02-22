@@ -8,6 +8,7 @@ public class DisplayGrid {
 	private int start_row;
 	private int grid_width;
 	private int grid_height;
+	private int grid_index;
 
 	private int curDisplayGrid[][];
 	private int navGrid[];
@@ -39,11 +40,12 @@ public class DisplayGrid {
 	private Monome monome;
 	private AllModes allmodes;
 
-	public DisplayGrid(Monome monome, AllModes allmodes, int start_column, int start_row, int grid_width, int grid_height, Mode defaultMode) {
+	public DisplayGrid(Monome monome, AllModes allmodes, int start_column, int start_row, int grid_width, int grid_height, Mode defaultMode, int grid_index) {
 		this.start_row = start_row;
 		this.start_column = start_column;
 		this.grid_width = grid_width;
 		this.grid_height = grid_height;
+		this.grid_index = grid_index;
 		
 		this.monome = monome;
 		this.allmodes = allmodes;
@@ -183,7 +185,7 @@ public class DisplayGrid {
 					menuLevel = SUBMENU;
 
 					if (curMode == ModeConstants.PATTERN_MODE)
-						navGrid = allmodes.getPatternizer().getNavGrid();
+						navGrid = allmodes.getPatternizerView(grid_index).getNavGrid();
 					else if (curMode == ModeConstants.CONTROL_MODE)
 						navGrid = allmodes.getController().getNavGrid();
 					else if (curMode == ModeConstants.SEQ_MODE)
@@ -205,8 +207,8 @@ public class DisplayGrid {
 					menuLevel = SUBMENU;
 					if(y == ModeConstants.PATTERN_MODE)
 					{
-						curDisplayGrid = allmodes.getPatternizer().getDisplayGrid();
-						navGrid = allmodes.getPatternizer().getNavGrid();
+						curDisplayGrid = allmodes.getPatternizerView(grid_index).getDisplayGrid();
+						navGrid = allmodes.getPatternizerView(grid_index).getNavGrid();
 					}
 					else if(y == ModeConstants.CONTROL_MODE)
 					{
@@ -265,8 +267,8 @@ public class DisplayGrid {
 				{
 					if(curMode == ModeConstants.PATTERN_MODE)
 					{
-						allmodes.getPatternizer().press(x, y);
-						curDisplayGrid = allmodes.getPatternizer().getDisplayGrid();
+						allmodes.getPatternizerView(grid_index).press(x, y);
+						curDisplayGrid = allmodes.getPatternizerView(grid_index).getDisplayGrid();
 					}
 					else if(curMode == ModeConstants.CONTROL_MODE)
 					{
@@ -306,7 +308,7 @@ public class DisplayGrid {
 		{
 			if (curMode == ModeConstants.PATTERN_MODE)
 			{
-				allmodes.getPatternizer().press(x, y);
+				allmodes.getPatternizerView(grid_index).press(x, y);
 			}
 			else if(curMode == ModeConstants.CONTROL_MODE)
 			{
@@ -334,7 +336,7 @@ public class DisplayGrid {
 
 		if(curMode == ModeConstants.PATTERN_MODE)
 		{
-			allmodes.getPatternizer().release(x, y);
+			allmodes.getPatternizerView(grid_index).release(x, y);
 		}
 		//If user releases within the melodizer play area
 		else if(curMode == ModeConstants.MELODY_MODE && x != NAVCOL)
@@ -356,8 +358,8 @@ public class DisplayGrid {
 	{
 		if(curMode == ModeConstants.PATTERN_MODE && x == NAVCOL && y>0)
 		{
-			allmodes.getPatternizer().triggerButtonHeld(x, y);
-			curDisplayGrid = allmodes.getPatternizer().getDisplayGrid();
+			allmodes.getPatternizerView(grid_index).triggerButtonHeld(x, y);
+			curDisplayGrid = allmodes.getPatternizerView(grid_index).getDisplayGrid();
 		}
 		else if(curMode == ModeConstants.CONTROL_MODE && x == NAVCOL && navGrid[y] == DisplayGrid.FASTBLINK)
 			allmodes.getController().clearControlBank(y);
@@ -367,13 +369,13 @@ public class DisplayGrid {
 	public void displayCursor() {
 		
 		//Only show the beat blips in current pattern mode
-        if ((curMode == ModeConstants.PATTERN_MODE && allmodes.getSequencer().isPatternPlaying(allmodes.getPatternizer().selectedPattern)) )
+        if ((curMode == ModeConstants.PATTERN_MODE && allmodes.getSequencer().isPatternPlaying(allmodes.getPatternizerView(grid_index).selectedPattern)) )
         {
         	for (int x = start_column; x < start_column + grid_width; x++) {
-        		if (monome.isLit(x, AllModes.patternizer.curPatternRow + start_row)) { 
-        			monome.setValue(x, AllModes.patternizer.curPatternRow + start_row, 0);  
+        		if (monome.isLit(x, AllModes.patternizerModel.curPatternRow + start_row)) { 
+        			monome.setValue(x, AllModes.patternizerModel.curPatternRow + start_row, 0);  
         		} else {
-        			monome.setValue(x, AllModes.patternizer.curPatternRow + start_row, 1);
+        			monome.setValue(x, AllModes.patternizerModel.curPatternRow + start_row, 1);
         		}
         	}
         	// @TODO clloyd fix this 
@@ -382,9 +384,9 @@ public class DisplayGrid {
         else if(curMode == ModeConstants.MASTER_MODE)
         {
 	        //blip the masterizer
-        	allmodes.getMasterizer().updatePatternBeat(allmodes.getPatternizer().curPatternRow);
+        	allmodes.getMasterizer().updatePatternBeat(allmodes.getPatternizerModel().curPatternRow);
         }
-        else if(curMode == ModeConstants.SEQ_MODE && allmodes.getPatternizer().curPatternRow % 4 == 0)
+        else if(curMode == ModeConstants.SEQ_MODE && allmodes.getPatternizerModel().curPatternRow % 4 == 0)
         {
         	for (int x = start_column; x < start_column + grid_width; x++) {
         		if (monome.isLit(x, AllModes.sequencer.curSeqRow + start_row)) { 
@@ -399,6 +401,11 @@ public class DisplayGrid {
         
         if(curMode == ModeConstants.MASTER_MODE)
         	allmodes.getMasterizer().updateDisplayGrid();
+	}
+	
+	public int getGridIndex()
+	{
+		return grid_index;
 	}
 	
 

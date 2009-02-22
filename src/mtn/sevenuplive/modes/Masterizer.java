@@ -90,7 +90,7 @@ public class Masterizer extends Mode {
 		}
 		else if(x == PATTERN_COL)
 		{
-			AllModes.patternizer.curPatternRow = y;
+			AllModes.patternizerModel.curPatternRow = y;
 		}
 		else if(x == SEQUENCER_COL)
 		{
@@ -103,7 +103,7 @@ public class Masterizer extends Mode {
 				{
 						AllModes.sequencer.curSeqRow = 0;
 						//Play pattern from beginning
-						AllModes.patternizer.curPatternRow = 0;
+						AllModes.patternizerModel.curPatternRow = 0;
 				}
 			}
 		}
