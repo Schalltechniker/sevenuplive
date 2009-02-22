@@ -41,7 +41,7 @@ public class SevenUpApplet extends processing.core.PApplet
 	public void setup()
 	{
 	   
-	   frameRate(40);
+	   frameRate(35);
 	   size(300, 200);
 	   
 	   xmlIO = new XMLInOut(this);
@@ -68,7 +68,24 @@ public class SevenUpApplet extends processing.core.PApplet
 	   case 3:
 		   x_grids=2; y_grids=2;
 		   break;
-			   
+	   case 4:
+		   x_grids = 1; y_grids = 5;
+		   break;
+	   case 5:
+		   x_grids = 1; y_grids = 6;
+		   break;
+	   case 6:
+		   x_grids = 1; y_grids = 7;
+		   break;
+	   case 7:
+		   x_grids = 1; y_grids = 8;
+		   break;
+	   case 8:
+		   x_grids = 1; y_grids = 9;
+		   break;
+	   case 9:
+		   x_grids = 1; y_grids = 10;
+		   break;
 	   };
 	   
 	   m = new MonomeUp(x_grids, y_grids, sevenUpConnections, monomeScale, midiIO, parentPanel);

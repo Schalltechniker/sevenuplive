@@ -87,6 +87,12 @@ public class ConnectionPanel extends JPanel
         monomeChoices.add("128H");
         monomeChoices.add("128V");
         monomeChoices.add("256");
+        monomeChoices.add("5 x 64");
+        monomeChoices.add("6 x 64");
+        monomeChoices.add("7 x 64");
+        monomeChoices.add("8 x 64");
+        monomeChoices.add("9 x 64");
+        monomeChoices.add("10 x 64");
         drpMonomeChoices = new JComboBox(monomeChoices);
         drpMonomeChoices.setSelectedIndex(sevenUpConnections.monomeType);
         drpMonomeChoices.addActionListener(

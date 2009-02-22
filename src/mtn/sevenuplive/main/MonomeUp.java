@@ -142,51 +142,31 @@ public final class MonomeUp extends MonomeOSC implements MonomeCallback {
 	    		 new Masterizer(ModeConstants.MASTER_MODE, midiMelodyOut, midiMelody2Out, midiMasterOut, this, GRID_WIDTH, GRID_HEIGHT));
 
 	     //Set initial display grids
-	     if (x_grids == 1) {
-	    	 switch (y_grids) {
-		    	 case 1:
-		    		 grids=new DisplayGrid[]{ 
-				    		 new DisplayGrid(this, allmodes, 0, 0, 8 ,8, allmodes.getPatternizer())
-			    		 };
-		    		 break;
-		    	 case 2:
-		    		 grids=new DisplayGrid[]{ 
-				    		 new DisplayGrid(this, allmodes, 0, 0, 8 ,8, allmodes.getPatternizer()),
-				    		 new DisplayGrid(this, allmodes, 0, 8, 8 ,8, allmodes.getSequencer())
-			    		 };
-		    		 break;
-		    	 default:
-		    		 grids=new DisplayGrid[]{ 
-			    		 	new DisplayGrid(this, allmodes, 0, 0, 8 ,8, allmodes.getPatternizer())
-		    	 		};
+	     int totalGrids = x_grids * y_grids;
+	     grids = new DisplayGrid[totalGrids];
+	     for(int i=0;i<grids.length;i++)
+	     {
+	    	 int startCol = 0;
+	    	 int startRow;
+	    	 //Determine startCol and startRow assuming all vertical monomes
+	    	 startRow = i * 8;
+	    	 
+	    	 //However, override for 128H or 256
+	    	 if(x_grids > 1 && y_grids > 1) //256
+	    	 {
+	    		 if((i + 1) % 2 == 0)startRow = 8; else startRow = 0;
+	    		 if(i > 1)startCol = 8; else startCol = 0;
 	    	 }
-	     } else if (x_grids == 2) {
-	    	 switch (y_grids) {
-		    	 case 1:
-		    		 grids=new DisplayGrid[]{ 
-		    				 new DisplayGrid(this, allmodes, 0, 0, 8 ,8, allmodes.getPatternizer()),
-				    		 new DisplayGrid(this, allmodes, 8, 0, 8 ,8, allmodes.getSequencer())
-			    		 };
-		    		 break;
-		    	 case 2:
-		    		 grids=new DisplayGrid[]{ // 256
-		    				 new DisplayGrid(this, allmodes, 0, 0, 8 ,8, allmodes.getPatternizer()),
-				    		 new DisplayGrid(this, allmodes, 8, 0, 8 ,8, allmodes.getSequencer()),
-				    		 new DisplayGrid(this, allmodes, 8, 8, 8 ,8, allmodes.getMasterizer()),
-				    		 new DisplayGrid(this, allmodes, 0, 8, 8 ,8, allmodes.getMelodizer1())
-			    		 };
-		    		 break;
-		    	 default:
-		    		 grids=new DisplayGrid[]{ 
-			    		 	new DisplayGrid(this, allmodes, 0, 0, 8 ,8, allmodes.getPatternizer())
-		    	 		};
-	    	 } 
-	      } else { // fall through t0 64
-	      	 grids=new DisplayGrid[]{ 
-	    		 	new DisplayGrid(this, allmodes, 0, 0, 8 ,8, allmodes.getPatternizer()),
-    	 		};
+	    	 else if(x_grids > 1) //128H
+	    	 {
+	    		 startRow = 0;
+	    		 startCol = i * 8;
+	    	 }
+	    	 
+	    	 grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizer());
 	     }
 	     
+	    
 	     // Turn on to debug monome OSC connection */
 	     //this.setDebug(Monome.FINE);
 	 } 
