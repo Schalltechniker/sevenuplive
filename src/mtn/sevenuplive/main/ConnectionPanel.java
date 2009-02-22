@@ -373,8 +373,7 @@ public class ConnectionPanel extends JPanel
 	}
 	
 	public void setSizeSmall(JComponent component) {
-		// Disable for now  
-		//component.putClientProperty("JComponent.sizeVariant", "small");
+		component.putClientProperty("JComponent.sizeVariant", "small");
 	}
 
 

@@ -456,8 +456,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	}
 
 	public void setSizeSmall(JComponent component) {
-		// Disable for now
-		//component.putClientProperty("JComponent.sizeVariant", "small");
+		component.putClientProperty("JComponent.sizeVariant", "small");
 	}
 	
 	class ResizeListener implements ComponentListener {
