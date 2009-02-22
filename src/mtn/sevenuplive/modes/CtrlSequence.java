@@ -14,13 +14,34 @@ import promidi.Note;
 
 public class CtrlSequence {
 	
+	//Inner class for control values that have an ID and value assigned
+	public class ControlValue{
+		private int id;
+		private int value;
+		
+		public ControlValue(int id, int value)
+		{
+			this.id = id;
+			this.value = value;
+		}
+		
+		public int getId(){
+			return this.id;
+		}
+		
+		public int getValue(){
+			return this.value;
+		}
+		
+	}
+	
 	private int counter;
 	private int length;
 	private int index;
 	private int status = MonomeUp.STOPPED;
 	
 	//Hashtable of keys (metronome count) and Integer loop positions
-	private Hashtable<Integer, ArrayList<Integer>> events;
+	private Hashtable<Integer, ArrayList<ControlValue>> events;
 
 	CtrlSequence(int index){
 		initialize();
