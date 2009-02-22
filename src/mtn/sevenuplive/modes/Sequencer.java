@@ -27,7 +27,7 @@ public class Sequencer extends Mode {
 	public void step()
 	{			
 		//Step through patterns.  If the pattern rolls over, increment sequence row
-		if(AllModes.patternizer.step(sequenceBanks[curSequenceBank].getRow(curSeqRow)))
+		if(AllModes.patternizerModel.step(sequenceBanks[curSequenceBank].getEnabledPatternInRow(curSeqRow)))
 		{
 			//If a next sequence was externally set, change to that sequence rather than incrementing through sequence rows
 			if(nextSequence != curSequenceBank)
@@ -45,9 +45,9 @@ public class Sequencer extends Mode {
 		}
 	}
 
-	public boolean[] getCurrentPatterns()
+	public int getCurrentPatterns()
 	{
-		return sequenceBanks[curSequenceBank].getRow(curSeqRow);
+		return sequenceBanks[curSequenceBank].getEnabledPatternInRow(curSeqRow);
 	}
 	
 	public void press(int x, int y)
@@ -64,7 +64,7 @@ public class Sequencer extends Mode {
 		//Pressing display area
 		{
 			if(sequenceBanks[curSequenceBank].isPatternEnabledAtRow(x, y)){
-				AllModes.patternizer.curPatternRow = 0;
+				AllModes.patternizerModel.curPatternRow = 0;
 				curSeqRow = y;
 			}
 			else
@@ -80,7 +80,7 @@ public class Sequencer extends Mode {
 	
 	public void reset()
 	{
-		AllModes.patternizer.curPatternRow = 0;
+		AllModes.patternizerModel.curPatternRow = 0;
 	}
 	
 	private void updateDisplay()
@@ -94,7 +94,7 @@ public class Sequencer extends Mode {
 		super.clearDisplayGrid();
 		for(int i=0;i<grid_height;i++)
 			for(int j=0;j<grid_width-1;j++)
-				if(sequenceBanks[curSequenceBank].getRow(i)[j])
+				if(sequenceBanks[curSequenceBank].getEnabledPatternInRow(i) == j)
 					displayGrid[j][i] = DisplayGrid.SOLID;
 				else
 					displayGrid[j][i] = DisplayGrid.OFF;

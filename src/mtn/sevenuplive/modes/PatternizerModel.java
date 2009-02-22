@@ -11,41 +11,23 @@ import org.jdom.Element;
 import promidi.MidiOut;
 import promidi.Note;
 
-public class Patternizer extends Mode {
+public class PatternizerModel {
 	
-	private int patternGrids[][][];
+	public int patternGrids[][][];
 	private int basePitch = MonomeUp.C3;
 	private int pressedNavButtons[];
 	public int selectedPattern = 0;
 	public int curPatternRow = 0;
 	private MidiOut midiSampleOut;
 
-	public Patternizer(int _navRow, promidi.MidiOut _midiSampleOut, int grid_width, int grid_height) {
-		super(_navRow, grid_width, grid_height);
-		
+	public PatternizerModel(int _navRow, promidi.MidiOut _midiSampleOut, int grid_width, int grid_height) {
 		midiSampleOut = _midiSampleOut;
 		patternGrids = new int[7][7][8];
-		pressedNavButtons = new int[8];
-		
-		updateDisplayGrid();
 	}
 
-	public void updateDisplayGrid()
-	{
-		//Update navcol
-		super.clearNavGrid();
-		navGrid[getYCoordFromSubMenu(selectedPattern)] = DisplayGrid.FASTBLINK;
-		navGrid[myNavRow] = DisplayGrid.SOLID;
-		
-		//Update display grid
-		displayGrid = patternGrids[selectedPattern];
-	}
-	
 	public void press(int x, int y)
 	{
-		if(x == DisplayGrid.NAVCOL)
-			pressNavCol(y);
-		else
+		if(x != DisplayGrid.NAVCOL)
 		{
 			//If pressed, change from off to fast, or fast to solid, or solid to off
 			 if (patternGrids[selectedPattern][x][y] == DisplayGrid.OFF)
@@ -62,36 +44,11 @@ public class Patternizer extends Mode {
 		pressedNavButtons[y] = 0;
 	}
 	
-	private void pressNavCol(int y)
-	{
-		pressedNavButtons[y] = 1;
-
-		//Handle copying a pattern to another bank
-   	 	if (getSubMenuFromYCoord(y) != selectedPattern && pressedNavButtons[getYCoordFromSubMenu(selectedPattern)] >=1 )
-   	 	{
-   	 		System.out.println("Copying " + selectedPattern + " to " + getSubMenuFromYCoord(y));
-   			 //Copy pattern
-   		 	for(int i=0;i<7;i++)
-   		 		for(int j=0;j<8;j++)
-   		 			patternGrids[getSubMenuFromYCoord(y)][i][j] = patternGrids[selectedPattern][i][j];
-   	 	}
-   	  
-		//If they are changing patterns unselect current and select the new pattern
-		if(selectedPattern != getSubMenuFromYCoord(y))
-		{
-			navGrid[getYCoordFromSubMenu(selectedPattern)] = DisplayGrid.OFF;
-			selectedPattern = getSubMenuFromYCoord(y);
-	        updateDisplayGrid();
-		}
-	}
 	
 	
-	public void triggerButtonHeld(int x, int y)
+	public void clearPattern(int patternNum)
 	{
-		patternGrids[getSubMenuFromYCoord(y)] = new int[7][8];
-		selectedPattern = getSubMenuFromYCoord(y);
-		updateDisplayGrid();
-		System.out.println("Clearing pattern grid " + getSubMenuFromYCoord(y));
+		patternGrids[patternNum] = new int[7][8];
 	}
 	
 	/***
@@ -99,21 +56,16 @@ public class Patternizer extends Mode {
 	 * @param curPatterns array of booleans indicating which patterns are to step
 	 * @return true if the pattern starts over, false if not
 	 */
-	public boolean step(boolean[] curPatterns)
+	public boolean step(int patternNum)
 	{
 		int sendPitch;
 		int sendVel;
 		Note noteSend;
 		
-		//For all currently playing patterns...
-		for(int i=0;i<curPatterns.length;i++)
-		{
-			if(curPatterns[i])
-			{
 			//Play pattern samples
 	        for(int x = 0; x < 7; x++)
 	        {
-	          if(patternGrids[i][x][curPatternRow] != DisplayGrid.OFF)
+	          if(patternGrids[patternNum][x][curPatternRow] != DisplayGrid.OFF)
 	          {
 	            //set pitch
 	            switch(x)
@@ -128,7 +80,7 @@ public class Patternizer extends Mode {
 	              default: sendPitch = basePitch;
 	            }
 	
-	            if (patternGrids[i][x][curPatternRow] == DisplayGrid.FASTBLINK)
+	            if (patternGrids[patternNum][x][curPatternRow] == DisplayGrid.FASTBLINK)
 	            	sendVel = 42;
 	            else sendVel = 126;
 	
@@ -137,9 +89,6 @@ public class Patternizer extends Mode {
 	            midiSampleOut.sendNoteOn(noteSend);
 	          } 
 	        }
-			}
-		}
-        
         curPatternRow++;
         if(curPatternRow == 8)
         {
@@ -148,7 +97,6 @@ public class Patternizer extends Mode {
         }
         else
         	return false;
-	
 	}
 
 	public Element toJDOMXMLElement()

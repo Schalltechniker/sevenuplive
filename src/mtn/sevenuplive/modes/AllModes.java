@@ -4,7 +4,7 @@ public class AllModes {
 	
 	// A bit of cheating but allow direct reference for classes in this package
 	// as the getters are too verbose here
-	static Patternizer patternizer;
+	static PatternizerModel patternizerModel;
 	static Controller controller;
 	static Sequencer sequencer;
 	static Melodizer melodizer1;
@@ -12,6 +12,7 @@ public class AllModes {
 	static Looper looper;
 	static LoopRecorder loopRecorder;
 	static Masterizer masterizer;
+	static PatternizerView patternizerViews[];
 
 	private static AllModes theinstance;
 	
@@ -33,11 +34,12 @@ public class AllModes {
 	 * @param loopRecorder
 	 * @param masterizer
 	 */
-	public AllModes(Patternizer patternizer, Controller controller,
+	public AllModes(PatternizerModel patternizerModel, PatternizerView[] patternizerViews, Controller controller,
 			Sequencer sequencer, Melodizer melodizer1, Melodizer melodizer2,
 			Looper looper, LoopRecorder loopRecorder, Masterizer masterizer) {
 		super();
-		AllModes.patternizer = patternizer;
+		AllModes.patternizerModel = patternizerModel;
+		AllModes.patternizerViews = patternizerViews;
 		AllModes.controller = controller;
 		AllModes.sequencer = sequencer;
 		AllModes.melodizer1 = melodizer1;
@@ -49,8 +51,12 @@ public class AllModes {
 		theinstance=this;
 	}
 	
-	public Patternizer getPatternizer() {
-		return patternizer;
+	public PatternizerView getPatternizerView(int i) {
+		return patternizerViews[i];
+	}
+	
+	public PatternizerModel getPatternizerModel(){
+		return patternizerModel;
 	}
 
 	public Controller getController() {
