@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import jklabs.monomic.MonomeOSC;
-import jklabs.monomic.MonomeCallback;
+import jklabs.monomic.MonomeListener;
 import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.modes.Controller;
 import mtn.sevenuplive.modes.DisplayGrid;
@@ -36,7 +36,7 @@ import promidi.MidiIO;
 import promidi.MidiOut;
 import promidi.Note;
 
-public final class MonomeUp extends MonomeOSC implements MonomeCallback {
+public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	
 	 private SevenUpPanel parentPanel;
 	 private ArrayList<Element> xmlPatches;

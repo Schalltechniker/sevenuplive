@@ -31,7 +31,7 @@ public class Monome {
 		this(1, 1); // default to 40h monome
 	}
 	
-	protected Monome(MonomeCallback callback) {
+	protected Monome(MonomeListener callback) {
 		this(callback, 1, 1); // default to 40h monome
 	}
 	
@@ -57,7 +57,7 @@ public class Monome {
 		getMethods(this);
 	}
 	
-	protected Monome(MonomeCallback callback, int y_bytes, int x_bytes) {
+	protected Monome(MonomeListener callback, int y_bytes, int x_bytes) {
 		Monome.x_dim = x_bytes * 8;
 		Monome.y_dim = y_bytes * 8;
 		

@@ -1,10 +1,12 @@
 package jklabs.monomic;
 
 import netP5.NetAddress;
+import oscP5.OscEventListener;
 import oscP5.OscMessage;
 import oscP5.OscP5;
+import oscP5.OscStatus;
 
-public class MonomeOSC extends Monome implements MonomeCallback {
+public class MonomeOSC extends Monome implements MonomeListener {
 
 	// oscP5 instance for the osc communication
 	private OscP5 oscP5;
@@ -24,7 +26,7 @@ public class MonomeOSC extends Monome implements MonomeCallback {
 	// Address for P5Osc
 	private NetAddress myRemoteLocation;
 	
-	private MonomeCallback callback;
+	private MonomeListener listener;
 	
 	// osc addresses for this instance
 	protected String led, row, col, shutdown, button, test, adc, adc_enable, intensity;
@@ -70,7 +72,7 @@ public class MonomeOSC extends Monome implements MonomeCallback {
 
 	/**
 	 * Construct any monome grid in byte(8) button increments
-	 * @param callback callback class for events
+	 * @param listener listener class for events
 	 * @param x_bytes size of monome width in bytes, 1 byte = 8 buttons  
 	 * @param y_bytes size of monome height in bytes, 1 byte = 8 buttons
 	 * @param boxName prefix to use "box" or "mlr" etc
@@ -78,10 +80,10 @@ public class MonomeOSC extends Monome implements MonomeCallback {
 	 * @param sendPort port to send on
 	 * @param receivePort port to receive on
 	 */
-	public MonomeOSC(MonomeCallback callback, int x_bytes, int y_bytes, String boxName, String host, int sendPort, int receivePort) {
+	public MonomeOSC(MonomeListener listener, int x_bytes, int y_bytes, String boxName, String host, int sendPort, int receivePort) {
 		super(x_bytes, y_bytes);
 		
-		this.callback = callback;
+		this.listener = listener;
 		
 		initOsc(host, sendPort, receivePort);
 		
@@ -233,8 +235,8 @@ public class MonomeOSC extends Monome implements MonomeCallback {
 	 * @param y
 	 */
 	public void monomePressed(int x, int y) {
-		if (callback != null)
-			callback.monomePressed(x, y);
+		if (listener != null)
+			listener.monomePressed(x, y);
 	}
 	
 	/**
@@ -243,8 +245,8 @@ public class MonomeOSC extends Monome implements MonomeCallback {
 	 * @param y
 	 */
 	public void monomeReleased(int x, int y) {
-		if (callback != null)
-			callback.monomeReleased(x, y)
+		if (listener != null)
+			listener.monomeReleased(x, y)
 ;	}
 	
 	/**
@@ -253,8 +255,8 @@ public class MonomeOSC extends Monome implements MonomeCallback {
 	 * @param value
 	 */
 	public void monomeAdc(int x, float value) {
-		if (callback != null)
-			callback.monomeAdc(x, value);
+		if (listener != null)
+			listener.monomeAdc(x, value);
 	}
 
 	////////////////////////////////////////////////// cleanup
@@ -268,18 +270,20 @@ public class MonomeOSC extends Monome implements MonomeCallback {
 	/**
 	 * The only reason this class is here is to wrap "this" MonomeOSC instance
 	 * as the OSC event receiver. For some unknown reason OscP5 refuses to 
-	 * notify us directly
+	 * notify us directly, even if MonomeOSC implements OscEventListener
 	 */
-	public class OSCReceiver {
+	public class OSCReceiver implements OscEventListener {
 		MonomeOSC parent;
 		
 		public OSCReceiver(MonomeOSC parent) {
 			this.parent = parent;
 		}
 		
-		void oscEvent(OscMessage oscIn) {
+		public void oscEvent(OscMessage oscIn) {
 			parent.oscEvent(oscIn);
 		}
+
+		public void oscStatus(OscStatus arg0) {}
 	}
 
 }
