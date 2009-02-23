@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
-    <title>SevenUpLive for the Monome 40h and 64</title>
+    <title>SevenUpLive for the Monome</title>
     <style type="text/css">
         <!--
         
@@ -9,12 +9,20 @@ body
 {
     font-family: Tahoma;
     font-size:10pt;
+}
 
 #container {
 	margin-left:auto;
 	margin-right:auto;
 	text-align:center;
-	}
+}
+
+.center {
+    text-align:center;
+    margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+}
 
 .FileLocation 
 {
@@ -31,9 +39,9 @@ a img {
 
 </head>
 <body>
-
-        <h1>SevenUpLive</h1>
-        <p>SevenUp Live is a Java application that combines 8 different monome applications 
+        <img alt="SevenUpLive logo" src="images/7up-logo-75.png" style="float:left;padding:20px 20px 20px 20px" />
+        <h1>7up Live</h1>
+        <p>7up Live is a Java application that combines 8 different monome applications 
             into one interface.&nbsp; With it, your monome communicates with 
             Ableton Live 7 via MIDI and allows MLR-like functionality along with 
             other goodies like sliders, sequencing melodies, creating patterns of beats, 
@@ -46,7 +54,7 @@ a img {
             <li><a href="#Download">Download</a></li>
             <li><a href="#AbletonLiveSetup">Ableton Live Setup</a></li>
             <li><a href="#GettingStarted">Getting Started</a></li>
-            <li><a href="#TheSevenUpLiveInterface">The SevenUpLive Interface</a><ul>
+            <li><a href="#TheSevenUpLiveInterface">The 7up Live Interface</a><ul>
                 <li><a href="#ChangingModes">Changing Modes</a></li>
                 <li><a href="#Stepper">1. Stepper</a></li>
                 <li><a href="#Sequencer">2. Sequencer</a></li>
@@ -85,18 +93,18 @@ a img {
             </li>
             <li>MonomeSerial for OSC communication (located here: 
                 <a href="http://monome.org/data/app/monomeserial">http://monome.org/data/app/monomeserial</a>)</li>
-            <li>SevenUpLive Ableton Live Set template (included in download)</li>
+            <li>7up Live's Ableton Live Set template (included in download)</li>
         </ul>
 	<a id="Download"/>
         <h2>Download</h2>
-        <p>The entire SevenUpLive package can be downloaded here:</p>
+        <p>The entire 7up Live package can be downloaded here:</p>
         <ul>
             <li><A href="http://www.makingthenoise.com/sevenup/SevenUpLive-v1.0.zip">http://www.makingthenoise.com/sevenup/SevenUpLive-v1.0.zip</a></li>
         </ul>
         <p>
             It includes the following:</p>
         <ul>
-            <li>SevenUpLive Java Application (as an executable JAR)</li>
+            <li>7up Live Java Application (as an executable JAR)</li>
             <li>Ableton Live template set (includes starter set of samples)</li>
             <li>Sample patch &amp; patch pack</li>
         </ul>
@@ -121,14 +129,14 @@ a img {
 
         <div style="text-align:center"><img border="0" alt="Live Midi Prefs" src="images/liveMidiPrefs.PNG" /></div>
         <h2>Getting Started</h2>
-        <p>This section will provide you with a &quot;Hello World&quot; for SevenUpLive.&nbsp; Once we 
-            get SevenUpLive talking to Ableton Live we&#39;ll later go into the details of how to 
-            navigate through the SevenUpLive interface.</p>
+        <p>This section will provide you with a &quot;Hello World&quot; for 7up Live.&nbsp; Once we 
+            get 7up Live talking to Ableton Live we&#39;ll later go into the details of how to 
+            navigate through the 7up Live interface.</p>
             
 
         <ol>
             <li>With your Monome connected to your PC, open MonomeSerial.&nbsp; The values shown 
-                below will work with the defaults in SevenUpLive: <br />
+                below will work with the defaults in 7up Live: <br />
                 <img alt="Monome Serial" src="images/MonomeSerial.PNG" style="width: 333px; height: 582px" /></li>
             <li>Open SevenUpLive v1.0.JAR</li>
             <li>You should see the screen below.&nbsp;Choose your monome model from the dropdown and check to make sure your MIDI settings are correct.  Your MIDI 
@@ -138,12 +146,12 @@ a img {
             <li>Press the initialize button to start the connection to the monome.&nbsp; Its buttons 
                 should clear except for 2 in the top right</li>
             <li>Open Ableton Live 7</li>
-            <li>Open the SevenUpLive Template Set.  It was distributed as an Ableton Live pack which means it needs to be installed first which is a simple process:</li>
+            <li>Open the 7up Live Template Set.  It was distributed as an Ableton Live pack which means it needs to be installed first which is a simple process:</li>
                 <ul>
-                <li>Navigate to File -&gt; Install Live Pack... and open the &quot;SevenUpLive 
+                <li>Navigate to File -&gt; Install Live Pack... and open the &quot;7up Live 
                 Template Set.alp&quot; pack included with this download package</li>
             <li>When promted, choose a location to save the project.</li>
-            <li>After a successful installation, navigate to File -&gt; Open... and open the newly saved SevenUpLive Template 
+            <li>After a successful installation, navigate to File -&gt; Open... and open the newly saved 7up Live Template 
                 Set.als</li>
                 </ul>
             
@@ -156,7 +164,7 @@ a img {
                 light in sync with Ableton Live<ol>
                     <li>If for some reason your monome doesn&#39;t react to pressing play in Ableton Live 
                         check that Live&#39;s MIDI sync 
-                        preferences are set correctly and that your Initialized SevenUpLive according 
+                        preferences are set correctly and that your Initialized 7up Live according 
                         to the graphic above.</li>
                     <li>Some users have seen issues when they initialize 7up WHILE Ableton Live is playing... so as a precaution make sure Ableton is stopped before opening/closing 7up</li>
                 </ol>
@@ -165,19 +173,19 @@ a img {
                 should notice that they light up and play samples when their row is flashed.</li>
         </ol>
         <p>
-            Congratulations! You have SevenUpLive working correctly... read on to understand 
+            Congratulations! You have 7up Live working correctly... read on to understand 
                 more about the SevenUp interface and how you can chop up loops, sequence MIDI 
                 notes, send MIDI Control values, and Sequence your patterns of samples.</p>
 
        <a id="TheSevenUpLiveInterface"></a>
-<h2>The SevenUpLive Interface</h2>
+<h2>The 7up Live Interface</h2>
 
 
         <p>
-            The SevenUpLive interface is built so that you can compose and perform entire 
+            The 7up Live interface is built so that you can compose and perform entire 
             songs without ever having to touch your computer.&nbsp; This creates a small 
             learning curve in figuring out how to interpret the 8x8 grid of flashing lights 
-            in front of you.&nbsp; In SevenUpLive there are 8 different modes that act as 
+            in front of you.&nbsp; In 7up Live there are 8 different modes that act as 
             8 different monome apps packaged into one super-app.&nbsp; However, SevenUp&#39;s 
             most useful feature is also its easiest to understand:&nbsp; the right-most 
             column will ALWAYS be your menu for choosing which mode to use.&nbsp; This 
@@ -206,7 +214,7 @@ a img {
         <h3>1. Stepper</h3>
         
         <p>
-            The stepper is the first mode that you enter after initializing SevenUpLive.&nbsp; 
+            The stepper is the first mode that you enter after initializing 7up Live.&nbsp; 
             It&#39;s purpose is to trigger samples from top to bottom in an 8-beat measure.&nbsp; 
             Once you&#39;ve laid out a group of samples to trigger, that is called a &quot;Pattern&quot;.&nbsp; 
             You have the ability to store up to 7 different patterns by clicking on any 
@@ -278,7 +286,7 @@ a img {
         </p>
         <p>
             It's important to understand that loops loaded into the looper must already match your BPM (which may require consolidating a loop).  Also, because 7up has no way of knowing how long your loop in Ableton is, you must use the 7up user interface to assign each loop's length.
-            Remember that dropping a sample&#39;s pitch by 12 half-steps is the same as doubling its length.</p>
+            </p>
     <div style="text-align:center"><img src="images/Looperv1.PNG" /></div>
     <p>Additionally, the interface gives you the option to add loops to different choke groups.  This is similar to MLR's concept of choke groups in that only 1 loop in a particular choke group can be playing at once.  For instance if loops 2 and 3 are both part of choke group 1, playing loop 2 will stop loop 3 and vice versa.</p>
     <h4>How do I import new loops?</h4>
@@ -287,7 +295,7 @@ a img {
             <b>avoid </b>when importing new loops into the looper:</p>
         <ol>
             <li>Replacing an entire chain in the Looper track.&nbsp; This will delete the MIDI 
-                mapping that exists between SevenUpLive and the &quot;Start&quot; knob of each chain</li>
+                mapping that exists between 7up Live and the &quot;Start&quot; knob of each chain</li>
             <li>Importing a loop that doesn&#39;t fit your tempo (unless it&#39;s intentional)</li>
         </ol>
         <p>
@@ -332,7 +340,7 @@ a img {
             that loop and chopped it up, press the same sub-nav button to stop recording and 
             instantly play back what you recorded.&nbsp; You can also start and stop recordings from the Masterizer mode.</p>
         <p>
-            Recording loops and melodies in SevenUpLive is done consistently throughout.&nbsp; 
+            Recording loops and melodies in 7up Live is done consistently throughout.&nbsp; 
             Press the sub-nav button corresponding to the track you want to record to once 
             and it will start blinking slowly to let you know it is armed.&nbsp; As soon as 
             you start playing on that track, the recording process begins and continues 
@@ -342,7 +350,7 @@ a img {
         <h3>6. Melodizer 1</h3>
         <p>The Melodizer allows you to play and record sequences of melodies in any key of 
             any scale.&nbsp; It does this by providing a MIDI keyboard that is presented to 
-            you in a scale that is chosen through the SevenUpLive interface.&nbsp; First 
+            you in a scale that is chosen through the 7up Live interface.&nbsp; First 
             select a scale (other than CLIP LAUNCH which is explained further down) from the dropdown of the interface:</p>
         <div style="text-align:center"><img src="images/SevenUpScalesv1.png" /></div>
         <p>
@@ -354,7 +362,7 @@ a img {
             <p>As you can see, the interface is split into 3 areas.&nbsp; The Key area supplies 
                 the starting note of the Note area in the top left.&nbsp; In this way, you can 
                 play a C major scale or a D major scale.&nbsp; If you change your scale to minor 
-                in the SevenUpLive interface, you can then play a C minor scale or D minor 
+                in the 7up Live interface, you can then play a C minor scale or D minor 
                 scale.</p>
         <p>Additional notes:&nbsp; Recording here is similar as the loop recorder, simply press 
             the current track you&#39;re on and start playing.&nbsp; Once you&#39;re finished, press 
@@ -382,7 +390,7 @@ a img {
         <p>When Melodizer 1&#39;s scale is changed to &quot;Clip Launch&quot;, the bottom &quot;keys&quot; 
             section of the melodizer is removed and the melodizer becomes an interface to 
             launch and view clip information from Ableton Live.&nbsp; To take advantage of this mode we need to assign some melodizer MIDI notes to 
-            individual clips in Live&#39;s Session View.&nbsp; </p>
+            individual clips in Live&#39;s Session View.&nbsp;Also make sure that your MIDI preferences have the "Track" column selected.</p>
         <p>FIRST make sure that no 
             tracks are intercepting your MIDI notes.&nbsp; Meaning, if you want to assign 
             clips to Melodizer 1 which is set to output on MIDI device 4, make sure that you 
@@ -402,7 +410,7 @@ a img {
         <p>
             You should notice that when the clip is played, the corresponding key in 
             the melodizer lights up as well.&nbsp; Live is sending information to 
-            SevenUpLive telling it when clips are started, stopped, and cued.&nbsp; The 
+            7up Live telling it when clips are started, stopped, and cued.&nbsp; The 
             reverse is also true, when pressing a melodizer 1 note, the corresponding clip 
             will play.&nbsp; On the monome, cued 
             clips will blink, started clips will glow solid, and stopped clips will turn 
@@ -504,17 +512,17 @@ a img {
         <a id="WhatAboutLive"></a>
         <h2>What about Ableton Live?</h2>
         <p>I said at the beginning of this that you can compose and perform songs entirely 
-            with the monome and SevenUpLive without touching the computer.&nbsp; While this 
+            with the monome and 7up Live without touching the computer.&nbsp; While this 
             is true, you&#39;ll find it more rewarding to compose in Ableton Live in parallel.&nbsp; 
             Because we&#39;re using Live as the DAW, we have access to all of its effects, 
             instruments, and other capabilities.&nbsp; For this reason, I&#39;ll touch on how 
-            SevenUpLive is interfacing with Live so that you can tweak with it yourself.&nbsp; 
-            A basic understanding of Live is assumed.</p>
-        <p>The SevenUpLive package contains a template Live set that is configured to 
+            7up Live is interfacing with Live so that you can tweak with it yourself.&nbsp; 
+        </p>
+        <p>The 7up Live package contains a template Live set that is configured to 
             correctly interpret the MIDI signals being sent back and forth.&nbsp; For 
             instance, the template set has a track called &quot;Stepper&quot; that contains a Drum 
             Rack that has been pre-configured to accept the MIDI notes being sent from 
-            SevenUpLive when in Stepper mode.</p>
+            7up Live when in Stepper mode.</p>
         <p>The template set looks like this:</p>
         
     <div style="text-align:center"><img src="images/AbletonLiveTemplate.PNG" /></siv>
@@ -523,14 +531,14 @@ a img {
         <p>
             As you can see, there is a track for the &quot;Stepper mode&quot;, the &quot;Looper mode&quot; and 
             both of the Melodizers.&nbsp; By adding effects to these tracks, you will alter 
-            the sounds produced by SevenUpLive.&nbsp; You may have also noticed that each 
+            the sounds produced by 7up Live.&nbsp; You may have also noticed that each 
             track uses a different virtual midi device in order to accept its MIDI input.&nbsp; 
             Be careful only to change these settings if you know what you&#39;re doing.</p>
         <p>
             The looper track is very similar to the stepper track except that each sample 
-            has its &quot;Start Offset&quot; knob mapped to a controller being used by SevenUpLive.&nbsp; 
+            has its &quot;Start Offset&quot; knob mapped to a controller being used by 7up Live.&nbsp; 
             Manipulating these start offset knobs in time with your button-mashing is how 
-            SevenUpLive is able to chop up loops and start them at any offset.&nbsp; Be 
+            7up Live is able to chop up loops and start them at any offset.&nbsp; Be 
             caseful not to delete these samples in the drum rack or you will lose the 
             mapping to the controller.&nbsp; You can, however, drag a new sample on top of 
             the old sample to change the samples that are looped.&nbsp; Please note that 
@@ -543,30 +551,22 @@ a img {
             the Looper drum rack samples and start chopping up what you just did in real 
             time.&nbsp; Using this technique, you could record vocals in real time and 
             immediately start chopping them up as loops.</p>
-        <h3>How does SevenUpLive know where it is in the song?</h3>
-        <p>The timing of SevenUpLive is controled by 2 MIDI tracks located in the Ableton Live template called "MIDI 
+        <h3>How does 7up Live know where it is in the song?</h3>
+        <p>The timing of 7up Live is controled by 2 MIDI tracks located in the Ableton Live template called "MIDI 
             Clock 1&quot; and &quot;MIDI Clock 2 - Looper&quot;.&nbsp; These 2 tracks send MIDI note values to 
-            SevenUpLive (to the MIDI device selected in the initialization screen) which 
-            SevenUpLive interprets in order to time the triggering of samples and sequences.&nbsp; 
+            7up Live (to the MIDI device selected in the initialization screen) which 
+            7up Live interprets in order to time the triggering of samples and sequences.&nbsp; 
             The &quot;Midi Clock&quot; track controls the Stepper and Melodizers and is affected by 
             any global shuffle you apply to your song in Live.&nbsp; The &quot;Midi Clock - 
-            Looper&quot; track controls the Looper mode and is not affected by global 
+            Looper&quot; track controls the Looper mode and by default is not affected by global 
             shuffle.</p>
-        <p>This implementation can lead to situations where Ableton Live and SevenUpLive are 
-            out of sync in terms of where the 1-beat falls.&nbsp; For instance, if you stop 
-            your song while the SevenUpLive Stepper is on beat 2, it will pick up on beat 3 
-            even if you move your Ableton Live transport cursor to the beginning.&nbsp; This 
-            peculiarity is intentional as it allows your looper to be out of sync with your 
-            stepper, your melodizers to be out of sync with eachother, etc.&nbsp; In short, 
-            the application is designed to allow aryhtmic situations rather than forcing 
-            synchronization.&nbsp; If keeping SevenUpLive in sync with Ableton Live is 
-            important, you can use column 4 of the <a href="#Masterizer">Masterizer</a> to help find your way.&nbsp; 
+        <p>Pressing Ableton's stop button will cause 7up to reset all sequences, loops, and melodies to their starting point.  
             Additionally, sending the MIDI note &quot;F#4&quot; from MIDI Clock 1 or 2 will tell 7up 
             to stop all loops and melodies and reset the stepper to the first beat.&nbsp; 
             This can be used in conjunction with Patch queueing to make sure your newly 
             loaded patches sync to Ableton&#39;s beat.</p>
         <p>If for whatever reason you need to change the MIDI device or channel that Ableton Live uses 
-            to send timing data to SevenUpLive, you can do so by clicking on the &quot;MIDI 
+            to send timing data to 7up Live, you can do so by clicking on the &quot;MIDI 
             Clock&quot; and &quot;MIDI Clock - Looper&quot; tracks, selecting the &quot;External Instrument&quot; 
             effect, and changing the &quot;MIDI To&quot; value.</p>
            
@@ -574,24 +574,30 @@ a img {
             <h2>Using Multiple Monomes</h2>
             <p>As of v1.0, 7up supports connecting a 128, a 256, or any number of 64's (or 40h's) to the same 7up instance.  For each 8x8 grid of buttons connected, a new window into the 7up instance is opened.  For instance, a 256 allows 4 windows, each of which can view different 7up modes.  Alternately, 8 x 64's could be connected, each viewing 1 mode of the same 7up instance.</p>
             <p>This is done by first plugging all of the monomes into the same machine, using monomeserial's dropdown box to select each monome, then setting a unique start column and start row for each in increments of 8.</p>
+            <div class="center" >
+            <img src="images/MonomeserialDropdown.png" alt="Monomeserial with dropdown for multiple monomes" />
+            </div>
             <p><b>Example with 1 x 128 and 2 x 64's:</b> here we have 3 monomes but all 7up sees is 4 8x8 grids which it will assume is a 256 using the following settings in monomeserial:</p>
             
+            <div class="center">
             <table border="1">
             <tr><td>Monome</td><td>Start Col</td><td>Start Row</td></tr>
             <tr><td>128</td><td>0</td><td>0</td></tr>
             <tr><td>64 (1)</td><td>0</td><td>8</td></tr>
             <tr><td>64 (2)</td><td>8</td><td>8</td></tr>
             </table>
+            </div>
             
             <p><b>Example with 3 x 64's:</b></p>
             
+            <div class="center">
             <table border="1">
             <tr><td>Monome</td><td>Start Col</td><td>Start Row</td></tr>
             <tr><td>64 (1)</td><td>0</td><td>0</td></tr>
             <tr><td>64 (2)</td><td>0</td><td>8</td></tr>
             <tr><td>64 (3)</td><td>0</td><td>16</td></tr>
             </table>
-            
+            </div>
             
             <a id="Patches" />
             <h2>SevenUp Patches (Loading, Saving, and Queueing)</h2>
