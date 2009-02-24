@@ -7,6 +7,9 @@
   	<echo>Targets:</echo>
   	<echo>build: build the code</echo>
   	<echo>jar: build the jar file</echo>
+  	<echo>zipsrc: build the zipped source file</echo>
+  	<echo>docs: build the documentation</echo>
+  	<echo>dist: build the entire distribution</echo>
   	<echo>clean: clean the build</echo>
   </target>	
   
@@ -15,6 +18,7 @@
     <property file="./build.properties" />
   	
   	<mkdir dir="${bin.folder}" />
+  	<mkdir dir="${out.folder}" />
   	
   	<echo>Locations in build</echo>
   	<echo>Sources=${src.folder}</echo>
@@ -34,13 +38,13 @@
   	<echo>${proxml.jar}</echo>
   	  	
     <path id="sevenup.classpath">
-    	<fileset file="${core.jar}"/>
-		<fileset file="${jdom.jar}"/>
-		<fileset file="${jklabs.monomic.jar}"/>
-		<fileset file="${libProMandoMidiJNILib.jar}"/>
-		<fileset file="${oscP5.jar}"/>
-		<fileset file="${promidi.jar}"/>
-    	<fileset file="${proxml.jar}"/>
+    	<fileset file="${lib.folder}/${core.jar}"/>
+		<fileset file="${lib.folder}/${jdom.jar}"/>
+		<fileset file="${lib.folder}/${jklabs.monomic.jar}"/>
+		<fileset file="${lib.folder}/${libProMandoMidiJNILib.jar}"/>
+		<fileset file="${lib.folder}/${oscP5.jar}"/>
+		<fileset file="${lib.folder}/${promidi.jar}"/>
+    	<fileset file="${lib.folder}/${proxml.jar}"/>
 	</path>
 	
   </target>
@@ -52,20 +56,100 @@
   <target name="clean" depends="_init">
     <delete quiet="false" dir="${bin.folder}" />
     <delete quiet="false" dir="${dist.folder}" />
+    <delete quiet="false" dir="${out.folder}" />
   </target>
   
   <target name="jar" depends="build">
+    <mkdir dir="${out.folder}"/>
     <mkdir dir="${dist.folder}"/>
-    <jar jarfile="${dist.folder}/SevenUpLive.jar">
+    <jar jarfile="${out.folder}/SevenUpLive-${release.version}.jar">
         <fileset dir="${bin.folder}"/>
         <manifest>
-            <attribute name="Class-Path" value="core.jar jdom.jar libProMandoMidiJNILib.jar oscP5.jar promidi.jar proxml.jar"/>
+            <attribute name="Class-Path" value="${core.jar} ${jdom.jar} ${libProMandoMidiJNILib.jar} ${oscP5.jar} ${promidi.jar} ${proxml.jar}"/>
             <attribute name="Main-Class" value="mtn.sevenuplive.main.MainApp"/>
         </manifest>
     </jar>
-    <copy todir="${dist.folder}" flatten="false">
-			<fileset dir="${lib.folder}"/>
+  </target>
+  
+  <target name="zipsrc" depends="_init">
+    <mkdir dir="${out.folder}"/>
+    <mkdir dir="${dist.folder}"/>
+    <jar jarfile="${out.folder}/SevenUpLive-${release.version}-src.zip">
+        <fileset dir="${src.folder}"/>
+    </jar>
+  </target>
+  
+  <target name="docs" depends="_init">
+    <mkdir dir="${out.folder}"/>
+    <mkdir dir="${dist.folder}"/>
+    <copy todir="${out.folder}" flatten="false">
+        <fileset dir="${doc.folder}"/>
     </copy>
+  </target>
+  
+  <target name="dist" depends="jar, zipsrc, docs">
+    <!-- For the PC -->
+    <copy todir="${out.folder}" flatten="false">
+        <fileset dir="${lib.folder}">
+            <include name="${core.jar}"/>
+            <include name="${jdom.jar}"/>
+            <include name="${libProMandoMidiJNILib.jar}"/>
+            <!-- NOT INCLUDED -->
+            <!-- <include name="${jklabs.monomic.jar}"/> -->
+            <include name="${oscP5.jar}"/>
+            <include name="${promidi.jar}"/>
+            <include name="${proxml.jar}"/>
+        </fileset>
+    </copy>
+        
+  	<!-- For the MAC -->
+  	
+  	<copy todir="${out.folder}/SevenUpLive.app" flatten="false">
+        <fileset dir="${resources.folder}/osx/SevenUpLive.app"/>
+    </copy>
+	  
+	<!-- Need to do string substituition in info.plist for #RELEASE.VERSION# in Mac Application package -->   
+    <replaceregexp file="${out.folder}/SevenUpLive.app/Contents/info.plist"
+		               match="#RELEASE\.VERSION#"
+                       replace="${release.version}"
+                       byline="true"/>
+	<!-- need exacute permissions -->  
+	<chmod  perm="755">
+		<fileset dir="${out.folder}/SevenUpLive.app/Contents/MacOS">
+			<include name="JavaApplicationStub"/>
+		</fileset>
+    </chmod>  
+                       
+    <mkdir dir="${out.folder}/SevenUpLive.app/Contents/Resources/Java"/>
+  	
+  	<copy todir="${out.folder}/SevenUpLive.app/Contents/Resources/Java" flatten="false">
+        <fileset dir="${lib.folder}">
+            <include name="${core.jar}"/>
+            <include name="${jdom.jar}"/>
+            <include name="${libProMandoMidiJNILib.jar}"/>
+            <include name="${libProMandoMidiJNILib.jnilib}"/>
+            <include name="${oscP5.jar}"/>
+            <include name="${promidi.jar}"/>
+            <include name="${proxml.jar}"/>
+        </fileset>
+    </copy>
+    
+    <copy todir="${out.folder}/SevenUpLive.app/Contents/Resources" flatten="false">
+        <fileset dir="${resources.folder}/osx">
+            <include name="SevenUpLive.icns"/>
+        </fileset>
+    </copy>
+    
+    <copy todir="${out.folder}/SevenUpLive.app/Contents/Resources/Java">
+        <fileset dir="${out.folder}">
+            <include name="SevenUpLive-${release.version}.jar"/>
+        </fileset>
+    </copy>
+    <!-- Now zip everything into a distribution -->
+    <jar jarfile="${dist.folder}/SevenUpLive-${release.version}.zip">
+        <fileset dir="${out.folder}"/>
+    </jar>
+    
   </target>
   
 </project>
