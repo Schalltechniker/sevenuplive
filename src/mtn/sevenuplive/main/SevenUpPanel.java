@@ -62,7 +62,15 @@ public class SevenUpPanel extends JPanel implements ActionListener
     	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     	parentFrame.setBounds(screenSize.width / 2,screenSize.height / 2,376,420);
  
+    	try
+    	{
+
     	initLayout();
+    	}
+    	catch(Exception ex)
+    	{
+    		System.out.println(ex.getMessage());
+    	}
     	
     	//Initialize Sevenup Applet
         sevenUpApplet = new SevenUpApplet(sevenUpConnections, this);
@@ -74,8 +82,8 @@ public class SevenUpPanel extends JPanel implements ActionListener
     	this.addComponentListener(new ResizeListener());
     }
     
-    private void initLayout() {
-		try {
+    private void initLayout()
+    {
 			//7up Gui
 			
 			FlowLayout layout = new FlowLayout();
@@ -241,11 +249,17 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	            drpLoopLength.setName(i.toString()+"length");
 	            drpLoopLength.setSelectedIndex(1);
 	            drpLoopLength.addActionListener(
-	            		new ActionListener(){
+	            		new ActionListener() {
 	            			public void actionPerformed(ActionEvent e) {
 	            				setDirty(true);
 	            				JComboBox cb = (JComboBox)e.getSource();
-	            				sevenUpApplet.setLoopLength(Integer.parseInt(cb.getName().substring(0,1)), Float.parseFloat(cb.getSelectedItem().toString()));
+	            				Float loopLength = Float.parseFloat(cb.getSelectedItem().toString());
+	            				Integer loopNum = Integer.parseInt(cb.getName().substring(0,1));
+	            				if(loopLength > 0)
+	            					sevenUpApplet.setLoopLength(loopNum, loopLength);
+	            				else
+	            					System.out.println("Invalid loopLength specified in ComboBox for loop: " + loopNum);
+	            				
 	            			}
 	            		}
 	            );
@@ -316,10 +330,6 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        this.setPreferredSize(new Dimension(400, 200));
 	        this.setMinimumSize(new Dimension(200, 200));
 	        this.setMaximumSize(new Dimension(500, 300));
-	        
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
     
 
