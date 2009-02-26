@@ -4,8 +4,8 @@
 -Send note OFFS when switching patches mid-stride
 -External controller to start/stop recording
 -Tilt control
--Switch back to only 1 stepper sequence at a time
 -Modify the loop recorder to work more like a melodizer in that it has separate sequences that can be recorded
 -Modify the controller to work more like the melodizer in that it has separate sequences that can be recorded
 BUGS
 -clearing a melodizer pattern should remove it's blinking light from the masterizer
+- When loading a patch, patternizers do not update their UI until you move away from page and come back again

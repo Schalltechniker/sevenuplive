@@ -25,7 +25,10 @@ public abstract class Mode implements ModeConstants{
 		this.myNavRow = navRow;
 		displayGrid = new int[grid_width - 1][grid_height];
 		navGrid = new int[grid_height];
-		navGrid[myNavRow] = DisplayGrid.SOLID;
+		
+		// startup uses -1 as nav row
+		if (navRow > 0 && navRow < grid_height)
+			navGrid[myNavRow] = DisplayGrid.SOLID;
 	}
 	
 	public int getMyNavRow() {

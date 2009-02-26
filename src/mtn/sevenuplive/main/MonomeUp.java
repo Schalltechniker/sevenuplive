@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import jklabs.monomic.MonomeOSC;
 import jklabs.monomic.MonomeListener;
+import jklabs.monomic.MonomeOSC;
 import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.modes.Controller;
 import mtn.sevenuplive.modes.DisplayGrid;
@@ -25,6 +25,7 @@ import mtn.sevenuplive.modes.ModeConstants;
 import mtn.sevenuplive.modes.PatternizerModel;
 import mtn.sevenuplive.modes.PatternizerView;
 import mtn.sevenuplive.modes.Sequencer;
+import mtn.sevenuplive.modes.StartupMode;
 import mtn.sevenuplive.modes.Displays.GridCoordinateTarget;
 import mtn.sevenuplive.scales.Scale;
 
@@ -149,7 +150,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	    		 new Melodizer(ModeConstants.MELODY2_MODE,midiMelody2Out, GRID_WIDTH, GRID_HEIGHT), // Melodizer 2
 	    		 new Looper(ModeConstants.LOOP_MODE, midiLoopOut, this, GRID_WIDTH, GRID_HEIGHT), 
 	    		 new LoopRecorder(ModeConstants.LOOP_RECORD_MODE, this, GRID_WIDTH, GRID_HEIGHT), 
-	    		 new Masterizer(ModeConstants.MASTER_MODE, midiMelodyOut, midiMelody2Out, midiMasterOut, this, GRID_WIDTH, GRID_HEIGHT));
+	    		 new Masterizer(ModeConstants.MASTER_MODE, midiMelodyOut, midiMelody2Out, midiMasterOut, this, GRID_WIDTH, GRID_HEIGHT),
+	    		 new StartupMode(totalGrids, 75, 2));
 
 	     //Set initial display grids
 	     grids = new DisplayGrid[totalGrids];
@@ -226,6 +228,11 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	
 	 public void monomePressed(int raw_x, int raw_y)
 	 {
+		 // Dirty flag for any action on a patch
+		 if (!parentPanel.isDirty()) {
+			 parentPanel.setDirty(true);
+		 }
+		 
 		 GridCoordinateTarget targetd = Displays.translate(grids, raw_x, raw_y);
 		 int x = targetd.getX_translated();
 		 int y = targetd.getY_translated();
@@ -515,6 +522,10 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 
 	public String getPatchTitle() {
 		return patchTitle;
+	}
+
+	public void setPatchTitle(String patchTitle) {
+		this.patchTitle = patchTitle;
 	}
 
 	public void setLooperMute(boolean mute) {

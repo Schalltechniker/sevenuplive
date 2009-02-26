@@ -31,6 +31,9 @@ public class SevenUpApplet extends processing.core.PApplet
 	
 	private int monomeType = MonomeUp.MONOME_64;
 	
+	/** Dirty flag for changes to the patch */
+	private boolean dirty; 
+	
 	public SevenUpApplet(ConnectionSettings _sevenUpConnections, SevenUpPanel _parentPanel)
 	{
 		sevenUpConnections = _sevenUpConnections;
@@ -182,6 +185,7 @@ public class SevenUpApplet extends processing.core.PApplet
 		try
 		{
 			xmlIO.loadElement(patchPath);
+			dirty = false;
 			return true;
 		}catch (Exception e)
 		{
@@ -279,6 +283,7 @@ public class SevenUpApplet extends processing.core.PApplet
 	
 	public Document toJDOMXMLDocument(String fileName)
 	{
+		m.setPatchTitle(fileName);
 		return m.toXMLDocument(fileName);
 	}
 	
@@ -362,6 +367,13 @@ public class SevenUpApplet extends processing.core.PApplet
 		return m.getLoopLength(loopNum);
 	}
 	
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
 	
 }
 		

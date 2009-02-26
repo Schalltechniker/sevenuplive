@@ -39,6 +39,8 @@ public class DisplayGrid {
 
 	private Monome monome;
 	private AllModes allmodes;
+	
+	private Mode defaultMode;
 
 	public DisplayGrid(Monome monome, AllModes allmodes, int start_column, int start_row, int grid_width, int grid_height, Mode defaultMode, int grid_index) {
 		this.start_row = start_row;
@@ -54,9 +56,15 @@ public class DisplayGrid {
 		//Pressed buttons
 		pressedButtonsLength = new int[grid_width][grid_height];
 
-		curDisplayGrid = defaultMode.getDisplayGrid();
-		navGrid = defaultMode.getNavGrid();
-		curMode = defaultMode.getMyNavRow();
+		this.defaultMode = defaultMode;
+		
+		curDisplayGrid = AllModes.startup.getDisplayGrid();
+		navGrid = AllModes.startup.getNavGrid();
+		curMode = AllModes.startup.getMyNavRow();
+	}
+
+	public Mode getDefaultMode() {
+		return defaultMode;
 	}
 
 	public int translateX(int x) {
@@ -77,6 +85,20 @@ public class DisplayGrid {
 
 	public void draw()
 	{
+		//Very fast int compare here to not slow us down
+		if (curMode == StartupMode.STARTUP_MODE) {
+			
+			if (AllModes.startup.isFinished()) {
+				// If we press a key in startup mode, then change to default mode
+				curDisplayGrid = defaultMode.getDisplayGrid();
+				navGrid = defaultMode.getNavGrid();
+				curMode = defaultMode.getMyNavRow();
+				return; // don't do anything else
+			}
+			
+			AllModes.startup.nextSequence();
+		}
+			
 		
 		//if a button is being held, count to the holdtime and fire a heldevent
 		//TODO: need to be able to handle multiple press and release
@@ -168,6 +190,15 @@ public class DisplayGrid {
 	}
 
 	public void monomePressed(int x, int y) {
+		
+		// Very fast int compare here to not slow us down
+		if (curMode == StartupMode.STARTUP_MODE) {
+			// If we press a key in startup mode, then change to default mode
+			curDisplayGrid = defaultMode.getDisplayGrid();
+			navGrid = defaultMode.getNavGrid();
+			curMode = defaultMode.getMyNavRow();
+			return; // don't do anything else
+		}
 		
 		//Flag current button as pressed
 	    pressedButtonsLength[x][y] = 1;

@@ -12,6 +12,7 @@ public class AllModes {
 	static Looper looper;
 	static LoopRecorder loopRecorder;
 	static Masterizer masterizer;
+	static StartupMode startup;
 	static PatternizerView patternizerViews[];
 
 	private static AllModes theinstance;
@@ -33,10 +34,11 @@ public class AllModes {
 	 * @param looper
 	 * @param loopRecorder
 	 * @param masterizer
+	 * @param startup 
 	 */
 	public AllModes(PatternizerModel patternizerModel, PatternizerView[] patternizerViews, Controller controller,
 			Sequencer sequencer, Melodizer melodizer1, Melodizer melodizer2,
-			Looper looper, LoopRecorder loopRecorder, Masterizer masterizer) {
+			Looper looper, LoopRecorder loopRecorder, Masterizer masterizer, StartupMode startup) {
 		super();
 		AllModes.patternizerModel = patternizerModel;
 		AllModes.patternizerViews = patternizerViews;
@@ -47,6 +49,7 @@ public class AllModes {
 		AllModes.looper = looper;
 		AllModes.loopRecorder = loopRecorder;
 		AllModes.masterizer = masterizer;
+		AllModes.startup = startup;
 		
 		theinstance=this;
 	}
@@ -86,5 +89,9 @@ public class AllModes {
 	public Masterizer getMasterizer() {
 		return masterizer;
 	}
-
+	
+	public StartupMode getStartupMode() {
+		return startup;
+	}
+	
 }

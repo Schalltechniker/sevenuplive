@@ -77,15 +77,38 @@ public class MainApp extends JFrame
     {
     	sevenUpPanel = new SevenUpPanel(sevenUpConnections, this);
     	this.setContentPane(sevenUpPanel);
-    	//Enable load and save
-    	menu.getItem(0).setEnabled(true);
-    	menu.getItem(3).setEnabled(true);
+    	
+    	updateMenuStatus();
     	
     	// Now we can display recent files
     	loadRecentFileList();
     	
     	// This also updates the menu
     	this.storeAndUpdateRecents();     
+    }
+    
+    public void updateMenuStatus() {
+    	//Enable load and save
+    	menu.getItem(0).setEnabled(true);
+    	if (sevenUpPanel.isDirty() && lastFile != null && lastDirectory != null && lastFile.exists() && lastDirectory.exists() && !sevenUpPanel.isPatchPack()) {
+    		menu.getItem(2).setEnabled(true); // enable Save
+    	} else {
+    		menu.getItem(2).setEnabled(false); // disable Save
+    	}
+    	// Cannot save patch packs currently
+    	if (sevenUpPanel.isPatchPack())
+    		menu.getItem(3).setEnabled(false);
+    	else
+    		menu.getItem(3).setEnabled(true);
+    }
+    
+    /* (non-Javadoc)
+     * @see java.awt.Frame#setTitle(java.lang.String)
+     * Overridden to catch dirty flag status
+     */
+    public void setTitle(String title) {
+    	super.setTitle(title);
+    	updateMenuStatus();
     }
 
     protected JMenuBar createMenuBar() {
@@ -160,6 +183,10 @@ public class MainApp extends JFrame
     				return; // do nothing
     			
     			loadPatch(file); // load the patch
+    			lastFile = file; 
+    			lastDirectory = file.getParentFile();
+    			sevenUpPanel.setDirty(false);
+                updateMenuStatus();
     		}
     	} else if ("open".equals(e.getActionCommand())) {
     		fc.setMode(FileDialog.LOAD);
@@ -169,21 +196,21 @@ public class MainApp extends JFrame
     			lastFile = new File(filename); 
     			lastDirectory = new File(fc.getDirectory());
     			loadPatch(lastFile); // load the patch
+    			sevenUpPanel.setDirty(false);
+                updateMenuStatus();
     		}	
         } else if ("save".equals(e.getActionCommand())) {
         	java.io.FileWriter fileWriter = null;
+        	if (lastFile == null || !lastFile.exists())
+        		return;
         	
         	try {
-        		String filename = fc.getFile() == null ? null : fc.getDirectory() + fc.getFile();
-        		if (filename != null) {
-        			java.io.File file = new File(filename);
-        			
-                    org.jdom.Document doc = sevenUpPanel.toJDOMXMLDocument(file.getName());
+        			org.jdom.Document doc = sevenUpPanel.toJDOMXMLDocument(lastFile.getName());
+                    sevenUpPanel.setDirty(false);
+                    updateMenuStatus();
                     org.jdom.output.XMLOutputter fmt = new XMLOutputter();
-                    
-        			fileWriter = new FileWriter(file);
+                    fileWriter = new FileWriter(lastFile);
         			fmt.output(doc, fileWriter);
-        		}
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally { // standard java closing resources in finally
@@ -208,12 +235,14 @@ public class MainApp extends JFrame
         		String filename = fc.getFile() == null ? null : fc.getDirectory() + fc.getFile();
         		if (filename != null) {
         			java.io.File file = new File(filename);
-        			
-                    org.jdom.Document doc = sevenUpPanel.toJDOMXMLDocument(file.getName());
+        			org.jdom.Document doc = sevenUpPanel.toJDOMXMLDocument(file.getName());
+                    sevenUpPanel.setDirty(false);
+                    updateMenuStatus();
                     org.jdom.output.XMLOutputter fmt = new XMLOutputter();
                     
         			fileWriter = new FileWriter(file);
         			fmt.output(doc, fileWriter);
+        			lastFile = new File(filename);
         			lastDirectory = new File(fc.getDirectory());
         			addToRecents(file);
         		}
@@ -234,9 +263,6 @@ public class MainApp extends JFrame
         	 System.exit(0);
         } 
     	
-    	if (lastFile != null && lastDirectory != null && lastFile.exists() && lastDirectory.exists()) {
-    		menu.getItem(2).setEnabled(true); // enable Save
-    	}
     }
     
     /**
@@ -250,7 +276,7 @@ public class MainApp extends JFrame
         {
      	   Document doc = builder.build(file);
      	   sevenUpPanel.loadJDOMXMLDocument(doc);
-           fc.setDirectory(file.getParent());
+     	   fc.setDirectory(file.getParent());
            addToRecents(file);
         }
         catch(Exception ex)

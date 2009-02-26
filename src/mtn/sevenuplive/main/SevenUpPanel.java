@@ -26,7 +26,7 @@ import mtn.sevenuplive.scales.Scale;
 import org.jdom.Document;
 
 public class SevenUpPanel extends JPanel implements ActionListener
-						  {
+{
 	
 	private static final long serialVersionUID = 1L;
 	SevenUpApplet sevenUpApplet;
@@ -42,7 +42,17 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	JFrame parentFrame;
 	JPanel secondPanel;
 	
-    public SevenUpPanel(ConnectionSettings sevenUpConnections, JFrame _parent) 
+	boolean isPatchPack = false;
+	
+	public boolean isPatchPack() {
+		return isPatchPack;
+	}
+
+	public void setPatchPack(boolean isPatchPack) {
+		this.isPatchPack = isPatchPack;
+	}
+
+	public SevenUpPanel(ConnectionSettings sevenUpConnections, JFrame _parent) 
     {
     	super();  
     	
@@ -114,6 +124,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        drpScaleChoices1.addActionListener(
 	        		new ActionListener(){
 	        			public void actionPerformed(ActionEvent e) {
+	        				setDirty(true);
 	        				JComboBox cb = (JComboBox)e.getSource();
 	        				if(cb.getSelectedIndex() == 0)
 	        				{
@@ -159,6 +170,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        drpScaleChoices2.addActionListener(
 	        		new ActionListener(){
 	        			public void actionPerformed(ActionEvent e) {
+	        				setDirty(true);
 	        				JComboBox cb = (JComboBox)e.getSource();
 	        					sevenUpApplet.setMelody2Scale(cb.getSelectedItem().toString());
 	        					sevenUpApplet.setMelody2ClipMode(false);
@@ -181,6 +193,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        drpMelRecMode.addActionListener(
 	        		new ActionListener(){
 	        			public void actionPerformed(ActionEvent e) {
+	        				setDirty(true);
 	        				JComboBox cb = (JComboBox)e.getSource();
 	        				if(cb.getSelectedItem().toString().equals("On Button Press"))
 		        				sevenUpApplet.setMelRecMode(ModeConstants.MEL_ON_BUTTON_PRESS);
@@ -209,6 +222,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	            drpLoopChoke.addActionListener(
 	            		new ActionListener(){
 	            			public void actionPerformed(ActionEvent e) {
+	            				setDirty(true);
 	            				JComboBox cb = (JComboBox)e.getSource();
 	            				if(cb.getSelectedIndex() == 0)
 	            					sevenUpApplet.setLoopChokeGroup(Integer.parseInt(cb.getName().substring(0,1)), -1);
@@ -229,6 +243,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	            drpLoopLength.addActionListener(
 	            		new ActionListener(){
 	            			public void actionPerformed(ActionEvent e) {
+	            				setDirty(true);
 	            				JComboBox cb = (JComboBox)e.getSource();
 	            				sevenUpApplet.setLoopLength(Integer.parseInt(cb.getName().substring(0,1)), Float.parseFloat(cb.getSelectedItem().toString()));
 	            			}
@@ -252,6 +267,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        drpGateLoopChoke.addActionListener(
 	        		new ActionListener(){
 	        			public void actionPerformed(ActionEvent e) {
+	        				setDirty(true);
 	        				JComboBox cb = (JComboBox)e.getSource();
 	        				sevenUpApplet.setGateLoopChokes(cb.getSelectedItem().toString().equals("Ok"));
 	        			}
@@ -270,6 +286,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        chkMuteLooper.addActionListener(
 	        		new ActionListener(){
 	        			public void actionPerformed(ActionEvent e) {
+	        				setDirty(true);
 	        				JCheckBox chk = (JCheckBox)e.getSource();
 	       					sevenUpApplet.setLooperMute(chk.isSelected());
 	        			}
@@ -319,7 +336,6 @@ public class SevenUpPanel extends JPanel implements ActionListener
     
     public void loadJDOMXMLDocument(Document XMLDoc)
     {	
-    	boolean isPatchPack = false;
     	
     	isPatchPack = sevenUpApplet.loadJDOMXMLDocument(XMLDoc);
 
@@ -408,7 +424,8 @@ public class SevenUpPanel extends JPanel implements ActionListener
     	else
     		drpGateLoopChoke.setSelectedIndex(1);
     	
-    	setTitle(sevenUpApplet.getPatchTitle());
+    	// Add star to title if patch is dirty, we clear it on save
+    	setTitle(sevenUpApplet.isDirty() ? "*" + sevenUpApplet.getPatchTitle(): sevenUpApplet.getPatchTitle());
     }
     
     public void quit()
@@ -471,6 +488,17 @@ public class SevenUpPanel extends JPanel implements ActionListener
 		}
 
 		public void componentShown(ComponentEvent e) {}
+	}
+	
+	public void setDirty(boolean dirty) {
+		sevenUpApplet.setDirty(dirty);
+		
+		// Add star to title if patch is dirty, we clear it on save
+    	setTitle(sevenUpApplet.isDirty() ? "*" + sevenUpApplet.getPatchTitle(): sevenUpApplet.getPatchTitle());
+	}
+
+	public boolean isDirty() {
+		return sevenUpApplet.isDirty();
 	}
 
 

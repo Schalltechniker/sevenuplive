@@ -9,6 +9,7 @@ public interface ModeConstants {
 	////////////////////////////////////
 	//Interface modes
 	 
+	public static final int STARTUP_MODE = -1;  
 	public static final int PATTERN_MODE = 0;
 	public static final int SEQ_MODE = 1;
 	public static final int CONTROL_MODE = 2;

@@ -58,11 +58,25 @@
     <delete quiet="false" dir="${dist.folder}" />
     <delete quiet="false" dir="${out.folder}" />
   </target>
+	
+  <target name="_makedistdirs">
+    <mkdir dir="${out.folder}/windows/supporting"/>
+	<mkdir dir="${out.folder}/osx"/>
+	<mkdir dir="${dist.folder}/windows"/>
+	<mkdir dir="${dist.folder}/osx"/>
+  </target>
+	  	
   
-  <target name="jar" depends="build">
-    <mkdir dir="${out.folder}"/>
-    <mkdir dir="${dist.folder}"/>
-    <jar jarfile="${out.folder}/SevenUpLive-${release.version}.jar">
+  <target name="jar" depends="build, _makedistdirs">
+    <jar jarfile="${out.folder}/windows/SevenUpLive-${release.version}.jar">
+        <fileset dir="${bin.folder}"/>
+        <manifest>
+            <attribute name="Class-Path" value="./supporting/${core.jar} ./supporting/${jdom.jar} ./supporting/${libProMandoMidiJNILib.jar} ./supporting/${oscP5.jar} ./supporting/${promidi.jar} ./supporting/${proxml.jar}"/>
+            <attribute name="Main-Class" value="mtn.sevenuplive.main.MainApp"/>
+        </manifest>
+    </jar>
+    
+    <jar jarfile="${out.folder}/osx/SevenUpLive-${release.version}.jar">
         <fileset dir="${bin.folder}"/>
         <manifest>
             <attribute name="Class-Path" value="${core.jar} ${jdom.jar} ${libProMandoMidiJNILib.jar} ${oscP5.jar} ${promidi.jar} ${proxml.jar}"/>
@@ -71,31 +85,38 @@
     </jar>
   </target>
   
-  <target name="zipsrc" depends="_init">
-    <mkdir dir="${out.folder}"/>
-    <mkdir dir="${dist.folder}"/>
-    <jar jarfile="${out.folder}/SevenUpLive-${release.version}-src.zip">
+  <target name="zipsrc" depends="_init, _makedistdirs">
+    <jar jarfile="${out.folder}/osx/SevenUpLive-${release.version}-src.zip">
+        <fileset dir="${src.folder}"/>
+    </jar>
+    <jar jarfile="${out.folder}/windows/SevenUpLive-${release.version}-src.zip">
         <fileset dir="${src.folder}"/>
     </jar>
   </target>
   
-  <target name="docs" depends="_init">
-    <mkdir dir="${out.folder}"/>
-    <mkdir dir="${dist.folder}"/>
-    <copy todir="${out.folder}" flatten="false">
+  <target name="doc" depends="_init">
+  	<mkdir dir="${out.folder}/windows/doc"/>
+  	<mkdir dir="${out.folder}/osx/doc"/>
+    <copy todir="${out.folder}/windows/doc" flatten="false">
+        <fileset dir="${doc.folder}"/>
+    </copy>
+    <copy todir="${out.folder}/osx/doc" flatten="false">
         <fileset dir="${doc.folder}"/>
     </copy>
   </target>
   
-  <target name="dist" depends="jar, zipsrc, docs">
+  <target name="dist" depends="jar, zipsrc, doc">
+    
     <!-- For the PC -->
-    <copy todir="${out.folder}" flatten="false">
+  	<copy todir="${out.folder}/windows" flatten="false">
+  	  	<fileset dir="${resources.folder}/content"/>
+  	</copy>
+  	  	
+  	<copy todir="${out.folder}/windows/supporting" flatten="false">
         <fileset dir="${lib.folder}">
             <include name="${core.jar}"/>
             <include name="${jdom.jar}"/>
             <include name="${libProMandoMidiJNILib.jar}"/>
-            <!-- NOT INCLUDED -->
-            <!-- <include name="${jklabs.monomic.jar}"/> -->
             <include name="${oscP5.jar}"/>
             <include name="${promidi.jar}"/>
             <include name="${proxml.jar}"/>
@@ -104,25 +125,23 @@
         
   	<!-- For the MAC -->
   	
-  	<copy todir="${out.folder}/SevenUpLive.app" flatten="false">
+  	<copy todir="${out.folder}/osx" flatten="false">
+  		<fileset dir="${resources.folder}/content"/>
+  	</copy>
+  		
+  	<copy todir="${out.folder}/osx/SevenUpLive.app" flatten="false">
         <fileset dir="${resources.folder}/osx/SevenUpLive.app"/>
     </copy>
 	  
 	<!-- Need to do string substituition in info.plist for #RELEASE.VERSION# in Mac Application package -->   
-    <replaceregexp file="${out.folder}/SevenUpLive.app/Contents/info.plist"
+    <replaceregexp file="${out.folder}/osx/SevenUpLive.app/Contents/info.plist"
 		               match="#RELEASE\.VERSION#"
                        replace="${release.version}"
                        byline="true"/>
-	<!-- need exacute permissions -->  
-	<chmod  perm="755">
-		<fileset dir="${out.folder}/SevenUpLive.app/Contents/MacOS">
-			<include name="JavaApplicationStub"/>
-		</fileset>
-    </chmod>  
-                       
-    <mkdir dir="${out.folder}/SevenUpLive.app/Contents/Resources/Java"/>
+	
+	<mkdir dir="${out.folder}/osx/SevenUpLive.app/Contents/Resources/Java"/>
   	
-  	<copy todir="${out.folder}/SevenUpLive.app/Contents/Resources/Java" flatten="false">
+  	<copy todir="${out.folder}/osx/SevenUpLive.app/Contents/Resources/Java" flatten="false">
         <fileset dir="${lib.folder}">
             <include name="${core.jar}"/>
             <include name="${jdom.jar}"/>
@@ -134,21 +153,31 @@
         </fileset>
     </copy>
     
-    <copy todir="${out.folder}/SevenUpLive.app/Contents/Resources" flatten="false">
+    <copy todir="${out.folder}/osx/SevenUpLive.app/Contents/Resources" flatten="false">
         <fileset dir="${resources.folder}/osx">
             <include name="SevenUpLive.icns"/>
         </fileset>
     </copy>
     
-    <copy todir="${out.folder}/SevenUpLive.app/Contents/Resources/Java">
-        <fileset dir="${out.folder}">
+    <copy todir="${out.folder}/osx/SevenUpLive.app/Contents/Resources/Java">
+        <fileset dir="${out.folder}/osx">
             <include name="SevenUpLive-${release.version}.jar"/>
         </fileset>
     </copy>
-    <!-- Now zip everything into a distribution -->
-    <jar jarfile="${dist.folder}/SevenUpLive-${release.version}.zip">
-        <fileset dir="${out.folder}"/>
+    
+    <!-- Now zip everything into a distribution for Windows -->
+    <jar jarfile="${dist.folder}/windows/SevenUpLiveWindows-${release.version}.zip">
+        <fileset dir="${out.folder}/windows"/>
     </jar>
+    
+    <tar tarfile="${dist.folder}/osx/SevenUpLiveOSX-${release.version}.tar.gz" compression="gzip" longfile="gnu">
+    	<tarfileset dir="${out.folder}/osx">
+    	    <include name="*/**"/>
+    	</tarfileset>
+    	<tarfileset dir="${out.folder}/osx" mode="755">
+    		<include name="SevenUpLive.app/Contents/MacOS/JavaApplicationStub"/>
+    	</tarfileset>
+    </tar>
     
   </target>
   
