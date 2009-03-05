@@ -151,6 +151,8 @@ public class Looper extends Mode {
 			}
 			
 			stopLoopsOnNextStep[x] = false;
+			int loopCtrlValue = (y * 16);
+			midiOut.sendController(new promidi.Controller(OFFSET_START_CTRL+x, loopCtrlValue));
 			playLoop(x, y);
 			
 			//System.out.println("Gate loops is " + gateLoopChokes);
