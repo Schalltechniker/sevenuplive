@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
     <title>SevenUpLive for the Monome</title>
@@ -41,6 +41,7 @@ a img {
 <body>
         <img alt="SevenUpLive logo" src="images/7up-logo-75.png" style="float:left;padding:20px 20px 20px 20px" />
         <h1>7up Live</h1>
+
         <p>7up Live is a Java application that combines 8 different monome applications 
             into one interface.&nbsp; With it, your monome communicates with 
             Ableton Live 7 via MIDI and allows MLR-like functionality along with 
@@ -51,18 +52,21 @@ a img {
         <h2>Contents</h2>
         <ul>
             <li><a href="#Requirements">Requirements</a></li>
+
             <li><a href="#Download">Download</a></li>
             <li><a href="#AbletonLiveSetup">Ableton Live Setup</a></li>
             <li><a href="#GettingStarted">Getting Started</a></li>
             <li><a href="#TheSevenUpLiveInterface">The 7up Live Interface</a><ul>
                 <li><a href="#ChangingModes">Changing Modes</a></li>
                 <li><a href="#Stepper">1. Stepper</a></li>
+
                 <li><a href="#Sequencer">2. Sequencer</a></li>
                 <li><a href="#Controller">3. Controller</a></li>
                 <li><a href="#Looper">4. Looper</a></li>
                 <li><a href="#LoopRecorder">5. Loop Recorder</a></li>
                 <li><a href="#Melodizer1">6. Melodizer 1</a></li>
                 <ul><li><a href="#clipLaunch">Clip Launch Mode</a></li></ul>
+
                 <li><a href="#Melodizer2">7. Melodizer 2</a></li>
                 <ul><li><a href="#externInstrument">External MIDI Instruments</a></li></ul>
                 <li><a href="#Masterizer">8. Masterizer</a></li>
@@ -70,6 +74,7 @@ a img {
             </li>
             <li><a href="#WhatAboutLive">What about Ableton Live?</a></li>
             <li><a href="#Patches">SevenUp Patches (Loading, Saving, and Queueing)</a></li>
+
             <li><a href="#contact">Contact</a></li>
             <li><a href="#Multiple">Using Multiple Monomes</a></li>
             <li><a href="#ChangeHistory">Change History</a></li>
@@ -79,6 +84,7 @@ a img {
         
         <a id="Requirements"></a>
         <h2>Requirements</h2>
+
         
 
         <ul>
@@ -88,6 +94,7 @@ a img {
             <li>Virtual MIDI Device drivers<ul>
                 <li>Windows: MidiYoke is suggested (and located here: 
                     <a href="http://www.midiox.com/index.htm" >http://www.midiox.com/index.htm </a>)</li>
+
                 <li>Mac: use your built-in IAC</li>
                 </ul>
             </li>
@@ -95,11 +102,15 @@ a img {
                 <a href="http://monome.org/data/app/monomeserial">http://monome.org/data/app/monomeserial</a>)</li>
             <li>7up Live's Ableton Live Set template (included in download)</li>
         </ul>
+
 	<a id="Download"/>
         <h2>Download</h2>
         <p>The entire 7up Live package can be downloaded here:</p>
         <ul>
-            <li><A href="http://www.makingthenoise.com/sevenup/SevenUpLive-v1.0.zip">http://www.makingthenoise.com/sevenup/SevenUpLive-v1.0.zip</a></li>
+            <li>Windows: <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveWindows-v1.0.zip">http://www.makingthenoise.com/sevenup/SevenUpLiveWindows-v1.0.zip</a></li>
+       		<li>OSX: <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.0.tar.gz">http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.0.tar.gz</a></li>
+
+       
         </ul>
         <p>
             It includes the following:</p>
@@ -107,6 +118,7 @@ a img {
             <li>7up Live Java Application (as an executable JAR)</li>
             <li>Ableton Live template set (includes starter set of samples)</li>
             <li>Sample patch &amp; patch pack</li>
+
         </ul>
         <a id="AbletonLiveSetup" />
         <h2>Ableton Live Setup</h2>
@@ -116,11 +128,13 @@ a img {
 
         <ol>
             <li>Open Ableton Live and navigate to Options -&gt; Preferences</li>
+
             <li>Click on the MIDI Sync tab on the left</li>
             <li>Enable Track and Remote for the virtual INPUTS of 2-5 (but not 1).&nbsp; Enable Track 
                 and Remote MIDI signals for the OUTPUT of device 1<ol>
                     <li><a id="GettingStarted"></a>IMPORTANT: do not turn the <b>input</b> of device 1 on while the 
                         <b>output</b> for device 1 is on or you may cause MIDI feedback</li>
+
                 </ol>
             </li>
             <li>Your preference should now look similar to the image below (Macs will have 
@@ -132,17 +146,23 @@ a img {
         <p>This section will provide you with a &quot;Hello World&quot; for 7up Live.&nbsp; Once we 
             get 7up Live talking to Ableton Live we&#39;ll later go into the details of how to 
             navigate through the 7up Live interface.</p>
+
             
 
         <ol>
             <li>With your Monome connected to your PC, open MonomeSerial.&nbsp; The values shown 
                 below will work with the defaults in 7up Live: <br />
                 <img alt="Monome Serial" src="images/MonomeSerial.PNG" style="width: 333px; height: 582px" /></li>
-            <li>Open SevenUpLive v1.0.JAR</li>
+            <li>Open SevenUpLive v1.0.JAR (Windows) or SevenUpLive.app (OSX)
+            <b>NOTE:</b> Some users have not been able to launch SevenUpLive.app on OSX and we don't yet fully understand the issue but there are simple workarounds. 
+            You can either go into ./supporting folder and double click SevenUpLive-v1.0.jar which should launch the app but you will not get the custom dock icon 
+            or OSX style menus. Or you can copy libProMandoMidiJNILib.jnilib from the ./supporting folder to /Library/Java/Extensions and try launching SevenUpLive.app again.</li>
+
             <li>You should see the screen below.&nbsp;Choose your monome model from the dropdown and check to make sure your MIDI settings are correct.  Your MIDI 
                 device names may differ depending on your virtual midi utility but the numbers 
                 should match<br />
                 <img alt="SevenUp Connections" border="0" src="images/SevenUpConnectionsv1.PNG" /></li>
+
             <li>Press the initialize button to start the connection to the monome.&nbsp; Its buttons 
                 should clear except for 2 in the top right</li>
             <li>Open Ableton Live 7</li>
@@ -150,13 +170,15 @@ a img {
                 <ul>
                 <li>Navigate to File -&gt; Install Live Pack... and open the &quot;7up Live 
                 Template Set.alp&quot; pack included with this download package</li>
+
             <li>When promted, choose a location to save the project.</li>
             <li>After a successful installation, navigate to File -&gt; Open... and open the newly saved 7up Live Template 
                 Set.als</li>
                 </ul>
             
-            <li>Before you press play, click on each &quot;Midi Clock&quot; track and change the external 
+            <li>Before you press play, click on the &quot;Midi Clock&quot; track and change the external 
                 instrument MIDI output to <b>Device 1 and channel 8</b> as shown below:</li><br /><img src="images/win_extern_instru.png" />
+
                 <li>Next, change the MIDI Input devices of the Stepper, Looper, and Melodizer tracks to the 
                     following device numbers (2, 3, 4, 5).&nbsp; Set the Stepper and Looper to 
                     listen only on channel 8:</li><br /><img src="images/liveMidiInputs.PNG" />
@@ -168,6 +190,7 @@ a img {
                         to the graphic above.</li>
                     <li>Some users have seen issues when they initialize 7up WHILE Ableton Live is playing... so as a precaution make sure Ableton is stopped before opening/closing 7up</li>
                 </ol>
+
             </li>
             <li>Just for fun, press some of the monomes buttons in the LEFT 7 COLUMNS.&nbsp; You 
                 should notice that they light up and play samples when their row is flashed.</li>
@@ -178,6 +201,7 @@ a img {
                 notes, send MIDI Control values, and Sequence your patterns of samples.</p>
 
        <a id="TheSevenUpLiveInterface"></a>
+
 <h2>The 7up Live Interface</h2>
 
 
@@ -191,6 +215,7 @@ a img {
             column will ALWAYS be your menu for choosing which mode to use.&nbsp; This 
             leaves you with the 7 left-most columns in order to chop loops, create patterns, 
             sequence melodies, etc.&nbsp;
+
         </p>
         <a id="ChangingModes" />
         <h3>Changing Modes</h3>
@@ -200,6 +225,7 @@ a img {
         <div style="text-align:center">
             <img alt="" src="images/SevenUpModes.PNG"  />
         </div>
+
         <p>
             In order to navigate from one mode to another, simply press on the solid button 
             in the nav menu (which indicates your current mode) and then press the nav 
@@ -210,6 +236,7 @@ a img {
         <p>
             Once you&#39;ve mastered even 1 or 2 of the modes, you&#39;ll have plenty to play with.&nbsp; 
             Each mode is covered below.</p>
+
             <a id="Stepper" />
         <h3>1. Stepper</h3>
         
@@ -222,6 +249,7 @@ a img {
             nav menu).&nbsp; These different patterns can then be recalled in different 
             orders by using the &quot;Sequencer&quot; mode.&nbsp; The layout of the stepper interface 
             is shown below:</p>
+
         <div style="text-align:center">
             <img src="images/StepperMode.PNG" /></div>
 
@@ -231,6 +259,7 @@ a img {
             pattern by holding down that pattern&#39;s button for 3 seconds.&nbsp; When you 
             press a sample trigger, it will first be flashing to indicate low velocity, 
             pressing it again will make it solid to indicate a high velocity.</p>
+
         <a id="Sequencer" />
         <h3>2. Sequencer</h3>
         <p>
@@ -240,6 +269,7 @@ a img {
             Each row then corresponds to playing one measure of that pattern.&nbsp; The 
             diagram below shows a sequence that plays: Pattern 1, Pattern 2, Pattern 1, 
             Pattern 3, Pattern 1, Pattern 2, Pattern 1, Pattern 4.</p>
+
         <div style="text-align:center">
     <img src="images/SequencerMode.PNG" /></div>
 
@@ -253,6 +283,7 @@ a img {
 
 
         <p>
+
             The controller mode allows you to map 7 different MIDI controllers to any knob 
             or function in Ableton Live.&nbsp; 
             For instance, you can assign controls 1-3 to 3 different filters for 3 of your 
@@ -269,6 +300,7 @@ a img {
             The following graphic shows a situation where someone mapped 4 different sliders 
             to knobs in Ableton Live.&nbsp; The first slider is sending MIDI control value 
             128, the second is sending 64... and so on.</p>
+
     <div style="text-align:center">
     <img src="images/ControllerMode.PNG" /></div>
         
@@ -283,21 +315,24 @@ a img {
             This allows you to chop up loops similar to MLR.&nbsp; Each 
             column on the left hand side corresponds to a loop.&nbsp; If you press any row 
             in a loop, the loop will play at that offset and continue to play.  Each column also has a corresponding row in the right nav column which can also be used to start and stop the loop.</p>
+
         </p>
         <p>
             It's important to understand that loops loaded into the looper must already match your BPM (which may require consolidating a loop).  Also, because 7up has no way of knowing how long your loop in Ableton is, you must use the 7up user interface to assign each loop's length.
             </p>
     <div style="text-align:center"><img src="images/Looperv1.PNG" /></div>
-    <p>Additionally, the interface gives you the option to add loops to different choke groups.  This is similar to MLR's concept of choke groups in that only 1 loop in a particular choke group can be playing at once.  For instance if loops 2 and 3 are both part of choke group 1, playing loop 2 will stop loop 3 and vice versa.</p>
+    <p>Additionally, the interface gives you the option to add loops to different choke groups.  This is similar to MLR's concept of choke groups in that only 1 loop in a particular choke group can be playing at once.  For instance if loops 2 and 3 are both part of choke group 1, playing loop 2 will stop loop 3 and vice versa.</p>
     <h4>How do I import new loops?</h4>
         <p>If you plan on using any loops besides the ones provided in the Template Set 
             you&#39;ll want to read these instructions.&nbsp; There are two things you want to 
             <b>avoid </b>when importing new loops into the looper:</p>
+
         <ol>
             <li>Replacing an entire chain in the Looper track.&nbsp; This will delete the MIDI 
                 mapping that exists between 7up Live and the &quot;Start&quot; knob of each chain</li>
             <li>Importing a loop that doesn&#39;t fit your tempo (unless it&#39;s intentional)</li>
         </ol>
+
         <p>
             You&#39;re probably used to Live auto-warping samples that don&#39;t match your BPM so 
             you rarely have to deal with loops not matching.&nbsp; Unfortunately, if you 
@@ -306,9 +341,11 @@ a img {
             give an example of importing a beat into the Looper that doesn&#39;t match the 
             song&#39;s BPM:</p>
         <ol>
+
             <li>In &quot;Session&quot; mode (horizontal), drag your loop onto the &quot;Resample&quot; track</li>
             <li>Righ click on the sample and choose &quot;Consolidate&quot; (this will stop audio)</li>
             <li>Staying in session mode, click on the looper track</li>
+
             <li>Click on the chain you&#39;ll be replacing (Loops 1-7)</li>
             <li>Drag your consolidated sample from the session view onto the WAVEFORM of the 
                 existing sample as this picture demonstrates.<ol>
@@ -317,6 +354,7 @@ a img {
                 </ol>
             </li><br /><img src="images/LooperImportWave.PNG" />
             <li>The last step is to use 7up interface to select the loop's length (in measures).</li>
+
         </ol>
         <p>
             Additional notes:&nbsp; One pain about importing new loops is that if they are 
@@ -326,6 +364,7 @@ a img {
             skip a beat.&nbsp; Also, the &quot;Mute Looper&quot; checkbox in the interface allows you 
             to temporarily mute the MIDI notes being sent by the loop in case you just want 
             to modify the MIDI mapping of the Start Offset control values.</p>
+
         <p>&nbsp;</p>
     
 <a id="LoopRecorder" />
@@ -339,6 +378,7 @@ a img {
             right once arms that particular loop for recording.&nbsp; Once you&#39;ve played 
             that loop and chopped it up, press the same sub-nav button to stop recording and 
             instantly play back what you recorded.&nbsp; You can also start and stop recordings from the Masterizer mode.</p>
+
         <p>
             Recording loops and melodies in 7up Live is done consistently throughout.&nbsp; 
             Press the sub-nav button corresponding to the track you want to record to once 
@@ -348,6 +388,7 @@ a img {
             flash to let you know it&#39;s playing your recording back.</p>
         <a id="Melodizer1" />
         <h3>6. Melodizer 1</h3>
+
         <p>The Melodizer allows you to play and record sequences of melodies in any key of 
             any scale.&nbsp; It does this by providing a MIDI keyboard that is presented to 
             you in a scale that is chosen through the 7up Live interface.&nbsp; First 
@@ -358,6 +399,7 @@ a img {
             note within that scale started at a Key you select from the left-bottom 
             interface.&nbsp; This may be best explained with a graphic:</p>
         <div style="text-align:center">
+
             <img src="images/MelodizerMode.PNG" /></div>
             <p>As you can see, the interface is split into 3 areas.&nbsp; The Key area supplies 
                 the starting note of the Note area in the top left.&nbsp; In this way, you can 
@@ -371,6 +413,7 @@ a img {
             If you like, you could set up 7 different instruments in Live listening to 7 
             different channels rather than how my template is setup which uses 1 instrument 
             listening to all 7 channels.</p>
+
        <a id="clipLaunch0" />
         <p>
             <b>Melodizer Recording Modes</b></p>
@@ -384,6 +427,7 @@ a img {
             These principles apply to the Masterizer screen as well.&nbsp; That means that 
             when &quot;Quantized&quot; mode is enabled, melodizer patterns triggered in the Masterizer 
             screen will wait until the next 1/2 measure before triggering.</p>
+
         <a id="Melodizer3" />
        <a id="clipLaunch" />
        <h3>Clip Launch Mode</h3>
@@ -391,17 +435,20 @@ a img {
             section of the melodizer is removed and the melodizer becomes an interface to 
             launch and view clip information from Ableton Live.&nbsp; To take advantage of this mode we need to assign some melodizer MIDI notes to 
             individual clips in Live&#39;s Session View.&nbsp;Also make sure that your MIDI preferences have the "Track" column selected.</p>
+
         <p>FIRST make sure that no 
             tracks are intercepting your MIDI notes.&nbsp; Meaning, if you want to assign 
             clips to Melodizer 1 which is set to output on MIDI device 4, make sure that you 
             don&#39;t have a MIDI track with its &quot;MIDI From&quot; set to Device 4 as well.&nbsp; 
             ALSO, make sure that your MIDI preferences in Ableton Live have the &quot;Track&quot; AND 
             &quot;Remote&quot; option turned on for your MIDI output device (typically Device 1).</p>
+
         <ol>
             <li>Set melodizer 1&#39;s scale to &quot;CLIP LAUNCH&quot;</li>
             <li>Change to melodizer 1 mode in SevenUp</li>
             <li>Add an audio track in Live with 4 audio clips loaded</li>
             <li>Open up Live&#39;s MIDI Map Mode by pressing the &quot;MIDI&quot; button in the top right</li>
+
             <li>For each of your 4 clips, select it and assign it to a note in the Melodizer by 
                 pressing anywhere on the left 7 columns</li>
             <li>Exit MIDI map mode by pressing the &quot;MIDI&quot; in the top right button once again</li>
@@ -417,6 +464,7 @@ a img {
             their LED off.&nbsp; Each melodizer column should map to only a single Ableton 
             Live track at a time because SevenUp assumes that only 1 clip in a column can be 
             playing at once.</p>
+
         <p>
             This functionality only works for Melodizer 1 because Ableton Live doesn&#39;t keep 
             track of which device is sending the mapped MIDI notes.&nbsp; Therefore, it 
@@ -428,6 +476,7 @@ a img {
         <h3>7. Melodizer 2</h3>
         <p>Melodizer 2 is exactly the same as Melodizer 1 but without clip launch mode and 
             with the option to accept incoming MIDI events from external MIDI isntruments. </p>
+
             <a id="externInstrument" />
             <h3>External MIDI Instruments</h3>
             
@@ -440,11 +489,13 @@ a img {
             pattern using SevenUp.</p>
         <p>The following instructions explain how to set this up:</p>
         <ol>
+
             <li>Add a new MIDI channel to Ableton Live</li>
             <li>Change the &quot;MIDI From&quot; parameter to your MIDI keyboard device</li>
             <li>Change the &quot;Monitor&quot; option to &quot;In&quot;</li>
             <li>Change the &quot;MIDI To&quot; parameter to SevenUp&#39;s input device (typically IAC/Midi 
                 Yoke 1).</li>
+
             <li>Change the channel dropdown to &quot;Ch. 9&quot;.&nbsp; This will route notes to the 
                 Melodizer 2&#39;s channel 1.&nbsp; Your track should now look like this:</li>
                 <center><img src="images/ExternInstrument.PNG" /></center>
@@ -452,6 +503,7 @@ a img {
                     light up monome if you have pattern 1 selected</li>
             <li>Enabling recording for a melodizer 2 pattern will also record any MIDI coming 
                 from external instruments.</li>
+
             <li>The new MIDI track&#39;s Ch. 10 maps to melodizer pattern 2, Ch. 11 to pattern 3, 
                 etc...</li>
         </ol>
@@ -461,6 +513,7 @@ a img {
             what is going on in each of the other modes.&nbsp; It&#39;s for this reason that the 
             Masterizer interface is the least intuitive.&nbsp; The left side of the 
             Masterizer mode uses each column to control another mode as such:</p>
+
         <ul>
             <li>Column 1:<ul>
                 <li>This column shows the current progress of the current pattern.&nbsp; The pattern 
@@ -468,6 +521,7 @@ a img {
                 </ul>
             </li>
             <li>Column 2:<ul>
+
                 <li>This column shows the current sequence that is playing.&nbsp; You can change 
                     sequences by pressing a button in this column.&nbsp; Notice that the sequence 
                     waits for the current pattern to finish before changing</li>
@@ -476,6 +530,7 @@ a img {
             <li>Column 3:<ul>
                 <li>This column allows you to trigger control banks 1-7.&nbsp; Any control bank that has 
                     values set will show as flashing.</li>
+
                 </ul>
             </li>
             <li>Column 4:<ul>
@@ -484,6 +539,7 @@ a img {
                 </ul>
             </li>
             <li>Column 5:<ul>
+
                 <li>This column allows you to enable or disable loops.&nbsp; If there is a recorded 
                     loop, it will show up as a flashing light.</li>
                 </ul>
@@ -492,6 +548,7 @@ a img {
                 <ul>
                     <li>This column allows you to enable or disable melodizer 1 sequences.&nbsp; If 
                         there is a recorded sequence, it will show up as a flashing light.</li>
+
                 </ul>
             </li>
             <li>Column 7:<ul>
@@ -499,6 +556,7 @@ a img {
                 </ul>
             </li>
             <li>Column 8:<ul>
+
                 <li>The sub-nav buttons of the Masterizer send MIDI notes C4-G4 on Channel 8 in 
                     order to allow transport control.&nbsp; For instance, the top most button could 
                     be mapped to &quot;Play&quot;, the second button to &quot;Stop&quot;, and the 3rd button to &quot;Locator 
@@ -506,6 +564,7 @@ a img {
                     to prevent accidentally pressing transport buttons which could potentially make 
                     a big mess out of a performance.</li>
                 </ul>
+
             </li>
         </ul>
       
@@ -518,6 +577,7 @@ a img {
             instruments, and other capabilities.&nbsp; For this reason, I&#39;ll touch on how 
             7up Live is interfacing with Live so that you can tweak with it yourself.&nbsp; 
         </p>
+
         <p>The 7up Live package contains a template Live set that is configured to 
             correctly interpret the MIDI signals being sent back and forth.&nbsp; For 
             instance, the template set has a track called &quot;Stepper&quot; that contains a Drum 
@@ -529,12 +589,14 @@ a img {
      
         </div>
         <p>
+
             As you can see, there is a track for the &quot;Stepper mode&quot;, the &quot;Looper mode&quot; and 
             both of the Melodizers.&nbsp; By adding effects to these tracks, you will alter 
             the sounds produced by 7up Live.&nbsp; You may have also noticed that each 
             track uses a different virtual midi device in order to accept its MIDI input.&nbsp; 
             Be careful only to change these settings if you know what you&#39;re doing.</p>
         <p>
+
             The looper track is very similar to the stepper track except that each sample 
             has its &quot;Start Offset&quot; knob mapped to a controller being used by 7up Live.&nbsp; 
             Manipulating these start offset knobs in time with your button-mashing is how 
@@ -545,6 +607,7 @@ a img {
             dragging any sample into the looper doesnt mean it will fit your tempo.&nbsp; 
             You should first drag your sample into the &quot;Resample&quot; track, consolidate it, and 
             then drag it into the looper.</p>
+
         <p>
             Something that I&#39;ve found fun is to use the &quot;Resample&quot; track to record 2 
             measures of what you&#39;ve done, then drag that newly recorded sample onto one of 
@@ -552,14 +615,13 @@ a img {
             time.&nbsp; Using this technique, you could record vocals in real time and 
             immediately start chopping them up as loops.</p>
         <h3>How does 7up Live know where it is in the song?</h3>
-        <p>The timing of 7up Live is controled by 2 MIDI tracks located in the Ableton Live template called "MIDI 
-            Clock 1&quot; and &quot;MIDI Clock 2 - Looper&quot;.&nbsp; These 2 tracks send MIDI note values to 
+        <p>The timing of 7up Live is controled by a MIDI clock track located in the Ableton Live template called "MIDI 
+            Clock".&nbsp; This track sends MIDI note values to 
             7up Live (to the MIDI device selected in the initialization screen) which 
             7up Live interprets in order to time the triggering of samples and sequences.&nbsp; 
-            The &quot;Midi Clock&quot; track controls the Stepper and Melodizers and is affected by 
-            any global shuffle you apply to your song in Live.&nbsp; The &quot;Midi Clock - 
-            Looper&quot; track controls the Looper mode and by default is not affected by global 
-            shuffle.</p>
+            The &quot;Midi Clock&quot; track controls the Stepper. Looper, and Melodizers and is affected by 
+            any global shuffle you apply to your song in Live.</p>
+
         <p>Pressing Ableton's stop button will cause 7up to reset all sequences, loops, and melodies to their starting point.  
             Additionally, sending the MIDI note &quot;F#4&quot; from MIDI Clock 1 or 2 will tell 7up 
             to stop all loops and melodies and reset the stepper to the first beat.&nbsp; 
@@ -567,8 +629,9 @@ a img {
             loaded patches sync to Ableton&#39;s beat.</p>
         <p>If for whatever reason you need to change the MIDI device or channel that Ableton Live uses 
             to send timing data to 7up Live, you can do so by clicking on the &quot;MIDI 
-            Clock&quot; and &quot;MIDI Clock - Looper&quot; tracks, selecting the &quot;External Instrument&quot; 
+            Clock&quot; track, selecting the &quot;External Instrument&quot; 
             effect, and changing the &quot;MIDI To&quot; value.</p>
+
            
            <a id="Multiple" />
             <h2>Using Multiple Monomes</h2>
@@ -577,24 +640,28 @@ a img {
             <div class="center" >
             <img src="images/MonomeserialDropdown.png" alt="Monomeserial with dropdown for multiple monomes" />
             </div>
+
             <p><b>Example with 1 x 128 and 2 x 64's:</b> here we have 3 monomes but all 7up sees is 4 8x8 grids which it will assume is a 256 using the following settings in monomeserial:</p>
             
             <div class="center">
             <table border="1">
             <tr><td>Monome</td><td>Start Col</td><td>Start Row</td></tr>
             <tr><td>128</td><td>0</td><td>0</td></tr>
+
             <tr><td>64 (1)</td><td>0</td><td>8</td></tr>
             <tr><td>64 (2)</td><td>8</td><td>8</td></tr>
             </table>
             </div>
             
             <p><b>Example with 3 x 64's:</b> here we would arrange the 3 64's vertically and set the corresponding rows (cols stay at 0)</p>
+
             
             <div class="center">
             <table border="1">
             <tr><td>Monome</td><td>Start Col</td><td>Start Row</td></tr>
             <tr><td>64 (1)</td><td>0</td><td>0</td></tr>
             <tr><td>64 (2)</td><td>0</td><td>8</td></tr>
+
             <tr><td>64 (3)</td><td>0</td><td>16</td></tr>
             </table>
             </div>
@@ -605,6 +672,7 @@ a img {
             collection of Patterns/Loops/Melodies that you have arranged.&nbsp; Each 
             song you make with SevenUp is called a Patch.&nbsp; Saving and loading are fairly 
             straightforward as they are done through the &quot;File&quot; menu in the interface.&nbsp;
+
             
             <a id="Patches0" />
             Each patch is saved as an XML file in a location of your choosing.</a></p>
@@ -615,6 +683,7 @@ a img {
             Live.&nbsp; This essentially gives you access to an unlimited combination of 
             patterns/loops/melodies.&nbsp; Currently, there is no utility for merging 
             patches into Patch Packs so it must be done manually in a text editor.</p>
+
             <h3>Creating Patch Packs</h3>
         <p>Creating Patch Packs in a text editor is fairly straightforward.&nbsp; In this 
             example we will take two pre-existing patches and merge them into a single Patch 
@@ -623,27 +692,32 @@ a img {
             <li>Open your first Patch in a text editor.&nbsp; You&#39;ll see the contents will look 
                 something like this:</li>
                 <div style="padding:4px"><code >	&lt;?xml version="1.0" encoding="UTF-8"?><br />
+
 	&lt;SevenUpPatch areLoopsGated="false" patchName="Sample Patch 1.xml"><br /> ... ... 	<br />&lt;/SevenUpPatch></code></div>
 	        <li>Right now, the XML defines only 1 patch.&nbsp; If we want to queue up another 
                 patch, all we have to do is copy the &lt;SevenUpPatch&gt; XML from our second patch 
                 and append it to our XML file.&nbsp; REMEMBER: don&#39;t copy the first line that 
                 says &quot;<code>&lt;?xml version="1.0" encoding="UTF-8"?>&quot; </code> there should only be 1 of those per XML file
                 </li>
+
                 <li>Our XML now looks something like this:</li>
                 <div style="padding:4px"><code >	&lt;?xml version="1.0" encoding="UTF-8"?><br />
 	&lt;SevenUpPatch areLoopsGated="false" patchName="Sample Patch 1.xml"><br /> ... ... 	<br />&lt;/SevenUpPatch><br />
 	                <b>&lt;SevenUpPatch areLoopsGated="false" patchName="Sample Patch 2.xml"><br /> ... ... 	<br />&lt;/SevenUpPatch></b></code></div>
+
        <li>You could go on adding more patches if you like at this point.  The last step is important, we must enclose all of our patches in a 
            &lt;SevenUpPatchPack&gt; &lt;/SevenUpPackPack&gt; tag.&nbsp; Our completed file now looks 
            like this:</li>
            <div style="padding:4px"><code >	&lt;?xml version="1.0" encoding="UTF-8"?><br />
                <b>&lt;SevenUpPatchPack></b><br />
+
 	&lt;SevenUpPatch areLoopsGated="false" patchName="Sample Patch 1.xml"><br /> ... ... 	<br />&lt;/SevenUpPatch><br />
 	&lt;SevenUpPatch areLoopsGated="false" patchName="Sample Patch 2.xml"><br /> ... ... 	<br />&lt;/SevenUpPatch><br />
 	           <b>&lt;/SevenUpPatchPack></b></code></div>
        
        
         </ol>
+
            
             <p>Now we&#39;re ready to load our file into SevenUp.&nbsp; Once loaded, the &quot;Prev 
                 Patch&quot; and &quot;Next Patch&quot; buttons will be available to load up our queued Patches.&nbsp; 
@@ -651,6 +725,7 @@ a img {
                 interface.&nbsp; Patches can also be loaded using MIDI signals.&nbsp; The MIDI 
                 note E4 will send the &quot;Prev Patch&quot; command and F4 will send the &quot;Next Patch&quot; 
                 command.</p>
+
             
             <a id="ChangeHistory" />
             <h2>Change History</h2>
@@ -658,6 +733,7 @@ a img {
         <ul>
             <li>0.1 - 8/4/2008 - Initial release</li>
             <li>0.2 - 8/6/2008 - Replaced serial connection with OSC</li>
+
             <li>0.3 - 8/8/2008 - Added &quot;Choke Groups&quot; for loops.  Modified the template set and updated documentation</li>
             <li>0.4 - 8/10/2008 - Implemented &quot;Mandolane&quot; version of proMidi which should allow 
                 for full Mac support.&nbsp; This seems to have resolved the previous problem 
@@ -666,6 +742,7 @@ a img {
             <li>0.5 - 9/30/2008 - Added a &quot;Gate choked loopers?&quot; dropdown which determines 
                 whether or not loops in choke groups will stop as soon as a new loop is pressed 
                 or not until the next &quot;step&quot; event</li>
+
             <li>0.6 - 10/14/2008 - Added &quot;PatchPack&quot; functionality which allows multple patches 
                 to be queued up and triggered via MIDI.&nbsp; Also added MIDI commands for 
                 resetting the stepper/looper/melodizer</li>
@@ -675,6 +752,7 @@ a img {
                 SevenUpLive now expects to receive MIDI Clock data on channel 8 (was 1 
                 previously).&nbsp; Any Live sets must update their External Instrument effects 
                 on the MIDI clock tracks accordingly.</li>
+
             <li>0.7.1 - 11/26/2008 - Fixed some small bugs.&nbsp; Stepper and Looper must now 
                 listen only to channel 8.&nbsp; Now only Melodizer 1 can be set to clip launch 
                 mode (makes no sense to map clips to different devices on the same channels).&nbsp; 
@@ -683,6 +761,7 @@ a img {
                 values.&nbsp; Modified clip launch so that each column maps to a single Live 
                 track, this means that only 1 clip in a track can play (be solid) at once.</li>
             <li>0.7.2 - 12/2/2008 - Small bug fix related to patch packs</li>
+
             <li>0.8 - 12/9/2008 - Added &quot;Quantized&quot; recording mode for melodizer which allows a 
                 user to cue recording for 1/2 measure before recording begins or ends.&nbsp; 
                 This is as opposed to &quot;On Button Pressed&quot; recording which begins immediately 
@@ -692,13 +771,15 @@ a img {
             <li>0.9 - 12/12/2008 - Enabled quantized playing/stopping for masterizer when it&#39;s 
                 also enabled for the melodizer.&nbsp; Added ability to listen to MIDI from 
                 external MIDI devices and route it through melodizer 2.</li>
+
             <li>0.9.1 - 1/13/2009 - barnone (Chris Lloyd) added the ability to store connection 
                 preferences.  Added the ability to sequence mutiple patterns at a time.&nbsp; 
                 This *removes* this ability to trigger patterns while in sequencer mode.</li>
-            <li>1.0 - 2/20/2009 - barnone (Chris Lloyd) added the ability to support multiple monome connections at once.  Loop length was moved to the UI.  Removed ability to sequence multiple patterns at once.</li>
+            <li>1.0 - 2/20/2009 - barnone (Chris Lloyd) added the ability to support multiple monome connections at once.  Loop length was moved to the UI.  Removed ability to sequence multiple patterns at once because it kinda sucked.</li>
         </ul>
         <h2 id="contact">Contact</h2>
         Any comments or suggestions, contact me at <a href="mailto:sevenuplive@googlegroups.com" >sevenuplive@googlegroups.com</a>
+
         <h2 id="donation">Donation</h2>
         All donations are appreciated but certainly not required, thanks!
         <br />
@@ -715,9 +796,11 @@ a img {
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 </script>
+
 <script type="text/javascript">
 var pageTracker = _gat._getTracker("UA-3756989-3");
 pageTracker._trackPageview();
 </script></body>
 
 </html>
+            

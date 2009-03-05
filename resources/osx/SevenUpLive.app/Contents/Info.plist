@@ -5,7 +5,7 @@
 	<key>CFBundleName</key>
 	<string>SevenUpLive</string>
 	<key>CFBundleVersion</key>
-	<string>9.3</string>
+	<string>#RELEASE.VERSION#</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<string>true</string>
 	<key>CFBundleExecutable</key>
@@ -42,7 +42,7 @@
 			</array>
 		<key>Properties</key>
 		<dict>
-			<key>apple.laf.useScreenMenuBar</key>
+		    <key>apple.laf.useScreenMenuBar</key>
 			<string>true</string>
 		</dict>
 	</dict>

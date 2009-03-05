@@ -61,7 +61,8 @@
 	
   <target name="_makedistdirs">
     <mkdir dir="${out.folder}/windows/supporting"/>
-	<mkdir dir="${out.folder}/osx"/>
+  	<mkdir dir="${out.folder}/osx/supporting"/>
+  	<mkdir dir="${out.folder}/osx"/>
 	<mkdir dir="${dist.folder}/windows"/>
 	<mkdir dir="${dist.folder}/osx"/>
   </target>
@@ -76,7 +77,7 @@
         </manifest>
     </jar>
     
-    <jar jarfile="${out.folder}/osx/SevenUpLive-${release.version}.jar">
+    <jar jarfile="${out.folder}/osx/supporting/SevenUpLive-${release.version}.jar">
         <fileset dir="${bin.folder}"/>
         <manifest>
             <attribute name="Class-Path" value="${core.jar} ${jdom.jar} ${libProMandoMidiJNILib.jar} ${oscP5.jar} ${promidi.jar} ${proxml.jar}"/>
@@ -160,11 +161,25 @@
     </copy>
     
     <copy todir="${out.folder}/osx/SevenUpLive.app/Contents/Resources/Java">
-        <fileset dir="${out.folder}/osx">
+        <fileset dir="${out.folder}/osx/supporting">
             <include name="SevenUpLive-${release.version}.jar"/>
         </fileset>
     </copy>
     
+  	<copy todir="${out.folder}/osx/supporting" flatten="false">
+  	        <fileset dir="${lib.folder}">
+  	            <include name="${core.jar}"/>
+  	            <include name="${jdom.jar}"/>
+  	            <include name="${libProMandoMidiJNILib.jar}"/>
+  	        	<include name="${libProMandoMidiJNILib.jnilib}"/>
+  	            <include name="${oscP5.jar}"/>
+  	            <include name="${promidi.jar}"/>
+  	            <include name="${proxml.jar}"/>
+  	        	<include name="SevenUpLive-${release.version}.jar"/>
+  	        </fileset>
+  	    </copy>
+  	    
+  	
     <!-- Now zip everything into a distribution for Windows -->
     <jar jarfile="${dist.folder}/windows/SevenUpLiveWindows-${release.version}.zip">
         <fileset dir="${out.folder}/windows"/>
@@ -173,6 +188,7 @@
     <tar tarfile="${dist.folder}/osx/SevenUpLiveOSX-${release.version}.tar.gz" compression="gzip" longfile="gnu">
     	<tarfileset dir="${out.folder}/osx">
     	    <include name="*/**"/>
+    		<exclude name="SevenUpLiveOSX-${release.version}.jar"/>
     	</tarfileset>
     	<tarfileset dir="${out.folder}/osx" mode="755">
     		<include name="SevenUpLive.app/Contents/MacOS/JavaApplicationStub"/>
