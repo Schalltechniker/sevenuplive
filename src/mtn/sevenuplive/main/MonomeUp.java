@@ -541,6 +541,10 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	public void setLoopLength(int loopNum, float length) {
 		allmodes.getLooper().getLoop(loopNum).setLength(length);
 	}
+	
+	public void setLoopType(int loopNum, int type) {
+		allmodes.getLooper().getLoop(loopNum).setType(type);
+	}
 
 	public void extNoteOn(Note note, int channel) {
 		allmodes.getMelodizer2().extNoteOn(note, channel);

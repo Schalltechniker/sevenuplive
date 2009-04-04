@@ -5,6 +5,30 @@ import org.jdom.Element;
 
 public class Loop {
 	
+	/** Loop types */
+	
+	/** Regular loop that keeps looping */
+	public static final int LOOP = 0; 
+	
+	/** Loop that stops at end of one iteration. Steps like a regular loop and can be choked or killed. */
+	public static final int SHOT = 1;
+	
+	/** Triggers a loop and keeps stepping loop until button is released. */
+	public static final int MOMENTARY = 2;  
+
+	/** 
+	 * Triggers the sample mapped to a step and plays till end of that sample regardless of key release. Super useful for multi
+	 * samples such as drums where 8 samples are mapped across the velocity range 
+	 * Can also be used with multi-samples that are much longer.
+	 */
+	public static final int HIT = 3;    
+	
+	/** 
+	 * Triggers the sample mapped to a step and plays till end of that step regardless of key release. Super useful for triggering
+	 * just a sample slice where you want it to play just that slice.
+	 */
+	public static final int SLICE = 4;    
+	
 	/** Value indicating the loop is not playing */ 
 	public static final int NOT_PLAYING = -1;
 	
@@ -17,8 +41,16 @@ public class Loop {
 
 	/** Current step index or {@link #NOT_PLAYING} */
 	private int step;
+	private int iteration = 0;
 	private int startOffset;
 	private int resCounter;
+	/** Determines if a step has been retriggered  */
+	private boolean[] trigger;
+	/** Last step that was triggered */
+	private int lastTriggeredStep = -1;
+	
+	/** The type of loop it is */
+	private int type = LOOP;
 	
 	private int pressedRow;
 	
@@ -29,6 +61,7 @@ public class Loop {
 	{
 		step = NOT_PLAYING; //not playing currently
 		chokeGroup = NO_CHOKE_GROUP; //Default to no choke group
+		trigger = new boolean[8];
 	}
 	
 	public boolean isPlaying()
@@ -36,14 +69,40 @@ public class Loop {
 		return step != NOT_PLAYING;
 	}
 	
+	public int getIteration()
+	{
+		return iteration;
+	}
+	
 	public int getStep()
 	{
 		return step;
 	}
-		
+	
+	public boolean getTrigger(int step)
+	{
+		return trigger[step];
+	}
+	
+	public void setTrigger(int step, boolean value)
+	{
+		trigger[step] = value;
+		if (value == true)
+			lastTriggeredStep = step;
+	}
+	
+	public int getLastTriggedStep()
+	{
+		return lastTriggeredStep;
+	}
+	
 	public void stop()
 	{
+		for (int i = 0; i < 7; i++) {
+			setTrigger(i, false);
+		}
 		step = NOT_PLAYING;
+		iteration = 0;
 	}
 
 	public int getResolution()
@@ -61,9 +120,12 @@ public class Loop {
 		// When we change a step, res needs to reset to 0.
 		resCounter = 0;
 		
+		
 		step++;
-		if(this.step > 7)
+		if(this.step > 7) {
 			this.step = 0;
+			iteration++;
+		}	
 	}
 	
 	/**
@@ -120,10 +182,44 @@ public class Loop {
 		}
 	}
 
+	/**
+	 * Is this the last resolution tick in the loop 
+	 */
+	public boolean isLastResStep()
+	{
+		int testRes = resCounter + 1;
+		
+		if (testRes % (resolution) == 0 && this.step == 7) 
+			return true;
+		
+		return false;
+	}
+	
+	/**
+	 * Is this the last resolution tick in the step 
+	 */
+	public boolean isLastResInStep()
+	{
+		int testRes = resCounter + 1;
+		
+		if (testRes % (resolution) == 0) 
+			return true;
+		
+		return false;
+	}
+
 	public void setLength(Float length) {
 		//resolution of 0 + 1 = 1/2 measure
 		//Meaning, stepping every 1 16th note will produce 1/2 measure in 8 steps
 		this.resolution = new Float(length * 2).intValue();
+	}
+	
+	public void setType(int type) {
+		this.type = type;
+	}
+	
+	public int getType() {
+		return type;
 	}
 
 	public int getPressedRow()

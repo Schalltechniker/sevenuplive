@@ -362,6 +362,10 @@ public class SevenUpApplet extends processing.core.PApplet
 		m.setLoopLength(loopNum, length);
 	}
 	
+	public void setLoopType(int loopNum, int type) {
+		m.setLoopType(loopNum, type);
+	}
+	
 	public float getLoopLength(int loopNum )
 	{
 		return m.getLoopLength(loopNum);

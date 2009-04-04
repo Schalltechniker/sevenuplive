@@ -34,6 +34,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	JComboBox drpScaleChoices2;
 	JComboBox drpLoopChoke;
 	JComboBox drpLoopLength;
+	JComboBox drpLoopType;
 	JComboBox drpGateLoopChoke;
 	JComboBox drpMelRecMode;
 	JButton btnPrevPatch;
@@ -60,7 +61,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
     	
     	// Resize a bit
     	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    	parentFrame.setBounds(screenSize.width / 2,screenSize.height / 2,376,420);
+    	parentFrame.setBounds(screenSize.width / 2,screenSize.height / 2,450,420);
  
     	try
     	{
@@ -216,6 +217,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        //Loops
 	        JLabel lblSetLoopGate;
 	        JLabel lblSetLoopLength;
+	        JLabel lblSetLoopType;
 	        
 	        for(Integer i=0; i<7;i++)
 	        {
@@ -263,10 +265,30 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	            			}
 	            		}
 	            );
+	            
+	            // Loop type choices
+	            lblSetLoopType = new JLabel("Type");
+	            setSizeSmall(lblSetLoopType);
+	            lblSetLoopType.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
+	            String[] typeChoices = { "Loop", "Shot", "Momentary", "Hit", "Slice"};
+	            drpLoopType = new JComboBox(typeChoices);
+	            setSizeSmall(drpLoopType);
+	            drpLoopType.setName(i.toString()+"type");
+	            drpLoopType.setSelectedIndex(0);
+	            drpLoopType.addActionListener(
+	            		new ActionListener(){
+	            			public void actionPerformed(ActionEvent e) {
+	            				setDirty(true);
+	            				JComboBox cb = (JComboBox)e.getSource();
+	            				sevenUpApplet.setLoopType(Integer.parseInt(cb.getName().substring(0,1)), cb.getSelectedIndex());
+	            			}
+	            		}
+	            );
 	            c.gridx = 0; c.gridy = 3 + i; secondPanel.add(lblSetLoopGate, c);
 	            c.gridx = 1; secondPanel.add(drpLoopChoke, c);
 	            c.gridx = 2; secondPanel.add(lblSetLoopLength, c);
 	            c.gridx = 3; secondPanel.add(drpLoopLength, c);
+	            c.gridx = 4; secondPanel.add(drpLoopType, c);
 	        }
 	        
 	        JLabel lblGateLoopChoke = new JLabel("Gate choked loops?");

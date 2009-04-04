@@ -380,6 +380,9 @@ public class DisplayGrid {
 			if(y<6 || allmodes.getMelodizer2().clipMode)
 				allmodes.getMelodizer2().release(x, y);
 		}
+		else if (curMode == ModeConstants.LOOP_MODE && x != NAVCOL) {
+			allmodes.getLooper().release(x, y);
+		}
 
 		pressedButtonsLength[x][y] = 0;
 
