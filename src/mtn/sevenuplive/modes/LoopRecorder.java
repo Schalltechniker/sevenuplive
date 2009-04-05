@@ -143,7 +143,7 @@ public class LoopRecorder extends Mode {
 				{
 					if(cv != null && cv.getValue() > -1)
 					{
-						System.out.println("Sequence " + i + ": Returned id: " + cv.getId() + " value: " + cv.getValue());
+						//System.out.println("Sequence " + i + ": Returned id: " + cv.getId() + " value: " + cv.getValue());
 						//If using gating, only 1 loop can play per step.  Determine that loop.  Play it and stop the others.
 						curChokeGroup = AllModes.getInstance().getLooper().getLoop(i).getChokeGroup();
 						if(curChokeGroup > -1)
