@@ -43,7 +43,6 @@ public class Melodizer extends Mode {
 		key = new int[7];
 		cuedIndex = -1;
 		sequences = new Hashtable<Integer, NoteSequence>();
-		 
 		curSeqBank = 0;
 	    heldNote = new boolean[128];
 	    displayNote = new int[128];

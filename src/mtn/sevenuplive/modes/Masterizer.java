@@ -7,40 +7,41 @@ import promidi.MidiOut;
 import promidi.Note;
 
 public class Masterizer extends Mode {
-	//PATTERN
-	private final static int PATTERN_COL = 0;
-	
 	//SEQUENCER
-	private final static int SEQUENCER_COL = 1;
+	private final static int SEQUENCER_COL = 0;
 	int sequencerRows[];
 	
 	//CONROLLER
-	private final static int CONTROLER_COL = 2;
+	private final static int CONTROLER_COL = 1;
 	int curControlBank = -1;
 	
-	//TRANSPORT LOCATOR
-	private final static int PLAYMODE = 1;
-	private final static int RECMODE = 2;
-	private final static int LOCATOR_COL = 3;
-	private int locatorRows[];
-	private int locatorMode = PLAYMODE;
-	
 	//LOOPING
-	private final static int LOOPER_COL = 4;
+	private final static int LOOPER_COL = 2;
 	int looperRows[]; 
+	
+	//LOOP RECORDER SEQUENCES
+	private final static int LOOPRECORDER_COL = 3;
+	int loopRecorderRows[]; 
 	
 	//MELODY
 	private MidiOut midiMelodyOut[];
-	private final static int MELODY_COL = 5;
+	private final static int MELODY_COL = 4;
 	private int melodyRows[];
 	private int melRecMode = ModeConstants.MEL_ON_BUTTON_PRESS;
 	private boolean mel1Cue[];
 
 	//MELODY2
 	private MidiOut midiMelody2Out[];
-	private int melody2Col = 6;
+	private int melody2Col = 5;
 	private int melody2Rows[];
 	private boolean mel2Cue[];
+	
+	//TRANSPORT LOCATOR
+	private final static int LOCATOR_COL = 6;
+	private final static int PLAYMODE = 1;
+	private final static int RECMODE = 2;
+	private int locatorRows[];
+	private int locatorMode = PLAYMODE;
 	
 	//MASTER
 	private MidiOut midiMasterOut;
@@ -54,6 +55,9 @@ public class Masterizer extends Mode {
 		
 		//LOOPER
 		looperRows = new int[8];
+		
+		//LOOPRECORDER
+		loopRecorderRows = new int[8];
 		
 		//MELODY
 		melodyRows = new int[8];
@@ -88,10 +92,6 @@ public class Masterizer extends Mode {
 				midiMasterOut.sendNoteOn(new Note(MonomeUp.C5 + y,127, 0));
 			}
 		}
-		else if(x == PATTERN_COL)
-		{
-			AllModes.patternizerModel.curPatternRow = y;
-		}
 		else if(x == SEQUENCER_COL)
 		{
 			//Ignore 7th row
@@ -107,22 +107,30 @@ public class Masterizer extends Mode {
 				}
 			}
 		}
+		else if(x == LOOPRECORDER_COL && y < 7)
+		{
+			seqStatus = AllModes.loopRecorder.getSeqStatus(y);
+   		 	if(seqStatus == MonomeUp.PLAYING)
+   		 	{
+	 			AllModes.loopRecorder.stopLoopSequence(y);
+   		 	}
+   		 	else if(seqStatus == MonomeUp.STOPPED)
+   		 	{
+	 			AllModes.loopRecorder.playLoopSequence(y);
+		 	}
+		}
 		else if(x == LOOPER_COL)
 		{
 			if(y < AllModes.looper.getNumLoops())
 			{
-				
-				if(AllModes.looper.isLoopPlaying(y) || AllModes.loopRecorder.isLoopSequencePlaying(y))
+				//TODO: test if loop recorder is playing this loop?
+				if(AllModes.looper.isLoopPlaying(y))
 				{
 					AllModes.looper.stopLoop(y);
-					AllModes.loopRecorder.stopLoopSequence(y);
 				}
 				else
 				{
-					if(AllModes.loopRecorder.loopSequenceExists(y))
-						AllModes.loopRecorder.playLoopSequence(y);
-					else
-						AllModes.looper.playLoop(y, 0);
+					AllModes.looper.playLoop(y, 0);
 				}
 			}
 		}
@@ -196,6 +204,8 @@ public class Masterizer extends Mode {
 
 	public void updateDisplayGrid()
 	{
+		int seqStatus;
+		
 		//CONTROLLER
 		//Light up the enabled control banks
 		for(int i=0;i<7;i++)
@@ -227,16 +237,25 @@ public class Masterizer extends Mode {
 		//LOOPER
 		for(int i=0;i<AllModes.looper.getNumLoops();i++)
 		{
-			if(AllModes.looper.isLoopPlaying(i) || AllModes.loopRecorder.isLoopSequencePlaying(i))
+			if(AllModes.looper.isLoopPlaying(i))
 				looperRows[i] = DisplayGrid.SOLID;
-			else if(AllModes.loopRecorder.loopSequenceExists(i))
-				looperRows[i] = DisplayGrid.FASTBLINK;
 			else
 				looperRows[i] = DisplayGrid.OFF;
 		}
+		
+		//LOOP RECORDER
+		for(int i=0;i<7;i++)
+		{
+			loopRecorderRows[i] = DisplayGrid.OFF;
+			
+			if(AllModes.loopRecorder.loopSequenceExists(i))
+				loopRecorderRows[i] = DisplayGrid.FASTBLINK;
+			
+			if(AllModes.loopRecorder.getSeqStatus(i) == MonomeUp.PLAYING)
+				loopRecorderRows[i] = DisplayGrid.SOLID;
+			}
 
 		//MELODY
-		int seqStatus;
 		for(int i=0;i<8;i++)
 		{
 			seqStatus = AllModes.melodizer1.getSeqStatus(i);
@@ -267,15 +286,10 @@ public class Masterizer extends Mode {
 		displayGrid[SEQUENCER_COL] = sequencerRows;
 		displayGrid[LOCATOR_COL] = locatorRows;
 		displayGrid[LOOPER_COL] = looperRows;
+		displayGrid[LOOPRECORDER_COL] = loopRecorderRows;
 		displayGrid[MELODY_COL] = melodyRows;
 		displayGrid[melody2Col] = melody2Rows;
 		
-	}
-	
-	public void updatePatternBeat(int patternRow)
-	{
-		displayGrid[PATTERN_COL] = new int[8];
-		displayGrid[PATTERN_COL][patternRow] = DisplayGrid.SOLID;
 	}
 	
 	/***

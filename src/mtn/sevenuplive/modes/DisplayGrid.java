@@ -415,11 +415,6 @@ public class DisplayGrid {
         	// @TODO clloyd fix this 
         	//monome.invertRowByte(allmodes.getPatternizer().curPatternRow + start_row, Math.abs(start_column / 8)); 
         }
-        else if(curMode == ModeConstants.MASTER_MODE)
-        {
-	        //blip the masterizer
-        	allmodes.getMasterizer().updatePatternBeat(allmodes.getPatternizerModel().curPatternRow);
-        }
         else if(curMode == ModeConstants.SEQ_MODE && allmodes.getPatternizerModel().curPatternRow % 4 == 0)
         {
         	for (int x = start_column; x < start_column + grid_width; x++) {

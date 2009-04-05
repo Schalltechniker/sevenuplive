@@ -105,9 +105,7 @@ public class LoopRecorder extends Mode {
 			else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.PLAYING)
 			{
 				//If playing, stop, clear, and cue the sequence
-				for(Integer loopId : loopSequences[getSubMenuFromYCoord(y)].getUniqueCtrlIds())
-					AllModes.getInstance().getLooper().stopLoop(loopId);
-				loopSequences[getSubMenuFromYCoord(y)].stop();
+				stopLoopSequence(getSubMenuFromYCoord(y));
 				loopSequences[getSubMenuFromYCoord(y)] = new CtrlSequence(getSubMenuFromYCoord(y));
 				loopSequences[getSubMenuFromYCoord(y)].beginCue();
 			}
@@ -180,8 +178,15 @@ public class LoopRecorder extends Mode {
 		//TODO need to play the sequence RIGHT now?
 	}
 	
+	public int getSeqStatus(int seqNum)
+	{
+		return loopSequences[seqNum].getStatus();
+	}
+	
 	public void stopLoopSequence(int loopIndex)
 	{
+		for(Integer loopId : loopSequences[loopIndex].getUniqueCtrlIds())
+			AllModes.getInstance().getLooper().stopLoop(loopId);
 		loopSequences[loopIndex].stop();
 	}
 	

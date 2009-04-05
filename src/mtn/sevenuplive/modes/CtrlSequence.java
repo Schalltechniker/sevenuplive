@@ -17,7 +17,7 @@ public class CtrlSequence {
 	private int counter;
 	private int length;
 	private int index;
-	private int status = MonomeUp.STOPPED;
+	private int status = -1;
 	
 	//Hashtable of keys (metronome count) and Integer loop positions
 	private Hashtable<Integer, ArrayList<ControlValue>> events;
