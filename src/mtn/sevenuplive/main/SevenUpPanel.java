@@ -380,6 +380,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
     private void updateGui()
     {
     	int chokeGroup;
+    	int loopType;
     	Float length;
     	boolean gateLoopChokes;
     	
@@ -414,6 +415,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
     	{
     		chokeGroup = sevenUpApplet.getLoopChokeGroup(i);
     		length = sevenUpApplet.getLoopLength(i);
+    		loopType = sevenUpApplet.getLoopType(i);
     		if(chokeGroup == -1)chokeGroup = 0;
     		
     		for(int k=0; k<secondPanel.getComponentCount();k++)
@@ -445,6 +447,12 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	    			{
 	    				drpLoopChoke = (JComboBox)secondPanel.getComponent(k);
 	    				drpLoopChoke.setSelectedIndex(chokeGroup);
+	    			}
+	    			else if(secondPanel.getComponent(k).getName().equals(i.toString()+"type"))
+	    			{
+	    				drpLoopType = (JComboBox)secondPanel.getComponent(k);
+	    				drpLoopType.setSelectedIndex(loopType);
+	    				drpLoopLength.setSelectedItem(Integer.toString(loopType));
 	    			}
     			}
 			}

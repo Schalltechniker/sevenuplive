@@ -553,6 +553,10 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	public float getLoopLength(int loopNum) {
 		return allmodes.getLooper().getLoop(loopNum).getLength();
 	}
+	
+	public int getLoopType(int loopNum) {
+		return allmodes.getLooper().getLoop(loopNum).getType();
+	}
 
 	public void reset() {
 		for(int i=0;i<7;i++)

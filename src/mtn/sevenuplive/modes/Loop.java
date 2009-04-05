@@ -236,7 +236,7 @@ public class Loop {
 	public Element toJDOMXMLElement()
 	{
 		Element xmlLoop = new Element("loop");
-		
+		xmlLoop.setAttribute(new Attribute("type", ((Integer)type).toString()));
 		xmlLoop.setAttribute(new Attribute("resolution", ((Integer)resolution).toString()));
 		xmlLoop.setAttribute(new Attribute("startOffset",((Integer)startOffset).toString()));
 		xmlLoop.setAttribute(new Attribute("resCounter",((Integer)resCounter).toString()));
@@ -249,7 +249,7 @@ public class Loop {
 	public void loadJDOMXMLElement(Element xmlLoop)
 	{
 		step = NOT_PLAYING; //not playing currently
-		
+		type = xmlLoop.getAttributeValue("type") == null ? LOOP : Integer.parseInt(xmlLoop.getAttributeValue("type"));
 		resolution = xmlLoop.getAttributeValue("resolution") == null ? DEFAULT_RESOLUTION : Integer.parseInt(xmlLoop.getAttributeValue("resolution"));
 		startOffset = xmlLoop.getAttributeValue("startOffset") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("startOffset"));
 		resCounter = xmlLoop.getAttributeValue("resCounter") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlLoop.getAttributeValue("resCounter"));

@@ -333,6 +333,10 @@ public class SevenUpApplet extends processing.core.PApplet
 	public int getMonomeType() {
 		return monomeType;
 	}
+	
+	public int getLoopType(int loopNum) {
+		return m.getLoopType(loopNum);
+	}
 
 	public void setMelody1ClipMode(boolean b) {
 		AllModes.getInstance().getMelodizer1().clipMode = b;
