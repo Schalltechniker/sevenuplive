@@ -97,7 +97,6 @@ public class Looper extends Mode {
 		if(AllModes.getInstance().getLoopRecorder().isLoopSequencePlaying(loopIndex) || loops[loopIndex].isPlaying())
 		{
 			loops[loopIndex].stop();
-			AllModes.getInstance().getLoopRecorder().stopLoopSequence(loopIndex);
 			midiOut.sendNoteOff(new Note(MonomeUp.C3+loopIndex,127, 0));
 		}
 		else
