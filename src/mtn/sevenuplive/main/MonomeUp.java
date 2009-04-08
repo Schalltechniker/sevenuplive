@@ -566,7 +566,9 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 			{
 				allmodes.getLoopRecorder().stopLoopSequence(i);
 				allmodes.getLoopRecorder().playLoopSequence(i);
-			} else if(allmodes.getLooper().isLoopPlaying(i))
+			} 
+			
+			if(allmodes.getLooper().isLoopPlaying(i))
 				allmodes.getLooper().getLoop(i).setStep(0);
 			
 			if(allmodes.getMelodizer1().getSeqStatus(i) == MonomeUp.PLAYING)

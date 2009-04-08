@@ -175,7 +175,7 @@ public class LoopRecorder extends Mode {
 	public void playLoopSequence(int loopIndex)
 	{
 		loopSequences[loopIndex].play();
-		//TODO need to play the sequence RIGHT now?
+		step();
 	}
 	
 	public int getSeqStatus(int seqNum)
