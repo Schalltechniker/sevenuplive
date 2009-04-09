@@ -452,7 +452,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	    			{
 	    				drpLoopType = (JComboBox)secondPanel.getComponent(k);
 	    				drpLoopType.setSelectedIndex(loopType);
-	    				drpLoopLength.setSelectedItem(Integer.toString(loopType));
+	    				drpLoopType.setSelectedItem(Integer.toString(loopType));
 	    			}
     			}
 			}
