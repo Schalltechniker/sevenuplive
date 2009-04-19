@@ -204,19 +204,26 @@ public class CtrlSequence {
 		length = xmlSequence.getAttributeValue("length") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlSequence.getAttributeValue("length"));
 		
 		List<Element> xmlEvents;
+		List<Element> xmlControlValues;
+		ArrayList<ControlValue> controlValues;
 		Integer ctrlValue;
+		Integer id;
 		Integer index;
 		
 		xmlEvents = xmlSequence.getChildren();
 		
-		int defaultindex = 0;
 		for (Element xmlEvent :  xmlEvents)
 		{
-			ctrlValue = xmlEvent.getAttributeValue("ctrlValue") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlEvent.getAttributeValue("ctrlValue"));
-			index = xmlEvent.getAttributeValue("index") == null ? defaultindex : Integer.parseInt(xmlEvent.getAttributeValue("index"));
-			//TODO update load xml
-			//events.put(index, ctrlValue);
-			defaultindex++;
+			controlValues = new ArrayList<ControlValue>();
+			index = xmlEvent.getAttributeValue("index") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlEvent.getAttributeValue("index"));
+			xmlControlValues = xmlEvent.getChildren();
+			for (Element xmlControlValue : xmlControlValues)
+			{
+				ctrlValue = xmlControlValue.getAttributeValue("value") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlControlValue.getAttributeValue("value"));
+				id = xmlControlValue.getAttributeValue("id") == null ? ModeConstants.NOT_SET : Integer.parseInt(xmlControlValue.getAttributeValue("id"));
+				controlValues.add(new ControlValue(id, ctrlValue));
+			}
+			events.put(index, controlValues);
 		}
 	}
 	
