@@ -29,7 +29,7 @@
 		<key>MainClass</key>
 		<string>mtn.sevenuplive.main.MainApp</string>
 		<key>JVMVersion</key>
-		<string>1.5+</string>
+		<string>1.5*</string>
 		<key>ClassPath</key>
 			<array>
 			<string>$JAVAROOT/SevenUpLive-#RELEASE.VERSION#.jar</string>
