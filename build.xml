@@ -49,8 +49,10 @@
 	
   </target>
 
+	
   <target name="build" depends="_init">
-    <javac srcdir="${src.folder}" destdir="${bin.folder}" classpathref="sevenup.classpath"/>
+    <!-- We must build as 1.5 source for OSX distro -->
+  	<javac srcdir="${src.folder}" destdir="${bin.folder}" classpathref="sevenup.classpath" source="1.5" target="1.5"/>
   </target>
 
   <target name="clean" depends="_init">
