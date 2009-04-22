@@ -270,7 +270,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	            lblSetLoopType = new JLabel("Type");
 	            setSizeSmall(lblSetLoopType);
 	            lblSetLoopType.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
-	            String[] typeChoices = { "Loop", "Shot", "Momentary", "Hit", "Slice"};
+	            String[] typeChoices = { "Loop", "Step", "Shot", "Momentary", "Hit", "Slice"};
 	            drpLoopType = new JComboBox(typeChoices);
 	            setSizeSmall(drpLoopType);
 	            drpLoopType.setName(i.toString()+"type");

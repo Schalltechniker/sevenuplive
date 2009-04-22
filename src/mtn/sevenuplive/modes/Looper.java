@@ -259,6 +259,7 @@ public class Looper extends Mode {
         	    			}
         	        	// Don't break flow into LOOP	
         				case Loop.LOOP:
+        				case Loop.STEP:
         				default:
         					if (resCounter == 0) 
         						midiOut.sendController(new promidi.Controller(OFFSET_START_CTRL+i, loopCtrlValue));
@@ -267,11 +268,23 @@ public class Looper extends Mode {
         	        		if((resCounter == 0) && (step == 0 || pressedRow > -1))
         	        		{
         	        			if (!muteNotes) {
+        	        				boolean sendNote = false;
+        	        				if(loops[i].getTrigger(step) == true) { 
+	        	        				loops[i].setTrigger(step, false);
+	        	        				sendNote = true;
+	        	        			}	
+	        	        			
         	        				// We only want to retrigger when necessary to avoid additional microfades or minor timing issues.
-	        	        			if(loops[i].getTrigger(step) == true || (step == 0 && resCounter == 0 && loops[i].getIteration() > 0)) {
+	        	        			if (resCounter == 0 && loops[i].getIteration() > 0) {
+	        	        				if (loops[i].getType() == Loop.STEP) { // Else we are stepping in Loop.STEP mode and we retrigger every step
+	        	        					sendNote = true;
+	        	        				} else if (step == 0) { // We only retrigger at step 0 in other modes
+	        	        					sendNote = true;
+		        	        				
+	        	        				}
+	        	        			}	
+	        	        			if (sendNote)
 	        	        				midiOut.sendNoteOn(new Note(MonomeUp.C3+i,127, 0));
-	        	        				loops[i].setTrigger(step, false); 
-	        	        			}
         	        			}
         	        			pressedRow = -1;
         	        				

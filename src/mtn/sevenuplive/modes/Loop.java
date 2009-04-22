@@ -10,24 +10,32 @@ public class Loop {
 	/** Regular loop that keeps looping */
 	public static final int LOOP = 0; 
 	
+	/**
+	 * Step mode is actually the original loop mode in SevenUp.
+	 * It loops the sample by retriggering the sample at each step
+	 * using an appropriate sample offset.
+	 */
+	public static final int STEP = 1;    
+	
 	/** Loop that stops at end of one iteration. Steps like a regular loop and can be choked or killed. */
-	public static final int SHOT = 1;
+	public static final int SHOT = 2;
 	
 	/** Triggers a loop and keeps stepping loop until button is released. */
-	public static final int MOMENTARY = 2;  
+	public static final int MOMENTARY = 3;  
 
 	/** 
 	 * Triggers the sample mapped to a step and plays till end of that sample regardless of key release. Super useful for multi
 	 * samples such as drums where 8 samples are mapped across the velocity range 
 	 * Can also be used with multi-samples that are much longer.
 	 */
-	public static final int HIT = 3;    
+	public static final int HIT = 4;    
 	
 	/** 
 	 * Triggers the sample mapped to a step and plays till end of that step regardless of key release. Super useful for triggering
 	 * just a sample slice where you want it to play just that slice.
 	 */
-	public static final int SLICE = 4;    
+	public static final int SLICE = 5;    
+	
 	
 	/** Value indicating the loop is not playing */ 
 	public static final int NOT_PLAYING = -1;
