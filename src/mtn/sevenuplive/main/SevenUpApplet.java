@@ -74,22 +74,28 @@ public class SevenUpApplet extends processing.core.PApplet
 	   case 4: //256
 		   x_grids=2; y_grids=2;
 		   break;
-	   case 5:
+	   case 5: //2x256
+		   x_grids=4; y_grids=2;
+		   break;
+	   case 6: //3x256
+		   x_grids=6; y_grids=2;
+		   break;	   
+	   case 7:
 		   x_grids = 1; y_grids = 5;
 		   break;
-	   case 6:
+	   case 8:
 		   x_grids = 1; y_grids = 6;
 		   break;
-	   case 7:
+	   case 9:
 		   x_grids = 1; y_grids = 7;
 		   break;
-	   case 8:
+	   case 10:
 		   x_grids = 1; y_grids = 8;
 		   break;
-	   case 9:
+	   case 11:
 		   x_grids = 1; y_grids = 9;
 		   break;
-	   case 10: //10 x 64's
+	   case 12: //10 x 64's
 		   x_grids = 1; y_grids = 10;
 		   break;
 	   };

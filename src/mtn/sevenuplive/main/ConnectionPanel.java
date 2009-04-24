@@ -90,6 +90,8 @@ public class ConnectionPanel extends JPanel
         monomeChoices.add("128V");
         monomeChoices.add("3 x 64");
         monomeChoices.add("256");
+        monomeChoices.add("2x256");
+        monomeChoices.add("3x256");
         monomeChoices.add("5 x 64");
         monomeChoices.add("6 x 64");
         monomeChoices.add("7 x 64");
