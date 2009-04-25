@@ -327,8 +327,10 @@ a img {
         <p>Each loop may be played in one of five different loop modes: Loop, Shot, 
             Momentary, Hit, and Slice.</p>
         <ul>
-            <li>Loop - When a loop reaches the end, it will start back from the beginning 
+            <li>Loop - Triggers the loop once wherever the button is pressed.&nbsp; When a loop reaches the end, it will start back from the beginning 
                 automatically.</li>
+            <li>Step - At every step, the loop will be re-triggered at the cooresponding offset.&nbsp; 
+                When the loop reaches the end, it will start from the beginning.</li>
             <li>Shot - When a loop reaches the end, it will stop</li>
             <li>Momentary - The loop is only played while you continue to hold down the button</li>
             <li>Hit - When used with the Sampler (as opposed to the Simpler) this can play 
@@ -525,43 +527,41 @@ a img {
 
         <ul>
             <li>Column 1:<ul>
-                <li>This column shows the current progress of the current pattern.&nbsp; The pattern 
-                    can be chopped up by pressing the buttons in this column.</li>
-                </ul>
-            </li>
-            <li>Column 2:<ul>
 
                 <li>This column shows the current sequence that is playing.&nbsp; You can change 
                     sequences by pressing a button in this column.&nbsp; Notice that the sequence 
                     waits for the current pattern to finish before changing</li>
                 </ul>
             </li>
-            <li>Column 3:<ul>
+            <li>Column 2:<ul>
                 <li>This column allows you to trigger control banks 1-7.&nbsp; Any control bank that has 
                     values set will show as flashing.</li>
+                </ul>
+            </li>
+            <li>Column 3:<ul>
 
+                <li>This column allows you to start or stop loops.</li>
                 </ul>
             </li>
             <li>Column 4:<ul>
-                <li>This column displays the current location of the Ableton Live track.&nbsp; This 
-                    is useful when using effects that rely on the position of the Live song.</li>
-                </ul>
-            </li>
-            <li>Column 5:<ul>
 
-                <li>This column allows you to enable or disable loops.&nbsp; If there is a recorded 
-                    loop, it will show up as a flashing light.</li>
+                <li>This column allows you to start or stop looprecorder sequences</li>
                 </ul>
             </li>
-            <li>Column 6:&nbsp;
+            <li>Column 5:&nbsp;
                 <ul>
                     <li>This column allows you to enable or disable melodizer 1 sequences.&nbsp; If 
                         there is a recorded sequence, it will show up as a flashing light.</li>
 
                 </ul>
             </li>
+            <li>Column 6:<ul>
+                <li>Same as column 5 but for melodizer 2.</li>
+                </ul>
+            </li>
             <li>Column 7:<ul>
-                <li>Same as column 6 but for melodizer 2.</li>
+                <li>This column displays the current location of the Ableton Live track.&nbsp; This 
+                    is useful when using effects that rely on the position of the Live song.</li>
                 </ul>
             </li>
             <li>Column 8:<ul>
@@ -785,6 +785,7 @@ a img {
                 preferences.  Added the ability to sequence mutiple patterns at a time.&nbsp; 
                 This *removes* this ability to trigger patterns while in sequencer mode.</li>
             <li>1.0 - 2/20/2009 - barnone (Chris Lloyd) added the ability to support multiple monome connections at once.  Loop length was moved to the UI.  Removed ability to sequence multiple patterns at once because it kinda sucked.</li>
+            <li>1.1 - 4/25/2009 - New looper modes assigned to each of the 7 loops through the GUI.  Loop recorder has been revamped to behave more like the melodizers in that the recorded sequences can include button presses for any loop.  Added support for multiple 256's.</li>
         </ul>
         <h2 id="contact">Contact</h2>
         Any comments or suggestions, contact me at <a href="mailto:sevenuplive@googlegroups.com" >sevenuplive@googlegroups.com</a>
