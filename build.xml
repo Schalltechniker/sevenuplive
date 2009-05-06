@@ -112,7 +112,14 @@
     
     <!-- For the PC -->
   	<copy todir="${out.folder}/windows" flatten="false">
-  	  	<fileset dir="${resources.folder}/content"/>
+  	  	<fileset dir="${resources.folder}/content">
+  	  		<include name="*.*"/>
+  		</fileset>
+  	</copy>
+  	<copy todir="${out.folder}/windows" flatten="false">
+  		<fileset dir="${resources.folder}/content/windows">
+  	  		<include name="*.*"/>
+  	    </fileset>
   	</copy>
   	  	
   	<copy todir="${out.folder}/windows/supporting" flatten="false">
@@ -129,7 +136,14 @@
   	<!-- For the MAC -->
   	
   	<copy todir="${out.folder}/osx" flatten="false">
-  		<fileset dir="${resources.folder}/content"/>
+  	  	<fileset dir="${resources.folder}/content">
+  	  		<include name="*.*"/>
+  		</fileset>
+  	</copy>
+  	<copy todir="${out.folder}/osx" flatten="false">
+  		<fileset dir="${resources.folder}/content/osx">
+  	  		<include name="*.*"/>
+  	    </fileset>
   	</copy>
   		
   	<copy todir="${out.folder}/osx/SevenUpLive.app" flatten="false">
@@ -156,7 +170,7 @@
         </fileset>
     </copy>
     
-    <copy todir="${out.folder}/osx/SevenUpLive.app/Contents/Resources" flatten="false">
+  	<copy todir="${out.folder}/osx/SevenUpLive.app/Contents/Resources" flatten="false">
         <fileset dir="${resources.folder}/osx">
             <include name="SevenUpLive.icns"/>
         </fileset>
