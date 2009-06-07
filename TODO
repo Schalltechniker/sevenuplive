@@ -9,3 +9,6 @@
 BUGS
 -clearing a melodizer pattern should remove it's blinking light from the masterizer
 - When loading a patch, patternizers do not update their UI until you move away from page and come back again
+
+
+

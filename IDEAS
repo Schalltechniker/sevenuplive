@@ -1,0 +1,25 @@
+Ideas for Features/Improvements
+
+- Load Scales from XML Files
+ Ability to load a melodizer scales from an XML file and have it associated with a custom name and appear in the pick list.
+ 
+ - Option to hide keyboard in Melodizer.
+ Option to hide the keyboard in Melodizer and gain more notes. 
+ 
+ - Schema for 7up Live Patch format (Validation)
+ XML improvements like XML validation of patches...pretty printing of XML so it is easier to edit.
+ 
+ - Patch Packs
+ Ability to save, load, create Patch Packs. Ability to have patch packs reference patches on the filesystem (an option) and save changes to patches in the pack. Ability to create self-contained patch packs as well.
+ 
+ - Controller Page
+  Ability to send all control changes when moving between control pages.
+  Ability to have each controller page send different CCs for more mapping options
+  Ability to change values smoothly. For example, smooth fade out.
+  
+- More quantization options
+Ability to start/stop loops and loop recorder slot quantized to step or bar. Use the navcol start/stop and masterizer start/stop buttons only. Still allow triggering of loop steps unquantized. If launching from quantized button then chokes are also quantized.
+
+- Mute capabilities
+I think this is a template feature. Ability to assign loops to return chains in template and map buttons to mute on each return chain.
+
