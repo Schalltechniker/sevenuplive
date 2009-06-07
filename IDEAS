@@ -4,7 +4,7 @@ Ideas for Features/Improvements
  Ability to load a melodizer scales from an XML file and have it associated with a custom name and appear in the pick list. 
  
  - Midi Scale Learn mode
- Click "Learn" button in 7up. Now start playing a scale from lowest note on up. 
+ Click "Learn" button in 7up. Now start playing a scale from lowest note on up on external instrument. 
  The monome grid, every note lights a button in order as the scale is assigned to each button slot on the monome.
  Now save and name your new scale. Awesome for just picking great notes for individual projects. Scale is saved with patch and can 
  also be saved as a spearate file for loading into other patches.
