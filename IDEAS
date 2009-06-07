@@ -1,10 +1,11 @@
 Ideas for Features/Improvements
 
 - Load Scales from XML Files
- Ability to load a melodizer scales from an XML file and have it associated with a custom name and appear in the pick list.
+ Ability to load a melodizer scales from an XML file and have it associated with a custom name and appear in the pick list. 
  
  - Option to hide keyboard in Melodizer.
- Option to hide the keyboard in Melodizer and gain more notes. 
+ Option to hide the keyboard in Melodizer and gain more notes. Also helpful for 64 fingers mode where each pad is mapped to a sample
+ using chromatic scale and no need for a keyboard.
  
  - Schema for 7up Live Patch format (Validation)
  XML improvements like XML validation of patches...pretty printing of XML so it is easier to edit.
