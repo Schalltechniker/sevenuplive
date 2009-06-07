@@ -27,6 +27,7 @@ Ideas for Features/Improvements
 - More quantization options
 Ability to start/stop loops and loop recorder slot quantized to step or bar. Use the navcol start/stop and masterizer start/stop buttons only. Still allow triggering of loop steps unquantized. If launching from quantized button then chokes are also quantized.
 
-- Mute capabilities
-I think this is a template feature. Ability to assign loops to return chains in template and map buttons to mute on each return chain.
+- Mute capabilities + Sub Mixing of Loop Tracks 
+Change Looper racks to use Drum Racks instead of Device Racks which will allow return chains. The allows each loop to be 
+routed to different audio sub mixes, group mutes etc...plus different effect racks in each submix.  
 
