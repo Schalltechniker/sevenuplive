@@ -141,6 +141,17 @@ public class Scale {
 			Degrees[5] = 8;
 			Degrees[6] = 10;
 			break;
+		case Telerium:
+			Name = ScaleName.Telerium;
+			label = "Telerium";
+			Degrees[0] = 0;
+			Degrees[1] = 2;
+			Degrees[2] = 3;
+			Degrees[3] = 5;
+			Degrees[4] = 6;
+			Degrees[5] = 8;
+			Degrees[6] = 11;
+			break;
 		case Chromatic:
 			Name = ScaleName.Chromatic;
 			label = "Chromatic";

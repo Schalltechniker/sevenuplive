@@ -155,6 +155,8 @@ public class SevenUpApplet extends processing.core.PApplet
 			newScale = new Scale(ScaleName.Mullnixian);
 		else if(scaleName.equals("Yorkian"))
 			newScale = new Scale(ScaleName.Yorkian);
+		else if(scaleName.equals("Telerium"))
+			newScale = new Scale(ScaleName.Telerium);
 		else
 			newScale = new Scale(ScaleName.Chromatic);
 		

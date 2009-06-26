@@ -55,6 +55,7 @@ a img {
             <li><a href="#Requirements">Requirements</a></li>
 
             <li><a href="#Download">Download</a></li>
+            <li><a href="#Tutorials">Tutorials</a></li>
             <li><a href="#AbletonLiveSetup">Ableton Live Setup</a></li>
             <li><a href="#GettingStarted">Getting Started</a></li>
             <li><a href="#TheSevenUpLiveInterface">The 7up Live Interface</a><ul>
@@ -73,12 +74,9 @@ a img {
                 <li><a href="#Masterizer">8. Masterizer</a></li>
                 </ul>
             </li>
-            <li><a href="#WhatAboutLive">What about Ableton Live?</a></li>
             <li><a href="#Patches">SevenUp Patches (Loading, Saving, and Queueing)</a></li>
-
             <li><a href="#contact">Contact</a></li>
             <li><a href="#Multiple">Using Multiple Monomes</a></li>
-            <li><a href="#ChangeHistory">Change History</a></li>
             <li><a href="#donation">Donations</a></li>
         </ul>
         
@@ -108,19 +106,34 @@ a img {
         <h2>Download</h2>
         <p>The entire 7up Live package can be downloaded here:</p>
         <ul>
-            <li>Windows: <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveWindows-v1.0.zip">http://www.makingthenoise.com/sevenup/SevenUpLiveWindows-v1.0.zip</a></li>
-       		<li>OSX: <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.0.tar.gz">http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.0.tar.gz</a></li>
-
-       
+            <li>Windows: <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveWindows-v1.1.zip">http://www.makingthenoise.com/sevenup/SevenUpLiveWindows-v1.1.zip</a></li>
+            <li>OSX - <span style="color:red"/>A recent Apple Java update has broken SevenUpLiveOSX 1.1.&nbsp; A 
+                temporary fix is available below as v1.2</span>:<ul>
+                    <li>OSX (pre Java 5 Update 4): 
+                        <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.1.tar.gz">http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.1.tar.gz</a></li>
+                    <li>OSX (post Java 5 Update 4):  <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.2.tar.gz">http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.2.tar.gz</a></li>
+                </ul>
+            </li>
         </ul>
-        <p>
-            It includes the following:</p>
+       <p>Extras for advanced users:</p>
         <ul>
-            <li>7up Live Java Application (as an executable JAR)</li>
-            <li>Ableton Live template set (includes starter set of samples)</li>
-            <li>Sample patch &amp; patch pack</li>
-
+        <li>
+        Sampler (as opposed to Simpler) template set: <a href="http://experimentsinanalogchaos.com/7up/SevenUpLive%20Sampler%20Template%20Set%20v7A%20Project.zip" target="_blank">download</a>
+        </li>
         </ul>
+       
+       <a id="Tutorials" />
+        <h2>Tutorials</h2>
+
+        <ul>
+        <li>
+            <a href="http://www.vimeo.com/4438775" target="_blank">Setup & Basics</a>
+        </li>
+        <li>
+            <a href="http://www.vimeo.com/4384489" target="_blank">Advanced Looping</a>
+        </li>
+        </ul>
+
         <a id="AbletonLiveSetup" />
         <h2>Ableton Live Setup</h2>
         <p>There are a few configuration 
@@ -154,11 +167,7 @@ a img {
             <li>With your Monome connected to your PC, open MonomeSerial.&nbsp; The values shown 
                 below will work with the defaults in 7up Live: <br />
                 <img alt="Monome Serial" src="images/MonomeSerial.PNG" style="width: 333px; height: 582px" /></li>
-            <li>Open SevenUpLive v1.0.JAR (Windows) or SevenUpLive.app (OSX)
-            <b>NOTE:</b> Some users have not been able to launch SevenUpLive.app on OSX and we don't yet fully understand the issue but there are simple workarounds. 
-            You can either go into ./supporting folder and double click SevenUpLive-v1.0.jar which should launch the app but you will not get the custom dock icon 
-            or OSX style menus. Or you can copy libProMandoMidiJNILib.jnilib from the ./supporting folder to /Library/Java/Extensions and try launching SevenUpLive.app again.</li>
-
+            <li>Open SevenUpLive v1.1.JAR (Windows) or SevenUpLive.app (OSX)
             <li>You should see the screen below.&nbsp;Choose your monome model from the dropdown and check to make sure your MIDI settings are correct.  Your MIDI 
                 device names may differ depending on your virtual midi utility but the numbers 
                 should match<br />
