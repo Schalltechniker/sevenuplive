@@ -9,6 +9,9 @@
 BUGS
 -clearing a melodizer pattern should remove it's blinking light from the masterizer
 - When loading a patch, patternizers do not update their UI until you move away from page and come back again
-
-
+- SamplePatchPack.xml is not really a patch pack. Needs to be updated.
+- Check "NextPatch" clip in template...It was sending an F3 instead of the F4 needed to change the patch.
+- There was a bug report that loop pattern recorder was not replaying loops that used choke groups properly. This may have to do
+which where new notes are triggered or not depending on loop mode.
+ 
 

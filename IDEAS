@@ -31,3 +31,10 @@ Ability to start/stop loops and loop recorder slot quantized to step or bar. Use
 Change Looper racks to use Drum Racks instead of Device Racks which will allow return chains. The allows each loop to be 
 routed to different audio sub mixes, group mutes etc...plus different effect racks in each submix.  
 
+- Melodizer scale enhancements
+Ability to make the keyboard area rotate the scale into different modes rather than change the scale root. For example, I can take a D minor scale
+and rotate it so that first pad in row is second position in the scale. This is super useful for jamming and chaning up chord positions. Also
+you get locked in ruts as certain note options are harder to use since near the edge of the grid.
+
+
+
