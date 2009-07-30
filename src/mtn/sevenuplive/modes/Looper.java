@@ -14,6 +14,9 @@ public class Looper extends Mode {
 	
 	private Loop[] loops;
 	
+	//tracks held button presses to establish subloops
+	private int[] buttonHeld;
+	
 	private final static int OFFSET_START_CTRL = 96;
 	
 	private MidiOut midiOut;
@@ -28,9 +31,13 @@ public class Looper extends Mode {
 		stopLoopsOnNextStep = new boolean[7];
 		
 		loops = new Loop[7];
+		buttonHeld = new int[7];	//for subloops
 		for(int i=0;i<loops.length;i++)
+		{
 			loops[i] = new Loop();
-		
+			buttonHeld[i] = -1;
+		}
+
 		midiOut = _midiOut;
 	}
 	
@@ -84,7 +91,10 @@ public class Looper extends Mode {
 			updateNavGrid();
 		}
 		else
+		{
 			pressDisplay(x,y);
+			buttonHeld[x] = y;
+		}
 
 		updateDisplayGrid();
 		//updateNavGrid(); // @TODO clloyd not needed, done in play and stop functions
@@ -131,12 +141,17 @@ public class Looper extends Mode {
 		loops[loopNum].setTrigger(step, true);
 		loops[loopNum].setStep(step);
 		loops[loopNum].setPressedRow(step);
+		loops[loopNum].setStartStep(0);
+		loops[loopNum].setLoopLength(8);
 		updateNavGrid();
 		AllModes.loopRecorder.updateNavGrid();
 	}
 	
 	private void pressDisplay(int x, int y)
 	{
+		if (buttonHeld[x] < 0) {
+			//no buttons are held, trigger loop as normal
+			
 			//Choke loops in the same choke group
 			int curChokeGroup = loops[x].getChokeGroup();
 			if(curChokeGroup > -1)
@@ -155,7 +170,13 @@ public class Looper extends Mode {
 			int loopCtrlValue = (y * 16);
 			midiOut.sendController(new promidi.Controller(OFFSET_START_CTRL+x, loopCtrlValue));
 			playLoop(x, y);
-			
+		}	else {
+			loops[x].setStartStep(buttonHeld[x]);
+			if (buttonHeld[x] > y) 	//subloop wraps around the end of the sound file
+				loops[x].setLoopLength(y-buttonHeld[x]+8);
+			else
+				loops[x].setLoopLength(y-buttonHeld[x]);
+		}
 			//System.out.println("Gate loops is " + gateLoopChokes);
 	}
 	
@@ -188,6 +209,7 @@ public class Looper extends Mode {
 		if (loops[x].isPlaying() && loops[x].getType() == Loop.MOMENTARY && loops[x].getLastTriggedStep() == y) {
 			stopLoop(x);
 		}
+		buttonHeld[x] = -1;
 	}
 
 	public void step()
@@ -208,10 +230,10 @@ public class Looper extends Mode {
 		}
 		
 		for(int i = 0;i<loops.length;i++)
-        {
+		{
 			
 			if(loops[i].isPlaying())
-        	{
+			{
         		pressedRow = loops[i].getPressedRow();
         		resCounter = loops[i].getResCounter();
         		step = loops[i].getStep();
@@ -265,7 +287,7 @@ public class Looper extends Mode {
         						midiOut.sendController(new promidi.Controller(OFFSET_START_CTRL+i, loopCtrlValue));
         				
         					//Send note every time looprow is 0 or at it's offset
-        	        		if((resCounter == 0) && (step == 0 || pressedRow > -1))
+        	        		if((resCounter == 0) && (loops[i].atStartStep(step) || pressedRow > -1))
         	        		{
         	        			if (!muteNotes) {
         	        				boolean sendNote = false;
@@ -278,7 +300,7 @@ public class Looper extends Mode {
 	        	        			if (resCounter == 0 && loops[i].getIteration() > 0) {
 	        	        				if (loops[i].getType() == Loop.STEP) { // Else we are stepping in Loop.STEP mode and we retrigger every step
 	        	        					sendNote = true;
-	        	        				} else if (step == 0) { // We only retrigger at step 0 in other modes
+	        	        				} else if (loops[i].atStartStep(step)) { // We only retrigger at step 0 in other modes
 	        	        					sendNote = true;
 		        	        				
 	        	        				}

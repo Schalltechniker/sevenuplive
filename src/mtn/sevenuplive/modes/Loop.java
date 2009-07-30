@@ -52,6 +52,9 @@ public class Loop {
 	private int iteration = 0;
 	private int startOffset;
 	private int resCounter;
+	private int startStep = 0;
+	private int loopLength = 8;
+	
 	/** Determines if a step has been retriggered  */
 	private boolean[] trigger;
 	/** Last step that was triggered */
@@ -118,6 +121,39 @@ public class Loop {
 		return resolution;
 	}
 	
+	public void setStartStep(int step)
+	{
+		// Check for out of bounds
+		if (step > 7)
+			throw new IndexOutOfBoundsException("Step [" + Integer.toString(step) + "] is out of range: [0-" + Integer.toString(7) + "]");
+		
+		startStep = step;
+	}
+	
+	public int getStartStep()
+	{
+		return startStep;
+	}
+	
+	public boolean atStartStep(int current)
+	{
+		return current == startStep;
+	}
+	
+	public void setLoopLength(int len)
+	{
+		// Check for out of bounds
+		if (len > 8 || len < 1)
+			throw new IndexOutOfBoundsException("Length [" + Integer.toString(step) + "] is out of range: [1-" + Integer.toString(8) + "]");
+		
+		loopLength = len;
+	}
+	
+	public int getLoopLength()
+	{
+		return loopLength;
+	}
+	
 	/**
 	 * Increment to the next step.
 	 * This sets the current step to the new value.
@@ -125,15 +161,17 @@ public class Loop {
 	 * @param step
 	 */
 	public void nextStep() {
+		int wrapStep = (startStep + loopLength - 1) % 8;
+		
 		// When we change a step, res needs to reset to 0.
 		resCounter = 0;
 		
 		
 		step++;
-		if(this.step > 7) {
-			this.step = 0;
+		if(this.step > wrapStep) {
+			this.step = startStep;
 			iteration++;
-		}	
+		}
 	}
 	
 	/**
@@ -219,6 +257,9 @@ public class Loop {
 	public void setLength(Float length) {
 		//resolution of 0 + 1 = 1/2 measure
 		//Meaning, stepping every 1 16th note will produce 1/2 measure in 8 steps
+		
+		//since we have set and getLoopLength now, maybe we want to rename this to
+		//setResolution instead of setLength to avoid confusion??
 		this.resolution = new Float(length * 2).intValue();
 	}
 	
