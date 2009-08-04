@@ -281,6 +281,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	    	  allmodes.getLoopRecorder().updateDisplayGrid();
 	    	  allmodes.getLooper().step();
 	    	  allmodes.getLoopRecorder().step();  
+	    	  //TODO give controller its own MIDI note
+	    	  allmodes.getController().step();
 	      }
 	      else if(noteOnPitch == C4 || noteOnPitch == CSHARP4 || noteOnPitch == DSHARP4)
 	      {

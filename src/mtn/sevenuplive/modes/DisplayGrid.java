@@ -395,8 +395,6 @@ public class DisplayGrid {
 			allmodes.getPatternizerView(grid_index).triggerButtonHeld(x, y);
 			curDisplayGrid = allmodes.getPatternizerView(grid_index).getDisplayGrid();
 		}
-		else if(curMode == ModeConstants.CONTROL_MODE && x == NAVCOL && navGrid[y] == DisplayGrid.FASTBLINK)
-			allmodes.getController().clearControlBank(y);
 	}
 	
 	

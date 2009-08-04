@@ -1,5 +1,8 @@
 package mtn.sevenuplive.modes;
+import java.util.ArrayList;
 import java.util.List;
+
+import mtn.sevenuplive.main.MonomeUp;
 
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -8,44 +11,59 @@ import promidi.MidiOut;
 
 public class Controller extends Mode {
 
+	private CtrlSequence ctrlSequences[];
+	private int curSequence = 0;
 	private MidiOut midiControlOut;
-	public Integer curControlBank  = 0;
-	private Integer controls[][];
+	private Integer controls[];
 	private Integer startingController;
 	
 	public Controller(int _navRow, MidiOut _midiControlOut, int _startingController, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
 		midiControlOut = _midiControlOut;
-		controls = new Integer[7][7];
+		//Initialize ctrl sequences
+		ctrlSequences = new CtrlSequence[7];
+		for(int i=0;i<7;i++)
+			ctrlSequences[i] = new CtrlSequence(i);
+		
+		controls = new Integer[7];
+		
 		startingController = _startingController;
 		
 		//Initialize controls to -1 for "not set"
-	     for(int i=0; i<7; i++)
-	       for(int j=0;j<7;j++)
-	           controls[i][j] = -1;
+		for(int j=0;j<7;j++)
+           controls[j] = -1;
 	     
-	     navGrid[curControlBank] = DisplayGrid.FASTBLINK;
-	     updateDisplay();
+	    updateDisplayGrid();
 	}
 	
-	private void updateDisplay()
+	private void updateDisplayGrid()
 	{
 		super.clearDisplayGrid();
 		//Loop through the controls in a control bank and set the y coordinate on the display grid
 		for(int i=0;i<7;i++)
 		{
 			//Only set the display if the control is > 0
-			if(controls[curControlBank][i] > 0)
-				for(int j=7;j>=8-controls[curControlBank][i];j--)
+			if(controls[i] > 0)
+				for(int j=7;j>=8-controls[i];j--)
 					displayGrid[i][j] = DisplayGrid.SOLID;
 		}
 	}
 	
 	private void updateNavGrid()
 	{
-		super.clearNavGrid();
-		navGrid[getYCoordFromSubMenu(curControlBank)] = DisplayGrid.FASTBLINK;
+		clearNavGrid();
 		navGrid[myNavRow] = DisplayGrid.SOLID;
+
+		switch(ctrlSequences[curSequence].getStatus()){
+		case MonomeUp.STOPPED: navGrid[getYCoordFromSubMenu(curSequence)] = DisplayGrid.FASTBLINK;
+			break;
+		case MonomeUp.CUED: navGrid[getYCoordFromSubMenu(curSequence)] = DisplayGrid.SLOWBLINK;
+			break;
+		case MonomeUp.RECORDING: navGrid[getYCoordFromSubMenu(curSequence)] = DisplayGrid.SLOWBLINK;
+			break;
+		case MonomeUp.PLAYING: navGrid[getYCoordFromSubMenu(curSequence)] = DisplayGrid.FASTBLINK;
+			break;
+		}
 	}
 	
 	/*
@@ -62,99 +80,151 @@ public class Controller extends Mode {
 	 */
 	public void press(int x, int y)
 	{
-		if (x == DisplayGrid.NAVCOL)
+		if(x == DisplayGrid.NAVCOL)
+			pressNavCol(y);
+		else
+			pressDisplay(x,y);
+		
+		updateDisplayGrid();
+		updateNavGrid();
+	}
+	
+	private void pressDisplay(int x, int y) {
+		   //If they hit the bottom row twice, clear the column
+	       if(y==7 && controls[x] == 1)
+	       {
+	    	   controls[x] = 0;
+	    	   if(ctrlSequences[curSequence].getStatus() == MonomeUp.CUED || ctrlSequences[curSequence].getStatus() == MonomeUp.RECORDING)
+	    		   ctrlSequences[curSequence].addEvent(x, 0);
+	    	   
+	       }
+	       //Otherwise set the value to 8-y
+	       else
+	       { 
+	    	   controls[x] = 8-y;
+	    	   if(ctrlSequences[curSequence].getStatus() == MonomeUp.CUED || ctrlSequences[curSequence].getStatus() == MonomeUp.RECORDING) 
+	    		   ctrlSequences[curSequence].addEvent(x, 8-y);
+	       }
+	       
+	       updateDisplayGrid();
+	       
+	       //Send the control value for the previous selected column
+	       sendMidiControls(x);
+	}
+
+	private void pressNavCol(int y) {
+		//If changing to a different sequence
+		if(curSequence != getSubMenuFromYCoord(y))
 		{
-			curControlBank = getSubMenuFromYCoord(y);
-			updateNavGrid();
-			updateDisplay();
+			curSequence = getSubMenuFromYCoord(y);
 		}
 		else
 		{
-			 //If they hit the bottom row twice, clear the column
-		       if(y==7 && controls[curControlBank][x] == 1)
-		       {
-		    	   controls[curControlBank][x] = 0;
-		       }
-		       //Otherwise set the value to 8-y
-		       else
-		       { 
-		    	   controls[curControlBank][x] = 8-y;
-		       }
-		       
-		       updateDisplay();
-		       
-		       //Send the control value for the previous selected column
-		       sendMidiControls(curControlBank, x);
+			if(ctrlSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.STOPPED)
+			{
+				ctrlSequences[getSubMenuFromYCoord(y)].beginCue();
+			}
+			else if(ctrlSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.CUED)
+			{
+				//If cued and then stopped, clear the sequence
+				ctrlSequences[getSubMenuFromYCoord(y)] = new CtrlSequence(getSubMenuFromYCoord(y));
+			}
+			else if(ctrlSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.PLAYING)
+			{
+				//If playing, stop, clear, and cue the sequence
+				stopCtrlSequence(getSubMenuFromYCoord(y));
+				ctrlSequences[getSubMenuFromYCoord(y)] = new CtrlSequence(getSubMenuFromYCoord(y));
+				ctrlSequences[getSubMenuFromYCoord(y)].beginCue();
+			}
+			else if(ctrlSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.RECORDING)
+			{
+				ctrlSequences[getSubMenuFromYCoord(y)].endRecording();
+				ctrlSequences[getSubMenuFromYCoord(y)].play();
+				//Play the first offset
+				ArrayList<ControlValue> sequencedControlValues = ctrlSequences[getSubMenuFromYCoord(y)].heartbeat();
+				
+				for(ControlValue cv : sequencedControlValues)
+					if(cv != null && cv.getValue() > -1)
+					{
+						controls[cv.getId()] = cv.getValue();
+						sendMidiControls(cv.getId());
+					}
+			}
 		}
+		
 	}
 	
-	public void sendMidiControlBank(int controlBank)
+	public void stopCtrlSequence(int ctrlIndex)
 	{
-		for(int i =0;i<7;i++)
-		{
-			if(controls[controlBank][i] > -1)
-				sendMidiControls(controlBank, i);
-		}
+		for(Integer loopId : ctrlSequences[ctrlIndex].getUniqueCtrlIds())
+			AllModes.getInstance().getLooper().stopLoop(loopId);
+		ctrlSequences[ctrlIndex].stop();
 	}
 	
-	private void sendMidiControls(int controlBank, int x)
+	private void sendMidiControls(int x)
 	 {
-		   int controlValue = controls[controlBank][x] * 16;
+		   int controlValue = controls[x] * 16;
 		   //Can not send 128 as a value
 		   if(controlValue == 128)
 			   controlValue = 127;
 		   
 		   //send controlvalue to control corresponding to the current control grid and the column
 		   midiControlOut.sendController(new promidi.Controller(startingController + x, controlValue));
-	 }
-	
-	//X is the Y button being held down by a user
-	public void clearControlBank(int x)
-	{
-		for(int i=0;i<7;i++)
-			controls[getSubMenuFromYCoord(x)][i] = -1;
-		updateDisplay();
 	}
 	
-	//Returns true if the bank has any control values > -1
-	public boolean isBankEnabled(int x)
+	public void step()
 	{
+		//If a ctrl sequence is playing, call heartbeat
 		for(int i=0;i<7;i++)
-			if(controls[x][i] > -1)
-				return true;
+		{
+			ArrayList<ControlValue> sequencedControlValues = ctrlSequences[i].heartbeat();
+			
+			if(sequencedControlValues != null)
+			{
+				for(ControlValue cv : sequencedControlValues)
+					if(cv != null && cv.getValue() > -1)
+					{
+						controls[cv.getId()] = cv.getValue();
+						sendMidiControls(cv.getId());
+					}
+			}
+		}
 		
-		return false;	
+		updateDisplayGrid();
 	}
+	
+	public int getSeqStatus(int seqNum)
+	{
+		return ctrlSequences[seqNum].getStatus();
+	}
+	
+	public void playSequence(int index)
+	{
+		ctrlSequences[index].play();
+		step();
+	}
+	
+	public void stopSequence(int index)
+	{
+		ctrlSequences[index].stop();
+	}
+	
+	public boolean sequenceExists(int index)
+	{
+		return ctrlSequences[index].hasEvents();
+	}
+	
 	
 	public Element toJDOMXMLElement()
 	{
-		Element xmlController;
-		//TODO No longer necessary.  Only 1 controller
-		if(myNavRow == 2)
-			xmlController = new Element("controller");
-		else
-			xmlController = new Element("controller2");
-		
-		Element xmlControlBank;
-		Element xmlControlValue;
-		
+		Element xmlController = new Element("controller");
 		xmlController.setAttribute(new Attribute("startingController", startingController.toString()));
+		Element xmlControllerSequence;
 		
-		for(Integer i=0;i<7;i++)
+		for(int i=0;i<ctrlSequences.length;i++)	
 		{
-			xmlControlBank = new Element("controlBank");
-			xmlControlBank.setAttribute(new Attribute("position", i.toString()));
-			
-			for(Integer j=0;j<7;j++)
-			{
-				xmlControlValue = new Element("controlValue");
-				xmlControlValue.setAttribute(new Attribute("position", j.toString()));
-				xmlControlValue.setAttribute(new Attribute("value", controls[i][j].toString()));
-				
-				xmlControlBank.addContent(xmlControlValue);
-			}
-			
-			xmlController.addContent(xmlControlBank);
+			xmlControllerSequence = ctrlSequences[i].toJDOMXMLElement();
+			xmlController.addContent(xmlControllerSequence);
 		}
 		
 		return xmlController;
@@ -162,36 +232,30 @@ public class Controller extends Mode {
 	
 	@SuppressWarnings("unchecked")
 	public void loadJDOMXMLElement(Element xmlController)
-	{
-		List<Element> xmlControlBanks;
-		List<Element> xmlControlValues;
-		Integer controlBankPosition;
-		Integer controlValuePosition;
-		Integer controlValueValue;
-		
+	{	
 		startingController = xmlController.getAttributeValue("startingController") == null ? startingController : Integer.parseInt(xmlController.getAttributeValue("startingController"));
 		
-		xmlControlBanks = xmlController.getChildren();
+		//Clear current info
+		ctrlSequences = new CtrlSequence[7];
+		for(int i=0;i<7;i++)
+			ctrlSequences[i] = new CtrlSequence(i);
 		
-		int outerindex = 0;
-		for (Element xmlControlBank : xmlControlBanks)
+		List<Element> xmlSequences;
+		Integer index;
+		CtrlSequence sequence;
+		
+		xmlSequences = xmlController.getChildren();
+		
+		int defaultindex = 0;
+		for (Element xmlSequence: xmlSequences)
 		{
-			controlBankPosition = xmlControlBank.getAttributeValue("position") == null ? outerindex : Integer.parseInt(xmlControlBank.getAttributeValue("position"));
-			
-			xmlControlValues = xmlControlBank.getChildren();
-			
-			int innerindex = 0;
-			for (Element xmlControlValue: xmlControlValues)
-			{
-				controlValuePosition = xmlControlValue.getAttributeValue("position") == null ? innerindex : Integer.parseInt(xmlControlValue.getAttributeValue("position"));
-				controlValueValue = xmlControlValue.getAttributeValue("value") == null ? NOT_SET : Integer.parseInt(xmlControlValue.getAttributeValue("value"));
-				
-				controls[controlBankPosition][controlValuePosition] = controlValueValue;
-				innerindex++;
-			}
-			outerindex++;
+			index = xmlSequence.getAttributeValue("index") == null ? defaultindex : Integer.parseInt(xmlSequence.getAttributeValue("index"));
+			sequence = new CtrlSequence(index);
+			sequence.loadJDOMXMLElement(xmlSequence);
+			ctrlSequences[index] = sequence;
+			defaultindex++;
 		}
 		
-		updateDisplay();
+		updateDisplayGrid();
 	}
 }

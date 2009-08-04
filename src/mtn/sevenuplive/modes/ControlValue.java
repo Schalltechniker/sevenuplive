@@ -7,8 +7,8 @@ package mtn.sevenuplive.modes;
  */
 public class ControlValue {
 	
-		private int id;
-		private int value;
+		private int id; //Ctrl ID
+		private int value; //Ctrl value
 		
 		public ControlValue(int id, int value)
 		{

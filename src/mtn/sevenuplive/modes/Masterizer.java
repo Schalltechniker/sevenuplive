@@ -13,7 +13,7 @@ public class Masterizer extends Mode {
 	
 	//CONROLLER
 	private final static int CONTROLER_COL = 1;
-	int curControlBank = -1;
+	int ctrlSequenceRows[]; 
 	
 	//LOOPING
 	private final static int LOOPER_COL = 2;
@@ -52,6 +52,9 @@ public class Masterizer extends Mode {
 		displayGrid = new int[7][8];
 		
 		sequencerRows = new int[8];
+		
+		//CONTROLLER
+		ctrlSequenceRows = new int[8];
 		
 		//LOOPER
 		looperRows = new int[8];
@@ -173,11 +176,15 @@ public class Masterizer extends Mode {
    	 	}
 		else if(x == CONTROLER_COL && y < 7)
 		{
-			if(AllModes.controller.isBankEnabled(y))
-			{
-				AllModes.controller.sendMidiControlBank(y);
-				curControlBank = y;
-			}
+			seqStatus = AllModes.controller.getSeqStatus(y);
+   		 	if(seqStatus == MonomeUp.PLAYING)
+   		 	{
+	 			AllModes.controller.stopSequence(y);
+   		 	}
+   		 	else if(seqStatus == MonomeUp.STOPPED)
+   		 	{
+	 			AllModes.controller.playSequence(y);
+		 	}
 		}
 		updateDisplayGrid();
 	}
@@ -207,16 +214,16 @@ public class Masterizer extends Mode {
 		int seqStatus;
 		
 		//CONTROLLER
-		//Light up the enabled control banks
 		for(int i=0;i<7;i++)
 		{
-			if(AllModes.controller.isBankEnabled(i))
-				displayGrid[CONTROLER_COL][i] = DisplayGrid.FASTBLINK;
-			else
-				displayGrid[CONTROLER_COL][i] = DisplayGrid.OFF;
+			ctrlSequenceRows[i] = DisplayGrid.OFF;
+			
+			if(AllModes.controller.sequenceExists(i))
+				ctrlSequenceRows[i] = DisplayGrid.FASTBLINK;
+			
+			if(AllModes.controller.getSeqStatus(i) == MonomeUp.PLAYING)
+				ctrlSequenceRows[i] = DisplayGrid.SOLID;
 		}
-		if(curControlBank > -1)
-			displayGrid[CONTROLER_COL][curControlBank] = DisplayGrid.SOLID;
 				
 		//SEQUENCER
 		//Light up the current sequence
@@ -253,7 +260,7 @@ public class Masterizer extends Mode {
 			
 			if(AllModes.loopRecorder.getSeqStatus(i) == MonomeUp.PLAYING)
 				loopRecorderRows[i] = DisplayGrid.SOLID;
-			}
+		}
 
 		//MELODY
 		for(int i=0;i<8;i++)
@@ -289,6 +296,7 @@ public class Masterizer extends Mode {
 		displayGrid[LOOPRECORDER_COL] = loopRecorderRows;
 		displayGrid[MELODY_COL] = melodyRows;
 		displayGrid[melody2Col] = melody2Rows;
+		displayGrid[CONTROLER_COL] = ctrlSequenceRows;
 		
 	}
 	
