@@ -41,7 +41,7 @@ public class NoteSequence {
 	
 	private void initialize()
 	{
-		status = MonomeUp.STOPPED;
+		status = MonomeUp.EMPTY;
 		counter = 0;
 		events = new Hashtable<Integer, ArrayList<Note>>();	
 		notesOn = new ArrayList<Integer>();
@@ -107,7 +107,7 @@ public class NoteSequence {
 					notesOnSend.add(events.get(eventIndex).get(i));
 		}
 		
-		events.put(length, notesOnSend);
+		if(!isEmpty())events.put(length, notesOnSend);
 		status = MonomeUp.STOPPED;
 	}
 
@@ -306,6 +306,8 @@ public class NoteSequence {
 	
 	public int getStatus()
 	{
+		if(isEmpty()) return MonomeUp.EMPTY;
+		
 		return status;
 	}
 	
@@ -423,5 +425,9 @@ public class NoteSequence {
 
 	public void setMelRecMode(int _recMode) {
 		recMode = _recMode;
+	}
+	
+	public boolean isEmpty(){
+		return events.size() == 0;
 	}
 }

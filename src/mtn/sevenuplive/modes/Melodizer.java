@@ -428,12 +428,13 @@ public class Melodizer extends Mode {
 		}
 	}
 	
-	//Returns -1 if no such sequence exists.  0 if stopped. 1 if playing.
+	//Returns -1 if no such sequence exists or empty.  0 if stopped. 1 if playing.
 	public int getSeqStatus(int index)
 	{
 		if(sequences.containsKey(index))
 			return sequences.get(index).getStatus();
 		else return -1;
+		
 	}
 	
 	public Element toXMLElement(String ElementName)

@@ -51,6 +51,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	 public static final int MONOME_128V = 2;
 	 public static final int MONOME_256 = 3;
 	 
+	 public static final int EMPTY = -1;
 	 public static final int STOPPED = 0;
 	 public static final int PLAYING = 1;
 	 public static final int CUED = 2;

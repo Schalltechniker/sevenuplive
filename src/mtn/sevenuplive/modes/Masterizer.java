@@ -259,9 +259,9 @@ public class Masterizer extends Mode {
 		for(int i=0;i<8;i++)
 		{
 			seqStatus = AllModes.melodizer1.getSeqStatus(i);
-			if(seqStatus == 0)
+			if(seqStatus == MonomeUp.STOPPED)
 				melodyRows[i] = DisplayGrid.FASTBLINK;
-			else if(seqStatus == 1)
+			else if(seqStatus == MonomeUp.PLAYING)
 				melodyRows[i] = DisplayGrid.SOLID;
 			else melodyRows[i] = DisplayGrid.OFF;
 			
@@ -273,9 +273,9 @@ public class Masterizer extends Mode {
 		for(int i=0;i<8;i++)
 		{
 			seqStatus = AllModes.melodizer2.getSeqStatus(i);
-			if(seqStatus == 0)
+			if(seqStatus == MonomeUp.STOPPED)
 				melody2Rows[i] = DisplayGrid.FASTBLINK;
-			else if(seqStatus == 1)
+			else if(seqStatus == MonomeUp.PLAYING)
 				melody2Rows[i] = DisplayGrid.SOLID;
 			else melody2Rows[i] = DisplayGrid.OFF;
 			
