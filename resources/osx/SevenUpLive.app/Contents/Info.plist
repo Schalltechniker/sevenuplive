@@ -23,7 +23,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleGetInfoString</key>
-	<string>SevenUpLive v1.1 Adam Ribauldo copyright 2009</string>
+	<string>SevenUpLive #RELEASE.VERSION# Adam Ribauldo copyright 2009</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleIconFile</key>
@@ -38,7 +38,7 @@
 		<string>1.5*</string>
 		<key>ClassPath</key>
 			<array>
-			<string>$JAVAROOT/SevenUpLive-v1.1.jar</string>
+			<string>$JAVAROOT/SevenUpLive-#RELEASE.VERSION#.jar</string>
 			<string>$JAVAROOT/core.jar</string>
 			<string>$JAVAROOT/jdom.jar</string>
 			<string>$JAVAROOT/libProMandoMidiJNILib.jar</string>

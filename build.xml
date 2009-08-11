@@ -33,6 +33,7 @@
   	<echo>${jklabs.monomic.jar}</echo>
   	<echo>${libProMandoMidiJNILib.jar}</echo>
   	<echo>${libProMandoMidiJNILib.jnilib}</echo>
+  	<echo>${libProMandoMidiLpJNILib.jnilib}</echo>
   	<echo>${oscP5.jar}</echo>
   	<echo>${promidi.jar}</echo>
   	<echo>${proxml.jar}</echo>
@@ -164,6 +165,7 @@
             <include name="${jdom.jar}"/>
             <include name="${libProMandoMidiJNILib.jar}"/>
             <include name="${libProMandoMidiJNILib.jnilib}"/>
+        	<include name="${libProMandoMidiLpJNILib.jnilib}"/>
             <include name="${oscP5.jar}"/>
             <include name="${promidi.jar}"/>
             <include name="${proxml.jar}"/>
@@ -188,6 +190,7 @@
   	            <include name="${jdom.jar}"/>
   	            <include name="${libProMandoMidiJNILib.jar}"/>
   	        	<include name="${libProMandoMidiJNILib.jnilib}"/>
+  	        	<include name="${libProMandoMidiLpJNILib.jnilib}"/>
   	            <include name="${oscP5.jar}"/>
   	            <include name="${promidi.jar}"/>
   	            <include name="${proxml.jar}"/>
