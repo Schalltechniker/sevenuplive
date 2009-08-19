@@ -531,29 +531,30 @@ public class Melodizer extends Mode {
 	}
 
 	public void clipLaunch(int pitch, int vel, int channel) {
-			if(vel == 0)
+			if(vel == 0 ||vel == 64) //STOP or OFF
 			{
 				clipNotes[channel][pitch] = DisplayGrid.OFF;
-				System.out.println("Setting " + pitch + " OFF for channel " + channel);
+				//System.out.println("Setting " + pitch + " OFF for channel " + channel);
 			}
-			else if(vel == 126)
+			else if(vel == 126)//CUE
 			{
 				clipNotes[channel][pitch] = DisplayGrid.SLOWBLINK;
 				//System.out.println("Setting " + pitch + " SLOWBLINK");
 			}	
-			else if(vel == 127)
+			else if(vel == 127 || vel == 1)//PLAY or continue
 			{
+				/*
 				//Set all other notes in this note's melodizer column to off (only 1 note in one column can be playing at a time)
 				int lowestPitch = 0;
 				for(int i = pitch;i>=0;i-=12)
 					lowestPitch = i;
 				for(int i = lowestPitch;i<=127;i+=12)
 					clipNotes[channel][i] = DisplayGrid.OFF;
+				*/
 				
 				//Turn on the note that actually plays
 				clipNotes[channel][pitch] = DisplayGrid.SOLID;
 			}
-			//TODO add something for vel 1 (continue)
 			if(channel == curSeqBank)
 				updateDisplayGrid();
 	}
