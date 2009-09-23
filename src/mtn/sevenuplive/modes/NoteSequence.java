@@ -311,6 +311,11 @@ public class NoteSequence {
 		return status;
 	}
 	
+	public void setStatus(int status)
+	{
+		this.status = status;
+	}
+	
 	
 	public Element toJDOMXMLElement()
 	{

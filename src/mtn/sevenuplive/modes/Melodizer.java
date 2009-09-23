@@ -517,6 +517,8 @@ public class Melodizer extends Mode {
 					sequence = new NoteSequence(index);
 					setMelRecMode(recMode);
 					sequence.loadJDOMXMLElement(xmlSequence);
+					//Set status to stopped if there is a sequence
+					if(!sequence.isEmpty())sequence.setStatus(MonomeUp.STOPPED);
 					sequences.put(index, sequence);
 				}
 				

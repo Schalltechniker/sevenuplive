@@ -155,9 +155,7 @@ public class Looper extends Mode {
 			int loopCtrlValue = (y * 16);
 			midiOut.sendController(new promidi.Controller(OFFSET_START_CTRL+x, loopCtrlValue));
 			playLoop(x, y);
-			
-			//System.out.println("Gate loops is " + gateLoopChokes);
-	}
+			}
 	
 	// NOTE: Not used
 	/*private int getSizeOfStoppedLoopsInChokeGroup(int chokeGroup)
@@ -227,7 +225,7 @@ public class Looper extends Mode {
         					if (loops[i].getTrigger(step) == true) {
         						midiOut.sendController(new promidi.Controller(OFFSET_START_CTRL+i, loopCtrlValue));
         						if(!muteNotes)
-        							midiOut.sendNoteOn(new Note(MonomeUp.C3+i,127, 0));
+        							midiOut.sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16  +1, 0));
         						loops[i].setTrigger(step, false);
         					} else {
         						stopLoop(i);
@@ -240,7 +238,7 @@ public class Looper extends Mode {
         					if (resCounter == 0 || loops[i].getTrigger(step)) {
         						midiOut.sendController(new promidi.Controller(OFFSET_START_CTRL+i, loopCtrlValue));
         						if(!muteNotes)
-        							midiOut.sendNoteOn(new Note(MonomeUp.C3+i,127, 0));
+        							midiOut.sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16 +1, 0));
         						loops[i].setTrigger(step, false);
         					}
         					// If it's a one shot loop, then we stop after the first iteration
@@ -284,7 +282,7 @@ public class Looper extends Mode {
 	        	        				}
 	        	        			}	
 	        	        			if (sendNote)
-	        	        				midiOut.sendNoteOn(new Note(MonomeUp.C3+i,127, 0));
+	        	        				midiOut.sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16 +1, 0));
         	        			}
         	        			pressedRow = -1;
         	        				

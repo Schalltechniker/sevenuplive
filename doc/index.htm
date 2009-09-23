@@ -106,14 +106,8 @@ a img {
         <h2>Download</h2>
         <p>The entire 7up Live package can be downloaded here:</p>
         <ul>
-            <li>Windows: <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveWindows-v1.1.zip">http://www.makingthenoise.com/sevenup/SevenUpLiveWindows-v1.1.zip</a></li>
-            <li>OSX - <span style="color:red"/>A recent Apple Java update has broken SevenUpLiveOSX 1.1.&nbsp; A 
-                temporary fix is available below as v1.2</span>:<ul>
-                    <li>OSX (pre Java 5 Update 4): 
-                        <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.1.tar.gz">http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.1.tar.gz</a></li>
-                    <li>OSX (post Java 5 Update 4):  <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.2.tar.gz">http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.2.tar.gz</a></li>
-                </ul>
-            </li>
+            <li>Windows: <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveWindows-v1.2.zip">http://www.makingthenoise.com/sevenup/SevenUpLiveWindows-v1.2.zip</a></li>
+        	<li>OSX: <A href="http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.2.tar.gz">http://www.makingthenoise.com/sevenup/SevenUpLiveOSX-v1.2.tar.gz</a></li>
         </ul>
        <p>Extras for advanced users:</p>
         <ul>
@@ -295,13 +289,15 @@ a img {
         <p>
 
             The controller mode allows you to map 7 different MIDI controllers to any knob 
-            or function in Ableton Live.&nbsp; 
+            or function in Ableton Live and record sequences of control value changes.&nbsp; 
             For instance, you can assign controls 1-3 to 3 different filters for 3 of your 
-            loops and assign control 4 to the chance those loops Beat Repeat.&nbsp; The 
-            controller mode gives you 7 memory banks for control values which can be 
-            triggered through the Masterizer mode.</p>
+            loops and assign control 4 to the chance those loops Beat Repeat.&nbsp; Then by 
+            cueing a control sequence, you can record your interactions with those knobs and 
+            play them back (this functionality is similar to loop recording covered later).&nbsp; 
+            Once a sequence is recorded and stopped, it will immediately play back.&nbsp; 
+            Stopping and starting a control sequence after that must be done from the 
+            Masterizer mode.</p>
         <p>
-            Each column on the left hand side acts as a slider and corresponds to 1 control.&nbsp; 
             In order to map that slider to a knob in Ableton Live, first STOP YOUR SONG 
             (otherwise other midi values being sent will be interpretted), then click the 
             MIDI button in the top right of Ableton Live, click on the knob you want to 
@@ -309,7 +305,8 @@ a img {
         <p>
             The following graphic shows a situation where someone mapped 4 different sliders 
             to knobs in Ableton Live.&nbsp; The first slider is sending MIDI control value 
-            128, the second is sending 64... and so on.</p>
+            128, the second is sending 64... and so on.&nbsp; The Nav Menu column can then 
+            be used to cue and record 7 sequences of control changes.</p>
 
     <div style="text-align:center">
     <img src="images/ControllerMode.PNG" /></div>
@@ -795,6 +792,9 @@ a img {
                 This *removes* this ability to trigger patterns while in sequencer mode.</li>
             <li>1.0 - 2/20/2009 - barnone (Chris Lloyd) added the ability to support multiple monome connections at once.  Loop length was moved to the UI.  Removed ability to sequence multiple patterns at once because it kinda sucked.</li>
             <li>1.1 - 4/25/2009 - New looper modes assigned to each of the 7 loops through the GUI.  Loop recorder has been revamped to behave more like the melodizers in that the recorded sequences can include button presses for any loop.  Added support for multiple 256's.</li>
+            <li>1.2 - 8/7/2009 - Updated promidi library to fix bugs with Mac OSX Java Update4 &amp; 
+                64-bit mac&#39;s.&nbsp; Modified controller mode to allow for recording sequences of 
+                control value changes (Similar to loop recorder).</li>
         </ul>
         <h2 id="contact">Contact</h2>
         Any comments or suggestions, contact me at <a href="mailto:sevenuplive@googlegroups.com" >sevenuplive@googlegroups.com</a>
