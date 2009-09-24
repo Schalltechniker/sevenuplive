@@ -281,8 +281,6 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	    	  allmodes.getLoopRecorder().updateDisplayGrid();
 	    	  allmodes.getLooper().step();
 	    	  allmodes.getLoopRecorder().step();  
-	    	  //TODO give controller its own MIDI note
-	    	  allmodes.getController().step();
 	      }
 	      else if(noteOnPitch == C4 || noteOnPitch == CSHARP4 || noteOnPitch == DSHARP4)
 	      {
@@ -378,11 +376,6 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 				System.out.println("Loading PATTERNIZER...");
 				allmodes.getPatternizerModel().loadJDOMXMLElement(xmlStateChild);
 			}
-			else if(xmlStateChild.getName().equals("controller"))
-			{
-				System.out.println("Loading CONTROLLER...");
-				allmodes.getController().loadJDOMXMLElement(xmlStateChild);
-			}
 			else if(xmlStateChild.getName().equals("sequencer"))
 			{
 				System.out.println("Loading SEQUENCER...");
@@ -452,9 +445,6 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 		 //Create PATTERNIZER
 		 Element xmlPatternizer = allmodes.getPatternizerModel().toJDOMXMLElement();
 		 
-	 	 //Create CONTROLLER
-		 Element xmlController = allmodes.getController().toJDOMXMLElement();
-		 
 		 //Create SEQUENCER
 		 Element xmlSequencer = allmodes.getSequencer().toJDOMXMLElement();
 			
@@ -475,7 +465,6 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 		
 		//Add modes to xmlState
 	 	xmlState.addContent(xmlPatternizer);
-	 	xmlState.addContent(xmlController);
 	 	xmlState.addContent(xmlSequencer);
 	 	xmlState.addContent(xmlLooper);
 	 	xmlState.addContent(xmlLoopRecorder);

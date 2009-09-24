@@ -176,15 +176,8 @@ public class Masterizer extends Mode {
    	 	}
 		else if(x == CONTROLER_COL && y < 7)
 		{
-			seqStatus = AllModes.controller.getSeqStatus(y);
-   		 	if(seqStatus == MonomeUp.PLAYING)
-   		 	{
-	 			AllModes.controller.stopSequence(y);
-   		 	}
-   		 	else if(seqStatus == MonomeUp.STOPPED)
-   		 	{
-	 			AllModes.controller.playSequence(y);
-		 	}
+			if(AllModes.controller.bankHasValues(y))
+				AllModes.controller.sendAllBankValues(y);
 		}
 		updateDisplayGrid();
 	}
@@ -216,13 +209,10 @@ public class Masterizer extends Mode {
 		//CONTROLLER
 		for(int i=0;i<7;i++)
 		{
-			ctrlSequenceRows[i] = DisplayGrid.OFF;
-			
-			if(AllModes.controller.sequenceExists(i))
+			if(AllModes.controller.bankHasValues(i))
 				ctrlSequenceRows[i] = DisplayGrid.FASTBLINK;
-			
-			if(AllModes.controller.getSeqStatus(i) == MonomeUp.PLAYING)
-				ctrlSequenceRows[i] = DisplayGrid.SOLID;
+			else
+				ctrlSequenceRows[i] = DisplayGrid.OFF;
 		}
 				
 		//SEQUENCER
