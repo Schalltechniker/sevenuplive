@@ -71,20 +71,21 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	 public static final  int ESHARP7 = 109;
 	 public static final  int E7 = 112;
 	 public static final  int F7 = 113;
-	 public static final  int C4 = 72;
 	 public static final  int CSHARP4 = 73;
 	 public static final  int D4 = 74;
 	 public static final  int DSHARP4 = 75;
 	 public static final  int E4 = 76;
 	 public static final  int F4 = 77;
 	 public static final  int FSHARP4 = 78;
+	 public static final int G2 = 55;
 	 public static final  int G4 = 79;
 	 public static final  int A4 = 58;
-	 public static final int C3 = 60;
 	 public static final int C1 = 36;
-	 public static final int C5 = 72;
-	 public static final int CSHARP5 = 73;
-	 
+	 public static final int C2 = 48;
+	 public static final int C3 = 60;
+	 public static final int CSHARP3 = 61;
+	 public static final int C4 = 72;
+ 
 	 /** Class that holds all our mode instances */
 	 private AllModes allmodes;
 	 
@@ -303,12 +304,21 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 		  //Reset all modes
 	      else if(noteOnPitch == FSHARP4)
 	      {
-	    	  System.out.println("received fsharp");
 	    	  allmodes.getSequencer().reset();
 	    	  allmodes.getLooper().reset();
 	    	  allmodes.getMelodizer1().reset();
 	    	  allmodes.getMelodizer2().reset();
 	      }
+		  //Start loops
+	      else if(noteOnPitch >= C2 && noteOnPitch < G2){
+			  int loopNum = noteOnPitch - C2;
+			  AllModes.getInstance().getLooper().playLoop(loopNum, 0);
+		  }
+		  //Stop loops
+      	  else if(noteOnPitch >= G2 && noteOnPitch <= CSHARP3){
+      		  int loopNum = noteOnPitch - G2;
+			  AllModes.getInstance().getLooper().stopLoop(loopNum);
+		  }
 	}
 	 
 	 /***

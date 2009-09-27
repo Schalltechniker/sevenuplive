@@ -92,7 +92,7 @@ public class Masterizer extends Mode {
 			else if(navGrid[y] == DisplayGrid.SLOWBLINK)
 			{
 				navGrid[y] = DisplayGrid.OFF;
-				midiMasterOut.sendNoteOn(new Note(MonomeUp.C5 + y,127, 0));
+				midiMasterOut.sendNoteOn(new Note(MonomeUp.C4 + y,127, 0));
 			}
 		}
 		else if(x == SEQUENCER_COL)
