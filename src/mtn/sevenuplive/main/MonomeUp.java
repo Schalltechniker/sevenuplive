@@ -313,6 +313,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	      else if(noteOnPitch >= C2 && noteOnPitch < G2){
 			  int loopNum = noteOnPitch - C2;
 			  AllModes.getInstance().getLooper().playLoop(loopNum, 0);
+			  AllModes.getInstance().getLooper().stepOneLoop(loopNum);
+			  
 		  }
 		  //Stop loops
       	  else if(noteOnPitch >= G2 && noteOnPitch <= CSHARP3){
