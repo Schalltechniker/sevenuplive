@@ -201,8 +201,8 @@ public class Looper extends Mode {
 				stopLoop(i);
 				stopLoopsOnNextStep[i] = false;
 			}
-			
-			stepOneLoop(i);
+			else		
+				stepOneLoop(i);
 		}
 		
 	}
@@ -249,8 +249,10 @@ public class Looper extends Mode {
         						loops[i].setTrigger(step, false);
         					}
         					// If it's a one shot loop, then we stop after the first iteration
-        	        		if (loops[i].getType() == Loop.SLICE && loops[i].isLastResInStep()) {
+        	        		if (loops[i].isLastResInStep()) {
+                				System.out.println("stop 0");
         	    				stopLoop(i);
+        	    				loops[i].setPressedRow(-1);
         	    				pressedRow = -1;
         	    			}
         				// Don't break here, flow into SHOT	
@@ -258,6 +260,7 @@ public class Looper extends Mode {
         					// If it's a one shot loop, then we stop after the first iteration
         	        		if (loops[i].getType() == Loop.SHOT && loops[i].isLastResStep()) {
         	    				stopLoop(i);
+        	    				loops[i].setPressedRow(-1);
         	    				pressedRow = -1;
         	    			}
         	        	// Don't break flow into LOOP	
@@ -296,8 +299,9 @@ public class Looper extends Mode {
         					
         			};
         		}	
-        		
-        		loops[i].nextResCount();
+        	
+        		if(loops[i].isPlaying())
+        			loops[i].nextResCount();
         	}
    
 	}
