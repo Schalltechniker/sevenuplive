@@ -559,11 +559,8 @@ public class Melodizer extends Mode implements PlayContext {
 				
 			}
 
-			int curOffsetValue = offset[curSeqBank];
-
 			//Set new offset
 			offset[curSeqBank] = x;
-			int offsetDif = curOffsetValue - offset[curSeqBank];
 			if (transpose) {
 				transposeDirty = true;
 				markStartTransposeOffsets(curSeqBank);
@@ -716,9 +713,6 @@ public class Melodizer extends Mode implements PlayContext {
 			sequences.put(seqIndex, new NoteSequence(seqIndex, this));
 			setMelRecMode(recMode);
 		}
-		// Transposition offsets will be marked from here
-		markSequenceOffsets(cuedIndex);
-		
 		sequences.get(seqIndex).beginCue();
 
 		cuedIndex = seqIndex;
@@ -726,6 +720,9 @@ public class Melodizer extends Mode implements PlayContext {
 
 	public void endRecording()
 	{
+		// Transposition offsets will be marked from here
+		markSequenceOffsets(cuedIndex);
+		
 		sequences.get(cuedIndex).endRecording();
 		cuedIndex = -1;
 	}
