@@ -24,6 +24,7 @@ public class DisplayGrid {
 	public static final int SLOWBLINK = 1;
 	public static final int SOLID = 3;
 	public static final int OFF = 0;
+	public static final int UNDEFINED = -1;
 	private static final  int SLOWBLINKFRAME = 10;
 	private static final int FASTBLINKFRAME = 1;
 
@@ -215,27 +216,35 @@ public class DisplayGrid {
 					navGrid[curMode] = DisplayGrid.SOLID;
 					menuLevel = SUBMENU;
 
-					if (curMode == ModeConstants.PATTERN_MODE)
+					// Send focus change event
+					allmodes.sendMenuFocusChangeEvent(new Mode.MenuFocusEvent(Mode.MenuFocusEvent.eMenuFocusEvent.MENU_FOCUS_CHANGE_ABORTED, curMode, curMode));
+					
+					if (curMode == ModeConstants.PATTERN_MODE) {
 						navGrid = allmodes.getPatternizerView(grid_index).getNavGrid();
-					else if (curMode == ModeConstants.CONTROL_MODE)
+					} else if (curMode == ModeConstants.CONTROL_MODE) {
 						navGrid = allmodes.getController().getNavGrid();
-					else if (curMode == ModeConstants.SEQ_MODE)
+					} else if (curMode == ModeConstants.SEQ_MODE) {
 						navGrid = allmodes.getSequencer().getNavGrid();
-					else if (curMode == ModeConstants.LOOP_MODE)
+					} else if (curMode == ModeConstants.LOOP_MODE) {
 						navGrid = allmodes.getLooper().getNavGrid();
-					else if (curMode == ModeConstants.LOOP_RECORD_MODE)
+					} else if (curMode == ModeConstants.LOOP_RECORD_MODE) {
 						navGrid = allmodes.getLoopRecorder().getNavGrid();
-					else if (curMode == ModeConstants.MELODY_MODE)
+					} else if (curMode == ModeConstants.MELODY_MODE) {
 						navGrid = allmodes.getMelodizer1().getNavGrid();
-					else if (curMode == ModeConstants.MELODY2_MODE)
+					} else if (curMode == ModeConstants.MELODY2_MODE) {
 						navGrid = allmodes.getMelodizer2().getNavGrid();
+					}	
 				}
 				//Else they are changing modes
 				else
 				{
 					navGrid = new int[8];
+					int oldMode = curMode;
 					curMode = y;
 					menuLevel = SUBMENU;
+					
+					allmodes.sendMenuFocusChangeEvent(new Mode.MenuFocusEvent(Mode.MenuFocusEvent.eMenuFocusEvent.MENU_FOCUS_COMMITTED, oldMode, curMode));
+					
 					if(y == ModeConstants.PATTERN_MODE)
 					{
 						curDisplayGrid = allmodes.getPatternizerView(grid_index).getDisplayGrid();
@@ -292,6 +301,9 @@ public class DisplayGrid {
 					navGrid = new int[grid_height];
 					navGrid[curMode] = DisplayGrid.SOLID;
 					menuLevel = MAINMENU;
+					
+					allmodes.sendMenuFocusChangeEvent(new Mode.MenuFocusEvent(Mode.MenuFocusEvent.eMenuFocusEvent.MENU_FOCUS_CHANGE_CUED, curMode, curMode));
+					
 				}
 				//Else they are moving between sub-menu items
 				else
@@ -372,12 +384,12 @@ public class DisplayGrid {
 		//If user releases within the melodizer play area
 		else if(curMode == ModeConstants.MELODY_MODE && x != NAVCOL)
 		{
-			if(y<6 || allmodes.getMelodizer1().clipMode)
+			if(allmodes.getMelodizer1().isNote(y))
 				allmodes.getMelodizer1().release(x, y);
 		}
 		else if(curMode == ModeConstants.MELODY2_MODE && x != NAVCOL)
 		{
-			if(y<6 || allmodes.getMelodizer2().clipMode)
+			if(y<6 || allmodes.getMelodizer2().isNote(y))
 				allmodes.getMelodizer2().release(x, y);
 		}
 		else if (curMode == ModeConstants.LOOP_MODE && x != NAVCOL) {

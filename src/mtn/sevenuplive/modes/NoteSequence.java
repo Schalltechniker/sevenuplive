@@ -25,18 +25,24 @@ public class NoteSequence {
 	private Integer length;  //Length of the entire sequence
 	private Integer index;	//Sequence index out of all possible NoteSequences for printout in XML
 	private int status;  //Current status of the sequence
-	private Hashtable <Integer, Note> heldNotesPlaying;  //Hashtable keeping track of currently held notes
+	private Hashtable <Integer, TranspositionContext> heldNotesTranspositionContext;  //Hashtable keeping track of the transposition context of held notes
+	private Hashtable <Integer, Note> originalHeldNotesPlaying;  //Hashtable keeping track of currently held notes at original pitchs
 	
 	//Create hashtable of keys (metronome count) and ArrayList<Note>(notes played at that event position)
 	private Hashtable<Integer, ArrayList<Note>> events;
 	private ArrayList<Integer> notesOn;
 	private int recMode = ModeConstants.MEL_ON_BUTTON_PRESS;
 	
-	NoteSequence(int _index){
+	private PlayContext context;
+	
+	
+	NoteSequence(int _index, PlayContext context){
 		initialize();
 		index = _index;
 		counter = 0;
-		heldNotesPlaying = new Hashtable<Integer, Note>();
+		originalHeldNotesPlaying = new Hashtable<Integer, Note>();
+		heldNotesTranspositionContext = new Hashtable<Integer, TranspositionContext>();
+		this.context = context;
 	}
 	
 	private void initialize()
@@ -114,6 +120,7 @@ public class NoteSequence {
 	/**
 	 * Called by the intiating class in order to cycle through the sequence events and return any notes to be played
 	 * @return An ArrayList to be played at the current count.  If no events, returns null.
+	 * 
 	 */
 	public ArrayList<Note> heartbeat()
 	{
@@ -141,22 +148,46 @@ public class NoteSequence {
 			{
 				//Keep track of which notes are playing
 				ArrayList<Note> noteList;
-				noteList = events.get(counter);
-				for(int i=0;i<noteList.size();i++)
-				{
+				noteList  = events.get(counter);
+				
+				for(int i=0;i<noteList.size();i++) {
 					if(noteList.get(i).getVelocity() > 0)
 					{
 						//Add a noteOn event to heldNotes
-						heldNotesPlaying.put(noteList.get(i).getPitch(), noteList.get(i));
+						originalHeldNotesPlaying.put(noteList.get(i).getPitch(), noteList.get(i));
+						
+						// Only record if transposing
+						if (context.getTranspose())
+							heldNotesTranspositionContext.put(noteList.get(i).getPitch(), context.getTranspositionContext(index));
 					}
 					else
 					{
 						//Remove a note from heldNotes
-						if(heldNotesPlaying.containsKey(noteList.get(i).getPitch()))
+						if(originalHeldNotesPlaying.containsKey(noteList.get(i).getPitch()))
 						{
-							heldNotesPlaying.remove(noteList.get(i).getPitch());
+							originalHeldNotesPlaying.remove(noteList.get(i).getPitch()); // they are the same so pitch here should be correct
+							heldNotesTranspositionContext.remove(noteList.get(i).getPitch());
 						}
 					}
+				}
+				
+				// If transposing 
+				if (context.getTranspose()) {
+					
+					// Transpose if necessary. If transposing then NoteList will actually be a clone of the original
+					TranspositionContext tc = context.getTranspositionContext(index);
+					ArrayList<Note> noteListAfterTranspose = new ArrayList<Note>();
+					Note newNote;
+					for(int i=0;i<noteList.size();i++) {
+						newNote = context.transposeWithContext(noteList.get(i), tc);
+						if (newNote != null) {
+							noteListAfterTranspose.add(newNote);
+						} else {
+							System.out.println("Note transposed off the grid");
+							noteListAfterTranspose.add(new Note(noteList.get(i).getPitch(), 0, 0)); // If off grid then send a note off
+						}	
+					}
+					return noteListAfterTranspose;
 				}
 				
 				return noteList;
@@ -390,13 +421,36 @@ public class NoteSequence {
 		}	
 	}
 
-	public ArrayList<Note> getHeldNotes() {
+	public ArrayList<Note> getHeldNotesTransposedPitch() {
 		ArrayList<Note> heldNotesArray = new ArrayList<Note>();
 		Integer index;
-		for(Enumeration<Integer> els = heldNotesPlaying.keys();els.hasMoreElements();)
+		for(Enumeration<Integer> els = originalHeldNotesPlaying.keys();els.hasMoreElements();)
 		{
 			index = Integer.class.cast(els.nextElement());
-			heldNotesArray.add(heldNotesPlaying.get(index));
+			Note originalNote = originalHeldNotesPlaying.get(index);
+			TranspositionContext tc = heldNotesTranspositionContext.get(originalNote.getPitch());
+			Note newNote;
+			if (tc != null) {
+				newNote = context.transposeWithContext(originalNote, tc);
+			} else {
+				newNote = originalNote;
+			}
+			if (newNote != null)
+				heldNotesArray.add(newNote);
+			
+		}
+		
+		return heldNotesArray;
+	}
+	
+	public ArrayList<Note> getHeldNotesOriginalPitch() {
+		ArrayList<Note> heldNotesArray = new ArrayList<Note>();
+		Integer index;
+		for(Enumeration<Integer> els = originalHeldNotesPlaying.keys();els.hasMoreElements();)
+		{
+			index = Integer.class.cast(els.nextElement());
+			Note originalNote = originalHeldNotesPlaying.get(index);
+			heldNotesArray.add(originalNote);
 		}
 		
 		return heldNotesArray;
@@ -435,4 +489,5 @@ public class NoteSequence {
 	public boolean isEmpty(){
 		return events.size() == 0;
 	}
+	
 }

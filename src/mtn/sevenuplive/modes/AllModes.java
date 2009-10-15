@@ -94,4 +94,22 @@ public class AllModes {
 		return startup;
 	}
 	
+	/**
+	 * Hardcoded subscription list for now
+	 * @param event
+	 */
+	public void sendMenuFocusChangeEvent(Mode.MenuFocusEvent event) {
+		controller.onMenuFocusChange(event);
+		sequencer.onMenuFocusChange(event);
+		melodizer1.onMenuFocusChange(event);
+		melodizer2.onMenuFocusChange(event);
+		looper.onMenuFocusChange(event);
+		loopRecorder.onMenuFocusChange(event);
+		masterizer.onMenuFocusChange(event);
+		startup.onMenuFocusChange(event);
+		for (int i = 0; i < patternizerViews.length; i++) {
+			patternizerViews[i].onMenuFocusChange(event);
+		}
+	}
+	
 }

@@ -45,6 +45,15 @@ public abstract class Mode implements ModeConstants{
 		return navGrid;
 	}
 	
+	/**
+	 * Called when the Nav Menu focus changes
+	 * Override in concrete class as needed 
+	 * @param event
+	 */
+	public void onMenuFocusChange(MenuFocusEvent event) {
+		
+	}
+	
 	protected void clearDisplayGrid()
 	{
 		for(int i=0;i<displayGrid.length;i++)
@@ -72,7 +81,25 @@ public abstract class Mode implements ModeConstants{
 		else return ycoord;
 	}
 	
-
-
+	public static class MenuFocusEvent {
+		public enum eMenuFocusEvent {MENU_FOCUS_CHANGE_CUED, MENU_FOCUS_COMMITTED, MENU_FOCUS_CHANGE_ABORTED};
+		
+		public eMenuFocusEvent type;
+		
+		public int oldIndex;
+		public int newIndex;
+		
+		private MenuFocusEvent() {}
+		
+		public MenuFocusEvent(eMenuFocusEvent type, int oldIndex, int newIndex) {
+			this.type = type;
+			this.oldIndex = oldIndex;
+			this.newIndex = newIndex;
+		}
+		
+		public String toString() {
+			return "MenuFocusEvent->" + type + " oldIndex:" + Integer.toString(oldIndex) + " newIndex:" + Integer.toString(newIndex);
+		}
+	}
 
 }

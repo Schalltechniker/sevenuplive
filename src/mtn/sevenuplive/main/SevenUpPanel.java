@@ -20,8 +20,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import mtn.sevenuplive.modes.Melodizer;
 import mtn.sevenuplive.modes.ModeConstants;
 import mtn.sevenuplive.scales.Scale;
+import mtn.sevenuplive.scales.ScaleName;
 
 import org.jdom.Document;
 
@@ -32,6 +34,8 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	SevenUpApplet sevenUpApplet;
 	JComboBox drpScaleChoices1;
 	JComboBox drpScaleChoices2;
+	JComboBox drpMelodizerModeChoices1;
+	JComboBox drpMelodizerModeChoices2;
 	JComboBox drpLoopChoke;
 	JComboBox drpLoopLength;
 	JComboBox drpLoopType;
@@ -40,6 +44,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	JButton btnPrevPatch;
 	JButton btnNextPatch;
 	JCheckBox chkMuteLooper;
+	JCheckBox chkTranspose1;
 	JFrame parentFrame;
 	JPanel secondPanel;
 	
@@ -61,7 +66,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
     	
     	// Resize a bit
     	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    	parentFrame.setBounds(screenSize.width / 2,screenSize.height / 2,450,420);
+    	parentFrame.setBounds(screenSize.width / 2,screenSize.height / 2,500,420);
  
     	try
     	{
@@ -107,45 +112,26 @@ public class SevenUpPanel extends JPanel implements ActionListener
 			JPanel thirdPanel = new JPanel(twocolumnstraight);
 			
 			//Scale
-	        JLabel lblSetScale = new JLabel("Melodizer 1 scale");
+	        JLabel lblSetScale = new JLabel("Melodizer 1 Scale/Mode");
 	        setSizeSmall(lblSetScale);
 	        lblSetScale.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	        
-	        Vector<String> scaleChoices = new Vector<String>();
-	        scaleChoices.add("CLIP LAUNCH");
-	        scaleChoices.add("Billian");
-	        scaleChoices.add("Blues");
-	        scaleChoices.add("Blues (Minor)");
-	        scaleChoices.add("Dorian");
-	        scaleChoices.add("Major");
-	        scaleChoices.add("Minor");
-	        scaleChoices.add("Minor Seven");
-	        scaleChoices.add("Mullnixian");
-	        scaleChoices.add("Yorkian");
-	        scaleChoices.add("Telerium");
-	        scaleChoices.add("Pentatonic");
-	        scaleChoices.add("Pentatonic (Minor)");
-	        scaleChoices.add("Ultra Locrian");
+	        Vector<ScaleName> scaleChoices = new Vector<ScaleName>();
+	        ScaleName[] scales = ScaleName.values();
+	        for (ScaleName scaleName : scales) {
+	        	scaleChoices.add(scaleName);
+	        }
 	        
 	        drpScaleChoices1 = new JComboBox(scaleChoices);
 	        setSizeSmall(drpScaleChoices1);
-	        drpScaleChoices1.setSelectedIndex(5);
+	        drpScaleChoices1.setSelectedItem(ScaleName.Major);
 	        
 	        drpScaleChoices1.addActionListener(
 	        		new ActionListener(){
 	        			public void actionPerformed(ActionEvent e) {
 	        				setDirty(true);
 	        				JComboBox cb = (JComboBox)e.getSource();
-	        				if(cb.getSelectedIndex() == 0)
-	        				{
-	        					sevenUpApplet.setMelody1Scale("Major");
-	        					sevenUpApplet.setMelody1ClipMode(true);
-	        				}
-	        				else
-	        				{
-	        					sevenUpApplet.setMelody1Scale(cb.getSelectedItem().toString());
-	        					sevenUpApplet.setMelody1ClipMode(false);
-	        				}
+	        				sevenUpApplet.setMelody1Scale(cb.getSelectedItem().toString());
 	        			}
 	        		}
 	        );
@@ -154,29 +140,13 @@ public class SevenUpPanel extends JPanel implements ActionListener
 			c.gridx = 1; firstPanel.add(drpScaleChoices1, c);
 	        
 			//Melodizer 2 Scale
-	        lblSetScale = new JLabel("Melodizer 2 scale");
+	        lblSetScale = new JLabel("Melodizer 2 Scale/Mode");
 	        setSizeSmall(lblSetScale);
 	        lblSetScale.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	        
-	        //Remove clip launch option
-	        scaleChoices = new Vector<String>();
-	        scaleChoices.add("Billian");
-	        scaleChoices.add("Blues");
-	        scaleChoices.add("Blues (Minor)");
-	        scaleChoices.add("Dorian");
-	        scaleChoices.add("Major");
-	        scaleChoices.add("Minor");
-	        scaleChoices.add("Minor Seven");
-	        scaleChoices.add("Mullnixian");
-	        scaleChoices.add("Yorkian");
-	        scaleChoices.add("Telerium");
-	        scaleChoices.add("Pentatonic");
-	        scaleChoices.add("Pentatonic (Minor)");
-	        scaleChoices.add("Ultra Locrian");
-	        
 	        drpScaleChoices2 = new JComboBox(scaleChoices);
 	        setSizeSmall(drpScaleChoices2);
-	        drpScaleChoices2.setSelectedIndex(4);
+	        drpScaleChoices2.setSelectedItem(ScaleName.Major);
 	        
 	        drpScaleChoices2.addActionListener(
 	        		new ActionListener(){
@@ -184,13 +154,82 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        				setDirty(true);
 	        				JComboBox cb = (JComboBox)e.getSource();
 	        					sevenUpApplet.setMelody2Scale(cb.getSelectedItem().toString());
-	        					sevenUpApplet.setMelody2ClipMode(false);
 	        			}
 	        		}
 	        );
 	        
 	        c.gridx = 0; c.gridy = 1; firstPanel.add(lblSetScale, c);
 	        c.gridx = 1; firstPanel.add(drpScaleChoices2, c);	        
+	        
+	        //Melodizer 1 Mode
+	        
+	        Vector<String> modeChoices = new Vector<String>();
+	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString());
+	        modeChoices.add(Melodizer.eMelodizerMode.POSITION.toString());
+	        modeChoices.add(Melodizer.eMelodizerMode.NONE.toString());
+	        modeChoices.add(Melodizer.eMelodizerMode.CLIP.toString());
+	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString() + "/" + Melodizer.eMelodizerMode.POSITION.toString());
+	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString() + "/" + Melodizer.eMelodizerMode.NONE.toString());
+	        modeChoices.add(Melodizer.eMelodizerMode.POSITION.toString() + "/" + Melodizer.eMelodizerMode.NONE.toString());
+	        
+	        drpMelodizerModeChoices1 = new JComboBox(modeChoices);
+	        setSizeSmall(drpMelodizerModeChoices1);
+	        drpMelodizerModeChoices1.setSelectedIndex(0);
+	        
+	        drpMelodizerModeChoices1.addActionListener(
+	        		new ActionListener(){
+	        			public void actionPerformed(ActionEvent e) {
+	        				setDirty(true);
+	        				JComboBox cb = (JComboBox)e.getSource();
+	        				String modeString = cb.getSelectedItem().toString();
+	        				String[] modes = modeString.split("/");
+	        				if (modes.length == 2) {
+	        					sevenUpApplet.setMelody1Mode(Melodizer.eMelodizerMode.valueOf(modes[0]));
+	        					sevenUpApplet.setMelody1AltMode(Melodizer.eMelodizerMode.valueOf(modes[1]));
+	        				} else {
+	        					sevenUpApplet.setMelody1Mode(Melodizer.eMelodizerMode.valueOf(modeString));
+	        					sevenUpApplet.setMelody1AltMode(Melodizer.eMelodizerMode.valueOf(modeString));
+	        				}	
+	        			}
+	        		}
+	        );
+	        
+	        c.gridx = 2; c.gridy = 0; firstPanel.add(drpMelodizerModeChoices1, c);	        
+	        
+	        //Melodizer 2 Mode
+	        
+	        //Remove clip launch option
+	        modeChoices = new Vector<String>();
+	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString());
+	        modeChoices.add(Melodizer.eMelodizerMode.POSITION.toString());
+	        modeChoices.add(Melodizer.eMelodizerMode.NONE.toString());
+	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString() + "/" + Melodizer.eMelodizerMode.POSITION.toString());
+	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString() + "/" + Melodizer.eMelodizerMode.NONE.toString());
+	        modeChoices.add(Melodizer.eMelodizerMode.POSITION.toString() + "/" + Melodizer.eMelodizerMode.NONE.toString());
+	        
+	        drpMelodizerModeChoices2 = new JComboBox(modeChoices);
+	        setSizeSmall(drpMelodizerModeChoices2);
+	        drpMelodizerModeChoices2.setSelectedIndex(0);
+	        
+	        drpMelodizerModeChoices2.addActionListener(
+	        		new ActionListener(){
+	        			public void actionPerformed(ActionEvent e) {
+	        				setDirty(true);
+	        				JComboBox cb = (JComboBox)e.getSource();
+	        				String modeString = cb.getSelectedItem().toString();
+	        				String[] modes = modeString.split("/");
+	        				if (modes.length == 2) {
+	        					sevenUpApplet.setMelody2Mode(Melodizer.eMelodizerMode.valueOf(modes[0]));
+	        					sevenUpApplet.setMelody2AltMode(Melodizer.eMelodizerMode.valueOf(modes[1]));
+	        				} else {
+	        					sevenUpApplet.setMelody2Mode(Melodizer.eMelodizerMode.valueOf(modeString));
+	        					sevenUpApplet.setMelody2AltMode(Melodizer.eMelodizerMode.valueOf(modeString));
+	        				}
+	        			}
+	        		}
+	        );
+	        
+	        c.gridx = 2; c.gridy = 1; firstPanel.add(drpMelodizerModeChoices2, c);	        
 	        
 	        //Melodizer record mode
 	        JLabel lblMelRecMode = new JLabel("Melodizer Rec Mode");
@@ -215,6 +254,39 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        );
 	        c.gridx = 0; c.gridy = 2; firstPanel.add(lblMelRecMode, c);
 	        c.gridx = 1; firstPanel.add(drpMelRecMode, c);
+	        
+	        // Enable transpose mode for both melodizers
+	        JLabel lblTranspose1 = new JLabel("Transpose Patterns");
+	        setSizeSmall(lblTranspose1);
+	        lblTranspose1.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
+	    	
+	        chkTranspose1 = new JCheckBox();
+	        setSizeSmall(chkTranspose1);
+	        chkTranspose1.addActionListener(
+	        		new ActionListener(){
+	        			public void actionPerformed(ActionEvent e) {
+	        				setDirty(true);
+	        				JCheckBox chk = (JCheckBox)e.getSource();
+	       					sevenUpApplet.setMelody1Transpose(chk.isSelected());
+	       					sevenUpApplet.setMelody2Transpose(chk.isSelected());
+	        			}
+	        		}
+	        );
+	        
+	        JPanel childP = new JPanel();
+	        GridBagConstraints d = new GridBagConstraints();
+			d.fill = GridBagConstraints.HORIZONTAL;
+			d.anchor = GridBagConstraints.LAST_LINE_START;
+			d.weighty = 0.5;
+			d.gridx = 0;
+			d.gridy = 0;
+			
+	        childP.add(lblTranspose1, d);
+	        d.gridx = 1;
+			childP.add(chkTranspose1, d);
+	        
+	        c.gridx = 2; c.gridy = 2; 
+	        firstPanel.add(childP, c);
 	        
 	        //Loops
 	        JLabel lblSetLoopGate;
@@ -334,6 +406,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        c.gridx = 0; c.gridy = 4; firstPanel.add(lblMuteLooper, c);
 	        c.gridx = 1; firstPanel.add(chkMuteLooper, c);
 	        
+	        
 	        //Add prev/next patch buttons
 	        btnPrevPatch = new JButton("<< Prev Patch");
 	        btnPrevPatch.putClientProperty("JButton.buttonType", "gradient");
@@ -387,33 +460,47 @@ public class SevenUpPanel extends JPanel implements ActionListener
     	boolean gateLoopChokes;
     	
     	//Update melody 1 gui based on patch settings
-    	if(sevenUpApplet.getMelody1ClipMode())
+    	Scale melodyScale1 = sevenUpApplet.getMelody1Scale();
+    	drpScaleChoices1.setSelectedItem(melodyScale1.Name);
+		
+		for(int i = drpMelodizerModeChoices1.getItemCount() - 1; i > -1; i--)
     	{
-    		//If clipMode is true then set the appropriate dropdown
-    		drpScaleChoices1.setSelectedIndex(0);
+			if(drpMelodizerModeChoices1.getItemAt(i).toString().equals(sevenUpApplet.getMelody1Mode().toString()))
+    		{
+    			drpMelodizerModeChoices1.setSelectedIndex(i);
+    			break;
+    		} 
+    		else if (drpMelodizerModeChoices1.getItemAt(i).toString().equals(sevenUpApplet.getMelody1Mode().toString() + "/" + sevenUpApplet.getMelody1AltMode().toString()))
+    		{
+    			drpMelodizerModeChoices1.setSelectedIndex(i);
+    			break;
+    		}
     	}
-    	else
-    	{
-    		Scale melodyScale = sevenUpApplet.getMelody1Scale();
-    		for(int i = 0; i < drpScaleChoices1.getItemCount(); i++)
-        	{
-        		if(drpScaleChoices1.getItemAt(i).toString().equals(melodyScale.label.toString()))
-        		{
-        			drpScaleChoices1.setSelectedIndex(i);
-        		}
-        	}
-    	}
-    	
-    	
-    	//Update melody 2 gui based on patch settings
-    	Scale melodyScale = sevenUpApplet.getMelody2Scale();
-        for(int i = 0; i < drpScaleChoices2.getItemCount(); i++)
-        {
-        	if(drpScaleChoices2.getItemAt(i).toString().equals(melodyScale.label.toString()))
-        		drpScaleChoices2.setSelectedIndex(i);
-        }
+		
+		//Update melody 2 gui based on patch settings
+    	Scale melodyScale2 = sevenUpApplet.getMelody2Scale();
+    	drpScaleChoices2.setSelectedItem(melodyScale2.Name);
         
-    	for(Integer i =0;i<7;i++)
+        // Just key off of serialized value of Melodizer1 even though they are independently assignable
+        chkTranspose1.setSelected(sevenUpApplet.getMelody1Transpose());
+        
+        
+        // Need to count backwards as the choices go from multiple modes to 1 mode
+        for(int i = drpMelodizerModeChoices2.getItemCount() - 1; i > -1; i--)
+    	{
+    		if(drpMelodizerModeChoices2.getItemAt(i).toString().equals(sevenUpApplet.getMelody2Mode().toString()))
+    		{
+    			drpMelodizerModeChoices2.setSelectedIndex(i);
+    			break;
+    		}
+    		else if (drpMelodizerModeChoices2.getItemAt(i).toString().equals(sevenUpApplet.getMelody2Mode().toString() + "/" + sevenUpApplet.getMelody2AltMode().toString()))
+    		{
+    			drpMelodizerModeChoices2.setSelectedIndex(i);
+    			break;
+    		}
+    	}
+		
+		for(Integer i =0;i<7;i++)
     	{
     		chokeGroup = sevenUpApplet.getLoopChokeGroup(i);
     		length = sevenUpApplet.getLoopLength(i);
@@ -525,8 +612,6 @@ public class SevenUpPanel extends JPanel implements ActionListener
 		public void componentMoved(ComponentEvent e) {}
 
 		public void componentResized(ComponentEvent e) {
-			//SevenUpPanel source = (SevenUpPanel)e.getSource();
-			//System.out.println("new size width:" + source.getSize().width + " height:" + source.getSize().height);
 		}
 
 		public void componentShown(ComponentEvent e) {}

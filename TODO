@@ -5,6 +5,7 @@ FEATURES
 -External controller to start/stop recording
 -Tilt control
 -set controller to use 7*7 different controller knobs. use MVC method so independent actors can manipulate
+
 BUGS
 - When loading a patch, patternizers do not update their UI until you move away from page and come back again
 - SamplePatchPack.xml is not really a patch pack. Needs to be updated.
@@ -12,5 +13,7 @@ BUGS
 - There was a bug report that loop pattern recorder was not replaying loops that used choke groups properly. This may have to do
 which where new notes are triggered or not depending on loop mode.
 -Bug in melodizer code where the first note may not be played directly after recording a sequence and another note is held down
+- Bug reported where pattern slots in Masterizer are not clearer when the pattern is dropped (recoded as empty) in a Melodizer.
+
  
 

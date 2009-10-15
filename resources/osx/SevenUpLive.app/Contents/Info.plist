@@ -11,7 +11,7 @@
 	<key>CFBundleName</key>
 	<string>SevenUpLive</string>
 	<key>CFBundleVersion</key>
-	<string>v1.1</string>
+	<string>#RELEASE.VERSION#</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<string>true</string>
 	<key>CFBundleExecutable</key>

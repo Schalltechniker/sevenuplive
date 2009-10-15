@@ -10,6 +10,7 @@
 
 package mtn.sevenuplive.main;
 import mtn.sevenuplive.modes.AllModes;
+import mtn.sevenuplive.modes.Melodizer;
 import mtn.sevenuplive.scales.Scale;
 import mtn.sevenuplive.scales.ScaleName;
 
@@ -129,38 +130,11 @@ public class SevenUpApplet extends processing.core.PApplet
 	
 	private Scale getScaleFromString(String scaleName)
 	{
-		Scale newScale;
+		ScaleName sn = ScaleName.valueOf(scaleName);
+		if (sn == null)
+			return new Scale(ScaleName.Major);
 		
-		if(scaleName.equals("Billian"))
-			newScale = new Scale(ScaleName.Billian);
-		else if(scaleName.equals("Blues"))
-			newScale = new Scale(ScaleName.Blues);
-		else if(scaleName.equals("Blues (Minor)"))
-			newScale = new Scale(ScaleName.MinorBlues);
-		else if(scaleName.equals("Dorian"))
-			newScale = new Scale(ScaleName.Dorian);
-		else if(scaleName.equals("Major"))
-			newScale = new Scale(ScaleName.Major);
-		else if(scaleName.equals("Minor"))
-			newScale = new Scale(ScaleName.Minor);
-		else if(scaleName.equals("Minor Seven"))
-			newScale = new Scale(ScaleName.MinorSeven);
-		else if(scaleName.equals("Pentatonic"))
-			newScale = new Scale(ScaleName.Pentatonic);
-		else if(scaleName.equals("Pentatonic (Minor)"))
-			newScale = new Scale(ScaleName.MinorPentatonic);
-		else if(scaleName.equals("Ultra Locrian"))
-			newScale = new Scale(ScaleName.UltraLocrian);
-		else if(scaleName.equals("Mullnixian"))
-			newScale = new Scale(ScaleName.Mullnixian);
-		else if(scaleName.equals("Yorkian"))
-			newScale = new Scale(ScaleName.Yorkian);
-		else if(scaleName.equals("Telerium"))
-			newScale = new Scale(ScaleName.Telerium);
-		else
-			newScale = new Scale(ScaleName.Chromatic);
-		
-		return newScale;
+		return new Scale(sn);
 	}
 	
 	public void setMelody1Scale(String scaleName)
@@ -347,25 +321,70 @@ public class SevenUpApplet extends processing.core.PApplet
 	}
 
 	public void setMelody1ClipMode(boolean b) {
-		AllModes.getInstance().getMelodizer1().clipMode = b;
-	}
-	public void setMelody2ClipMode(boolean b) {
-		AllModes.getInstance().getMelodizer2().clipMode = b;
-	}
-	public boolean getMelody1ClipMode()
-	{
-		return AllModes.getInstance().getMelodizer1().clipMode;
-	}
-	public boolean getMelody2ClipMode()
-	{
-		return AllModes.getInstance().getMelodizer2().clipMode;
-	}
-
-	public void setLooperMute(boolean mute) {
-		m.setLooperMute(mute);
+		if (b) {
+			AllModes.getInstance().getMelodizer1().setCurrentMode(Melodizer.eMelodizerMode.CLIP);
+		} else {
+			AllModes.getInstance().getMelodizer1().setCurrentMode(Melodizer.eMelodizerMode.KEYBOARD);
+		}
 		
 	}
+	
+	public void setMelody1Mode(Melodizer.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer1().setCurrentMode(mode);
+	}
+	
+	public Melodizer.eMelodizerMode getMelody1Mode()
+	{
+		return AllModes.getInstance().getMelodizer1().getCurrentMode();
+	}
+	
+	public void setMelody2Mode(Melodizer.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer2().setCurrentMode(mode);
+	}
+	
+	public Melodizer.eMelodizerMode getMelody2Mode()
+	{
+		return AllModes.getInstance().getMelodizer2().getCurrentMode();
+	}
+	
+	public void setMelody1Transpose(boolean transpose) {
+		AllModes.getInstance().getMelodizer1().setTranspose(transpose);
+	}
 
+	public boolean getMelody1Transpose() {
+		return AllModes.getInstance().getMelodizer1().getTranspose();
+	}
+	
+	public void setMelody1AltMode(Melodizer.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer1().setAltMode(mode);
+	}
+	
+	public Melodizer.eMelodizerMode getMelody1AltMode()
+	{
+		return AllModes.getInstance().getMelodizer1().getAltMode();
+	}
+	
+	public void setMelody2Transpose(boolean transpose) {
+		AllModes.getInstance().getMelodizer2().setTranspose(transpose);
+	}
+
+	public boolean getMelody2Transpose() {
+		return AllModes.getInstance().getMelodizer2().getTranspose();
+	}
+
+	public void setMelody2AltMode(Melodizer.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer2().setAltMode(mode);
+	}
+	
+	public Melodizer.eMelodizerMode getMelody2AltMode()
+	{
+		return AllModes.getInstance().getMelodizer2().getAltMode();
+	}
+	
+	public void setLooperMute(boolean mute) {
+		m.setLooperMute(mute);
+	}
+	
 	public void setMelRecMode(int melRecMode) {
 		m.setMelRecMode(melRecMode);
 	}

@@ -184,22 +184,10 @@ public class Masterizer extends Mode {
 	
 	private void stopMel2Seq(int y) {
 		AllModes.melodizer2.stopSeq(y);
-  		
-		 	ArrayList<Note> noteList;
-		noteList = AllModes.melodizer2.sequences.get(y).getHeldNotes();
-		//Loop through heldnotes and send note off for each
-		for(int i=0;i<noteList.size();i++)
-			midiMelody2Out[y].sendNoteOff(noteList.get(i));
 	}
 
 	private void stopMel1Seq(int y) {
 	 		AllModes.melodizer1.stopSeq(y);
-		
-		 	ArrayList<Note> noteList;
-		 	noteList = AllModes.melodizer1.sequences.get(y).getHeldNotes();
-		 	//Loop through heldnotes and send note off for each
-		 	for(int i=0;i<noteList.size();i++)
-		 		midiMelodyOut[y].sendNoteOff(noteList.get(i));
 	}
 
 	public void updateDisplayGrid()
