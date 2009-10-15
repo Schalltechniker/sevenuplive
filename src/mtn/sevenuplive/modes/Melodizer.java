@@ -708,6 +708,9 @@ public class Melodizer extends Mode implements PlayContext {
 	 */
 	public void beginCue(int seqIndex)
 	{
+		// Transposition offsets will be marked from here
+		markSequenceOffsets(seqIndex);
+		
 		if(!sequences.containsKey(seqIndex))
 		{
 			sequences.put(seqIndex, new NoteSequence(seqIndex, this));
@@ -720,10 +723,8 @@ public class Melodizer extends Mode implements PlayContext {
 
 	public void endRecording()
 	{
-		// Transposition offsets will be marked from here
-		markSequenceOffsets(cuedIndex);
-		
 		sequences.get(cuedIndex).endRecording();
+		snapToMarkedSequenceOffsets(cuedIndex);
 		cuedIndex = -1;
 	}
 
@@ -1082,6 +1083,15 @@ public class Melodizer extends Mode implements PlayContext {
 		startingOffset[seqIndex] = offset[seqIndex];
 		startingKey[seqIndex] = key[seqIndex];
 		markStartTransposeOffsets(seqIndex);
+	}
+	
+	/**
+	 * Move to the last marked sequence offsets
+	 * @param seqIndex
+	 */
+	private void snapToMarkedSequenceOffsets(int seqIndex) {
+		offset[seqIndex] = startingOffset[seqIndex];
+		key[seqIndex] = startingKey[seqIndex];
 	}
 	
 	private void markStartTransposeOffsets(int seqIndex) {
