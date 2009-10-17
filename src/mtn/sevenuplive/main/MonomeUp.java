@@ -20,7 +20,8 @@ import mtn.sevenuplive.modes.Displays;
 import mtn.sevenuplive.modes.LoopRecorder;
 import mtn.sevenuplive.modes.Looper;
 import mtn.sevenuplive.modes.Masterizer;
-import mtn.sevenuplive.modes.Melodizer;
+import mtn.sevenuplive.modes.MelodizerModel;
+import mtn.sevenuplive.modes.MelodizerView;
 import mtn.sevenuplive.modes.ModeConstants;
 import mtn.sevenuplive.modes.PatternizerModel;
 import mtn.sevenuplive.modes.PatternizerView;
@@ -137,19 +138,29 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	     initializeMidi();
 	     
 	     int totalGrids = x_grids * y_grids;
-	     //Create the same number of patternizer views as there are grids
+	     
+	     //Create the same number of views as there are grids
 	     PatternizerModel patternizerModel = new PatternizerModel(ModeConstants.PATTERN_MODE, midiSampleOut, GRID_WIDTH, GRID_HEIGHT);
 	     PatternizerView[] patternizerViews = new PatternizerView[totalGrids];
+	     
+	     MelodizerModel melodyModel1 = new MelodizerModel(ModeConstants.MELODY_MODE,midiMelodyOut, GRID_WIDTH, GRID_HEIGHT); // Melodizer 1 
+	     MelodizerModel melodyModel2 = new MelodizerModel(ModeConstants.MELODY2_MODE,midiMelody2Out, GRID_WIDTH, GRID_HEIGHT); // Melodizer 2
+		 
+	     MelodizerView[] melodizerViews1 = new MelodizerView[totalGrids];
+	     MelodizerView[] melodizerViews2 = new MelodizerView[totalGrids];
+	     
 	     for(int i=0;i<patternizerViews.length;i++)
 	     {
 	    	 patternizerViews[i] = new PatternizerView(ModeConstants.PATTERN_MODE, GRID_WIDTH, GRID_HEIGHT, patternizerModel);
+	    	 melodizerViews1[i] = new MelodizerView(ModeConstants.MELODY_MODE, GRID_WIDTH, GRID_HEIGHT, melodyModel1);
+	    	 melodizerViews2[i] = new MelodizerView(ModeConstants.MELODY2_MODE, GRID_WIDTH, GRID_HEIGHT, melodyModel2);
 	     }
 	     
 	     allmodes = new AllModes(patternizerModel, patternizerViews, 
 	    		 new Controller(ModeConstants.CONTROL_MODE, midiSampleOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT),
 	    		 new Sequencer(ModeConstants.SEQ_MODE, GRID_WIDTH, GRID_HEIGHT), 
-	    		 new Melodizer(ModeConstants.MELODY_MODE,midiMelodyOut, GRID_WIDTH, GRID_HEIGHT), // Melodizer 1 
-	    		 new Melodizer(ModeConstants.MELODY2_MODE,midiMelody2Out, GRID_WIDTH, GRID_HEIGHT), // Melodizer 2
+	    		 melodyModel1, melodizerViews1,
+	    		 melodyModel2, melodizerViews2,
 	    		 new Looper(ModeConstants.LOOP_MODE, midiLoopOut, this, GRID_WIDTH, GRID_HEIGHT), 
 	    		 new LoopRecorder(ModeConstants.LOOP_RECORD_MODE, this, GRID_WIDTH, GRID_HEIGHT), 
 	    		 new Masterizer(ModeConstants.MASTER_MODE, midiMelodyOut, midiMelody2Out, midiMasterOut, this, GRID_WIDTH, GRID_HEIGHT),
@@ -255,7 +266,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	 {
 		 //Does pressing stop send a midi note?
 		 //System.out.println("CLIP LAUNCH PITCH: " + pitch + " VEL: " + vel + " CHAN: " + channel);
-		 allmodes.getMelodizer1().clipLaunch(pitch, vel, channel);
+		 allmodes.getMelodizer1Model().clipLaunch(pitch, vel, channel);
 	 }
  
 	 /**
@@ -274,8 +285,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	      }
 	      else if(noteOnPitch == E7)
 	      {
-	    	  allmodes.getMelodizer1().heartbeat();
-	    	  allmodes.getMelodizer2().heartbeat();
+	    	  allmodes.getMelodizer1Model().heartbeat();
+	    	  allmodes.getMelodizer2Model().heartbeat();
 	      }
 	      else if(noteOnPitch == F7)
 	      {	
@@ -287,8 +298,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	      {
 	    	  if(noteOnPitch == C4)
 	    	  {
-	    		  allmodes.getMelodizer1().locatorEvent();
-	    		  allmodes.getMelodizer2().locatorEvent();
+	    		  allmodes.getMelodizer1Model().locatorEvent();
+	    		  allmodes.getMelodizer2Model().locatorEvent();
 	    	  }
 	    	  allmodes.getMasterizer().locatorEvent(noteOnPitch);
 	    	  allmodes.getMasterizer().updateDisplayGrid();
@@ -306,8 +317,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	      {
 	    	  allmodes.getSequencer().reset();
 	    	  allmodes.getLooper().reset();
-	    	  allmodes.getMelodizer1().reset();
-	    	  allmodes.getMelodizer2().reset();
+	    	  allmodes.getMelodizer1Model().reset();
+	    	  allmodes.getMelodizer2Model().reset();
 	      }
 		  //Start loops
 	      else if(noteOnPitch >= C2 && noteOnPitch < G2){
@@ -406,12 +417,12 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 			else if(xmlStateChild.getName().equals("melodizer"))
 			{
 				System.out.println("Loading MELODIZER...");
-				allmodes.getMelodizer1().loadXMLElement(xmlStateChild);
+				allmodes.getMelodizer1Model().loadXMLElement(xmlStateChild);
 			}
 			else if(xmlStateChild.getName().equals("melodizer2"))
 			{
 				System.out.println("Loading MELODIZER2...");
-				allmodes.getMelodizer2().loadXMLElement(xmlStateChild);
+				allmodes.getMelodizer2Model().loadXMLElement(xmlStateChild);
 			}
 		}
 		
@@ -419,22 +430,22 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	 
 	 public void setMelody1Scale(Scale newScale)
 	 {
-		 allmodes.getMelodizer1().setScale(newScale);
+		 allmodes.getMelodizer1Model().setScale(newScale);
 	 }
 	 
 	 public void setMelody2Scale(Scale newScale)
 	 {
-		 allmodes.getMelodizer2().setScale(newScale);
+		 allmodes.getMelodizer2Model().setScale(newScale);
 	 }
 	 
 	 public Scale getMelody1Scale()
 	 {
-		 return allmodes.getMelodizer1().getScale();
+		 return allmodes.getMelodizer1Model().getScale();
 	 }
 	 
 	 public Scale getMelody2Scale()
 	 {
-		 return allmodes.getMelodizer2().getScale();
+		 return allmodes.getMelodizer2Model().getScale();
 	 }
 	 
 	 public void setLoopChoke(int loopNum, int chokeGroup)
@@ -470,10 +481,10 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 		//XMLElement xmlChopper = chopper.toXMLElement();
 		 	
 		//Create MELODIZER1
-		Element xmlMelodizer = allmodes.getMelodizer1().toXMLElement("melodizer");
+		Element xmlMelodizer = allmodes.getMelodizer1Model().toXMLElement("melodizer");
 		
 		//Create MELODIZER2
-		Element xmlMelodizer2 = allmodes.getMelodizer2().toXMLElement("melodizer2");
+		Element xmlMelodizer2 = allmodes.getMelodizer2Model().toXMLElement("melodizer2");
 		
 		//Add modes to xmlState
 	 	xmlState.addContent(xmlPatternizer);
@@ -537,8 +548,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	}
 
 	public void setMelRecMode(int melRecMode) {
-		allmodes.getMelodizer1().setMelRecMode(melRecMode);
-		allmodes.getMelodizer2().setMelRecMode(melRecMode);
+		allmodes.getMelodizer1Model().setMelRecMode(melRecMode);
+		allmodes.getMelodizer2Model().setMelRecMode(melRecMode);
 		allmodes.getMasterizer().setMelRecMode(melRecMode);
 	}
 	
@@ -551,7 +562,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	}
 
 	public void extNoteOn(Note note, int channel) {
-		allmodes.getMelodizer2().extNoteOn(note, channel);
+		allmodes.getMelodizer2Model().extNoteOn(note, channel);
 	}
 
 	public float getLoopLength(int loopNum) {
@@ -575,16 +586,16 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 				allmodes.getLoopRecorder().playLoopSequence(i);
 			} 
 			
-			if(allmodes.getMelodizer1().getSeqStatus(i) == MonomeUp.PLAYING)
+			if(allmodes.getMelodizer1Model().getSeqStatus(i) == MonomeUp.PLAYING)
 			{
-				allmodes.getMelodizer1().stopSeq(i);
-				allmodes.getMelodizer1().playSeq(i);
+				allmodes.getMelodizer1Model().stopSeq(i);
+				allmodes.getMelodizer1Model().playSeq(i);
 			}	
 			
-			if(allmodes.getMelodizer2().getSeqStatus(i) == MonomeUp.PLAYING)
+			if(allmodes.getMelodizer2Model().getSeqStatus(i) == MonomeUp.PLAYING)
 			{
-				allmodes.getMelodizer2().stopSeq(i);
-				allmodes.getMelodizer2().playSeq(i);
+				allmodes.getMelodizer2Model().stopSeq(i);
+				allmodes.getMelodizer2Model().playSeq(i);
 			}	
 		}
 			

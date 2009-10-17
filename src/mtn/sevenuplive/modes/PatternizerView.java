@@ -1,9 +1,5 @@
 package mtn.sevenuplive.modes;
 
-import mtn.sevenuplive.main.MonomeUp;
-import promidi.MidiOut;
-import promidi.Note;
-
 /***
  * The patternizer view allows different windows into the same patternizer.  Each grid can view a different pattern at the same time.
  * @author Adam Ribaudo
@@ -11,7 +7,6 @@ import promidi.Note;
  */
 public class PatternizerView extends Mode {
 	
-	private int basePitch = MonomeUp.C3;
 	private int pressedNavButtons[];
 	public int selectedPattern = 0;
 	private PatternizerModel patternizerModel;

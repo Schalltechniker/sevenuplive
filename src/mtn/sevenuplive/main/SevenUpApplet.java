@@ -10,7 +10,7 @@
 
 package mtn.sevenuplive.main;
 import mtn.sevenuplive.modes.AllModes;
-import mtn.sevenuplive.modes.Melodizer;
+import mtn.sevenuplive.modes.MelodizerModel;
 import mtn.sevenuplive.scales.Scale;
 import mtn.sevenuplive.scales.ScaleName;
 
@@ -322,63 +322,63 @@ public class SevenUpApplet extends processing.core.PApplet
 
 	public void setMelody1ClipMode(boolean b) {
 		if (b) {
-			AllModes.getInstance().getMelodizer1().setCurrentMode(Melodizer.eMelodizerMode.CLIP);
+			AllModes.getInstance().getMelodizer1Model().setCurrentMode(MelodizerModel.eMelodizerMode.CLIP);
 		} else {
-			AllModes.getInstance().getMelodizer1().setCurrentMode(Melodizer.eMelodizerMode.KEYBOARD);
+			AllModes.getInstance().getMelodizer1Model().setCurrentMode(MelodizerModel.eMelodizerMode.KEYBOARD);
 		}
 		
 	}
 	
-	public void setMelody1Mode(Melodizer.eMelodizerMode mode) {
-		AllModes.getInstance().getMelodizer1().setCurrentMode(mode);
+	public void setMelody1Mode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer1Model().setCurrentMode(mode);
 	}
 	
-	public Melodizer.eMelodizerMode getMelody1Mode()
+	public MelodizerModel.eMelodizerMode getMelody1Mode()
 	{
-		return AllModes.getInstance().getMelodizer1().getCurrentMode();
+		return AllModes.getInstance().getMelodizer1Model().getCurrentMode();
 	}
 	
-	public void setMelody2Mode(Melodizer.eMelodizerMode mode) {
-		AllModes.getInstance().getMelodizer2().setCurrentMode(mode);
+	public void setMelody2Mode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer2Model().setCurrentMode(mode);
 	}
 	
-	public Melodizer.eMelodizerMode getMelody2Mode()
+	public MelodizerModel.eMelodizerMode getMelody2Mode()
 	{
-		return AllModes.getInstance().getMelodizer2().getCurrentMode();
+		return AllModes.getInstance().getMelodizer2Model().getCurrentMode();
 	}
 	
 	public void setMelody1Transpose(boolean transpose) {
-		AllModes.getInstance().getMelodizer1().setTranspose(transpose);
+		AllModes.getInstance().getMelodizer1Model().setTranspose(transpose);
 	}
 
 	public boolean getMelody1Transpose() {
-		return AllModes.getInstance().getMelodizer1().getTranspose();
+		return AllModes.getInstance().getMelodizer1Model().getTranspose();
 	}
 	
-	public void setMelody1AltMode(Melodizer.eMelodizerMode mode) {
-		AllModes.getInstance().getMelodizer1().setAltMode(mode);
+	public void setMelody1AltMode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer1Model().setAltMode(mode);
 	}
 	
-	public Melodizer.eMelodizerMode getMelody1AltMode()
+	public MelodizerModel.eMelodizerMode getMelody1AltMode()
 	{
-		return AllModes.getInstance().getMelodizer1().getAltMode();
+		return AllModes.getInstance().getMelodizer1Model().getAltMode();
 	}
 	
 	public void setMelody2Transpose(boolean transpose) {
-		AllModes.getInstance().getMelodizer2().setTranspose(transpose);
+		AllModes.getInstance().getMelodizer2Model().setTranspose(transpose);
 	}
 
 	public boolean getMelody2Transpose() {
-		return AllModes.getInstance().getMelodizer2().getTranspose();
+		return AllModes.getInstance().getMelodizer2Model().getTranspose();
 	}
 
-	public void setMelody2AltMode(Melodizer.eMelodizerMode mode) {
-		AllModes.getInstance().getMelodizer2().setAltMode(mode);
+	public void setMelody2AltMode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer2Model().setAltMode(mode);
 	}
 	
-	public Melodizer.eMelodizerMode getMelody2AltMode()
+	public MelodizerModel.eMelodizerMode getMelody2AltMode()
 	{
-		return AllModes.getInstance().getMelodizer2().getAltMode();
+		return AllModes.getInstance().getMelodizer2Model().getAltMode();
 	}
 	
 	public void setLooperMute(boolean mute) {

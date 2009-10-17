@@ -20,7 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import mtn.sevenuplive.modes.Melodizer;
+import mtn.sevenuplive.modes.MelodizerModel;
 import mtn.sevenuplive.modes.ModeConstants;
 import mtn.sevenuplive.scales.Scale;
 import mtn.sevenuplive.scales.ScaleName;
@@ -164,13 +164,13 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        //Melodizer 1 Mode
 	        
 	        Vector<String> modeChoices = new Vector<String>();
-	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString());
-	        modeChoices.add(Melodizer.eMelodizerMode.POSITION.toString());
-	        modeChoices.add(Melodizer.eMelodizerMode.NONE.toString());
-	        modeChoices.add(Melodizer.eMelodizerMode.CLIP.toString());
-	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString() + "/" + Melodizer.eMelodizerMode.POSITION.toString());
-	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString() + "/" + Melodizer.eMelodizerMode.NONE.toString());
-	        modeChoices.add(Melodizer.eMelodizerMode.POSITION.toString() + "/" + Melodizer.eMelodizerMode.NONE.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.KEYBOARD.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.POSITION.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.NONE.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.CLIP.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.KEYBOARD.toString() + "/" + MelodizerModel.eMelodizerMode.POSITION.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.KEYBOARD.toString() + "/" + MelodizerModel.eMelodizerMode.NONE.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.POSITION.toString() + "/" + MelodizerModel.eMelodizerMode.NONE.toString());
 	        
 	        drpMelodizerModeChoices1 = new JComboBox(modeChoices);
 	        setSizeSmall(drpMelodizerModeChoices1);
@@ -184,11 +184,11 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        				String modeString = cb.getSelectedItem().toString();
 	        				String[] modes = modeString.split("/");
 	        				if (modes.length == 2) {
-	        					sevenUpApplet.setMelody1Mode(Melodizer.eMelodizerMode.valueOf(modes[0]));
-	        					sevenUpApplet.setMelody1AltMode(Melodizer.eMelodizerMode.valueOf(modes[1]));
+	        					sevenUpApplet.setMelody1Mode(MelodizerModel.eMelodizerMode.valueOf(modes[0]));
+	        					sevenUpApplet.setMelody1AltMode(MelodizerModel.eMelodizerMode.valueOf(modes[1]));
 	        				} else {
-	        					sevenUpApplet.setMelody1Mode(Melodizer.eMelodizerMode.valueOf(modeString));
-	        					sevenUpApplet.setMelody1AltMode(Melodizer.eMelodizerMode.valueOf(modeString));
+	        					sevenUpApplet.setMelody1Mode(MelodizerModel.eMelodizerMode.valueOf(modeString));
+	        					sevenUpApplet.setMelody1AltMode(MelodizerModel.eMelodizerMode.valueOf(modeString));
 	        				}	
 	        			}
 	        		}
@@ -200,12 +200,12 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        
 	        //Remove clip launch option
 	        modeChoices = new Vector<String>();
-	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString());
-	        modeChoices.add(Melodizer.eMelodizerMode.POSITION.toString());
-	        modeChoices.add(Melodizer.eMelodizerMode.NONE.toString());
-	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString() + "/" + Melodizer.eMelodizerMode.POSITION.toString());
-	        modeChoices.add(Melodizer.eMelodizerMode.KEYBOARD.toString() + "/" + Melodizer.eMelodizerMode.NONE.toString());
-	        modeChoices.add(Melodizer.eMelodizerMode.POSITION.toString() + "/" + Melodizer.eMelodizerMode.NONE.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.KEYBOARD.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.POSITION.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.NONE.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.KEYBOARD.toString() + "/" + MelodizerModel.eMelodizerMode.POSITION.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.KEYBOARD.toString() + "/" + MelodizerModel.eMelodizerMode.NONE.toString());
+	        modeChoices.add(MelodizerModel.eMelodizerMode.POSITION.toString() + "/" + MelodizerModel.eMelodizerMode.NONE.toString());
 	        
 	        drpMelodizerModeChoices2 = new JComboBox(modeChoices);
 	        setSizeSmall(drpMelodizerModeChoices2);
@@ -219,11 +219,11 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        				String modeString = cb.getSelectedItem().toString();
 	        				String[] modes = modeString.split("/");
 	        				if (modes.length == 2) {
-	        					sevenUpApplet.setMelody2Mode(Melodizer.eMelodizerMode.valueOf(modes[0]));
-	        					sevenUpApplet.setMelody2AltMode(Melodizer.eMelodizerMode.valueOf(modes[1]));
+	        					sevenUpApplet.setMelody2Mode(MelodizerModel.eMelodizerMode.valueOf(modes[0]));
+	        					sevenUpApplet.setMelody2AltMode(MelodizerModel.eMelodizerMode.valueOf(modes[1]));
 	        				} else {
-	        					sevenUpApplet.setMelody2Mode(Melodizer.eMelodizerMode.valueOf(modeString));
-	        					sevenUpApplet.setMelody2AltMode(Melodizer.eMelodizerMode.valueOf(modeString));
+	        					sevenUpApplet.setMelody2Mode(MelodizerModel.eMelodizerMode.valueOf(modeString));
+	        					sevenUpApplet.setMelody2AltMode(MelodizerModel.eMelodizerMode.valueOf(modeString));
 	        				}
 	        			}
 	        		}

@@ -4,6 +4,7 @@ package mtn.sevenuplive.modes;
 import java.util.List;
 
 import mtn.sevenuplive.main.MonomeUp;
+import mtn.sevenuplive.modes.events.EventDispatcherImpl;
 
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -11,7 +12,7 @@ import org.jdom.Element;
 import promidi.MidiOut;
 import promidi.Note;
 
-public class PatternizerModel {
+public class PatternizerModel extends EventDispatcherImpl {
 	
 	public int patternGrids[][][];
 	private int basePitch = MonomeUp.C3;

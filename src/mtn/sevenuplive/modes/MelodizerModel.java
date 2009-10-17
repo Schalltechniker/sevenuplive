@@ -5,6 +5,14 @@ import java.util.Hashtable;
 import java.util.List;
 
 import mtn.sevenuplive.main.MonomeUp;
+import mtn.sevenuplive.modes.events.ClearDisplayEvent;
+import mtn.sevenuplive.modes.events.ClearNavEvent;
+import mtn.sevenuplive.modes.events.Event;
+import mtn.sevenuplive.modes.events.EventDispatcherImpl;
+import mtn.sevenuplive.modes.events.EventListener;
+import mtn.sevenuplive.modes.events.MenuFocusEvent;
+import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
+import mtn.sevenuplive.modes.events.UpdateNavEvent;
 import mtn.sevenuplive.scales.Scale;
 import mtn.sevenuplive.scales.ScaleName;
 
@@ -20,7 +28,7 @@ import promidi.Note;
  * 
  * Contains the logic involved in recording and playing back sequences of melodies for a MonomeUp.
  */
-public class Melodizer extends Mode implements PlayContext {
+public class MelodizerModel extends EventDispatcherImpl implements PlayContext, EventListener {
 
 	/** 
 	 * This is used to record the key state when a recorded pattern
@@ -36,7 +44,14 @@ public class Melodizer extends Mode implements PlayContext {
 
 	/** This is the scale offset/position in degrees for each slot */
 	public int offset[];
-
+	
+	public int displayNote[][]; //Array of ints holding [pitch] of notes being played back in a sequence and hence being displayed
+	
+	// Different display modes for Melodizer
+	public enum eMelodizerMode {KEYBOARD, CLIP, NONE, POSITION};
+	public eMelodizerMode currentMode = eMelodizerMode.KEYBOARD;
+	public eMelodizerMode altMode = eMelodizerMode.KEYBOARD;
+	
 	/** 
 	 * This is used to record the offset state when a recorded pattern
 	 * is triggered. And use it in transpose mode to compute the offset  
@@ -47,176 +62,90 @@ public class Melodizer extends Mode implements PlayContext {
 	public int lastOffset[];
 
 	public Hashtable <Integer, NoteSequence> sequences;
-	private int cuedIndex;
+	private boolean[] cuedIndex;
 
-	private boolean isRecording;
+	private boolean[] isRecording;
 
 	// Should changing the key or offset transpose the sequence that is playing?
-	private boolean transpose = false;
+	public boolean transpose = false;
 	// Tells us that a transposition index has changed
-	private boolean transposeDirty = false;
+	public boolean transposeDirty = false;
 
-	// Different display modes for Melodizer
-	public enum eMelodizerMode {KEYBOARD, CLIP, NONE, POSITION};
-	private eMelodizerMode currentMode = eMelodizerMode.KEYBOARD;
-	private eMelodizerMode altMode = eMelodizerMode.KEYBOARD;
-
-	private int curSeqBank;
-	private int displayNote[]; //Array of ints holding [pitch] of notes being played back in a sequence
-	private int clipNotes[][]; //When clipMode=true.  Array of ints holding [channel][pitch] of clips being launched/stopped
-	private boolean heldNote[];
-	private boolean newHeldNote[];
-	private MidiOut midiMelodyOut[];
+	public int clipNotes[][]; //When clipMode=true.  Array of ints holding [channel][pitch] of clips being launched/stopped
+	public boolean heldNote[];
+	public boolean newHeldNote[];
+	public MidiOut midiMelodyOut[];
 	private Scale melodyScale;
 	private Scale clipScale = new Scale(ScaleName.Major);
 
 	private int recMode = ModeConstants.MEL_ON_BUTTON_PRESS;
+	
+	private int _navRow;
 
-	public Melodizer(int _navRow, MidiOut _midiMelodyOut[], int grid_width, int grid_height) {
-		super(_navRow, grid_width, grid_height);
+	public MelodizerModel(int _navRow, MidiOut _midiMelodyOut[], int grid_width, int grid_height) {
+		
 		midiMelodyOut = _midiMelodyOut;
+		displayNote = new int[7][128];
 		key = new int[7];
 		offset = new int[7];
 		startingKey = new int[7];
 		startingOffset = new int[7];
 		lastKey = new int[7];
 		lastOffset = new int[7];
-		cuedIndex = -1;
+		cuedIndex = new boolean[7];
+		isRecording = new boolean[7];
 		sequences = new Hashtable<Integer, NoteSequence>();
-		curSeqBank = 0;
 		heldNote = new boolean[128];
-		displayNote = new int[128];
 		clipNotes = new int[7][128];
 		newHeldNote = new boolean[128];
 		melodyScale = new Scale(ScaleName.Major);
-
-		updateNavGrid();
-		updateDisplayGrid();
+		this._navRow = _navRow;
+		
+		/** Subscribe to our own events here */
+		subscribe(new MenuFocusEvent(), this);
 	}
-
-	public void updateDisplayGrid()
-	{
-		//System.out.println("Update melodizer display grid");
-		clearDisplayGrid();
-
-		if(currentMode == eMelodizerMode.KEYBOARD)
-		{
-			//Show keys
-			displayGrid[0][7] = DisplayGrid.FASTBLINK; // C
-			displayGrid[1][6] = DisplayGrid.FASTBLINK; // C#
-			displayGrid[1][7] = DisplayGrid.FASTBLINK; // D
-			displayGrid[2][6] = DisplayGrid.FASTBLINK; // D#
-			displayGrid[2][7] = DisplayGrid.FASTBLINK; // E
-			displayGrid[3][7] = DisplayGrid.FASTBLINK; // F
-			displayGrid[4][6] = DisplayGrid.FASTBLINK; // F#
-			displayGrid[4][7] = DisplayGrid.FASTBLINK; // G
-			displayGrid[5][6] = DisplayGrid.FASTBLINK; // G#
-			displayGrid[5][7] = DisplayGrid.FASTBLINK; // A
-			displayGrid[6][6] = DisplayGrid.FASTBLINK; // A#
-			displayGrid[6][7] = DisplayGrid.FASTBLINK; // B	
-
-			//Set current key
-			switch(key[curSeqBank])
-			{
-			case 0: displayGrid[0][7] = DisplayGrid.SOLID; // C
-			break;
-			case 1: displayGrid[1][6] = DisplayGrid.SOLID; // C#
-			break;
-			case 2: displayGrid[1][7] = DisplayGrid.SOLID; // D
-			break;
-			case 3: displayGrid[2][6] = DisplayGrid.SOLID; // D#
-			break;
-			case 4: displayGrid[2][7] = DisplayGrid.SOLID; // E
-			break;
-			case 5: displayGrid[3][7] = DisplayGrid.SOLID; // F
-			break;
-			case 6: displayGrid[4][6] = DisplayGrid.SOLID; // F#
-			break;
-			case 7: displayGrid[4][7] = DisplayGrid.SOLID; // G
-			break;
-			case 8: displayGrid[5][6] = DisplayGrid.SOLID; // G#
-			break;
-			case 9: displayGrid[5][7] = DisplayGrid.SOLID; // A
-			break;
-			case 10: displayGrid[6][6] = DisplayGrid.SOLID; // A#
-			break;
-			case 11: displayGrid[6][7] = DisplayGrid.SOLID; // B	
-			break;
-			}
-
-		} else if (currentMode == eMelodizerMode.POSITION) {
-
-			//Show keys
-			displayGrid[0][7] = DisplayGrid.FASTBLINK; 
-			displayGrid[1][7] = DisplayGrid.FASTBLINK; 
-			displayGrid[2][7] = DisplayGrid.FASTBLINK; 
-			displayGrid[3][7] = DisplayGrid.FASTBLINK; 
-			displayGrid[4][7] = DisplayGrid.FASTBLINK; 
-			displayGrid[5][7] = DisplayGrid.FASTBLINK; 
-			displayGrid[6][7] = DisplayGrid.FASTBLINK; 	
-
-			// Set current position
-			switch(offset[curSeqBank])
-			{
-			case 0: displayGrid[0][7] = DisplayGrid.SOLID; 
-			break;
-			case 1: displayGrid[1][7] = DisplayGrid.SOLID; 
-			break;
-			case 2: displayGrid[2][7] = DisplayGrid.SOLID; 
-			break;
-			case 3: displayGrid[3][7] = DisplayGrid.SOLID; 
-			break;
-			case 4: displayGrid[4][7] = DisplayGrid.SOLID; 
-			break;
-			case 5: displayGrid[5][7] = DisplayGrid.SOLID;
-			break;
-			case 6: displayGrid[6][7] = DisplayGrid.SOLID; 
-			break;
-			case 7: displayGrid[7][7] = DisplayGrid.SOLID; 
-			break;
-			}
-		}
-
-		if(currentMode != eMelodizerMode.CLIP)
-		{
-			//Light this note if not in clipMode
-			//Loop through entire grid.  Find each note value. Light it if it's held
-			int noteStatus;
-			for(int j=0;j<7;j++)
-			{
-				for(int k=0;k<8;k++)
-				{
-					noteStatus = displayNote[convertGridPositionToNote(j, k, curSeqBank)];
-
-					if (currentMode == eMelodizerMode.KEYBOARD && k < 7) {
-						if(noteStatus != DisplayGrid.OFF)
-							displayGrid[j][k] = noteStatus;
-					} else if (currentMode == eMelodizerMode.POSITION && k < 8) {
-						if(noteStatus != DisplayGrid.OFF)
-							displayGrid[j][k] = noteStatus;
-					} else if (currentMode == eMelodizerMode.NONE) {
-						if(noteStatus != DisplayGrid.OFF)
-							displayGrid[j][k] = noteStatus;
-					}
-				}
-			}	
-		}
-		else 
-		{
-			//Display clip status based on incoming MIDI notes from Live
-			int noteStatus;
-			for(int j=0;j<7;j++)
-			{
-				for(int k=0;k<8;k++)
-				{
-					noteStatus = clipNotes[curSeqBank][convertGridPositionToClipNote(j, k)];
-					if(noteStatus != DisplayGrid.OFF)
-						displayGrid[j][k] = noteStatus;
-				}
-			}	
+	
+	public boolean isRecording(int slot) {
+		return isRecording[slot];
+	}
+	
+	public void setIsRecording(int slot, boolean value) {
+		isRecording[slot] = value;
+		sendEvent(new UpdateNavEvent(slot));
+	}
+	
+	public void onEvent(Event e) {
+		
+		if (e.getType().equals(MenuFocusEvent.MENU_FOCUS_EVENT)) {
+			onMenuFocusChange((MenuFocusEvent)e);
 		}
 	}
-
+	
+	/**
+	 * Called when NavMenu change is being cued, aborted or committed
+	 */
+	public void onMenuFocusChange(MenuFocusEvent event) {
+		
+		// We are interested in this case
+		if (event.oldIndex == _navRow) {
+			// When we toggle current mode button we switch between default modes
+			if (event.type == MenuFocusEvent.eMenuFocusEvent.MENU_FOCUS_CHANGE_ABORTED) {
+				swapModes();
+			}
+		}
+	}
+	
+	/**
+	 * Reset the notes being displayed in all views attached to this slot 
+	 * @param slot
+	 */
+	public void resetDisplayNotes(int slot) {
+		for (int i = 0; i < 128; i++) {
+			displayNote[slot][i] = DisplayGrid.OFF;
+		}
+		sendEvent(new UpdateDisplayEvent(slot));
+	}
+	
 	/**
 	 * If note is out of midi range 1-128
 	 * return 0 
@@ -240,7 +169,7 @@ public class Melodizer extends Mode implements PlayContext {
 	 * @param sequence which sequence are we operating on
 	 * @return
 	 */
-	private int convertGridPositionToNote(int x, int y, int sequence) {
+	public int convertGridPositionToNote(int x, int y, int sequence) {
 		int note = (((8-y) * 12 - 12) + (Math.abs((x + offset[sequence]) / melodyScale.Degrees.length) * 12) + melodyScale.Degrees[((x + offset[sequence]) % melodyScale.Degrees.length)] + key[sequence]);
 		
 		//System.out.println("Position to Note->Grid x:" + Integer.toString(x) + " y:" + Integer.toString(y) + " note:" + Integer.toString(note));
@@ -282,7 +211,7 @@ public class Melodizer extends Mode implements PlayContext {
 	 * @param y
 	 * @return
 	 */
-	private int convertGridPositionToClipNote(int x, int y) {
+	public int convertGridPositionToClipNote(int x, int y) {
 		int note = (((8-y) * 12 - 12) + clipScale.Degrees[x % clipScale.Degrees.length]);
 		return clipRange(note);
 	}
@@ -296,7 +225,7 @@ public class Melodizer extends Mode implements PlayContext {
 	 * @param sequence which sequence are we operating on
 	 * @return First grid position, higher coordinate top/left if duplicates, null if not found
 	 */
-	private GridPosition convertNoteToGridPosition(int note, int sequence) {
+	public GridPosition convertNoteToGridPosition(int note, int sequence) {
 		int gridNote;
 
 		for(int j=0;j<7;j++)
@@ -366,249 +295,8 @@ public class Melodizer extends Mode implements PlayContext {
 		return null;
 	}
 
-	public void updateNavGrid()
-	{
-		clearNavGrid();
-
-		navGrid[myNavRow] = DisplayGrid.SOLID;
-
-		if(isRecording)
-			navGrid[getYCoordFromSubMenu(curSeqBank)] = DisplayGrid.SLOWBLINK;
-		else
-			navGrid[getYCoordFromSubMenu(curSeqBank)] = DisplayGrid.FASTBLINK;
-	}
-
-	public void press(int x, int y)
-	{
-
-		if(x == DisplayGrid.NAVCOL)
-		{
-			pressNavCol(y);
-			updateNavGrid();
-		}
-		else
-			pressDisplay(x,y);
-
-		updateDisplayGrid();
-	}
-
-	public void release(int x, int y)
-	{
-		int melodyPitch;
-		melodyPitch = convertGridPositionToNote(x, y, curSeqBank);
-		heldNote[melodyPitch] = false;
-		if(currentMode != eMelodizerMode.CLIP)
-			displayNote[melodyPitch] = DisplayGrid.OFF;
-		Note melodyRelease;
-		melodyRelease = new Note(melodyPitch,0, 0);
-		midiMelodyOut[curSeqBank].sendNoteOff(melodyRelease);
-		addEvent(melodyRelease);
-		updateDisplayGrid();
-	}
-
-	private void pressNavCol(int y)
-	{
-		int pressedSeq = getSubMenuFromYCoord(y);
-
-		//If they press the current bank and it is not already recording, begin cuing in that bank
-		if (pressedSeq == curSeqBank && isRecording == false)
-		{
-			if(getSeqStatus(pressedSeq) == MonomeUp.PLAYING)
-			{
-				ArrayList<Note> noteList;
-				Note note;
-				noteList = sequences.get(pressedSeq).getHeldNotesTransposedPitch();
-				//Loop through heldnotes and send note off for each
-				for(int i=0;i<noteList.size();i++)
-				{
-					note = noteList.get(i);
-					midiMelodyOut[pressedSeq].sendNoteOff(note);
-					if(pressedSeq == curSeqBank)
-						displayNote[note.getPitch()] = DisplayGrid.OFF;
-				}
-			}
-			//Reset displayNote container
-			displayNote = new int[128];
-			isRecording = true;
-
-			beginCue(pressedSeq);
-		}
-		//Stop recording
-		else if(pressedSeq == curSeqBank && isRecording == true)
-		{
-			isRecording = false;
-			endRecording();
-			//immediately begin playing the recorded sequence
-			playSeq(pressedSeq);
-		}
-		else if(pressedSeq != curSeqBank)
-		{
-			curSeqBank = pressedSeq;
-			//Reset displayNote container
-			displayNote = new int[128];
-		}
-
-		updateNavGrid();
-	}
-
-	/**
-	 * Determines if the row represents a note row or not
-	 * @param y
-	 * @return 
-	 */
-	public boolean isNote(int y) {
-		return (y < 6 && currentMode == eMelodizerMode.KEYBOARD) || 
-		currentMode == eMelodizerMode.NONE || 
-		currentMode == eMelodizerMode.CLIP || 
-		(y < 7 && currentMode == eMelodizerMode.POSITION);
-	}
-
-	private void pressDisplay(int x, int y)
-	{
-		//User is pressing a note button (as opposed to changing key)
-		if (isNote(y))
-		{
-			//Calculate the pitch by the octave (y) and the transposed scale
-			int melodyPitch;
-			if (currentMode == eMelodizerMode.CLIP)
-				melodyPitch = convertGridPositionToClipNote(x, y);
-			else	
-				melodyPitch = convertGridPositionToNote(x, y, curSeqBank);
-			
-			//System.out.println("Press note at " +  Integer.toString((x + offset[curSeqBank]) % melodyScale.Degrees.length) +  " degrees");
-			
-			Note melodySend;
-			melodySend = new Note(melodyPitch,100, 0);
-			heldNote[melodyPitch] = true;
-			if(currentMode != eMelodizerMode.CLIP)
-				displayNote[melodyPitch] = DisplayGrid.SOLID;
-			midiMelodyOut[curSeqBank].sendNoteOn(melodySend);
-			addEvent(melodySend);
-		}
-		//User is pressing a button in the key area
-		else if (currentMode == eMelodizerMode.KEYBOARD)
-		{
-			//User is changing keys
-			for(int i=0; i<128;i++)
-			{
-				// If transposing we want the old pitch here
-				if (transpose) 
-					displayNote[i] = DisplayGrid.OFF;
-				
-			}
-
-			int curKeyValue = key[curSeqBank];
-
-			//Set new key
-			key[curSeqBank] = getKeyFromCoords( x, y);
-			int keyDif = curKeyValue - key[curSeqBank];
-			if (transpose) {
-				transposeDirty = true;
-				markStartTransposeOffsets(curSeqBank);
-			}
-			//Release notes from old key
-			for(int i=0; i<128;i++)
-			{ 
-				if(heldNote[i])
-				{
-					Note melodyRelease;
-					melodyRelease = new Note(i,0, 0);
-					midiMelodyOut[curSeqBank].sendNoteOff(melodyRelease);
-					addEvent(melodyRelease);
-					heldNote[i] = false;
-					
-					// If !transposing we want the new pitch here
-					if (!transpose) 
-						displayNote[i] = DisplayGrid.OFF;
-					
-					if ((i-keyDif) >= 0)
-						newHeldNote[i-keyDif] = true;
-
-					//System.out.println("  Killing " + i);
-				}
-			}
-			
-			//Send notes for new key
-			for(int i=0; i<128;i++)
-			{ 
-				if(newHeldNote[i])
-				{		
-					Note melodySend;
-					melodySend = new Note(i,100, 0);
-					midiMelodyOut[curSeqBank].sendNoteOn(melodySend);
-					addEvent(melodySend);
-					heldNote[i]=true;
-					displayNote[i] = DisplayGrid.SOLID;
-					newHeldNote[i] = false;
-					//System.out.println("Sending " + i);
-				}
-			}
-
-		} else if (currentMode == eMelodizerMode.POSITION) {
-
-			GridPosition[] oldPositions = new GridPosition[128]; 
-
-			// Mark all old positions
-			for(int i=0; i<128;i++)
-			{
-				oldPositions[i] = convertNoteToGridPosition(i, curSeqBank);
-				
-				// If transposing we want the old pitch here
-				if (transpose) 
-					displayNote[i] = DisplayGrid.OFF;
-				
-			}
-
-			//Set new offset
-			offset[curSeqBank] = x;
-			if (transpose) {
-				transposeDirty = true;
-				markStartTransposeOffsets(curSeqBank);
-			}
-			//Release notes from old offset
-			for(int i=0; i<128;i++)
-			{ 
-				if(heldNote[i])
-				{
-					Note melodyRelease;
-					melodyRelease = new Note(i,0, 0);
-					midiMelodyOut[curSeqBank].sendNoteOff(melodyRelease);
-					addEvent(melodyRelease);
-					heldNote[i] = false;
-					
-					// If !transposing we want the new pitch here
-					if (!transpose)
-						displayNote[i] = DisplayGrid.OFF;
-					
-					// Can't compute if we don't know the original position
-					if (oldPositions[i] != null) { 
-						// Because offset has changed, new note will be a different note from same grid position
-						int newNote = convertGridPositionToNote(oldPositions[i].x, oldPositions[i].y, curSeqBank);
-						newHeldNote[newNote] = true;
-					}
-				}
-			}
-
-			//Send notes for new key
-			for(int i=0; i<128;i++)
-			{ 
-				if(newHeldNote[i])
-				{		
-					Note melodySend;
-					melodySend = new Note(i,100, 0);
-					midiMelodyOut[curSeqBank].sendNoteOn(melodySend);
-					addEvent(melodySend);
-					heldNote[i]=true;
-					displayNote[i] = DisplayGrid.SOLID;
-					newHeldNote[i]=false;
-				}
-			}
-
-		}
-		
-	}
-
-	private int getKeyFromCoords(int x, int y)
+	
+	public int getKeyFromCoords(int x, int y)
 	{
 		//Set new key
 		if(x == 0 && y == 7)return 0;
@@ -648,7 +336,7 @@ public class Melodizer extends Mode implements PlayContext {
 				//Loop through old heldnotes 
 				for(int i=0;i< notesHeld.size();i++) {
 					midiMelodyOut[index].sendNoteOff(notesHeld.get(i));
-					displayNote[notesHeld.get(i).getPitch()] = DisplayGrid.OFF;
+					displayNote(index, notesHeld.get(i).getPitch(), DisplayGrid.OFF);
 				}	
 				 
 			}
@@ -679,27 +367,83 @@ public class Melodizer extends Mode implements PlayContext {
 				{
 					//System.out.println("Playing note " + note.getPitch());
 					midiMelodyOut[index].sendNoteOn(note);
-					if(index == curSeqBank)
-						displayNote[note.getPitch()] = DisplayGrid.SOLID;
+					displayNote(index, note.getPitch(), DisplayGrid.SOLID);
 				}
 				else
 				{
 					//System.out.println("Releasing note " + note.getPitch());
 					midiMelodyOut[index].sendNoteOff(note);
-					if(index == curSeqBank)
-						displayNote[note.getPitch()] = DisplayGrid.OFF;
+					displayNote(index, note.getPitch(), DisplayGrid.OFF);
 				}
-				if(index == curSeqBank)
-					updateDisplayGrid();
+				updateDisplayGrid(index);
 			}
 		}
 		if (transposeDirty && transpose) {
 			transposeDirty = false; // reset flag
-			markStartTransposeOffsets(curSeqBank);
+			markStartTransposeOffsets();
 		}
 		
 	}
 	
+	/**
+	 * Send events to our views to update this slot
+	 * @param slot slot to update or -1 means update All
+	 */
+	public void updateDisplayGrid(int slot) {
+		sendEvent(new UpdateDisplayEvent(slot));
+	}
+	
+	/**
+	 * Locator event for one pattern slot
+	 * @param slot
+	 */
+	public void locatorEvent(int slot) {
+		if(sequences.containsKey(slot))
+		{
+			sequences.get(slot).locatorEvent();
+		}
+	}
+	
+	/**
+	 * Locator event for all slots
+	 */
+	public void locatorEvent() {
+		for (int i = 0; i < 7; i++) {
+			locatorEvent(i);
+		}
+	}
+	
+	/**
+	 * Send events to our views to update this slot
+	 * @param slot slot to update or -1 means update All
+	 */
+	public void updateNavGrid(int slot) {
+		sendEvent(new UpdateNavEvent(slot));
+	}
+	
+	/**
+	 * Send events to our views to clearnav grid
+	 */
+	public void clearNavGrid() {
+		sendEvent(new ClearNavEvent());
+	}
+	
+	/**
+	 * Send events to our views to clear display grid
+	 */
+	public void clearDisplayGrid() {
+		sendEvent(new ClearDisplayEvent());
+	}
+	
+	/**
+	 * Display this note in a certain way
+	 * @param slot slot to update or -1 means update All
+	 * @param pitch pitch to set in display
+	 * @param displaystate for example  DisplayGrid.SOLID or DisplayGrid.OFF
+	 */
+	public void displayNote(int slot, int pitch, int displaystate) {
+		displayNote[slot][pitch] = displaystate;
+	}
 
 	/**
 	 * Beginning a cue creates a new sequence if one does not exist at the specified index.  Otherwise, it begins cueing on the existing sequence.
@@ -718,26 +462,26 @@ public class Melodizer extends Mode implements PlayContext {
 		}
 		sequences.get(seqIndex).beginCue();
 
-		cuedIndex = seqIndex;
+		cuedIndex[seqIndex] = true;
 	}
 
-	public void endRecording()
+	public void endRecording(int slot)
 	{
-		sequences.get(cuedIndex).endRecording();
-		snapToMarkedSequenceOffsets(cuedIndex);
-		cuedIndex = -1;
+		sequences.get(slot).endRecording();
+		snapToMarkedSequenceOffsets(slot);
+		cuedIndex = new boolean[7];
 	}
 
 	/**
-	 * Sends a note to the currently cued sequence.  If no sequence is cued, the note will be ignored.
+	 * Sends a note to the currently cued sequence in a slot.  If no sequence is cued, the note will be ignored.
 	 * 
 	 * @param note
 	 */
-	public void addEvent(Note note)
+	public void addEvent(int slot, Note note)
 	{
-		if(cuedIndex > -1)
+		if(cuedIndex[slot])
 		{
-			sequences.get(cuedIndex).addEvent(note);
+			sequences.get(slot).addEvent(note);
 		}
 	}
 
@@ -768,13 +512,9 @@ public class Melodizer extends Mode implements PlayContext {
 			//Loop through heldnotes and send note off for each
 			for(int i=0;i<noteList.size();i++) {
 				midiMelodyOut[seqIndex].sendNoteOff(noteList.get(i));
-				if (seqIndex == curSeqBank) {
-					displayNote[noteList.get(i).getPitch()] = DisplayGrid.OFF;
-				}
+				displayNote(seqIndex, noteList.get(i).getPitch(), DisplayGrid.OFF);
 			}
-			if (seqIndex == curSeqBank) {
-				updateDisplayGrid();
-			}
+			updateDisplayGrid(seqIndex);
 		}
 	}
 
@@ -869,7 +609,7 @@ public class Melodizer extends Mode implements PlayContext {
 	public void loadXMLElement(Element xmlMelodizer)
 	{
 		//Clear current info
-		cuedIndex = -1;
+		cuedIndex = new boolean[7];
 		sequences = new Hashtable<Integer, NoteSequence>();
 
 		//Load XML	
@@ -950,7 +690,7 @@ public class Melodizer extends Mode implements PlayContext {
 			sequences.put(index, sequence);
 		}
 
-		updateDisplayGrid();
+		updateDisplayGrid(-1);
 	
 	}
 
@@ -975,8 +715,7 @@ public class Melodizer extends Mode implements PlayContext {
 			//Turn on the note that actually plays
 			clipNotes[channel][pitch] = DisplayGrid.SOLID;
 		}
-		if(channel == curSeqBank)
-			updateDisplayGrid();
+		updateDisplayGrid(channel);
 	}
 
 	public Scale getScale()
@@ -987,13 +726,6 @@ public class Melodizer extends Mode implements PlayContext {
 	public void setScale(Scale newScale)
 	{
 		melodyScale = newScale;
-	}
-
-	public void locatorEvent() {
-		if(sequences.containsKey(curSeqBank))
-		{
-			sequences.get(curSeqBank).locatorEvent();
-		}
 	}
 
 	public void setMelRecMode(int _recMode) {
@@ -1019,21 +751,19 @@ public class Melodizer extends Mode implements PlayContext {
 		{
 			heldNote[note.getPitch()] = true;
 			midiMelodyOut[melodizerChannel].sendNoteOn(note);
-			if(melodizerChannel == curSeqBank)
-				displayNote[note.getPitch()] = DisplayGrid.SOLID;
-			addEvent(note);
+			displayNote(melodizerChannel, note.getPitch(), DisplayGrid.SOLID);
+			addEvent(melodizerChannel, note);
 		}
 		else
 		{
 			Note releaseNote = new Note(note.getPitch(),0, 0);
 			midiMelodyOut[melodizerChannel].sendNoteOff(releaseNote);
 			heldNote[note.getPitch()] = false;
-			if(melodizerChannel == curSeqBank)
-				displayNote[note.getPitch()] = DisplayGrid.OFF;
-			addEvent(releaseNote);
+			displayNote(melodizerChannel, note.getPitch(), DisplayGrid.OFF);
+			addEvent(melodizerChannel, releaseNote);
 		}
 
-		updateDisplayGrid();
+		updateDisplayGrid(-1);
 	}
 
 	public eMelodizerMode getCurrentMode() {
@@ -1042,8 +772,8 @@ public class Melodizer extends Mode implements PlayContext {
 
 	public void setCurrentMode(eMelodizerMode currentMode) {
 		this.currentMode = currentMode;
-		updateNavGrid();
-		updateDisplayGrid();
+		updateNavGrid(-1);
+		updateDisplayGrid(-1);
 	}
 
 	public void setAltMode(eMelodizerMode altCurrentMode) {
@@ -1094,28 +824,17 @@ public class Melodizer extends Mode implements PlayContext {
 		key[seqIndex] = startingKey[seqIndex];
 	}
 	
-	private void markStartTransposeOffsets(int seqIndex) {
+	public void markStartTransposeOffsets(int seqIndex) {
 		lastKey[seqIndex] = key[seqIndex];
 		lastOffset[seqIndex] = offset[seqIndex];
 	}	
 
-	/**
-	 * Called when NavMenu change is being cued, aborted or committed
-	 */
-	@Override
-	public void onMenuFocusChange(MenuFocusEvent event) {
-		super.onMenuFocusChange(event);
-
-		//System.out.println(event);
-
-		// We are interested in this case
-		if (event.oldIndex == myNavRow) {
-			// When we toggle current mode button we switch between default modes
-			if (event.type == Mode.MenuFocusEvent.eMenuFocusEvent.MENU_FOCUS_CHANGE_ABORTED) {
-				swapModes();
-			}
+	public void markStartTransposeOffsets() {
+		for (int seqIndex = 0; seqIndex < 7; seqIndex++) {
+			lastKey[seqIndex] = key[seqIndex];
+			lastOffset[seqIndex] = offset[seqIndex];
 		}
-	}
+	}	
 
 	/**
 	 * Perform pitch transformation if
@@ -1165,28 +884,28 @@ public class Melodizer extends Mode implements PlayContext {
 		
 		try {
 			// Chromatic
-			Melodizer.GridPosition grid = new Melodizer.GridPosition(new Scale(ScaleName.Chromatic), 0,0);
+			MelodizerModel.GridPosition grid = new MelodizerModel.GridPosition(new Scale(ScaleName.Chromatic), 0,0);
 			if (!testScaleArithmetic(grid))
 				throw new Exception("Chromatic 0,0 test failed");
 			
-			grid = new Melodizer.GridPosition(new Scale(ScaleName.Chromatic), 1,-1);
+			grid = new MelodizerModel.GridPosition(new Scale(ScaleName.Chromatic), 1,-1);
 			if (!testScaleArithmetic(grid))
 				throw new Exception("Chromatic -1,1 test failed");
 			
-			grid = new Melodizer.GridPosition(new Scale(ScaleName.Chromatic), 7,-10);
+			grid = new MelodizerModel.GridPosition(new Scale(ScaleName.Chromatic), 7,-10);
 			if (!testScaleArithmetic(grid))
 				throw new Exception("Chromatic -10,10 test failed");
 		
 			// Pentatonic
-			grid = new Melodizer.GridPosition(new Scale(ScaleName.Pentatonic), 0,0);
+			grid = new MelodizerModel.GridPosition(new Scale(ScaleName.Pentatonic), 0,0);
 			if (!testScaleArithmetic(grid))
 				throw new Exception("Pentatonic 0,0 test failed");
 			
-			grid = new Melodizer.GridPosition(new Scale(ScaleName.Pentatonic), 1,-1);
+			grid = new MelodizerModel.GridPosition(new Scale(ScaleName.Pentatonic), 1,-1);
 			if (!testScaleArithmetic(grid))
 				throw new Exception("Pentatonic -1,1 test failed");
 			
-			grid = new Melodizer.GridPosition(new Scale(ScaleName.Pentatonic), 7,-10);
+			grid = new MelodizerModel.GridPosition(new Scale(ScaleName.Pentatonic), 7,-10);
 			if (!testScaleArithmetic(grid))
 				throw new Exception("Pentatonic -10,10 test failed");
 		
@@ -1196,8 +915,8 @@ public class Melodizer extends Mode implements PlayContext {
 		}
 	}
 	
-	private static boolean testScaleArithmetic(Melodizer.GridPosition grid) {
-		Melodizer.GridPosition gridStart = grid;
+	private static boolean testScaleArithmetic(MelodizerModel.GridPosition grid) {
+		MelodizerModel.GridPosition gridStart = grid;
 		
 		for (int i = 0; i < 64; i++) {
 			grid = grid.offsetX(1);

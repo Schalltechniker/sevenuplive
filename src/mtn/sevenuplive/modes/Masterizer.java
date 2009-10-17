@@ -139,7 +139,7 @@ public class Masterizer extends Mode {
 		}
 		else if(x == MELODY_COL)
    	 	{
-			seqStatus = AllModes.melodizer1.getSeqStatus(y);
+			seqStatus = AllModes.melody1Model.getSeqStatus(y);
    		 	if(seqStatus == MonomeUp.PLAYING)
    		 	{
    		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
@@ -150,7 +150,7 @@ public class Masterizer extends Mode {
    		 	else if(seqStatus == MonomeUp.STOPPED)
    		 	{
    		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
-   		 			AllModes.melodizer1.playSeq(y);
+   		 			AllModes.melody1Model.playSeq(y);
 		 		else
 		 			mel1Cue[y] = true;
    		 	}
@@ -158,7 +158,7 @@ public class Masterizer extends Mode {
    	 	}
 		else if(x == melody2Col)
    	 	{
-			seqStatus = AllModes.melodizer2.getSeqStatus(y);
+			seqStatus = AllModes.melody2Model.getSeqStatus(y);
    		 	if(seqStatus == MonomeUp.PLAYING)
    		 	{	
    		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
@@ -169,7 +169,7 @@ public class Masterizer extends Mode {
    		 	else if(seqStatus == MonomeUp.STOPPED)
    		 	{
    		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
-   		 			AllModes.melodizer2.playSeq(y);
+   		 			AllModes.melody2Model.playSeq(y);
 		 		else
 		 			mel2Cue[y] = true;
    		 	}
@@ -183,11 +183,11 @@ public class Masterizer extends Mode {
 	}
 	
 	private void stopMel2Seq(int y) {
-		AllModes.melodizer2.stopSeq(y);
+		AllModes.melody2Model.stopSeq(y);
 	}
 
 	private void stopMel1Seq(int y) {
-	 		AllModes.melodizer1.stopSeq(y);
+	 		AllModes.melody1Model.stopSeq(y);
 	}
 
 	public void updateDisplayGrid()
@@ -243,7 +243,7 @@ public class Masterizer extends Mode {
 		//MELODY
 		for(int i=0;i<8;i++)
 		{
-			seqStatus = AllModes.melodizer1.getSeqStatus(i);
+			seqStatus = AllModes.melody1Model.getSeqStatus(i);
 			if(seqStatus == MonomeUp.STOPPED)
 				melodyRows[i] = DisplayGrid.FASTBLINK;
 			else if(seqStatus == MonomeUp.PLAYING)
@@ -257,7 +257,7 @@ public class Masterizer extends Mode {
 		//MELODY2
 		for(int i=0;i<8;i++)
 		{
-			seqStatus = AllModes.melodizer2.getSeqStatus(i);
+			seqStatus = AllModes.melody2Model.getSeqStatus(i);
 			if(seqStatus == MonomeUp.STOPPED)
 				melody2Rows[i] = DisplayGrid.FASTBLINK;
 			else if(seqStatus == MonomeUp.PLAYING)
@@ -296,20 +296,20 @@ public class Masterizer extends Mode {
 			{
 				if(mel1Cue[i] == true)
 				{
-					if(AllModes.melodizer1.getSeqStatus(i) == MonomeUp.PLAYING)
+					if(AllModes.melody1Model.getSeqStatus(i) == MonomeUp.PLAYING)
 						stopMel1Seq(i);
 					else
-						AllModes.melodizer1.playSeq(i);
+						AllModes.melody1Model.playSeq(i);
 					mel1Cue[i]=false;
 					
 				}
 			
 				if(mel2Cue[i] == true)
 				{
-					if(AllModes.melodizer2.getSeqStatus(i) == MonomeUp.PLAYING)
+					if(AllModes.melody2Model.getSeqStatus(i) == MonomeUp.PLAYING)
 						stopMel2Seq(i);
 					else
-						AllModes.melodizer2.playSeq(i);
+						AllModes.melody2Model.playSeq(i);
 					
 					mel2Cue[i] = false;
 				}

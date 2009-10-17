@@ -1,19 +1,25 @@
 package mtn.sevenuplive.modes;
 
-public class AllModes {
+import mtn.sevenuplive.modes.events.Event;
+import mtn.sevenuplive.modes.events.EventDispatcher;
+import mtn.sevenuplive.modes.events.EventListener;
+
+public class AllModes implements EventDispatcher {
 	
 	// A bit of cheating but allow direct reference for classes in this package
 	// as the getters are too verbose here
 	static PatternizerModel patternizerModel;
+	static MelodizerModel melody1Model;
+	static MelodizerModel melody2Model;
 	static Controller controller;
 	static Sequencer sequencer;
-	static Melodizer melodizer1;
-	static Melodizer melodizer2;
 	static Looper looper;
 	static LoopRecorder loopRecorder;
 	static Masterizer masterizer;
 	static StartupMode startup;
 	static PatternizerView patternizerViews[];
+	static MelodizerView melodizer1Views[];
+	static MelodizerView melodizer2Views[];
 
 	private static AllModes theinstance;
 	
@@ -37,21 +43,24 @@ public class AllModes {
 	 * @param startup 
 	 */
 	public AllModes(PatternizerModel patternizerModel, PatternizerView[] patternizerViews, Controller controller,
-			Sequencer sequencer, Melodizer melodizer1, Melodizer melodizer2,
+			Sequencer sequencer, MelodizerModel melody1Model, MelodizerView[] melodizer1Views, MelodizerModel melody2Model, MelodizerView[] melodizer2Views,
 			Looper looper, LoopRecorder loopRecorder, Masterizer masterizer, StartupMode startup) {
 		super();
 		AllModes.patternizerModel = patternizerModel;
 		AllModes.patternizerViews = patternizerViews;
 		AllModes.controller = controller;
 		AllModes.sequencer = sequencer;
-		AllModes.melodizer1 = melodizer1;
-		AllModes.melodizer2 = melodizer2;
+		AllModes.melody1Model = melody1Model;
+		AllModes.melody2Model = melody2Model;
+		AllModes.melodizer1Views = melodizer1Views;
+		AllModes.melodizer2Views = melodizer2Views;
 		AllModes.looper = looper;
 		AllModes.loopRecorder = loopRecorder;
 		AllModes.masterizer = masterizer;
 		AllModes.startup = startup;
 		
 		theinstance=this;
+			
 	}
 	
 	public PatternizerView getPatternizerView(int i) {
@@ -70,12 +79,20 @@ public class AllModes {
 		return sequencer;
 	}
 
-	public Melodizer getMelodizer1() {
-		return melodizer1;
+	public MelodizerView getMelodizer1View(int i) {
+		return melodizer1Views[i];
 	}
 
-	public Melodizer getMelodizer2() {
-		return melodizer2;
+	public MelodizerView getMelodizer2View(int i) {
+		return melodizer2Views[i];
+	}
+	
+	public MelodizerModel getMelodizer1Model() {
+		return melody1Model;
+	}
+
+	public MelodizerModel getMelodizer2Model() {
+		return melody2Model;
 	}
 
 	public Looper getLooper() {
@@ -95,21 +112,44 @@ public class AllModes {
 	}
 	
 	/**
-	 * Hardcoded subscription list for now
+	 * Delegate to event dispatchers in the different modes
 	 * @param event
 	 */
-	public void sendMenuFocusChangeEvent(Mode.MenuFocusEvent event) {
-		controller.onMenuFocusChange(event);
-		sequencer.onMenuFocusChange(event);
-		melodizer1.onMenuFocusChange(event);
-		melodizer2.onMenuFocusChange(event);
-		looper.onMenuFocusChange(event);
-		loopRecorder.onMenuFocusChange(event);
-		masterizer.onMenuFocusChange(event);
-		startup.onMenuFocusChange(event);
-		for (int i = 0; i < patternizerViews.length; i++) {
-			patternizerViews[i].onMenuFocusChange(event);
-		}
+	public void sendEvent(Event event) {
+		controller.sendEvent(event);
+		sequencer.sendEvent(event);
+		looper.sendEvent(event);
+		loopRecorder.sendEvent(event);
+		masterizer.sendEvent(event);
+		startup.sendEvent(event);
+		patternizerModel.sendEvent(event);
+		melody1Model.sendEvent(event);
+		melody2Model.sendEvent(event);
+	}
+
+	public void subscribe(Event event, EventListener target) {
+		controller.subscribe(event ,target);
+		sequencer.subscribe(event, target);
+		looper.subscribe(event, target);
+		loopRecorder.subscribe(event, target);
+		masterizer.subscribe(event, target);
+		startup.subscribe(event, target);
+		patternizerModel.subscribe(event, target);
+		melody1Model.subscribe(event, target);
+		melody2Model.subscribe(event, target);
+	}
+
+	public void unsubscribe(Event event, EventListener target) {
+		controller.unsubscribe(event ,target);
+		sequencer.unsubscribe(event, target);
+		looper.unsubscribe(event, target);
+		loopRecorder.unsubscribe(event, target);
+		masterizer.unsubscribe(event, target);
+		startup.unsubscribe(event, target);
+		patternizerModel.unsubscribe(event, target);
+		melody1Model.unsubscribe(event, target);
+		melody2Model.unsubscribe(event, target);
+		
 	}
 	
 }
