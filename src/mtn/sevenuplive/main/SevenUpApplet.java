@@ -152,6 +152,26 @@ public class SevenUpApplet extends processing.core.PApplet
 		m.setLoopChoke(loopNum, chokeGroup);
 	}
 	
+	public void setMel1TransposeGroup(int slotNum, int chokeGroup)
+	{
+		m.setMel1TransposeGroup(slotNum, chokeGroup);
+	}
+	
+	public void setMel2TransposeGroup(int slotNum, int chokeGroup)
+	{
+		m.setMel2TransposeGroup(slotNum, chokeGroup);
+	}
+	
+	public int getMel1TransposeGroup(int slotNum)
+	{
+		return m.getMel1TransposeGroup(slotNum);
+	}
+	
+	public int getMel2TransposeGroup(int slotNum)
+	{
+		return m.getMel2TransposeGroup(slotNum);
+	}
+	
 	public void setGateLoopChokes(boolean gateLoops)
 	{
 		m.setGateLoopChokes(gateLoops);
@@ -385,9 +405,22 @@ public class SevenUpApplet extends processing.core.PApplet
 		m.setLooperMute(mute);
 	}
 	
-	public void setMelRecMode(int melRecMode) {
-		m.setMelRecMode(melRecMode);
+	public void setMel1RecMode(int melRecMode) {
+		m.setMel1RecMode(melRecMode);
 	}
+	
+	public void setMel2RecMode(int melRecMode) {
+		m.setMel2RecMode(melRecMode);
+	}
+	
+	public int getMel1RecMode() {
+		return m.getMel1RecMode();
+	}
+	
+	public int getMel2RecMode() {
+		return m.getMel1RecMode();
+	}
+	
 	
 	public void setLoopLength(int loopNum, float length) {
 		m.setLoopLength(loopNum, length);

@@ -1,7 +1,5 @@
 package mtn.sevenuplive.modes;
 
-import java.util.ArrayList;
-
 import mtn.sevenuplive.main.MonomeUp;
 import promidi.MidiOut;
 import promidi.Note;
@@ -27,7 +25,6 @@ public class Masterizer extends Mode {
 	private MidiOut midiMelodyOut[];
 	private final static int MELODY_COL = 4;
 	private int melodyRows[];
-	private int melRecMode = ModeConstants.MEL_ON_BUTTON_PRESS;
 	private boolean mel1Cue[];
 
 	//MELODY2
@@ -142,14 +139,14 @@ public class Masterizer extends Mode {
 			seqStatus = AllModes.melody1Model.getSeqStatus(y);
    		 	if(seqStatus == MonomeUp.PLAYING)
    		 	{
-   		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
+   		 		if(AllModes.melody1Model.getRecMode() == ModeConstants.MEL_ON_BUTTON_PRESS)
    		 			stopMel1Seq(y);
    		 		else
    		 			mel1Cue[y] = true;
    		 	}
    		 	else if(seqStatus == MonomeUp.STOPPED)
    		 	{
-   		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
+   		 		if(AllModes.melody1Model.getRecMode() == ModeConstants.MEL_ON_BUTTON_PRESS)
    		 			AllModes.melody1Model.playSeq(y);
 		 		else
 		 			mel1Cue[y] = true;
@@ -161,14 +158,14 @@ public class Masterizer extends Mode {
 			seqStatus = AllModes.melody2Model.getSeqStatus(y);
    		 	if(seqStatus == MonomeUp.PLAYING)
    		 	{	
-   		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
+   		 		if(AllModes.melody2Model.getRecMode() == ModeConstants.MEL_ON_BUTTON_PRESS)
 		 			stopMel2Seq(y);
 		 		else
 		 			mel2Cue[y] = true;
    		 	}
    		 	else if(seqStatus == MonomeUp.STOPPED)
    		 	{
-   		 		if(melRecMode == ModeConstants.MEL_ON_BUTTON_PRESS)
+   		 		if(AllModes.melody2Model.getRecMode() == ModeConstants.MEL_ON_BUTTON_PRESS)
    		 			AllModes.melody2Model.playSeq(y);
 		 		else
 		 			mel2Cue[y] = true;
@@ -344,11 +341,6 @@ public class Masterizer extends Mode {
 					locatorRows[(currentStep + 1) % 8] = DisplayGrid.FASTBLINK;
 			}
 		}
-	}
-	
-	public void setMelRecMode(int _recMode)
-	{
-		melRecMode = _recMode;
 	}
 
 }
