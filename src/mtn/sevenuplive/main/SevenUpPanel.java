@@ -1,6 +1,5 @@
 package mtn.sevenuplive.main;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -19,6 +18,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import mtn.sevenuplive.modes.MelodizerModel;
 import mtn.sevenuplive.modes.ModeConstants;
@@ -37,16 +37,23 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	JComboBox drpMelodizerModeChoices1;
 	JComboBox drpMelodizerModeChoices2;
 	JComboBox drpLoopChoke;
+	JComboBox drpTransposeGroup1;
+	JComboBox drpTransposeGroup2;
 	JComboBox drpLoopLength;
 	JComboBox drpLoopType;
 	JComboBox drpGateLoopChoke;
 	JComboBox drpMelRecMode;
+	JComboBox drpMelRecMode2;
 	JButton btnPrevPatch;
 	JButton btnNextPatch;
 	JCheckBox chkMuteLooper;
 	JCheckBox chkTranspose1;
+	JCheckBox chkTranspose2;
 	JFrame parentFrame;
-	JPanel secondPanel;
+	JPanel looperPanel;
+	JPanel melodizer1Panel;
+	JPanel melodizer2Panel;
+	JTabbedPane tabPanel;
 	
 	boolean isPatchPack = false;
 	
@@ -66,7 +73,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
     	
     	// Resize a bit
     	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    	parentFrame.setBounds(screenSize.width / 2,screenSize.height / 2,500,420);
+    	parentFrame.setBounds(screenSize.width / 2,screenSize.height / 2,515,420);
  
     	try
     	{
@@ -98,7 +105,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 			
 			GridBagLayout twocolumn = new GridBagLayout();
 			GridBagLayout fourcolumn = new GridBagLayout();
-			BorderLayout twocolumnstraight = new BorderLayout();
+			GridBagLayout twocolumnstraight = new GridBagLayout();
 			
 			GridBagConstraints c = new GridBagConstraints();
 			c.fill = GridBagConstraints.HORIZONTAL;
@@ -107,12 +114,19 @@ public class SevenUpPanel extends JPanel implements ActionListener
 			c.gridx = 0;
 			c.gridy = 0;
 			
-			JPanel firstPanel = new JPanel(twocolumn);
-			secondPanel = new JPanel(fourcolumn);
+			tabPanel = new JTabbedPane();
+			
+			melodizer1Panel = new JPanel(twocolumn);
+			melodizer2Panel = new JPanel(twocolumn);
+			looperPanel = new JPanel(fourcolumn);
 			JPanel thirdPanel = new JPanel(twocolumnstraight);
 			
+			tabPanel.add("Looper", looperPanel);
+			tabPanel.add("Melodizer1", melodizer1Panel);
+			tabPanel.add("Melodizer2", melodizer2Panel);
+			
 			//Scale
-	        JLabel lblSetScale = new JLabel("Melodizer 1 Scale/Mode");
+	        JLabel lblSetScale = new JLabel("Scale/Mode");
 	        setSizeSmall(lblSetScale);
 	        lblSetScale.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	        
@@ -136,11 +150,11 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        		}
 	        );
 			
-			c.gridx = 0; c.gridy = 0; firstPanel.add(lblSetScale, c);
-			c.gridx = 1; firstPanel.add(drpScaleChoices1, c);
+			c.gridx = 0; c.gridy = 0; melodizer1Panel.add(lblSetScale, c);
+			c.gridx = 1; melodizer1Panel.add(drpScaleChoices1, c);
 	        
 			//Melodizer 2 Scale
-	        lblSetScale = new JLabel("Melodizer 2 Scale/Mode");
+	        lblSetScale = new JLabel("Scale/Mode");
 	        setSizeSmall(lblSetScale);
 	        lblSetScale.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	        
@@ -158,8 +172,8 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        		}
 	        );
 	        
-	        c.gridx = 0; c.gridy = 1; firstPanel.add(lblSetScale, c);
-	        c.gridx = 1; firstPanel.add(drpScaleChoices2, c);	        
+	        c.gridx = 0; c.gridy = 0; melodizer2Panel.add(lblSetScale, c);
+	        c.gridx = 1; melodizer2Panel.add(drpScaleChoices2, c);	        
 	        
 	        //Melodizer 1 Mode
 	        
@@ -194,7 +208,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        		}
 	        );
 	        
-	        c.gridx = 2; c.gridy = 0; firstPanel.add(drpMelodizerModeChoices1, c);	        
+	        c.gridx = 2; c.gridy = 0; melodizer1Panel.add(drpMelodizerModeChoices1, c);	        
 	        
 	        //Melodizer 2 Mode
 	        
@@ -229,10 +243,10 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        		}
 	        );
 	        
-	        c.gridx = 2; c.gridy = 1; firstPanel.add(drpMelodizerModeChoices2, c);	        
+	        c.gridx = 2; c.gridy = 0; melodizer2Panel.add(drpMelodizerModeChoices2, c);	        
 	        
 	        //Melodizer record mode
-	        JLabel lblMelRecMode = new JLabel("Melodizer Rec Mode");
+	        JLabel lblMelRecMode = new JLabel("Rec Mode");
 	        setSizeSmall(lblMelRecMode);
 	        lblMelRecMode.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	        Vector<String> recModeChoices = new Vector<String>();
@@ -246,16 +260,35 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        				setDirty(true);
 	        				JComboBox cb = (JComboBox)e.getSource();
 	        				if(cb.getSelectedItem().toString().equals("On Button Press"))
-		        				sevenUpApplet.setMelRecMode(ModeConstants.MEL_ON_BUTTON_PRESS);
+		        				sevenUpApplet.setMel1RecMode(ModeConstants.MEL_ON_BUTTON_PRESS);
 	        				else 
-	        					sevenUpApplet.setMelRecMode(ModeConstants.MEL_QUANTIZED);
+	        					sevenUpApplet.setMel1RecMode(ModeConstants.MEL_QUANTIZED);
 	        			}
 	        		}
 	        );
-	        c.gridx = 0; c.gridy = 2; firstPanel.add(lblMelRecMode, c);
-	        c.gridx = 1; firstPanel.add(drpMelRecMode, c);
 	        
-	        // Enable transpose mode for both melodizers
+	        //Melodizer record mode
+	        JLabel lblMelRecMode2 = new JLabel("Rec Mode");
+	        setSizeSmall(lblMelRecMode2);
+	        lblMelRecMode2.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
+	        drpMelRecMode2 = new JComboBox(recModeChoices);
+	        setSizeSmall(drpMelRecMode2);
+	        drpMelRecMode2.addActionListener(
+	        		new ActionListener(){
+	        			public void actionPerformed(ActionEvent e) {
+	        				setDirty(true);
+	        				JComboBox cb = (JComboBox)e.getSource();
+	        				if(cb.getSelectedItem().toString().equals("On Button Press"))
+		        				sevenUpApplet.setMel2RecMode(ModeConstants.MEL_ON_BUTTON_PRESS);
+	        				else 
+	        					sevenUpApplet.setMel2RecMode(ModeConstants.MEL_QUANTIZED);
+	        			}
+	        		}
+	        );
+	        c.gridx = 0; c.gridy = 1; melodizer2Panel.add(lblMelRecMode, c); melodizer1Panel.add(lblMelRecMode2, c);
+	        c.gridx = 1; melodizer2Panel.add(drpMelRecMode, c); melodizer1Panel.add(drpMelRecMode2, c);
+	        
+	        // Enable transpose mode for melodizers
 	        JLabel lblTranspose1 = new JLabel("Transpose Patterns");
 	        setSizeSmall(lblTranspose1);
 	        lblTranspose1.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
@@ -268,12 +301,29 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        				setDirty(true);
 	        				JCheckBox chk = (JCheckBox)e.getSource();
 	       					sevenUpApplet.setMelody1Transpose(chk.isSelected());
+	        			}
+	        		}
+	        );
+	        
+	        // Enable transpose mode 
+	        JLabel lblTranspose2 = new JLabel("Transpose Patterns");
+	        setSizeSmall(lblTranspose2);
+	        lblTranspose1.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
+	    	
+	        chkTranspose2 = new JCheckBox();
+	        setSizeSmall(chkTranspose2);
+	        chkTranspose2.addActionListener(
+	        		new ActionListener(){
+	        			public void actionPerformed(ActionEvent e) {
+	        				setDirty(true);
+	        				JCheckBox chk = (JCheckBox)e.getSource();
 	       					sevenUpApplet.setMelody2Transpose(chk.isSelected());
 	        			}
 	        		}
 	        );
 	        
 	        JPanel childP = new JPanel();
+	        JPanel child2P = new JPanel();
 	        GridBagConstraints d = new GridBagConstraints();
 			d.fill = GridBagConstraints.HORIZONTAL;
 			d.anchor = GridBagConstraints.LAST_LINE_START;
@@ -281,12 +331,74 @@ public class SevenUpPanel extends JPanel implements ActionListener
 			d.gridx = 0;
 			d.gridy = 0;
 			
-	        childP.add(lblTranspose1, d);
+	        childP.add(lblTranspose1, d); child2P.add(lblTranspose2, d);
 	        d.gridx = 1;
-			childP.add(chkTranspose1, d);
+			childP.add(chkTranspose1, d); child2P.add(chkTranspose2, d);
 	        
-	        c.gridx = 2; c.gridy = 2; 
-	        firstPanel.add(childP, c);
+	        c.gridx = 2; c.gridy = 1; 
+	        melodizer1Panel.add(childP, c);
+	        melodizer2Panel.add(child2P, c);
+	        
+	        
+	        // Transpose groups
+	        JLabel lblSetTransposeGroup;
+	        
+	        for(Integer i=0; i<7;i++)
+	        {
+	        	lblSetTransposeGroup = new JLabel("Pattern " + (i+1) + " Transpose Group");
+	        	setSizeSmall(lblSetTransposeGroup);
+	        	lblSetTransposeGroup.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
+	            String[] transposeChoices = { "Nope", "1", "2", "3", "4", "5", "6", "7"};
+	            drpTransposeGroup1 = new JComboBox(transposeChoices);
+	            setSizeSmall(drpTransposeGroup1);
+	            drpTransposeGroup1.setName(i.toString() + "transpose");
+	            drpTransposeGroup1.setSelectedIndex(0);
+	            drpTransposeGroup1.addActionListener(
+	            		new ActionListener(){
+	            			public void actionPerformed(ActionEvent e) {
+	            				setDirty(true);
+	            				JComboBox cb = (JComboBox)e.getSource();
+	            				if(cb.getSelectedIndex() == 0)
+	            					sevenUpApplet.setMel1TransposeGroup(Integer.parseInt(cb.getName().substring(0,1)), -1);
+	            				else 
+	            					sevenUpApplet.setMel1TransposeGroup(Integer.parseInt(cb.getName().substring(0,1)), cb.getSelectedIndex());
+	            			}
+	            		}
+	            );
+	            
+	            c.gridx = 0; c.gridy = 2 + i; melodizer1Panel.add(lblSetTransposeGroup, c);
+	            c.gridx = 1; melodizer1Panel.add(drpTransposeGroup1, c);
+	        }
+	        
+	        for(Integer i=0; i<7;i++)
+	        {
+	        	lblSetTransposeGroup = new JLabel("Pattern " + (i+1) + " Transpose Group");
+	        	setSizeSmall(lblSetTransposeGroup);
+	        	lblSetTransposeGroup.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
+	            String[] transposeChoices = { "Nope", "1", "2", "3", "4", "5", "6", "7"};
+	            drpTransposeGroup2 = new JComboBox(transposeChoices);
+	            setSizeSmall(drpTransposeGroup2);
+	            drpTransposeGroup2.setName(i.toString() + "transpose");
+	            drpTransposeGroup2.setSelectedIndex(0);
+	            drpTransposeGroup2.addActionListener(
+	            		new ActionListener(){
+	            			public void actionPerformed(ActionEvent e) {
+	            				setDirty(true);
+	            				JComboBox cb = (JComboBox)e.getSource();
+	            				if(cb.getSelectedIndex() == 0)
+	            					sevenUpApplet.setMel2TransposeGroup(Integer.parseInt(cb.getName().substring(0,1)), -1);
+	            				else 
+	            					sevenUpApplet.setMel2TransposeGroup(Integer.parseInt(cb.getName().substring(0,1)), cb.getSelectedIndex());
+	            			}
+	            		}
+	            );
+	            
+	            c.gridx = 0; c.gridy = 2 + i; melodizer2Panel.add(lblSetTransposeGroup, c);
+	            c.gridx = 1; melodizer2Panel.add(drpTransposeGroup2, c);
+	        }
+	        
+	        //////////////////////////////////////////
+	        // Looper
 	        
 	        //Loops
 	        JLabel lblSetLoopGate;
@@ -358,11 +470,11 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	            			}
 	            		}
 	            );
-	            c.gridx = 0; c.gridy = 3 + i; secondPanel.add(lblSetLoopGate, c);
-	            c.gridx = 1; secondPanel.add(drpLoopChoke, c);
-	            c.gridx = 2; secondPanel.add(lblSetLoopLength, c);
-	            c.gridx = 3; secondPanel.add(drpLoopLength, c);
-	            c.gridx = 4; secondPanel.add(drpLoopType, c);
+	            c.gridx = 0; c.gridy = 3 + i; looperPanel.add(lblSetLoopGate, c);
+	            c.gridx = 1; looperPanel.add(drpLoopChoke, c);
+	            c.gridx = 2; looperPanel.add(lblSetLoopLength, c);
+	            c.gridx = 3; looperPanel.add(drpLoopLength, c);
+	            c.gridx = 4; looperPanel.add(drpLoopType, c);
 	        }
 	        
 	        JLabel lblGateLoopChoke = new JLabel("Gate choked loops?");
@@ -383,8 +495,8 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        			}
 	        		}
 	        );
-	        c.gridx = 0; c.gridy = 3; firstPanel.add(lblGateLoopChoke, c);
-	        c.gridx = 1; firstPanel.add(drpGateLoopChoke, c);
+	        c.gridx = 0; c.gridy++; looperPanel.add(lblGateLoopChoke, c);
+	        c.gridx = 1; looperPanel.add(drpGateLoopChoke, c);
 	        
 	        //Add mute looper checkbox
 	        JLabel lblMuteLooper = new JLabel("Mute Looper (to assign MIDI)");
@@ -403,25 +515,36 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        		}
 	        );
 	        
-	        c.gridx = 0; c.gridy = 4; firstPanel.add(lblMuteLooper, c);
-	        c.gridx = 1; firstPanel.add(chkMuteLooper, c);
+	        GridBagConstraints e = new GridBagConstraints();
+			e.fill = GridBagConstraints.HORIZONTAL;
+			e.anchor = GridBagConstraints.LAST_LINE_START;
+			e.weighty = 1;
+			e.gridx = 0;
+			e.gridy = 0;
+			
+			thirdPanel.add(lblMuteLooper, e);
+	        e.gridx = 1;
+	        thirdPanel.add(chkMuteLooper, e);
 	        
-	        
+			e.gridx = 0; e.gridy = 1;
+			
 	        //Add prev/next patch buttons
 	        btnPrevPatch = new JButton("<< Prev Patch");
 	        btnPrevPatch.putClientProperty("JButton.buttonType", "gradient");
 	        btnPrevPatch.addActionListener(this);
 	        btnPrevPatch.setEnabled(false);
-	        thirdPanel.add(btnPrevPatch, BorderLayout.WEST);
+	        thirdPanel.add(btnPrevPatch, e);
+	        
+	        e.gridx = 1;
 	        
 	        btnNextPatch = new JButton("Next Patch >>");
 	        btnNextPatch.putClientProperty("JButton.buttonType", "gradient");
 	        btnNextPatch.addActionListener(this);
 	        btnNextPatch.setEnabled(false);
-	        thirdPanel.add(btnNextPatch, BorderLayout.EAST);
+	        thirdPanel.add(btnNextPatch, e);
 	        
-	        add(firstPanel);
-	        add(secondPanel);
+	        // Add tab to this container
+	        add(tabPanel);
 	        add(thirdPanel);
 	        
 	        this.setPreferredSize(new Dimension(400, 200));
@@ -455,6 +578,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
     private void updateGui()
     {
     	int chokeGroup;
+    	int transposeGroup;
     	int loopType;
     	Float length;
     	boolean gateLoopChokes;
@@ -481,9 +605,12 @@ public class SevenUpPanel extends JPanel implements ActionListener
     	Scale melodyScale2 = sevenUpApplet.getMelody2Scale();
     	drpScaleChoices2.setSelectedItem(melodyScale2.Name);
         
-        // Just key off of serialized value of Melodizer1 even though they are independently assignable
-        chkTranspose1.setSelected(sevenUpApplet.getMelody1Transpose());
         
+        chkTranspose1.setSelected(sevenUpApplet.getMelody1Transpose());
+        chkTranspose2.setSelected(sevenUpApplet.getMelody2Transpose());
+        
+        drpMelRecMode.setSelectedIndex(sevenUpApplet.getMel1RecMode() - 1);
+        drpMelRecMode2.setSelectedIndex(sevenUpApplet.getMel2RecMode()- 1);
         
         // Need to count backwards as the choices go from multiple modes to 1 mode
         for(int i = drpMelodizerModeChoices2.getItemCount() - 1; i > -1; i--)
@@ -499,6 +626,42 @@ public class SevenUpPanel extends JPanel implements ActionListener
     			break;
     		}
     	}
+        
+        for(Integer i=0;i<7;i++)
+    	{
+        	transposeGroup = sevenUpApplet.getMel1TransposeGroup(i);
+    		if(transposeGroup == -1)transposeGroup = 0;
+    		
+    		for(int k=0; k<melodizer1Panel.getComponentCount();k++)
+    		{
+    			if(melodizer1Panel.getComponent(k).getName() != null)
+    			{
+	    			if(melodizer1Panel.getComponent(k).getName().equals(i.toString()+"transpose"))
+	    			{
+	    				drpTransposeGroup1 = (JComboBox)melodizer1Panel.getComponent(k);
+	    				drpTransposeGroup1.setSelectedIndex(transposeGroup);
+	    			}
+    			}
+			}
+		}
+        
+        for(Integer i=0;i<7;i++)
+    	{
+        	transposeGroup = sevenUpApplet.getMel2TransposeGroup(i);
+    		if(transposeGroup == -1)transposeGroup = 0;
+    		
+    		for(int k=0; k<melodizer2Panel.getComponentCount();k++)
+    		{
+    			if(melodizer2Panel.getComponent(k).getName() != null)
+    			{
+	    			if(melodizer2Panel.getComponent(k).getName().equals(i.toString()+"transpose"))
+	    			{
+	    				drpTransposeGroup2 = (JComboBox)melodizer2Panel.getComponent(k);
+	    				drpTransposeGroup2.setSelectedIndex(transposeGroup);
+	    			}
+    			}
+			}
+		}
 		
 		for(Integer i =0;i<7;i++)
     	{
@@ -507,14 +670,14 @@ public class SevenUpPanel extends JPanel implements ActionListener
     		loopType = sevenUpApplet.getLoopType(i);
     		if(chokeGroup == -1)chokeGroup = 0;
     		
-    		for(int k=0; k<secondPanel.getComponentCount();k++)
+    		for(int k=0; k<looperPanel.getComponentCount();k++)
     		{
     			
-    			if(secondPanel.getComponent(k).getName() != null)
+    			if(looperPanel.getComponent(k).getName() != null)
     			{
-	    			if(secondPanel.getComponent(k).getName().equals(i.toString()+"length"))
+	    			if(looperPanel.getComponent(k).getName().equals(i.toString()+"length"))
 	    			{
-	    				drpLoopLength = (JComboBox)secondPanel.getComponent(k);
+	    				drpLoopLength = (JComboBox)looperPanel.getComponent(k);
 	    				if(length == .5)
 	    					drpLoopLength.setSelectedIndex(0);
 	    				else if(length == 1)
@@ -532,14 +695,14 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	    				
 	    				drpLoopLength.setSelectedItem(length.toString());
 	    			}   
-	    			else if(secondPanel.getComponent(k).getName().equals(i.toString()+"choke"))
+	    			else if(looperPanel.getComponent(k).getName().equals(i.toString()+"choke"))
 	    			{
-	    				drpLoopChoke = (JComboBox)secondPanel.getComponent(k);
+	    				drpLoopChoke = (JComboBox)looperPanel.getComponent(k);
 	    				drpLoopChoke.setSelectedIndex(chokeGroup);
 	    			}
-	    			else if(secondPanel.getComponent(k).getName().equals(i.toString()+"type"))
+	    			else if(looperPanel.getComponent(k).getName().equals(i.toString()+"type"))
 	    			{
-	    				drpLoopType = (JComboBox)secondPanel.getComponent(k);
+	    				drpLoopType = (JComboBox)looperPanel.getComponent(k);
 	    				drpLoopType.setSelectedIndex(loopType);
 	    				drpLoopType.setSelectedItem(Integer.toString(loopType));
 	    			}

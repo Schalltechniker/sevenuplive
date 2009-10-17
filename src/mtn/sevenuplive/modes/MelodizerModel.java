@@ -72,13 +72,16 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 	public boolean transposeDirty = false;
 
 	public int clipNotes[][]; //When clipMode=true.  Array of ints holding [channel][pitch] of clips being launched/stopped
-	public boolean heldNote[];
-	public boolean newHeldNote[];
+	public boolean[][] heldNote;
+	public boolean[][] newHeldNote;
 	public MidiOut midiMelodyOut[];
 	private Scale melodyScale;
 	private Scale clipScale = new Scale(ScaleName.Major);
 
 	private int recMode = ModeConstants.MEL_ON_BUTTON_PRESS;
+	
+	/** Transpose groups for slots 0-7. -1 value means no group */
+	private int[] transposeGroup;
 	
 	private int _navRow;
 
@@ -87,6 +90,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		midiMelodyOut = _midiMelodyOut;
 		displayNote = new int[7][128];
 		key = new int[7];
+		transposeGroup = new int[7];
 		offset = new int[7];
 		startingKey = new int[7];
 		startingOffset = new int[7];
@@ -95,9 +99,9 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		cuedIndex = new boolean[7];
 		isRecording = new boolean[7];
 		sequences = new Hashtable<Integer, NoteSequence>();
-		heldNote = new boolean[128];
+		heldNote = new boolean[7][128];
 		clipNotes = new int[7][128];
-		newHeldNote = new boolean[128];
+		newHeldNote = new boolean[7][128];
 		melodyScale = new Scale(ScaleName.Major);
 		this._navRow = _navRow;
 		
@@ -458,7 +462,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		if(!sequences.containsKey(seqIndex))
 		{
 			sequences.put(seqIndex, new NoteSequence(seqIndex, this));
-			setMelRecMode(recMode);
+			setRecMode(recMode);
 		}
 		sequences.get(seqIndex).beginCue();
 
@@ -540,7 +544,19 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		xmlMelodizer.setAttribute(new Attribute("melodizerMode", currentMode.toString()));
 		xmlMelodizer.setAttribute(new Attribute("altMode", altMode.toString()));
 		xmlMelodizer.setAttribute(new Attribute("transpose", Boolean.toString(transpose)));
+		xmlMelodizer.setAttribute(new Attribute("recMode", Integer.toString(recMode)));
 		
+		// Serialize the transpose group in each pattern slot
+		String groupString = "";
+		for(int i=0;i<transposeGroup.length;i++)
+		{
+			groupString += transposeGroup[i];
+			if(i!=transposeGroup.length-1)
+				groupString+= ",";
+		}
+
+		xmlMelodizer.setAttribute(new Attribute("groups", groupString));
+
 		// Serialize the Key in each pattern slot
 		String keyString = "";
 		for(int i=0;i<key.length;i++)
@@ -629,9 +645,22 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 			if (xmlMelodizer.getAttribute("transpose") != null) {
 				transpose = Boolean.parseBoolean(xmlMelodizer.getAttribute("transpose").getValue());
 			}
+			if (xmlMelodizer.getAttribute("recMode") != null) {
+				recMode = Integer.parseInt(xmlMelodizer.getAttribute("recMode").getValue());
+			}
 		} catch (Throwable t) {
 			// Do nothing
 		} 
+		try {
+			String groupString = xmlMelodizer.getAttribute("groups").getValue();
+			int i=0;
+			for(String strGroup : groupString.split(","))
+			{
+				transposeGroup[i] = Integer.parseInt(strGroup);
+				i++;
+			}
+		} catch (Throwable t) {}
+		
 		try {
 			String keyString = xmlMelodizer.getAttribute("key").getValue();
 			int i=0;
@@ -683,7 +712,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 			index = Integer.parseInt(xmlSequence.getAttributeValue("index"));	
 			key[index] = Integer.parseInt(xmlSequence.getAttributeValue("key"));
 			sequence = new NoteSequence(index, this);
-			setMelRecMode(recMode);
+			setRecMode(recMode);
 			sequence.loadJDOMXMLElement(xmlSequence);
 			//Set status to stopped if there is a sequence
 			if(!sequence.isEmpty())sequence.setStatus(MonomeUp.STOPPED);
@@ -728,7 +757,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		melodyScale = newScale;
 	}
 
-	public void setMelRecMode(int _recMode) {
+	public void setRecMode(int _recMode) {
 		//Set all sequences to the new rec Mode
 		recMode = _recMode;
 		Integer sequenceIndex;
@@ -737,8 +766,10 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 			sequenceIndex = Integer.class.cast(els.nextElement());
 			sequences.get(sequenceIndex).setMelRecMode(recMode);
 		}
+	}
 
-
+	public int getRecMode() {
+		return recMode;
 	}
 
 	public void extNoteOn(Note note, int channel) {
@@ -749,7 +780,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		//144 = noteOn
 		if(note.getVelocity() > 0 && note.getStatus() == 144)
 		{
-			heldNote[note.getPitch()] = true;
+			heldNote[melodizerChannel][note.getPitch()] = true;
 			midiMelodyOut[melodizerChannel].sendNoteOn(note);
 			displayNote(melodizerChannel, note.getPitch(), DisplayGrid.SOLID);
 			addEvent(melodizerChannel, note);
@@ -758,7 +789,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		{
 			Note releaseNote = new Note(note.getPitch(),0, 0);
 			midiMelodyOut[melodizerChannel].sendNoteOff(releaseNote);
-			heldNote[note.getPitch()] = false;
+			heldNote[melodizerChannel][note.getPitch()] = false;
 			displayNote(melodizerChannel, note.getPitch(), DisplayGrid.OFF);
 			addEvent(melodizerChannel, releaseNote);
 		}
@@ -799,6 +830,16 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		if (transpose)
 			this.transposeDirty = true;
 		this.transpose = transpose;
+	}
+	
+	public void setTransposeGroup(int slotNum, int group)
+	{
+		transposeGroup[slotNum] = group;
+	}
+
+	public int getTransposeGroup(int slotNum)
+	{
+		return transposeGroup[slotNum];
 	}
 
 	/**
