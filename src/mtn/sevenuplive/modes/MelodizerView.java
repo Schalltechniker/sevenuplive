@@ -55,14 +55,18 @@ public class MelodizerView extends Mode {
 		} else if (e.getType().equals(ClearNavEvent.CLEAR_NAV_EVENT)) {
 			clearNavGrid();
 		} else if (e.getType().equals(KeyTransposeGroupEvent.KEY_TRANSPOSE_GROUP_EVENT)) {
-			KeyTransposeGroupEvent ktge = (KeyTransposeGroupEvent)e;
-			if (ktge.getGroup() == model.getTransposeGroup(curSeqBank)) {
-				changeKey(ktge.getKeyX(), ktge.getKeyY());
+			if (model.getCurrentMode() != MelodizerModel.eMelodizerMode.CLIP) {
+				KeyTransposeGroupEvent ktge = (KeyTransposeGroupEvent)e;
+				if (ktge.getGroup() == model.getTransposeGroup(curSeqBank)) {
+					changeKey(ktge.getKeyX(), ktge.getKeyY());
+				}
 			}
 		} else if (e.getType().equals(PositionTransposeGroupEvent.POSITION_TRANSPOSE_GROUP_EVENT)) {
-			PositionTransposeGroupEvent ptge = (PositionTransposeGroupEvent)e;
-			if (ptge.getGroup() == model.getTransposeGroup(curSeqBank)) {
-				changePosition(ptge.getPosition());
+			if (model.getCurrentMode() != MelodizerModel.eMelodizerMode.CLIP) {
+				PositionTransposeGroupEvent ptge = (PositionTransposeGroupEvent)e;
+				if (ptge.getGroup() == model.getTransposeGroup(curSeqBank)) {
+					changePosition(ptge.getPosition());
+				}
 			}
 		}  
 	}
@@ -317,7 +321,8 @@ public class MelodizerView extends Mode {
 		{
 			// If we are in a group then send a group transpose event
 			if (model.getTransposeGroup(curSeqBank) != -1) {
-				model.sendEvent(new KeyTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x, y));
+				AllModes.melody1Model.sendEvent(new KeyTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x, y));
+				AllModes.melody2Model.sendEvent(new KeyTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x, y));
 			} else { // Just change key here
 				changeKey(x, y);
 			}
@@ -326,7 +331,8 @@ public class MelodizerView extends Mode {
 			
 			// If we are in a group then send a group transpose event
 			if (model.getTransposeGroup(curSeqBank) != -1) {
-				model.sendEvent(new PositionTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x));
+				AllModes.melody1Model.sendEvent(new PositionTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x));
+				AllModes.melody2Model.sendEvent(new PositionTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x));
 			} else {
 				changePosition(x); // Just change
 			}
