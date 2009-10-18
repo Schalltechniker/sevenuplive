@@ -245,7 +245,7 @@ public class MelodizerView extends Mode {
 			{
 				ArrayList<Note> noteList;
 				Note note;
-				noteList = model.sequences.get(pressedSeq).getHeldNotesTransposedPitch();
+				noteList = model.sequences.get(pressedSeq).getHeldNotesAtPlayedPitch(pressedSeq);
 				//Loop through heldnotes and send note off for each
 				for(int i=0;i<noteList.size();i++)
 				{
@@ -359,7 +359,7 @@ public class MelodizerView extends Mode {
 		model.key[curSeqBank] = model.getKeyFromCoords( x, y);
 		int keyDif = curKeyValue - model.key[curSeqBank];
 		if (model.transpose) {
-			model.transposeDirty = true;
+			model.transposeDirty[curSeqBank] = true;
 			model.markStartTransposeOffsets(curSeqBank);
 		}
 		//Release notes from old key
@@ -425,7 +425,7 @@ public class MelodizerView extends Mode {
 		//Set new offset
 		model.offset[curSeqBank] = x;
 		if (model.transpose) {
-			model.transposeDirty = true;
+			model.transposeDirty[curSeqBank] = true;
 			model.markStartTransposeOffsets(curSeqBank);
 		}
 		//Release notes from old offset

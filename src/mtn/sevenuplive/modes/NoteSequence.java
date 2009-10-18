@@ -25,8 +25,8 @@ public class NoteSequence {
 	private Integer length;  //Length of the entire sequence
 	private Integer index;	//Sequence index out of all possible NoteSequences for printout in XML
 	private int status;  //Current status of the sequence
-	private Hashtable <Integer, TranspositionContext> heldNotesTranspositionContext;  //Hashtable keeping track of the transposition context of held notes
-	private Hashtable <Integer, Note> originalHeldNotesPlaying;  //Hashtable keeping track of currently held notes at original pitchs
+	private Hashtable <Integer, Hashtable<Integer, TranspositionContext>> heldNotesTranspositionContext;  //First Hashtable keys sequence number to internal Hashtable keeping track of the transposition context of held notes
+	private Hashtable< Integer, Hashtable <Integer, Note>> originalHeldNotesPlaying;  //First Hashtable keys sequence number to internal Hashtable keeping track of currently held notes at original pitchs
 	
 	//Create hashtable of keys (metronome count) and ArrayList<Note>(notes played at that event position)
 	private Hashtable<Integer, ArrayList<Note>> events;
@@ -40,8 +40,8 @@ public class NoteSequence {
 		initialize();
 		index = _index;
 		counter = 0;
-		originalHeldNotesPlaying = new Hashtable<Integer, Note>();
-		heldNotesTranspositionContext = new Hashtable<Integer, TranspositionContext>();
+		originalHeldNotesPlaying = new Hashtable<Integer, Hashtable<Integer, Note>>();
+		heldNotesTranspositionContext =  new Hashtable<Integer, Hashtable<Integer, TranspositionContext>>();
 		this.context = context;
 	}
 	
@@ -154,11 +154,22 @@ public class NoteSequence {
 					if(noteList.get(i).getVelocity() > 0)
 					{
 						//Add a noteOn event to heldNotes
-						originalHeldNotesPlaying.put(noteList.get(i).getPitch(), noteList.get(i));
+						Hashtable <Integer, Note> internal = originalHeldNotesPlaying.get(index);
+						if (internal == null) {
+							internal = new Hashtable <Integer, Note>();
+							originalHeldNotesPlaying.put(index, internal);
+						}	
+						internal.put(noteList.get(i).getPitch(), noteList.get(i));
 						
 						// Only record if transposing
-						if (context.getTranspose())
-							heldNotesTranspositionContext.put(noteList.get(i).getPitch(), context.getTranspositionContext(index));
+						if (context.getTranspose()) {
+							Hashtable <Integer, TranspositionContext> internal2 = heldNotesTranspositionContext.get(index);
+							if (internal2 == null) {
+								internal2 = new Hashtable <Integer, TranspositionContext>();
+								heldNotesTranspositionContext.put(index, internal2);
+							}	
+							internal2.put(noteList.get(i).getPitch(), context.getTranspositionContext(index));
+						}	
 					}
 					else
 					{
@@ -421,14 +432,31 @@ public class NoteSequence {
 		}	
 	}
 
-	public ArrayList<Note> getHeldNotesTransposedPitch() {
+	/**
+	 * Get held notes at the pitch they were played at.
+	 * This takes into account what transpositions were 
+	 * applied and reapplies them.
+	 * @param sequence number 0-7
+	 * @return
+	 */
+	public ArrayList<Note> getHeldNotesAtPlayedPitch(int sequence) {
 		ArrayList<Note> heldNotesArray = new ArrayList<Note>();
 		Integer index;
-		for(Enumeration<Integer> els = originalHeldNotesPlaying.keys();els.hasMoreElements();)
+		Hashtable <Integer, Note> internal = originalHeldNotesPlaying.get(sequence);
+		if (internal == null) 
+			return new ArrayList<Note>(); // empty list
+			
+		for(Enumeration<Integer> els = internal.keys();els.hasMoreElements();)
 		{
 			index = Integer.class.cast(els.nextElement());
-			Note originalNote = originalHeldNotesPlaying.get(index);
-			TranspositionContext tc = heldNotesTranspositionContext.get(originalNote.getPitch());
+			
+			Note originalNote = internal.get(index);
+			
+			Hashtable <Integer, TranspositionContext> internal2 = heldNotesTranspositionContext.get(sequence);
+			if (internal2 == null)
+				internal2 = new Hashtable <Integer, TranspositionContext>();
+			
+			TranspositionContext tc = internal2.get(originalNote.getPitch());
 			Note newNote;
 			if (tc != null) {
 				newNote = context.transposeWithContext(originalNote, tc);
@@ -443,13 +471,58 @@ public class NoteSequence {
 		return heldNotesArray;
 	}
 	
-	public ArrayList<Note> getHeldNotesOriginalPitch() {
+	/**
+	 * Get held notes at the latest transpose level.
+	 * Note that they may never have been played at this pitch
+	 * @param sequence number 0-7
+	 * @return
+	 */
+	public ArrayList<Note> getHeldNotesAtNewPitch(int sequence) {
 		ArrayList<Note> heldNotesArray = new ArrayList<Note>();
 		Integer index;
-		for(Enumeration<Integer> els = originalHeldNotesPlaying.keys();els.hasMoreElements();)
+		Hashtable <Integer, Note> internal = originalHeldNotesPlaying.get(sequence);
+		if (internal == null) 
+			return new ArrayList<Note>(); // empty list
+			
+		
+		for(Enumeration<Integer> els = internal.keys();els.hasMoreElements();)
 		{
 			index = Integer.class.cast(els.nextElement());
-			Note originalNote = originalHeldNotesPlaying.get(index);
+			
+			Note originalNote = internal.get(index);
+			
+			TranspositionContext tc = context.getTranspositionContext(sequence);
+			Note newNote;
+			if (tc != null) {
+				newNote = context.transposeWithContext(originalNote, tc);
+			} else {
+				newNote = originalNote;
+			}
+			if (newNote != null)
+				heldNotesArray.add(newNote);
+			
+		}
+		
+		return heldNotesArray;
+	}
+	
+	/**
+	 * Get held notes at original untransposed pitch.
+	 * Note that they may never have been played at this pitch
+	 * @param sequence sequence to get held notes for
+	 * @return
+	 */
+	public ArrayList<Note> getHeldNotesOriginalPitch(int sequence) {
+		ArrayList<Note> heldNotesArray = new ArrayList<Note>();
+		Integer index;
+		Hashtable <Integer, Note> internal = originalHeldNotesPlaying.get(sequence);
+		if (internal == null) 
+			return new ArrayList<Note>(); // empty list
+		
+		for(Enumeration<Integer> els = internal.keys();els.hasMoreElements();)
+		{
+			index = Integer.class.cast(els.nextElement());
+			Note originalNote = internal.get(index);
 			heldNotesArray.add(originalNote);
 		}
 		

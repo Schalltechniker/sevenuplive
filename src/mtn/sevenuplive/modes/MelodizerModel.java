@@ -69,7 +69,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 	// Should changing the key or offset transpose the sequence that is playing?
 	public boolean transpose = false;
 	// Tells us that a transposition index has changed
-	public boolean transposeDirty = false;
+	public boolean transposeDirty[];
 
 	public int clipNotes[][]; //When clipMode=true.  Array of ints holding [channel][pitch] of clips being launched/stopped
 	public boolean[][] heldNote;
@@ -92,6 +92,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		key = new int[7];
 		transposeGroup = new int[7];
 		offset = new int[7];
+		transposeDirty = new boolean[7];
 		startingKey = new int[7];
 		startingOffset = new int[7];
 		lastKey = new int[7];
@@ -332,10 +333,10 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 			s = sequences.get(index);
 
 			// Check if notes are being transposed and the transposition has changed recently
-			if (transposeDirty && transpose) {
+			if (transposeDirty[index] && transpose) {
 				
 				// Collect held notes before the heartbeat
-				ArrayList<Note> notesHeld = s.getHeldNotesTransposedPitch();
+				ArrayList<Note> notesHeld = s.getHeldNotesAtPlayedPitch(index);
 				
 				//Loop through old heldnotes 
 				for(int i=0;i< notesHeld.size();i++) {
@@ -381,10 +382,10 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 				}
 				updateDisplayGrid(index);
 			}
-		}
-		if (transposeDirty && transpose) {
-			transposeDirty = false; // reset flag
-			markStartTransposeOffsets();
+			if (transposeDirty[index] && transpose) {
+				transposeDirty[index] = false; // reset flag
+				markStartTransposeOffsets(index);
+			}
 		}
 		
 	}
@@ -511,7 +512,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 			NoteSequence sequence = sequences.get(seqIndex); 
 			sequence.stop();
 		 	ArrayList<Note> noteList;
-			noteList = sequence.getHeldNotesTransposedPitch();
+			noteList = sequence.getHeldNotesAtPlayedPitch(seqIndex);
 			
 			//Loop through heldnotes and send note off for each
 			for(int i=0;i<noteList.size();i++) {
@@ -827,8 +828,11 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 
 	public void setTranspose(boolean transpose) {
 		clearDisplayGrid();
-		if (transpose)
-			this.transposeDirty = true;
+		if (transpose) {
+			for (int i = 0; i < 7; i++) {
+				transposeDirty[i] = true;
+			}
+		}	
 		this.transpose = transpose;
 	}
 	
