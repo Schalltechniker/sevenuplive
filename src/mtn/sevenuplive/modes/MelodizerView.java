@@ -399,6 +399,9 @@ public class MelodizerView extends Mode {
 				//System.out.println("Sending " + i);
 			}
 		}
+		
+		if (!direct)
+			updateDisplayGrid();
 	}
 	
 	private void changePosition(boolean direct, int x) {
@@ -463,6 +466,9 @@ public class MelodizerView extends Mode {
 				model.newHeldNote[curSeqBank][i] = false;
 			}
 		}
+		
+		if (!direct)
+			updateDisplayGrid();
 	}
 
 }
