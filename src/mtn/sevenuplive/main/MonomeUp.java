@@ -477,6 +477,26 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	{
 		return allmodes.getMelodizer2Model().getTransposeGroup(slotNum);
 	}
+	
+	public boolean getMel1TransposeSustain(int slotNum)
+	{
+		return allmodes.getMelodizer1Model().getTransposeSustain(slotNum);
+	}
+	
+	public boolean getMel2TransposeSustain(int slotNum)
+	{
+		return allmodes.getMelodizer2Model().getTransposeSustain(slotNum);
+	}
+	
+	public void setMel1TransposeSustain(int slotNum, boolean value)
+	{
+		allmodes.getMelodizer1Model().setTransposeSustain(slotNum, value);
+	}
+	
+	public void setMel2TransposeSustain(int slotNum, boolean value)
+	{
+		allmodes.getMelodizer2Model().setTransposeSustain(slotNum, value);
+	}
 
 	public Document toXMLDocument(String fileName)
 	{

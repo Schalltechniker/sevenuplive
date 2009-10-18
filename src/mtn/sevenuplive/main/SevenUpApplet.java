@@ -162,6 +162,26 @@ public class SevenUpApplet extends processing.core.PApplet
 		m.setMel2TransposeGroup(slotNum, chokeGroup);
 	}
 	
+	public boolean getMel1TransposeSustain(int slotNum)
+	{
+		return m.getMel1TransposeSustain(slotNum);
+	}
+	
+	public boolean getMel2TransposeSustain(int slotNum)
+	{
+		return m.getMel2TransposeSustain(slotNum);
+	}
+	
+	public void setMel1TransposeSustain(int slotNum, boolean value)
+	{
+		m.setMel1TransposeSustain(slotNum, value);
+	}
+	
+	public void setMel2TransposeSustain(int slotNum, boolean value)
+	{
+		m.setMel2TransposeSustain(slotNum, value);
+	}
+	
 	public int getMel1TransposeGroup(int slotNum)
 	{
 		return m.getMel1TransposeGroup(slotNum);
@@ -171,6 +191,7 @@ public class SevenUpApplet extends processing.core.PApplet
 	{
 		return m.getMel2TransposeGroup(slotNum);
 	}
+	
 	
 	public void setGateLoopChokes(boolean gateLoops)
 	{

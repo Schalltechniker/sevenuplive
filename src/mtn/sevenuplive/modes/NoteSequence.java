@@ -161,15 +161,8 @@ public class NoteSequence {
 						}	
 						internal.put(noteList.get(i).getPitch(), noteList.get(i));
 						
-						// Only record if transposing
-						if (context.getTranspose()) {
-							Hashtable <Integer, TranspositionContext> internal2 = heldNotesTranspositionContext.get(index);
-							if (internal2 == null) {
-								internal2 = new Hashtable <Integer, TranspositionContext>();
-								heldNotesTranspositionContext.put(index, internal2);
-							}	
-							internal2.put(noteList.get(i).getPitch(), context.getTranspositionContext(index));
-						}	
+						// Mark this note as held at current transposition context
+						markHeldNoteAtCurrentTranspositionContext(noteList.get(i));	
 					}
 					else
 					{
@@ -208,6 +201,22 @@ public class NoteSequence {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Mark a held note as being played at the current transposition context
+	 * @param note Must be at the original UNTRANSPOSED pitch
+	 */
+	public void markHeldNoteAtCurrentTranspositionContext(Note note) {
+		// Only record if transposing
+		if (context.getTranspose()) {
+			Hashtable <Integer, TranspositionContext> internal2 = heldNotesTranspositionContext.get(index);
+			if (internal2 == null) {
+				internal2 = new Hashtable <Integer, TranspositionContext>();
+				heldNotesTranspositionContext.put(index, internal2);
+			}	
+			internal2.put(note.getPitch(), context.getTranspositionContext(index));
+		}	
 	}
 	
 	/***

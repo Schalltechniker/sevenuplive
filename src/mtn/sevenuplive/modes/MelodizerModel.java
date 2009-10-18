@@ -1,6 +1,7 @@
 package mtn.sevenuplive.modes;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -83,6 +84,16 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 	/** Transpose groups for slots 0-7. -1 value means no group */
 	private int[] transposeGroup;
 	
+	/** 
+	 * These Note off messages are delayed until next note off or on is played in that sequence.
+	 * This helps transposition retriggering to appear smoother
+	 * Keyed by sequence # 
+	 */
+	private HashMap<Integer, ArrayList<Note>> delayedNoteOffs = new HashMap<Integer, ArrayList<Note>>();
+	
+	/** Delay the sending off note offs on transposed notes for a sequence */
+	private boolean[] delayNoteOffs;
+	
 	private int _navRow;
 
 	public MelodizerModel(int _navRow, MidiOut _midiMelodyOut[], int grid_width, int grid_height) {
@@ -92,6 +103,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		key = new int[7];
 		transposeGroup = new int[7];
 		offset = new int[7];
+		delayNoteOffs = new boolean[7];
 		transposeDirty = new boolean[7];
 		startingKey = new int[7];
 		startingOffset = new int[7];
@@ -338,9 +350,19 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 				// Collect held notes before the heartbeat
 				ArrayList<Note> notesHeld = s.getHeldNotesAtPlayedPitch(index);
 				
-				//Loop through old heldnotes 
+				//Loop through old heldnotes and turn them off
 				for(int i=0;i< notesHeld.size();i++) {
-					midiMelodyOut[index].sendNoteOff(notesHeld.get(i));
+					// If delayedNoteOffs
+					if (delayNoteOffs[index]) {
+						ArrayList<Note> delayedNotes = delayedNoteOffs.get(index);
+						if (delayedNotes == null) {
+							delayedNotes = new ArrayList<Note>();
+							 delayedNoteOffs.put(index, delayedNotes);
+						}
+						delayedNotes.add(notesHeld.get(i));
+					} else { // Send immediately
+						midiMelodyOut[index].sendNoteOff(notesHeld.get(i));
+					}
 					displayNote(index, notesHeld.get(i).getPitch(), DisplayGrid.OFF);
 				}	
 				 
@@ -353,6 +375,11 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 			{
 				//package the note
 				notePackage.put(index, noteList);
+			}
+
+			if (transposeDirty[index] && transpose) {
+				transposeDirty[index] = false; // reset flag
+				markStartTransposeOffsets(index);
 			}
 		}
 
@@ -370,24 +397,39 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 				note = noteList.get(i);
 				if(note.getVelocity() > 0)
 				{
+					sendDelayedNoteOffs(index);
+					
 					//System.out.println("Playing note " + note.getPitch());
 					midiMelodyOut[index].sendNoteOn(note);
 					displayNote(index, note.getPitch(), DisplayGrid.SOLID);
 				}
 				else
 				{
+					sendDelayedNoteOffs(index);
+					
 					//System.out.println("Releasing note " + note.getPitch());
 					midiMelodyOut[index].sendNoteOff(note);
 					displayNote(index, note.getPitch(), DisplayGrid.OFF);
 				}
 				updateDisplayGrid(index);
 			}
-			if (transposeDirty[index] && transpose) {
-				transposeDirty[index] = false; // reset flag
-				markStartTransposeOffsets(index);
-			}
 		}
-		
+	}
+	
+	/**
+	 * Send any delayed note offs
+	 * @param index
+	 */
+	private void sendDelayedNoteOffs(int index) {
+		ArrayList<Note> delayedNotes = delayedNoteOffs.get(index);
+		if (delayedNotes == null)
+			return;
+			
+		for (Note note : delayedNotes) {
+			midiMelodyOut[index].sendNoteOff(note);
+		}
+		// Clear it out
+		delayedNoteOffs.put(index, new ArrayList<Note>());
 	}
 	
 	/**
@@ -448,6 +490,16 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 	 */
 	public void displayNote(int slot, int pitch, int displaystate) {
 		displayNote[slot][pitch] = displaystate;
+	}
+
+	/**
+	 * Return the display value of a note
+	 * @param slot
+	 * @param pitch
+	 * @return
+	 */
+	public int getDisplayNote(int slot, int pitch) {
+		return displayNote[slot][pitch];
 	}
 
 	/**
@@ -519,6 +571,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 				midiMelodyOut[seqIndex].sendNoteOff(noteList.get(i));
 				displayNote(seqIndex, noteList.get(i).getPitch(), DisplayGrid.OFF);
 			}
+			sendDelayedNoteOffs(seqIndex);
 			updateDisplayGrid(seqIndex);
 		}
 	}
@@ -546,7 +599,17 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		xmlMelodizer.setAttribute(new Attribute("altMode", altMode.toString()));
 		xmlMelodizer.setAttribute(new Attribute("transpose", Boolean.toString(transpose)));
 		xmlMelodizer.setAttribute(new Attribute("recMode", Integer.toString(recMode)));
-		
+
+		// Serialize the sustain mode in each pattern slot
+		String sustainString = "";
+		for(int i=0;i<this.delayNoteOffs.length;i++)
+		{
+			sustainString += delayNoteOffs[i];
+			if(i!=delayNoteOffs.length-1)
+				sustainString+= ",";
+		}
+		xmlMelodizer.setAttribute(new Attribute("sustain", sustainString));
+
 		// Serialize the transpose group in each pattern slot
 		String groupString = "";
 		for(int i=0;i<transposeGroup.length;i++)
@@ -651,7 +714,17 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 			}
 		} catch (Throwable t) {
 			// Do nothing
-		} 
+		}
+		try {
+			String sustainString = xmlMelodizer.getAttribute("sustain").getValue();
+			int i=0;
+			for(String strSustain : sustainString.split(","))
+			{
+				delayNoteOffs[i] = Boolean.parseBoolean(strSustain);
+				i++;
+			}
+		} catch (Throwable t) {}
+		
 		try {
 			String groupString = xmlMelodizer.getAttribute("groups").getValue();
 			int i=0;
@@ -844,6 +917,16 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 	public int getTransposeGroup(int slotNum)
 	{
 		return transposeGroup[slotNum];
+	}
+	
+	public void setTransposeSustain(int slotNum, boolean value)
+	{
+		delayNoteOffs[slotNum] = value;
+	}
+
+	public boolean getTransposeSustain(int slotNum)
+	{
+		return delayNoteOffs[slotNum];
 	}
 
 	/**

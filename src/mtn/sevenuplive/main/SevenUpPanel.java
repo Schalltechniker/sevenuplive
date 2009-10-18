@@ -29,6 +29,7 @@ import org.jdom.Document;
 
 public class SevenUpPanel extends JPanel implements ActionListener
 {
+	private enum eTransposeOptions {GATE, SUSTAIN};
 	
 	private static final long serialVersionUID = 1L;
 	SevenUpApplet sevenUpApplet;
@@ -39,6 +40,8 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	JComboBox drpLoopChoke;
 	JComboBox drpTransposeGroup1;
 	JComboBox drpTransposeGroup2;
+	JComboBox drpTransposeOptions1;
+	JComboBox drpTransposeOptions2;
 	JComboBox drpLoopLength;
 	JComboBox drpLoopType;
 	JComboBox drpGateLoopChoke;
@@ -350,24 +353,33 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        	lblSetTransposeGroup.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	            String[] transposeChoices = { "Nope", "1", "2", "3", "4", "5", "6", "7"};
 	            drpTransposeGroup1 = new JComboBox(transposeChoices);
+	            drpTransposeOptions1 = new JComboBox(eTransposeOptions.values());
 	            setSizeSmall(drpTransposeGroup1);
+	            setSizeSmall(drpTransposeOptions1);
 	            drpTransposeGroup1.setName(i.toString() + "transpose");
+	            drpTransposeOptions1.setName(i.toString() + "options");
 	            drpTransposeGroup1.setSelectedIndex(0);
 	            drpTransposeGroup1.addActionListener(
 	            		new ActionListener(){
 	            			public void actionPerformed(ActionEvent e) {
 	            				setDirty(true);
 	            				JComboBox cb = (JComboBox)e.getSource();
-	            				if(cb.getSelectedIndex() == 0)
-	            					sevenUpApplet.setMel1TransposeGroup(Integer.parseInt(cb.getName().substring(0,1)), -1);
-	            				else 
-	            					sevenUpApplet.setMel1TransposeGroup(Integer.parseInt(cb.getName().substring(0,1)), cb.getSelectedIndex());
+	            				sevenUpApplet.setMel1TransposeGroup(Integer.parseInt(cb.getName().substring(0,1)), cb.getSelectedIndex() - 1);
 	            			}
 	            		}
 	            );
-	            
+	            drpTransposeOptions1.addActionListener(
+	            		new ActionListener(){
+	            			public void actionPerformed(ActionEvent e) {
+	            				setDirty(true);
+	            				JComboBox cb = (JComboBox)e.getSource();
+	            				sevenUpApplet.setMel1TransposeSustain(Integer.parseInt(cb.getName().substring(0,1)), cb.getSelectedItem() == eTransposeOptions.SUSTAIN ? true: false);
+	            			}
+	            		}
+	            );
 	            c.gridx = 0; c.gridy = 2 + i; melodizer1Panel.add(lblSetTransposeGroup, c);
 	            c.gridx = 1; melodizer1Panel.add(drpTransposeGroup1, c);
+	            c.gridx = 2; melodizer1Panel.add(drpTransposeOptions1, c);
 	        }
 	        
 	        for(Integer i=0; i<7;i++)
@@ -376,25 +388,35 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	        	setSizeSmall(lblSetTransposeGroup);
 	        	lblSetTransposeGroup.setBorder(new javax.swing.border.EmptyBorder(4,4,4,4));
 	            String[] transposeChoices = { "Nope", "1", "2", "3", "4", "5", "6", "7"};
+	            drpTransposeOptions2 = new JComboBox(eTransposeOptions.values());
 	            drpTransposeGroup2 = new JComboBox(transposeChoices);
 	            setSizeSmall(drpTransposeGroup2);
+	            setSizeSmall(drpTransposeOptions2);
 	            drpTransposeGroup2.setName(i.toString() + "transpose");
+	            drpTransposeOptions2.setName(i.toString() + "options");
 	            drpTransposeGroup2.setSelectedIndex(0);
 	            drpTransposeGroup2.addActionListener(
 	            		new ActionListener(){
 	            			public void actionPerformed(ActionEvent e) {
 	            				setDirty(true);
 	            				JComboBox cb = (JComboBox)e.getSource();
-	            				if(cb.getSelectedIndex() == 0)
-	            					sevenUpApplet.setMel2TransposeGroup(Integer.parseInt(cb.getName().substring(0,1)), -1);
-	            				else 
-	            					sevenUpApplet.setMel2TransposeGroup(Integer.parseInt(cb.getName().substring(0,1)), cb.getSelectedIndex());
+	            				sevenUpApplet.setMel2TransposeGroup(Integer.parseInt(cb.getName().substring(0,1)), cb.getSelectedIndex() - 1);
+	            			}
+	            		}
+	            );
+	            drpTransposeOptions2.addActionListener(
+	            		new ActionListener(){
+	            			public void actionPerformed(ActionEvent e) {
+	            				setDirty(true);
+	            				JComboBox cb = (JComboBox)e.getSource();
+	            				sevenUpApplet.setMel2TransposeSustain(Integer.parseInt(cb.getName().substring(0,1)), cb.getSelectedItem() == eTransposeOptions.SUSTAIN ? true: false);
 	            			}
 	            		}
 	            );
 	            
 	            c.gridx = 0; c.gridy = 2 + i; melodizer2Panel.add(lblSetTransposeGroup, c);
 	            c.gridx = 1; melodizer2Panel.add(drpTransposeGroup2, c);
+	            c.gridx = 2; melodizer2Panel.add(drpTransposeOptions2, c);
 	        }
 	        
 	        //////////////////////////////////////////
@@ -579,6 +601,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
     {
     	int chokeGroup;
     	int transposeGroup;
+    	boolean sustain;
     	int loopType;
     	Float length;
     	boolean gateLoopChokes;
@@ -630,7 +653,6 @@ public class SevenUpPanel extends JPanel implements ActionListener
         for(Integer i=0;i<7;i++)
     	{
         	transposeGroup = sevenUpApplet.getMel1TransposeGroup(i);
-    		if(transposeGroup == -1)transposeGroup = 0;
     		
     		for(int k=0; k<melodizer1Panel.getComponentCount();k++)
     		{
@@ -639,7 +661,7 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	    			if(melodizer1Panel.getComponent(k).getName().equals(i.toString()+"transpose"))
 	    			{
 	    				drpTransposeGroup1 = (JComboBox)melodizer1Panel.getComponent(k);
-	    				drpTransposeGroup1.setSelectedIndex(transposeGroup);
+	    				drpTransposeGroup1.setSelectedIndex(transposeGroup + 1);
 	    			}
     			}
 			}
@@ -648,7 +670,6 @@ public class SevenUpPanel extends JPanel implements ActionListener
         for(Integer i=0;i<7;i++)
     	{
         	transposeGroup = sevenUpApplet.getMel2TransposeGroup(i);
-    		if(transposeGroup == -1)transposeGroup = 0;
     		
     		for(int k=0; k<melodizer2Panel.getComponentCount();k++)
     		{
@@ -657,11 +678,54 @@ public class SevenUpPanel extends JPanel implements ActionListener
 	    			if(melodizer2Panel.getComponent(k).getName().equals(i.toString()+"transpose"))
 	    			{
 	    				drpTransposeGroup2 = (JComboBox)melodizer2Panel.getComponent(k);
-	    				drpTransposeGroup2.setSelectedIndex(transposeGroup);
+	    				drpTransposeGroup2.setSelectedIndex(transposeGroup + 1);
 	    			}
     			}
 			}
 		}
+        
+        for(Integer i=0;i<7;i++)
+    	{
+        	sustain = sevenUpApplet.getMel1TransposeSustain(i);
+    		
+    		for(int k=0; k<melodizer1Panel.getComponentCount();k++)
+    		{
+    			if(melodizer1Panel.getComponent(k).getName() != null)
+    			{
+	    			if(melodizer1Panel.getComponent(k).getName().equals(i.toString()+"options"))
+	    			{
+	    				drpTransposeOptions1 = (JComboBox)melodizer1Panel.getComponent(k);
+	    				if (sustain) {
+	    					drpTransposeOptions1.setSelectedItem(eTransposeOptions.SUSTAIN);
+	    				} else {
+	    					drpTransposeOptions1.setSelectedItem(eTransposeOptions.GATE);
+	    				}
+	    			}
+    			}
+			}
+		}
+        
+        for(Integer i=0;i<7;i++)
+    	{
+        	sustain = sevenUpApplet.getMel2TransposeSustain(i);
+    		
+    		for(int k=0; k<melodizer2Panel.getComponentCount();k++)
+    		{
+    			if(melodizer2Panel.getComponent(k).getName() != null)
+    			{
+	    			if(melodizer2Panel.getComponent(k).getName().equals(i.toString()+"options"))
+	    			{
+	    				drpTransposeOptions2 = (JComboBox)melodizer2Panel.getComponent(k);
+	    				if (sustain) {
+	    					drpTransposeOptions2.setSelectedItem(eTransposeOptions.SUSTAIN);
+	    				} else {
+	    					drpTransposeOptions2.setSelectedItem(eTransposeOptions.GATE);
+	    				}
+	    			}
+    			}
+			}
+		}
+        
 		
 		for(Integer i =0;i<7;i++)
     	{
