@@ -183,7 +183,7 @@ public class NoteSequence {
 						if (newNote != null) {
 							noteListAfterTranspose.add(newNote);
 						} else {
-							System.out.println("Note transposed off the grid");
+							//System.out.println("Note transposed off the grid");
 							noteListAfterTranspose.add(new Note(noteList.get(i).getPitch(), 0, 0)); // If off grid then send a note off
 						}	
 					}

@@ -911,7 +911,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 				//System.out.println("new pitch:" + Integer.toString(pitch) + " Position:" + newpos + " offset:" + localOffset + " keyoffset:" + localKeyOffset);
 				return new Note(pitch, note.getVelocity(), note.getLength());
 			}	
-		System.out.println("Fell off the grid");
+		//System.out.println("Fell off the grid");
 		return null;	
 	}
 	
