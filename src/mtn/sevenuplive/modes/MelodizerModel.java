@@ -102,6 +102,8 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		displayNote = new int[7][128];
 		key = new int[7];
 		transposeGroup = new int[7];
+		for(int i=0;i<transposeGroup.length;i++)
+			transposeGroup[i] = -1;
 		offset = new int[7];
 		delayNoteOffs = new boolean[7];
 		transposeDirty = new boolean[7];
