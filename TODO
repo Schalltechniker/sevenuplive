@@ -1,7 +1,5 @@
 FEATURES
--Switch to promidi sequences for midi events and recording
 -Explore ideas of collapsing entire patterns into single buttons.  Same for melodies.
--Send note OFFS when switching patches mid-stride
 -External controller to start/stop recording
 -Tilt control
 -set controller to use 7*7 different controller knobs. use MVC method so independent actors can manipulate
@@ -9,11 +7,11 @@ FEATURES
 BUGS
 - When loading a patch, patternizers do not update their UI until you move away from page and come back again
 - SamplePatchPack.xml is not really a patch pack. Needs to be updated.
-- Check "NextPatch" clip in template...It was sending an F3 instead of the F4 needed to change the patch.
+- Check "NextPatch" clip in template...It was sending an F3 instead of the F4 needed to change the patch. 
 - There was a bug report that loop pattern recorder was not replaying loops that used choke groups properly. This may have to do
 which where new notes are triggered or not depending on loop mode.
 -Bug in melodizer code where the first note may not be played directly after recording a sequence and another note is held down
-- Bug reported where pattern slots in Masterizer are not clearer when the pattern is dropped (recoded as empty) in a Melodizer.
-
+- Bug reported where pattern slots in Masterizer are not clearer when the pattern is dropped (recoded as empty) in a Melodizer. - FIXED 1.4 beta 4
+- Send note OFFS when switching patches mid-stride
  
 
