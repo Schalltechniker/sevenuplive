@@ -7,7 +7,6 @@ import java.util.List;
 import mtn.sevenuplive.main.MonomeUp;
 import org.jdom.Attribute;
 import org.jdom.Element;
-import promidi.Note;
 
 public class CtrlSequence {
 	

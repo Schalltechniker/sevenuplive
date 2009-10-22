@@ -13,6 +13,9 @@ import java.util.List;
 
 import jklabs.monomic.MonomeListener;
 import jklabs.monomic.MonomeOSC;
+import mtn.sevenuplive.m4l.M4LMidi;
+import mtn.sevenuplive.m4l.M4LMidiOut;
+import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.modes.Controller;
 import mtn.sevenuplive.modes.DisplayGrid;
@@ -33,10 +36,6 @@ import mtn.sevenuplive.scales.Scale;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
-
-import promidi.MidiIO;
-import promidi.MidiOut;
-import promidi.Note;
 
 public final class MonomeUp extends MonomeOSC implements MonomeListener {
 
@@ -93,28 +92,28 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	//////////////////////////////////////
 	//LOOPER
 	/////////////////////////////////////
-	private MidiOut midiLoopOut;
+	private M4LMidiOut midiLoopOut;
 	private Boolean areLoopsGated = false;
 	////////////////////////////////////////
 
 	////////////////////////////////////////
 	//MELODIZER
 	////////////////////////////////////////
-	private MidiOut midiMelodyOut[];
-	private MidiOut midiMelody2Out[];
+	private M4LMidiOut midiMelodyOut[];
+	private M4LMidiOut midiMelody2Out[];
 	/////////////////////////////////////
 
 	/////////////////////////////////////
 	//MASTERIZER
 	/////////////////////////////////////
-	private MidiOut midiMasterOut;
+	private M4LMidiOut midiMasterOut;
 	/////////////////////////////////////
 
 	////////////////////////////////////////
 	//Midi members
 	////////////////////////////////////////
-	private MidiIO midiIO;
-	private MidiOut midiSampleOut;
+	private M4LMidi midiIO;
+	private M4LMidiOut midiSampleOut;
 	////////////////////////////////////
 
 	private ConnectionSettings sevenUpConnections;
@@ -125,7 +124,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 
 	private DisplayGrid[] grids;
 
-	MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, promidi.MidiIO _midiIO, SevenUpPanel _parentPanel) {
+	MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, M4LMidi _midiIO, SevenUpPanel _parentPanel) {
 		super(x_grids, y_grids, _sevenUpConnections.oscPrefix, _sevenUpConnections.oscHostAddress, _sevenUpConnections.oscHostPort, _sevenUpConnections.oscListenPort);
 		sevenUpConnections = _sevenUpConnections;
 
@@ -204,14 +203,14 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 
 
 		//Create 7 channels (0-6) for melody out
-		midiMelodyOut = new MidiOut[7];
+		midiMelodyOut = new M4LMidiOut[7];
 		for(int i = 0; i<midiMelodyOut.length; i++)
 		{
 			midiMelodyOut[i] = midiIO.getMidiOut(i, sevenUpConnections.melod1OutputDeviceName);
 		}
 
 		//Create 7 channels (0-6) for melody2 out
-		midiMelody2Out = new MidiOut[7];
+		midiMelody2Out = new M4LMidiOut[7];
 		for(int i = 0; i<midiMelody2Out.length; i++)
 		{
 			midiMelody2Out[i] = midiIO.getMidiOut(i, sevenUpConnections.melod2OutputDeviceName);

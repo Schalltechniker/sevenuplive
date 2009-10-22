@@ -3,14 +3,13 @@ package mtn.sevenuplive.modes;
 
 import java.util.List;
 
+import mtn.sevenuplive.m4l.M4LMidiOut;
+import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.main.MonomeUp;
 import mtn.sevenuplive.modes.events.EventDispatcherImpl;
 
 import org.jdom.Attribute;
 import org.jdom.Element;
-
-import promidi.MidiOut;
-import promidi.Note;
 
 public class PatternizerModel extends EventDispatcherImpl {
 	
@@ -19,9 +18,9 @@ public class PatternizerModel extends EventDispatcherImpl {
 	private int pressedNavButtons[];
 	public int selectedPattern = 0;
 	public int curPatternRow = 0;
-	private MidiOut midiSampleOut;
+	private M4LMidiOut midiSampleOut;
 
-	public PatternizerModel(int _navRow, promidi.MidiOut _midiSampleOut, int grid_width, int grid_height) {
+	public PatternizerModel(int _navRow, M4LMidiOut _midiSampleOut, int grid_width, int grid_height) {
 		midiSampleOut = _midiSampleOut;
 		patternGrids = new int[7][7][8];
 	}

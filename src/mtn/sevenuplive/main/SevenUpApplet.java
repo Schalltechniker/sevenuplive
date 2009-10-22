@@ -9,6 +9,9 @@
  */
 
 package mtn.sevenuplive.main;
+import mtn.sevenuplive.m4l.M4LMidi;
+import mtn.sevenuplive.m4l.M4LMidiSystem;
+import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.modes.MelodizerModel;
 import mtn.sevenuplive.scales.Scale;
@@ -16,8 +19,6 @@ import mtn.sevenuplive.scales.ScaleName;
 
 import org.jdom.Document;
 
-import promidi.MidiIO;
-import promidi.Note;
 import proxml.XMLInOut;
 
 public class SevenUpApplet extends processing.core.PApplet
@@ -26,7 +27,7 @@ public class SevenUpApplet extends processing.core.PApplet
 	private MonomeUp m;
 	private XMLInOut xmlIO;
 	private Scale monomeScale;
-	private MidiIO midiIO;
+	private M4LMidi midiIO;
 	private ConnectionSettings sevenUpConnections;
 	private SevenUpPanel parentPanel;
 	
@@ -49,7 +50,7 @@ public class SevenUpApplet extends processing.core.PApplet
 	   size(300, 200);
 	   
 	   xmlIO = new XMLInOut(this);
-	   midiIO = MidiIO.getInstance(this);
+	   midiIO = M4LMidiSystem.getInstance(this);
 	   midiIO.printDevices();
 	   monomeScale = new Scale(ScaleName.Major);
 	   

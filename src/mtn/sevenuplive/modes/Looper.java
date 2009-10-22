@@ -2,13 +2,13 @@ package mtn.sevenuplive.modes;
 
 import java.util.List;
 
+import mtn.sevenuplive.m4l.M4LController;
+import mtn.sevenuplive.m4l.M4LMidiOut;
+import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.main.MonomeUp;
 
 import org.jdom.Attribute;
 import org.jdom.Element;
-
-import promidi.MidiOut;
-import promidi.Note;
 
 public class Looper extends Mode {
 	
@@ -16,13 +16,13 @@ public class Looper extends Mode {
 	
 	private final static int OFFSET_START_CTRL = 96;
 	
-	private MidiOut midiOut;
+	private M4LMidiOut midiOut;
 	private Boolean gateLoopChokes = true;
 	private boolean muteNotes = false;
 
 	public boolean[] stopLoopsOnNextStep;
 	
-	public Looper(int _navRow, MidiOut _midiOut, mtn.sevenuplive.main.MonomeUp _m, int grid_width, int grid_height) {
+	public Looper(int _navRow, M4LMidiOut _midiOut, mtn.sevenuplive.main.MonomeUp _m, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
 		
 		stopLoopsOnNextStep = new boolean[7];
@@ -153,7 +153,7 @@ public class Looper extends Mode {
 			
 			stopLoopsOnNextStep[x] = false;
 			int loopCtrlValue = (y * 16);
-			midiOut.sendController(new promidi.Controller(OFFSET_START_CTRL+x, loopCtrlValue));
+			midiOut.sendController(new M4LController(OFFSET_START_CTRL+x, loopCtrlValue));
 			playLoop(x, y);
 			}
 	
@@ -231,7 +231,7 @@ public class Looper extends Mode {
         			switch (loops[i].getType()) {
         				case Loop.HIT: // Hits we let it run to the end of the sample and don't send a noteOff on release
         					if (loops[i].getTrigger(step) == true) {
-        						midiOut.sendController(new promidi.Controller(OFFSET_START_CTRL+i, loopCtrlValue));
+        						midiOut.sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
         						if(!muteNotes)
         							midiOut.sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16  +1, 0));
         						loops[i].setTrigger(step, false);
@@ -243,7 +243,7 @@ public class Looper extends Mode {
         				case Loop.MOMENTARY:
         				case Loop.SLICE:
         					if (resCounter == 0 || loops[i].getTrigger(step)) {
-        						midiOut.sendController(new promidi.Controller(OFFSET_START_CTRL+i, loopCtrlValue));
+        						midiOut.sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
         						if(!muteNotes)
         							midiOut.sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16 +1, 0));
         						loops[i].setTrigger(step, false);
@@ -268,7 +268,7 @@ public class Looper extends Mode {
         				case Loop.STEP:
         				default:
         					if (resCounter == 0) 
-        						midiOut.sendController(new promidi.Controller(OFFSET_START_CTRL+i, loopCtrlValue));
+        						midiOut.sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
         				
         					//Send note every time looprow is 0 or at it's offset
         	        		if((resCounter == 0) && (step == 0 || pressedRow > -1))

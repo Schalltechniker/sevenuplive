@@ -14,8 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import promidi.MidiIO;
-
+import mtn.sevenuplive.m4l.M4LMidi;
+import mtn.sevenuplive.m4l.M4LMidiSystem;
 
 public class ConnectionPanel extends JPanel 
 							     implements ActionListener{
@@ -301,7 +301,7 @@ public class ConnectionPanel extends JPanel
 	
 	public static ArrayList<String> getMidiInputs()
 	{
-		MidiIO midiSystem = MidiIO.getInstance();
+		M4LMidi midiSystem = M4LMidiSystem.getInstance();
 		
 		ArrayList<String> midiInputs = new ArrayList<String>();
 		
@@ -317,7 +317,7 @@ public class ConnectionPanel extends JPanel
 	
 	public static ArrayList<String> getMidiOutputs()
 	{
-		MidiIO midiSystem = MidiIO.getInstance();
+		M4LMidi midiSystem = M4LMidiSystem.getInstance();
 		
 		ArrayList<String> midiOutputs = new ArrayList<String>();
 		

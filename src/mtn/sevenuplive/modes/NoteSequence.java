@@ -5,12 +5,11 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.main.MonomeUp;
 
 import org.jdom.Attribute;
 import org.jdom.Element;
-
-import promidi.Note;
 
 /***
  * A sequence of notes that may be recorded live and played back.  

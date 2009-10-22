@@ -1,8 +1,8 @@
 package mtn.sevenuplive.modes;
 
+import mtn.sevenuplive.m4l.M4LMidiOut;
+import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.main.MonomeUp;
-import promidi.MidiOut;
-import promidi.Note;
 
 public class Masterizer extends Mode {
 	//SEQUENCER
@@ -22,13 +22,13 @@ public class Masterizer extends Mode {
 	int loopRecorderRows[]; 
 	
 	//MELODY
-	private MidiOut midiMelodyOut[];
+	private M4LMidiOut midiMelodyOut[];
 	private final static int MELODY_COL = 4;
 	private int melodyRows[];
 	private boolean mel1Cue[];
 
 	//MELODY2
-	private MidiOut midiMelody2Out[];
+	private M4LMidiOut midiMelody2Out[];
 	private int melody2Col = 5;
 	private int melody2Rows[];
 	private boolean mel2Cue[];
@@ -41,9 +41,9 @@ public class Masterizer extends Mode {
 	private int locatorMode = PLAYMODE;
 	
 	//MASTER
-	private MidiOut midiMasterOut;
+	private M4LMidiOut midiMasterOut;
 	
-	public Masterizer(int _navRow, MidiOut _midiMelodyOut[], MidiOut _midiMelody2Out[],MidiOut _midiMasterOut, mtn.sevenuplive.main.MonomeUp _m,  int grid_width, int grid_height)
+	public Masterizer(int _navRow, M4LMidiOut _midiMelodyOut[], M4LMidiOut _midiMelody2Out[], M4LMidiOut _midiMasterOut, mtn.sevenuplive.main.MonomeUp _m,  int grid_width, int grid_height)
 	{
 		super(_navRow, grid_width, grid_height);
 		displayGrid = new int[7][8];

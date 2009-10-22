@@ -1,23 +1,14 @@
 package mtn.sevenuplive.modes;
-import java.util.ArrayList;
-import java.util.List;
-
-import mtn.sevenuplive.main.MonomeUp;
-
-import org.jdom.Attribute;
-import org.jdom.Element;
-
-import promidi.MidiOut;
+import mtn.sevenuplive.m4l.M4LController;
+import mtn.sevenuplive.m4l.M4LMidiOut;
 
 public class Controller extends Mode {
-
-	private CtrlSequence ctrlSequences[];
 	private int curBank = 0;
-	private MidiOut midiControlOut;
+	private M4LMidiOut midiControlOut;
 	private Integer controls[][];
 	private Integer startingController;
 	
-	public Controller(int _navRow, MidiOut _midiControlOut, int _startingController, int grid_width, int grid_height) {
+	public Controller(int _navRow, M4LMidiOut _midiControlOut, int _startingController, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
 		midiControlOut = _midiControlOut;
 		controls = new Integer[7][7];
@@ -108,7 +99,7 @@ public class Controller extends Mode {
 			   controlValue = 127;
 		   
 		   //send controlvalue to control corresponding to the current control grid and the column
-		   midiControlOut.sendController(new promidi.Controller(startingController + x + (bank * 7), controlValue));
+		   midiControlOut.sendController(new M4LController(startingController + x + (bank * 7), controlValue));
 	 }
 
 	public boolean bankHasValues(int bank) {
