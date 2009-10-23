@@ -89,7 +89,8 @@ public class SevenUpPanel extends JPanel implements ActionListener
     	}
     	
     	//Initialize Sevenup Applet
-        sevenUpApplet = new SevenUpApplet(sevenUpConnections, this);
+    	// @TODO get rid of UI
+        //sevenUpApplet = new SevenUpApplet(sevenUpConnections, this);
         
         super.add(sevenUpApplet);
         

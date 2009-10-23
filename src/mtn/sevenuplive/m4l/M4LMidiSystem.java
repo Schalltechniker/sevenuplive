@@ -17,7 +17,7 @@ public class M4LMidiSystem implements M4LMidi {
 	public static M4LMidi getInstance(processing.core.PApplet core) {
 		
 		//@TODO Not sure what we need to do with core yet
-		return instance;	
+		return getInstance();	
 	}
 
 	public void closePorts() {
@@ -26,12 +26,12 @@ public class M4LMidiSystem implements M4LMidi {
 
 	public String getInputDeviceName(int device) {
 		// TODO Auto-generated method stub
-		return null;
+		return "fakeDevice";
 	}
 
 	public String getOutputDeviceName(int device) {
 		// TODO Auto-generated method stub
-		return null;
+		return "fakeDevice";
 	}
 
 	public int numberOfInputDevices() {
@@ -46,12 +46,12 @@ public class M4LMidiSystem implements M4LMidi {
 
 	public M4LMidiIn getMidiIn(int ch, String deviceName) {
 		// TODO Auto-generated method stub
-		return null;
+		return new M4LMidiInInst();
 	}
 
 	public M4LMidiOut getMidiOut(int ch, String deviceName) {
 		// TODO Auto-generated method stub
-		return null;
+		return new M4LMidiOutInst();
 	}
 
 	public void printDevices() {
@@ -71,7 +71,7 @@ public class M4LMidiSystem implements M4LMidi {
 
 	public void plug(PApplet core, String event, int deviceIndex, int ch) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("Calling plug with event: " + event);
 	}
 	
 }

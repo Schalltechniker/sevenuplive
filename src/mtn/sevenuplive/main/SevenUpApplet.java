@@ -36,16 +36,14 @@ public class SevenUpApplet extends processing.core.PApplet
 	/** Dirty flag for changes to the patch */
 	private boolean dirty; 
 	
-	public SevenUpApplet(ConnectionSettings _sevenUpConnections, SevenUpPanel _parentPanel)
+	public SevenUpApplet(ConnectionSettings _sevenUpConnections)
 	{
 		sevenUpConnections = _sevenUpConnections;
-		parentPanel = _parentPanel;
 		init();
 	}
 	
 	public void setup()
 	{
-	   
 	   frameRate(35);
 	   size(300, 200);
 	   
