@@ -12,6 +12,7 @@ package mtn.sevenuplive.main;
 import mtn.sevenuplive.m4l.M4LMidi;
 import mtn.sevenuplive.m4l.M4LMidiSystem;
 import mtn.sevenuplive.m4l.Note;
+import mtn.sevenuplive.max.mxj.SevenUp4Live;
 import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.modes.MelodizerModel;
 import mtn.sevenuplive.scales.Scale;
@@ -29,7 +30,7 @@ public class SevenUpApplet extends processing.core.PApplet
 	private Scale monomeScale;
 	private M4LMidi midiIO;
 	private ConnectionSettings sevenUpConnections;
-	private SevenUpPanel parentPanel;
+	private SevenUp4Live parent;
 	
 	private int monomeType = MonomeUp.MONOME_64;
 	
@@ -100,7 +101,7 @@ public class SevenUpApplet extends processing.core.PApplet
 		   break;
 	   };
 	   
-	   m = new MonomeUp(x_grids, y_grids, sevenUpConnections, monomeScale, midiIO, parentPanel);
+	   m = new MonomeUp(x_grids, y_grids, sevenUpConnections, monomeScale, midiIO, this);
 	   m.lightsOff();
 	   this.online = false;
 	   

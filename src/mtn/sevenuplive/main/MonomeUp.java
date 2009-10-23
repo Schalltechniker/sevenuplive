@@ -39,7 +39,7 @@ import org.jdom.Element;
 
 public final class MonomeUp extends MonomeOSC implements MonomeListener {
 
-	private SevenUpPanel parentPanel;
+	private SevenUpApplet parent;
 	private ArrayList<Element> xmlPatches;
 	private int curPatchIndex=0;
 	private String patchTitle = "";
@@ -124,12 +124,12 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 
 	private DisplayGrid[] grids;
 
-	MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, M4LMidi _midiIO, SevenUpPanel _parentPanel) {
+	MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, M4LMidi _midiIO, SevenUpApplet _parent) {
 		super(x_grids, y_grids, _sevenUpConnections.oscPrefix, _sevenUpConnections.oscHostAddress, _sevenUpConnections.oscHostPort, _sevenUpConnections.oscListenPort);
 		sevenUpConnections = _sevenUpConnections;
 
 		xmlPatches = new ArrayList<Element>();
-		parentPanel = _parentPanel;
+		parent = _parent;
 
 		midiIO = _midiIO;
 
@@ -241,8 +241,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	public void monomePressed(int raw_x, int raw_y)
 	{
 		// Dirty flag for any action on a patch
-		if (!parentPanel.isDirty()) {
-			parentPanel.setDirty(true);
+		if (!parent.isDirty()) {
+			parent.setDirty(true);
 		}
 
 		GridCoordinateTarget targetd = Displays.translate(grids, raw_x, raw_y);
@@ -305,11 +305,11 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 		}
 		else if(noteOnPitch == E4)
 		{
-			parentPanel.loadPrevPatch();
+			parent.loadPrevPatch();
 		}
 		else if(noteOnPitch == F4)
 		{
-			parentPanel.loadNextPatch();
+			parent.loadNextPatch();
 		}
 		//Reset all modes
 		else if(noteOnPitch == FSHARP4)
