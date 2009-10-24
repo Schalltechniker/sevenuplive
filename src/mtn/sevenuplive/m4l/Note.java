@@ -1,28 +1,31 @@
 package mtn.sevenuplive.m4l;
 
 public class Note {
+	
+	private int pitch;
+	private int vel;
+	private int dur;
+	private int status;
 
 	public Note(int pitch, int vel, int dur) {
-		// @TODO 
+		this.pitch = pitch;
+		this.vel = vel;
+		this.dur = dur;
 	}
 	
 	public int getPitch(){ 
-		//@TODO
-		return 0;
+		return pitch;
 	}
 	
 	public int getVelocity() {
-		//@TODO
-		return 0;
+		return vel;
 	}
 	
 	public int getStatus() {
-		//@TODO
-		return 0;
+		return status;
 	}
 	
 	public int getLength() {
-		//@TODO
-		return 0;
+		return dur;
 	}
 }

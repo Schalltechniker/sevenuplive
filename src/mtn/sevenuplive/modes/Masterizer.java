@@ -275,21 +275,13 @@ public class Masterizer extends Mode {
 		
 	}
 	
-	/***
-	 * Handles the transport locator column that updates based on the location of the DAW
-	 * @param noteValue
-	 */
-	public void locatorEvent(int noteValue)
+	//@TODO does this event exist anymore?
+	public void locatorEventCSharp4()
 	{
-		//@TODO does this event exist anymore?
-		if(noteValue == MonomeUp.CSHARP4)
-		{
-			//Begin a record mode (length of record shows by speed of steps)
-			locatorMode = RECMODE;
-			locatorRows = new int[8];
-			locatorRows[0] = DisplayGrid.FASTBLINK;
-		}
-		
+		//Begin a record mode (length of record shows by speed of steps)
+		locatorMode = RECMODE;
+		locatorRows = new int[8];
+		locatorRows[0] = DisplayGrid.FASTBLINK;
 	}
 	
 	public void locatorEventDSharp4()

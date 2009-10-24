@@ -596,35 +596,6 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	// @TODO We need this connected still to receive external midi events
 	void noteOn(int noteOnPitch)
 	{
-		/*if (noteOnPitch == C7)
-		{
-			for (DisplayGrid grid : grids) {
-				grid.displayCursor();
-			}
-			// Make sure we only step once
-			allmodes.getSequencer().step();
-		}
-		else if(noteOnPitch == E7)
-		{
-			allmodes.getMelodizer1Model().heartbeat();
-			allmodes.getMelodizer2Model().heartbeat();
-		}
-		else if(noteOnPitch == F7)
-		{	
-			allmodes.getLoopRecorder().updateDisplayGrid();
-			allmodes.getLooper().step();
-			allmodes.getLoopRecorder().step();  
-		}
-		else if(noteOnPitch == C4 || noteOnPitch == CSHARP4 || noteOnPitch == DSHARP4)
-		{
-			if(noteOnPitch == C4)
-			{
-				allmodes.getMelodizer1Model().locatorEvent();
-				allmodes.getMelodizer2Model().locatorEvent();
-			}
-			allmodes.getMasterizer().locatorEvent(noteOnPitch);
-			allmodes.getMasterizer().updateDisplayGrid();
-		}*/
 		if(noteOnPitch == E4)
 		{
 			parent.loadPrevPatch();
@@ -653,13 +624,12 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 			int loopNum = noteOnPitch - G2;
 			AllModes.getInstance().getLooper().stopLoop(loopNum);
 		}
-	
 	}
 
 	//////////////////////////////
 	// SevenUpClock interface
 	
-	public void c4() {
+	public void sendBigTick() {
 		allmodes.getMelodizer1Model().locatorEvent();
 		allmodes.getMelodizer2Model().locatorEvent();
 		//@TODO clean this up
@@ -667,7 +637,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		allmodes.getMasterizer().updateDisplayGrid();
 	}
 
-	public void c7() {
+	public void pumpSequencerHeart() {
 		for (DisplayGrid grid : grids) {
 			grid.displayCursor();
 		}
@@ -675,21 +645,27 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		allmodes.getSequencer().step();
 	}
 
-	public void dSharp4() {
+	public void sendSmallTick() {
 		//@TODO clean up naming here
 		allmodes.getMasterizer().locatorEventDSharp4();
 		allmodes.getMasterizer().updateDisplayGrid();
 	}
+	
+	public void cSharp4() {
+		//@TODO clean up naming here
+		allmodes.getMasterizer().locatorEventCSharp4();
+		allmodes.getMasterizer().updateDisplayGrid();
+	}
 
-	public void e7() {
+	public void pumpMelodizerHeart() {
 		allmodes.getMelodizer1Model().heartbeat();
 		allmodes.getMelodizer2Model().heartbeat();
 	}
 
-	public void f7() {
+	public void pumpLooperHeart() {
 		allmodes.getLoopRecorder().updateDisplayGrid();
 		allmodes.getLooper().step();
 		allmodes.getLoopRecorder().step();  
 	}
-
+	
 }

@@ -82,23 +82,28 @@ public class SevenUp4Live extends MaxObject {
 				switch (i) {
 				case 0:
 					post("C4");
-					clock.c4();
+					if (clock != null)
+						clock.sendBigTick();
 					break;
 				case 1:
 					post("D#4");
-					clock.dSharp4();
+					if (clock != null)
+						clock.sendSmallTick();
 					break;
 				case 2:
 					post("C7");
-					clock.c7();
+					if (clock != null)
+						clock.pumpSequencerHeart();
 					break;
 				case 3:
-					post("E7");
-					clock.e7();
+					post("F7");
+					if (clock != null)
+						clock.pumpLooperHeart();
 					break;
 				case 4:
-					post("F7");
-					clock.f7();
+					post("E7");
+					if (clock != null)
+						clock.pumpMelodizerHeart();
 					break;
 				default:
 					post("Clock does not understand " + i);

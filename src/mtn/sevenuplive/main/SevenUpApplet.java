@@ -464,25 +464,29 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 		return dirty;
 	}
 
-	public void c4() {
-		m.c4();
+	public void sendBigTick() {
+		m.sendBigTick();
 	}
 
-	public void c7() {
-		m.c7();
+	public void pumpSequencerHeart() {
+		m.pumpSequencerHeart();
 	}
 
-	public void dSharp4() {
-		m.dSharp4();
-	}
-
-	public void e7() {
-		m.e7();	
-	}
-
-	public void f7() {
-		m.f7();
+	public void sendSmallTick() {
+		m.sendSmallTick();
 	}
 	
+	public void cSharp4() {
+		m.cSharp4();
+	}
+
+	public void pumpMelodizerHeart() {
+		m.pumpMelodizerHeart();	
+	}
+
+	public void pumpLooperHeart() {
+		m.pumpLooperHeart();
+	}
+
 }
 		
