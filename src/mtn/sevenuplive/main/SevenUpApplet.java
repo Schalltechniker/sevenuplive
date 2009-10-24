@@ -109,6 +109,9 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	   //This sets us up to be called with clock events
 	   SevenUp4Live.setClock(this);
 	   
+	   // Ch8 is the channel we listen for midi to control certain actions in SevenUp
+	   midiIO.plug(this, "noteOn", sevenUpConnections.midiInputDeviceIndex, 7);
+	   
 	   //Channels 1-7 used to listen to Clip Launch events.
 	   midiIO.plug(this, "noteOnCh1", sevenUpConnections.midiInputDeviceIndex, 0);
 	   midiIO.plug(this, "noteOnCh2", sevenUpConnections.midiInputDeviceIndex, 1);

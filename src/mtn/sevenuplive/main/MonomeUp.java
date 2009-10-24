@@ -1,5 +1,5 @@
 /**
- * SevenUp for Monome's 40h
+ * SevenUp for Monome
  * @author Adam Ribaudo
  * arribaud@gmail.com
  * 12/09/2007
