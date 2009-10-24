@@ -16,6 +16,7 @@ import jklabs.monomic.MonomeOSC;
 import mtn.sevenuplive.m4l.M4LMidi;
 import mtn.sevenuplive.m4l.M4LMidiOut;
 import mtn.sevenuplive.m4l.Note;
+import mtn.sevenuplive.max.mxj.SevenUpClock;
 import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.modes.Controller;
 import mtn.sevenuplive.modes.DisplayGrid;
@@ -37,7 +38,7 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 
-public final class MonomeUp extends MonomeOSC implements MonomeListener {
+public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUpClock {
 
 	private SevenUpApplet parent;
 	private ArrayList<Element> xmlPatches;
@@ -266,71 +267,6 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 		//Does pressing stop send a midi note?
 		//System.out.println("CLIP LAUNCH PITCH: " + pitch + " VEL: " + vel + " CHAN: " + channel);
 		allmodes.getMelodizer1Model().clipLaunch(pitch, vel, channel);
-	}
-
-	/**
-	 * Receive notes from Live that tell SevenUp where the beat is
-	 * @param note
-	 */
-	void noteOn(int noteOnPitch)
-	{
-		if (noteOnPitch == C7)
-		{
-			for (DisplayGrid grid : grids) {
-				grid.displayCursor();
-			}
-			// Make sure we only step once
-			allmodes.getSequencer().step();
-		}
-		else if(noteOnPitch == E7)
-		{
-			allmodes.getMelodizer1Model().heartbeat();
-			allmodes.getMelodizer2Model().heartbeat();
-		}
-		else if(noteOnPitch == F7)
-		{	
-			allmodes.getLoopRecorder().updateDisplayGrid();
-			allmodes.getLooper().step();
-			allmodes.getLoopRecorder().step();  
-		}
-		else if(noteOnPitch == C4 || noteOnPitch == CSHARP4 || noteOnPitch == DSHARP4)
-		{
-			if(noteOnPitch == C4)
-			{
-				allmodes.getMelodizer1Model().locatorEvent();
-				allmodes.getMelodizer2Model().locatorEvent();
-			}
-			allmodes.getMasterizer().locatorEvent(noteOnPitch);
-			allmodes.getMasterizer().updateDisplayGrid();
-		}
-		else if(noteOnPitch == E4)
-		{
-			parent.loadPrevPatch();
-		}
-		else if(noteOnPitch == F4)
-		{
-			parent.loadNextPatch();
-		}
-		//Reset all modes
-		else if(noteOnPitch == FSHARP4)
-		{
-			allmodes.getSequencer().reset();
-			allmodes.getLooper().reset();
-			allmodes.getMelodizer1Model().reset();
-			allmodes.getMelodizer2Model().reset();
-		}
-		//Start loops
-		else if(noteOnPitch >= C2 && noteOnPitch < G2){
-			int loopNum = noteOnPitch - C2;
-			AllModes.getInstance().getLooper().playLoop(loopNum, 0);
-			AllModes.getInstance().getLooper().stepOneLoop(loopNum);
-
-		}
-		//Stop loops
-		else if(noteOnPitch >= G2 && noteOnPitch <= CSHARP3){
-			int loopNum = noteOnPitch - G2;
-			AllModes.getInstance().getLooper().stopLoop(loopNum);
-		}
 	}
 
 	/***
@@ -650,6 +586,110 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 
 		allmodes.getPatternizerModel().curPatternRow = 0;
 		allmodes.getSequencer().curSeqRow = 0;
+	}
+	
+	/**
+	 * Receive notes from Live that tell SevenUp where the beat is
+	 * @param note
+	 */
+	
+	// @TODO We need this connected still to receive external midi events
+	void noteOn(int noteOnPitch)
+	{
+		/*if (noteOnPitch == C7)
+		{
+			for (DisplayGrid grid : grids) {
+				grid.displayCursor();
+			}
+			// Make sure we only step once
+			allmodes.getSequencer().step();
+		}
+		else if(noteOnPitch == E7)
+		{
+			allmodes.getMelodizer1Model().heartbeat();
+			allmodes.getMelodizer2Model().heartbeat();
+		}
+		else if(noteOnPitch == F7)
+		{	
+			allmodes.getLoopRecorder().updateDisplayGrid();
+			allmodes.getLooper().step();
+			allmodes.getLoopRecorder().step();  
+		}
+		else if(noteOnPitch == C4 || noteOnPitch == CSHARP4 || noteOnPitch == DSHARP4)
+		{
+			if(noteOnPitch == C4)
+			{
+				allmodes.getMelodizer1Model().locatorEvent();
+				allmodes.getMelodizer2Model().locatorEvent();
+			}
+			allmodes.getMasterizer().locatorEvent(noteOnPitch);
+			allmodes.getMasterizer().updateDisplayGrid();
+		}*/
+		if(noteOnPitch == E4)
+		{
+			parent.loadPrevPatch();
+		}
+		else if(noteOnPitch == F4)
+		{
+			parent.loadNextPatch();
+		}
+		//Reset all modes
+		else if(noteOnPitch == FSHARP4)
+		{
+			allmodes.getSequencer().reset();
+			allmodes.getLooper().reset();
+			allmodes.getMelodizer1Model().reset();
+			allmodes.getMelodizer2Model().reset();
+		}
+		//Start loops
+		else if(noteOnPitch >= C2 && noteOnPitch < G2){
+			int loopNum = noteOnPitch - C2;
+			AllModes.getInstance().getLooper().playLoop(loopNum, 0);
+			AllModes.getInstance().getLooper().stepOneLoop(loopNum);
+
+		}
+		//Stop loops
+		else if(noteOnPitch >= G2 && noteOnPitch <= CSHARP3){
+			int loopNum = noteOnPitch - G2;
+			AllModes.getInstance().getLooper().stopLoop(loopNum);
+		}
+	
+	}
+
+	//////////////////////////////
+	// SevenUpClock interface
+	
+	public void c4() {
+		allmodes.getMelodizer1Model().locatorEvent();
+		allmodes.getMelodizer2Model().locatorEvent();
+		//@TODO clean this up
+		allmodes.getMasterizer().locatorEventC4();
+		allmodes.getMasterizer().updateDisplayGrid();
+	}
+
+	public void c7() {
+		for (DisplayGrid grid : grids) {
+			grid.displayCursor();
+		}
+		// Make sure we only step once
+		allmodes.getSequencer().step();
+	}
+
+	public void dSharp4() {
+		//@TODO clean up naming here
+		allmodes.getMasterizer().locatorEventDSharp4();
+		allmodes.getMasterizer().updateDisplayGrid();
+	}
+
+	public void e7() {
+		allmodes.getMelodizer1Model().heartbeat();
+		allmodes.getMelodizer2Model().heartbeat();
+	}
+
+	public void f7() {
+		allmodes.getLoopRecorder().updateDisplayGrid();
+		allmodes.getLooper().step();
+		allmodes.getLoopRecorder().step();  
 	}
 
 }

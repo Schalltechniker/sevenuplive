@@ -13,6 +13,7 @@ import mtn.sevenuplive.m4l.M4LMidi;
 import mtn.sevenuplive.m4l.M4LMidiSystem;
 import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.max.mxj.SevenUp4Live;
+import mtn.sevenuplive.max.mxj.SevenUpClock;
 import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.modes.MelodizerModel;
 import mtn.sevenuplive.scales.Scale;
@@ -22,7 +23,7 @@ import org.jdom.Document;
 
 import proxml.XMLInOut;
 
-public class SevenUpApplet extends processing.core.PApplet
+public class SevenUpApplet extends processing.core.PApplet implements SevenUpClock
 {
 	private static final long serialVersionUID = 1L;
 	private MonomeUp m;
@@ -105,9 +106,8 @@ public class SevenUpApplet extends processing.core.PApplet
 	   m.lightsOff();
 	   this.online = false;
 	   
-	   //Set up input devices for channels 1-8
-	   //MIDI Clock is set to channel 8 as to not interfere with Melodizer Clip launching
-	   midiIO.plug(this, "noteOn", sevenUpConnections.midiInputDeviceIndex, 7);
+	   //This sets us up to be called with clock events
+	   SevenUp4Live.setClock(this);
 	   
 	   //Channels 1-7 used to listen to Clip Launch events.
 	   midiIO.plug(this, "noteOnCh1", sevenUpConnections.midiInputDeviceIndex, 0);
@@ -462,6 +462,26 @@ public class SevenUpApplet extends processing.core.PApplet
 
 	public boolean isDirty() {
 		return dirty;
+	}
+
+	public void c4() {
+		m.c4();
+	}
+
+	public void c7() {
+		m.c7();
+	}
+
+	public void dSharp4() {
+		m.dSharp4();
+	}
+
+	public void e7() {
+		m.e7();	
+	}
+
+	public void f7() {
+		m.f7();
 	}
 	
 }

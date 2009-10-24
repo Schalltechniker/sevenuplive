@@ -10,9 +10,11 @@ import com.cycling74.max.MaxObject;
 public class SevenUp4Live extends MaxObject {
 	
 	private SevenUpApplet applet;
+	private static SevenUpClock clock;
 	
 	private static final String[] INLET_ASSIST = new String[]{
-		"inlet 1 help"
+		"messages",
+		"clock in (0=C4,1=D#4,2=C7,3=E7,4=F7)"
 	};
 	private static final String[] OUTLET_ASSIST = new String[]{
 		"outlet 1 help"
@@ -20,12 +22,16 @@ public class SevenUp4Live extends MaxObject {
 	
 	public SevenUp4Live(Atom[] args)
 	{
-		declareInlets(new int[]{DataTypes.ALL});
+		declareInlets(new int[]{DataTypes.ALL, DataTypes.INT});
 		declareOutlets(new int[]{DataTypes.ALL});
 		
 		setInletAssist(INLET_ASSIST);
 		setOutletAssist(OUTLET_ASSIST);
 
+	}
+	
+	public static void setClock(SevenUpClock clock) {
+		SevenUp4Live.clock = clock;
 	}
     
 	public void bang() {
@@ -33,6 +39,9 @@ public class SevenUp4Live extends MaxObject {
 		
 	}
     
+	/**
+	 * Initializes SevenUp with the current connection settings and starts it's heart 
+	 */
 	public void initialize() {
 		if (applet != null) {
 			post("7up is already initialized...");
@@ -49,6 +58,9 @@ public class SevenUp4Live extends MaxObject {
 		}
 	}
     
+	/**
+	 * Shuts down SevenUps heart and releases the OSC ports 
+	 */
 	public void shutdown() {
 		if (applet == null) {
 			post("Cannot shutdown 7up since has not been initialized yet");
@@ -62,6 +74,38 @@ public class SevenUp4Live extends MaxObject {
     
 	public void inlet(int i)
 	{
+		int inletNum = getInlet();; 
+		//post("I got an integer in inlet "+ inletNum);
+		
+		switch (inletNum) {
+			case 1:
+				switch (i) {
+				case 0:
+					post("C4");
+					clock.c4();
+					break;
+				case 1:
+					post("D#4");
+					clock.dSharp4();
+					break;
+				case 2:
+					post("C7");
+					clock.c7();
+					break;
+				case 3:
+					post("E7");
+					clock.e7();
+					break;
+				case 4:
+					post("F7");
+					clock.f7();
+					break;
+				default:
+					post("Clock does not understand " + i);
+				}
+				break;
+			default:	
+		}
 	}
     
 	public void inlet(float f)

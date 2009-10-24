@@ -281,64 +281,66 @@ public class Masterizer extends Mode {
 	 */
 	public void locatorEvent(int noteValue)
 	{
-		if(noteValue == MonomeUp.C4)
-		{
-			//Begin play for locator mode
-			locatorMode = PLAYMODE;
-			locatorRows = new int[8];
-			locatorRows[0] = DisplayGrid.SOLID;
-			
-			//If cued, trigger melodizer start or stop
-			for(int i=0;i<8;i++)
-			{
-				if(mel1Cue[i] == true)
-				{
-					if(AllModes.melody1Model.getSeqStatus(i) == MonomeUp.PLAYING)
-						stopMel1Seq(i);
-					else
-						AllModes.melody1Model.playSeq(i);
-					mel1Cue[i]=false;
-					
-				}
-			
-				if(mel2Cue[i] == true)
-				{
-					if(AllModes.melody2Model.getSeqStatus(i) == MonomeUp.PLAYING)
-						stopMel2Seq(i);
-					else
-						AllModes.melody2Model.playSeq(i);
-					
-					mel2Cue[i] = false;
-				}
-			}
-		
-			
-		}
-		else if(noteValue == MonomeUp.CSHARP4)
+		//@TODO does this event exist anymore?
+		if(noteValue == MonomeUp.CSHARP4)
 		{
 			//Begin a record mode (length of record shows by speed of steps)
 			locatorMode = RECMODE;
 			locatorRows = new int[8];
 			locatorRows[0] = DisplayGrid.FASTBLINK;
 		}
-		else if(noteValue == MonomeUp.DSHARP4)
+		
+	}
+	
+	public void locatorEventDSharp4()
+	{
+		int currentStep = -1;
+		
+		//Step in current mode
+		//Find the current step
+		for(int i =0; i<locatorRows.length;i++)
+			if(locatorRows[i]!=DisplayGrid.OFF)
+				currentStep = i;
+		
+		//Only if the locator knows where the current step is do we step forward
+		if(currentStep > -1)
+		{	
+			locatorRows = new int[8];
+			if(locatorMode == PLAYMODE)
+				locatorRows[(currentStep + 1) % 8] = DisplayGrid.SOLID;
+			else if(locatorMode == RECMODE)
+				locatorRows[(currentStep + 1) % 8] = DisplayGrid.FASTBLINK;
+		}
+	}
+	
+	public void locatorEventC4()
+	{
+		//Begin play for locator mode
+		locatorMode = PLAYMODE;
+		locatorRows = new int[8];
+		locatorRows[0] = DisplayGrid.SOLID;
+		
+		//If cued, trigger melodizer start or stop
+		for(int i=0;i<8;i++)
 		{
-			int currentStep = -1;
-			
-			//Step in current mode
-			//Find the current step
-			for(int i =0; i<locatorRows.length;i++)
-				if(locatorRows[i]!=DisplayGrid.OFF)
-					currentStep = i;
-			
-			//Only if the locator knows where the current step is do we step forward
-			if(currentStep > -1)
-			{	
-				locatorRows = new int[8];
-				if(locatorMode == PLAYMODE)
-					locatorRows[(currentStep + 1) % 8] = DisplayGrid.SOLID;
-				else if(locatorMode == RECMODE)
-					locatorRows[(currentStep + 1) % 8] = DisplayGrid.FASTBLINK;
+			if(mel1Cue[i] == true)
+			{
+				if(AllModes.melody1Model.getSeqStatus(i) == MonomeUp.PLAYING)
+					stopMel1Seq(i);
+				else
+					AllModes.melody1Model.playSeq(i);
+				mel1Cue[i]=false;
+				
+			}
+		
+			if(mel2Cue[i] == true)
+			{
+				if(AllModes.melody2Model.getSeqStatus(i) == MonomeUp.PLAYING)
+					stopMel2Seq(i);
+				else
+					AllModes.melody2Model.playSeq(i);
+				
+				mel2Cue[i] = false;
 			}
 		}
 	}
