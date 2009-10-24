@@ -1,5 +1,7 @@
 package mtn.sevenuplive.m4l;
 
+import java.util.HashMap;
+
 import processing.core.PApplet;
 
 public class M4LMidiSystem implements M4LMidi {
@@ -14,6 +16,12 @@ public class M4LMidiSystem implements M4LMidi {
 		return instance;	
 	}
 	
+	public enum eSevenUp4OutputDevices {Melodizer1, Melodizer2, Stepper, Looper};
+	public enum eSevenUp4InputDevices {SevenUpMidiControl};
+	
+	private HashMap<Integer, M4LMidiIn> inputDeviceMap = new HashMap<Integer, M4LMidiIn>();
+	private HashMap<Integer, M4LMidiOut> outputDeviceMap = new HashMap<Integer, M4LMidiOut>();
+	
 	public static M4LMidi getInstance(processing.core.PApplet core) {
 		
 		//@TODO Not sure what we need to do with core yet
@@ -25,53 +33,63 @@ public class M4LMidiSystem implements M4LMidi {
 	}
 
 	public String getInputDeviceName(int device) {
-		// TODO Auto-generated method stub
-		return "fakeDevice";
+		if (eSevenUp4InputDevices.values().length <= device)
+			return null;
+		
+		return (eSevenUp4InputDevices.values())[device].toString();
 	}
 
 	public String getOutputDeviceName(int device) {
-		// TODO Auto-generated method stub
-		return "fakeDevice";
+		if (eSevenUp4InputDevices.values().length <= device)
+			return null;
+		
+		return (eSevenUp4InputDevices.values())[device].toString();
 	}
 
 	public int numberOfInputDevices() {
-		// TODO Auto-generated method stub
-		return 0;
+		return eSevenUp4InputDevices.values().length;
 	}
 
 	public int numberOfOutputDevices() {
-		// TODO Auto-generated method stub
-		return 0;
+		return eSevenUp4OutputDevices.values().length;
 	}
 
 	public M4LMidiIn getMidiIn(int ch, String deviceName) {
-		// TODO Auto-generated method stub
-		return new M4LMidiInInst();
+		return inputDeviceMap.get(ch);
 	}
 
 	public M4LMidiOut getMidiOut(int ch, String deviceName) {
-		// TODO Auto-generated method stub
-		return new M4LMidiOutInst();
+		M4LMidiOut device = outputDeviceMap.get(ch);
+		
+		if (device != null)
+			return device;
+		
+		device = new M4LForwardingMidiOutPort(ch, null);
+		outputDeviceMap.put(ch, device);
+		return device;
 	}
 
 	public void printDevices() {
-		// TODO Auto-generated method stub
-		
+		for (eSevenUp4OutputDevices device: eSevenUp4OutputDevices.values()) {
+			System.out.println(device);
+		}
+		for (eSevenUp4InputDevices device: eSevenUp4InputDevices.values()) {
+			System.out.println(device);
+		}
 	}
 
 	public void closeInput(int deviceIndex) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void closeOutputs() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void plug(PApplet core, String event, int deviceIndex, int ch) {
-		// TODO Auto-generated method stub
-		System.out.println("Calling plug with event: " + event);
+		// @NOTE we don't use deviceIndex
+		M4LMidiIn device = new M4LForwardingMidiInPort(ch, event, core);
+		inputDeviceMap.put(ch, device);
 	}
 	
 }
