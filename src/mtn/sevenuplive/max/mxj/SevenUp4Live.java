@@ -43,31 +43,14 @@ public class SevenUp4Live extends MaxObject {
 			post("Shutting down old instance...");
 			instance.shutdown();
 			post("Old instance shutdown");
-			this.clock = instance.clock;
-			this.applet = instance.applet;
-			this.melodizer1 = instance.melodizer1;
-			this.melodizer2 = instance.melodizer2;
-			
-			// Disconnect old one
-			instance.clock = null;
-			instance.applet = null;
-			instance.melodizer1 = null;
-			instance.melodizer2 = null;
-			
-			for (int i = 0; i < 7; i++) {
-				this.melodizer1[i].setApp(this);
-				this.melodizer2[i].setApp(this);
-			}
-			post("Transfer complete");
-		} else {
-			init();
-		}
-		
+		} 
+		init();
 		instance = this;	
+		post("New 7up instance created");
 	}
 	
 	protected void loadbang() {
-		if (applet != null) {
+		if (instance.applet != null) {
 			instance.applet.stop();
 			instance.applet.teardown();
 		}
@@ -107,21 +90,21 @@ public class SevenUp4Live extends MaxObject {
 	 * Initializes SevenUp with the current connection settings and starts it's heart 
 	 */
 	public void initialize() {
-		if (instance.applet != null) {
-			if (instance.applet.isRunning()) {
+		if (applet != null) {
+			if (applet.isRunning()) {
 				post("7up is already initialized...");
 			} else {
 				ConnectionSettings settings = new ConnectionSettings();
-				instance.applet = new SevenUpApplet(settings);
-				instance.applet.setVisible(false);
+				applet = new SevenUpApplet(settings);
+				applet.setVisible(false);
 				post("7up started");
 			}
 		} else {
 			post("Initializing 7up heart...");
 			
 			ConnectionSettings settings = new ConnectionSettings();
-			instance.applet = new SevenUpApplet(settings);
-			instance.applet.setVisible(false);
+			applet = new SevenUpApplet(settings);
+			applet.setVisible(false);
 			post("7up started");
 		}
 	}
@@ -134,6 +117,7 @@ public class SevenUp4Live extends MaxObject {
 			post("Cannot shutdown 7up since has not been initialized yet");
 		} else {
 			post("Shutting down 7up...");
+			instance.applet.stop();
 			instance.applet.teardown();
 			post("7up is shutdown");
 		}
@@ -149,28 +133,28 @@ public class SevenUp4Live extends MaxObject {
 				switch (i) {
 				case 0:
 					//post("C4");
-					if (instance.clock != null)
-						instance.clock.sendBigTick();
+					if (clock != null)
+						clock.sendBigTick();
 					break;
 				case 1:
 					//post("D#4");
-					if (instance.clock != null)
-						instance.clock.sendSmallTick();
+					if (clock != null)
+						clock.sendSmallTick();
 					break;
 				case 2:
 					//post("C7");
-					if (instance.clock != null)
-						instance.clock.pumpSequencerHeart();
+					if (clock != null)
+						clock.pumpSequencerHeart();
 					break;
 				case 3:
 					//post("F7");
-					if (instance.clock != null)
-						instance.clock.pumpLooperHeart();
+					if (clock != null)
+						clock.pumpLooperHeart();
 					break;
 				case 4:
 					//post("E7");
-					if (instance.clock != null)
-						instance.clock.pumpMelodizerHeart();
+					if (clock != null)
+						clock.pumpMelodizerHeart();
 					break;
 				default:
 					post("Clock does not understand " + i);
