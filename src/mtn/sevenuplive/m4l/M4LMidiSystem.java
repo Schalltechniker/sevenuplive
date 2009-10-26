@@ -22,8 +22,8 @@ public class M4LMidiSystem implements M4LMidi {
 	public enum eSevenUp4OutputDevices {Melodizer1, Melodizer2, Stepper, Looper};
 	public enum eSevenUp4InputDevices {SevenUpMidiControl};
 	
-	private HashMap<Integer, M4LMidiIn> inputDeviceMap = new HashMap<Integer, M4LMidiIn>();
-	private HashMap<Integer, M4LMidiOut> outputDeviceMap = new HashMap<Integer, M4LMidiOut>();
+	private HashMap<String, HashMap<Integer, M4LMidiIn>> inputDeviceMap = new HashMap<String, HashMap<Integer, M4LMidiIn>>();
+	private HashMap<String, HashMap<Integer, M4LMidiOut>> outputDeviceMap = new HashMap<String, HashMap<Integer, M4LMidiOut>>();
 	
 	public static void init(SevenUp4Live app) {
 		M4LMidiSystem.app = app;
@@ -56,11 +56,22 @@ public class M4LMidiSystem implements M4LMidi {
 	}
 
 	public M4LMidiIn getMidiIn(int ch, String deviceName) {
-		return inputDeviceMap.get(ch);
+		HashMap<Integer, M4LMidiIn> map = inputDeviceMap.get(deviceName);
+		if (map == null) {
+			map = new HashMap<Integer, M4LMidiIn>();
+			inputDeviceMap.put(deviceName, map);
+		}
+		return map.get(ch);
 	}
 
 	public M4LMidiOut getMidiOut(int ch, String deviceName) {
-		M4LMidiOut device = outputDeviceMap.get(ch);
+		HashMap<Integer, M4LMidiOut> map = outputDeviceMap.get(deviceName);
+		if (map == null) {
+			map = new HashMap<Integer, M4LMidiOut>();
+			outputDeviceMap.put(deviceName, map);
+		}
+		
+		M4LMidiOut device = map.get(ch);
 		
 		if (device != null)
 			return device;
@@ -78,7 +89,7 @@ public class M4LMidiSystem implements M4LMidi {
 		if (device == null)
 			device = new M4LForwardingMidiOutPort(null);
 		
-		outputDeviceMap.put(ch, device);
+		map.put(ch, device);
 		return device;
 	}
 
@@ -91,7 +102,7 @@ public class M4LMidiSystem implements M4LMidi {
 		}
 	}
 
-	public void closeInput(int deviceIndex) {
+	public void closeInput(String deviceName) {
 		// TODO Auto-generated method stub
 	}
 
@@ -99,10 +110,14 @@ public class M4LMidiSystem implements M4LMidi {
 		// TODO Auto-generated method stub
 	}
 
-	public void plug(PApplet core, String event, int deviceIndex, int ch) {
-		// @NOTE we don't use deviceIndex
+	public void plug(PApplet core, String event, String deviceName, int ch) {
 		M4LMidiIn device = new M4LForwardingMidiInPort(ch, event, core);
-		inputDeviceMap.put(ch, device);
+		HashMap<Integer, M4LMidiIn> map = inputDeviceMap.get(deviceName);
+		if (map == null) {
+			map = new HashMap<Integer, M4LMidiIn>();
+			inputDeviceMap.put(deviceName, map);
+		}
+		map.put(ch, device);
 	}
 	
 }

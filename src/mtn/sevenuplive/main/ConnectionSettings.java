@@ -9,7 +9,6 @@ public class ConnectionSettings {
 	public int oscListenPort = 8000;
 	public String oscHostAddress = "127.0.0.1";
 	public String midiInputDeviceName = M4LMidiSystem.eSevenUp4InputDevices.SevenUpMidiControl.toString();
-	public int midiInputDeviceIndex;
 	public String stepperOutputDeviceName = M4LMidiSystem.eSevenUp4OutputDevices.Stepper.toString();
 	public String looperOuputDeviceName= M4LMidiSystem.eSevenUp4OutputDevices.Looper.toString();
 	public String melod1OutputDeviceName = M4LMidiSystem.eSevenUp4OutputDevices.Melodizer1.toString();

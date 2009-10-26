@@ -17,9 +17,9 @@ public interface M4LMidi {
 	
 	public M4LMidiIn getMidiIn(int ch, String deviceName);
 	
-	public void plug(processing.core.PApplet core, String event, int deviceIndex, int ch);
+	public void plug(processing.core.PApplet core, String event, String deviceName, int ch);
 	
-	public void closeInput(int deviceIndex);
+	public void closeInput(String deviceName);
 	
 	public void closeOutputs();
 	

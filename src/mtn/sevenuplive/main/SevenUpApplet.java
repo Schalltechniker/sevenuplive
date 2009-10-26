@@ -113,25 +113,25 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	   SevenUp4Live.setClock(this);
 	   
 	   // Ch8 is the channel we listen for midi to control certain actions in SevenUp
-	   midiIO.plug(this, "noteOn", sevenUpConnections.midiInputDeviceIndex, 7);
+	   midiIO.plug(this, "noteOn", sevenUpConnections.midiInputDeviceName, 7);
 	   
 	   //Channels 1-7 used to listen to Clip Launch events.
-	   midiIO.plug(this, "noteOnCh1", sevenUpConnections.midiInputDeviceIndex, 0);
-	   midiIO.plug(this, "noteOnCh2", sevenUpConnections.midiInputDeviceIndex, 1);
-	   midiIO.plug(this, "noteOnCh3", sevenUpConnections.midiInputDeviceIndex, 2);
-	   midiIO.plug(this, "noteOnCh4", sevenUpConnections.midiInputDeviceIndex, 3);
-	   midiIO.plug(this, "noteOnCh5", sevenUpConnections.midiInputDeviceIndex, 4);
-	   midiIO.plug(this, "noteOnCh6", sevenUpConnections.midiInputDeviceIndex, 5);
-	   midiIO.plug(this, "noteOnCh7", sevenUpConnections.midiInputDeviceIndex, 6);
+	   midiIO.plug(this, "noteOnCh1", sevenUpConnections.midiInputDeviceName, 0);
+	   midiIO.plug(this, "noteOnCh2", sevenUpConnections.midiInputDeviceName, 1);
+	   midiIO.plug(this, "noteOnCh3", sevenUpConnections.midiInputDeviceName, 2);
+	   midiIO.plug(this, "noteOnCh4", sevenUpConnections.midiInputDeviceName, 3);
+	   midiIO.plug(this, "noteOnCh5", sevenUpConnections.midiInputDeviceName, 4);
+	   midiIO.plug(this, "noteOnCh6", sevenUpConnections.midiInputDeviceName, 5);
+	   midiIO.plug(this, "noteOnCh7", sevenUpConnections.midiInputDeviceName, 6);
 	   
 	   //Channels 9-15 used to listen to external instruments for melodizer
-	   midiIO.plug(this, "noteOnCh9", sevenUpConnections.midiInputDeviceIndex, 8);
-	   midiIO.plug(this, "noteOnCh10", sevenUpConnections.midiInputDeviceIndex, 9);
-	   midiIO.plug(this, "noteOnCh11", sevenUpConnections.midiInputDeviceIndex, 10);
-	   midiIO.plug(this, "noteOnCh12", sevenUpConnections.midiInputDeviceIndex, 11);
-	   midiIO.plug(this, "noteOnCh13", sevenUpConnections.midiInputDeviceIndex, 12);
-	   midiIO.plug(this, "noteOnCh14", sevenUpConnections.midiInputDeviceIndex, 13);
-	   midiIO.plug(this, "noteOnCh15", sevenUpConnections.midiInputDeviceIndex, 14);
+	   midiIO.plug(this, "noteOnCh9", sevenUpConnections.midiInputDeviceName, 8);
+	   midiIO.plug(this, "noteOnCh10", sevenUpConnections.midiInputDeviceName, 9);
+	   midiIO.plug(this, "noteOnCh11", sevenUpConnections.midiInputDeviceName, 10);
+	   midiIO.plug(this, "noteOnCh12", sevenUpConnections.midiInputDeviceName, 11);
+	   midiIO.plug(this, "noteOnCh13", sevenUpConnections.midiInputDeviceName, 12);
+	   midiIO.plug(this, "noteOnCh14", sevenUpConnections.midiInputDeviceName, 13);
+	   midiIO.plug(this, "noteOnCh15", sevenUpConnections.midiInputDeviceName, 14);
 	   
 	   isRunning = true;
 	}
@@ -348,12 +348,12 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	public void quit()
 	{
 		//Redundant
-		midiIO.closeInput(sevenUpConnections.midiInputDeviceIndex);
+		midiIO.closeInput(sevenUpConnections.midiInputDeviceName);
 		midiIO.closeOutputs();
 	}
 
 	public void close() {
-		midiIO.closeInput(sevenUpConnections.midiInputDeviceIndex);
+		midiIO.closeInput(sevenUpConnections.midiInputDeviceName);
 		midiIO.closeOutputs();
 	}
 
