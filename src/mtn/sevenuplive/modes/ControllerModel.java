@@ -1,23 +1,14 @@
 package mtn.sevenuplive.modes;
-import java.util.ArrayList;
-import java.util.List;
-
-import mtn.sevenuplive.main.MonomeUp;
-
-import org.jdom.Attribute;
-import org.jdom.Element;
-
 import promidi.MidiOut;
 
-public class Controller extends Mode {
+public class ControllerModel extends Mode {
 
-	private CtrlSequence ctrlSequences[];
-	private int curBank = 0;
 	private MidiOut midiControlOut;
-	private Integer controls[][];
+	public Integer controls[][];
 	private Integer startingController;
 	
-	public Controller(int _navRow, MidiOut _midiControlOut, int _startingController, int grid_width, int grid_height) {
+	
+	public ControllerModel(int _navRow, MidiOut _midiControlOut, int _startingController, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
 		midiControlOut = _midiControlOut;
 		controls = new Integer[7][7];
@@ -27,30 +18,8 @@ public class Controller extends Mode {
 		for(int j=0;j<7;j++)
 			for(int i=0;i<7;i++)
 				controls[j][i] = -1;
-	     
-	    updateDisplayGrid();
-	    updateNavGrid();
 	}
 	
-	private void updateDisplayGrid()
-	{
-		super.clearDisplayGrid();
-		//Loop through the controls in a control bank and set the y coordinate on the display grid
-		for(int i=0;i<7;i++)
-		{
-			//Only set the display if the control is > 0
-			if(controls[curBank][i] > 0)
-				for(int j=7;j>=8-controls[curBank][i];j--)
-					displayGrid[i][j] = DisplayGrid.SOLID;
-		}
-	}
-	
-	private void updateNavGrid()
-	{
-		clearNavGrid();
-		navGrid[myNavRow] = DisplayGrid.SOLID;
-		navGrid[getYCoordFromSubMenu(curBank)] = DisplayGrid.FASTBLINK;
-	}
 	
 	/*
 	 * [8] //y=0
@@ -64,18 +33,8 @@ public class Controller extends Mode {
 	 * [0] // Send control value = 0
 	 * [-1] // Disabled, do not send a control value
 	 */
-	public void press(int x, int y)
+	public void press(int x, int y, int curBank)
 	{
-		if(x == DisplayGrid.NAVCOL)
-			pressNavCol(y);
-		else
-			pressDisplay(x,y);
-		
-		updateDisplayGrid();
-		updateNavGrid();
-	}
-	
-	private void pressDisplay(int x, int y) {
 		   //If they hit the bottom row twice, clear the column
 	       if(y==7 && controls[curBank][x] == 1)
 	       {
@@ -87,19 +46,11 @@ public class Controller extends Mode {
 	    	   controls[curBank][x] = 8-y;
 	       }
 	       
-	       updateDisplayGrid();
-	       
 	       //Send the control value for the previous selected column
 	       sendMidiControls(curBank, x);
-	}
-
-	private void pressNavCol(int y) {
-		//If changing to a different sequence
-		if(curBank != getSubMenuFromYCoord(y))
-			curBank = getSubMenuFromYCoord(y);
 
 	}
-	
+
 	private void sendMidiControls(int bank, int x)
 	 {
 		   int controlValue = controls[bank][x] * 16;

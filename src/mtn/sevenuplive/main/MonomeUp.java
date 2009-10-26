@@ -14,7 +14,8 @@ import java.util.List;
 import jklabs.monomic.MonomeListener;
 import jklabs.monomic.MonomeOSC;
 import mtn.sevenuplive.modes.AllModes;
-import mtn.sevenuplive.modes.Controller;
+import mtn.sevenuplive.modes.ControllerModel;
+import mtn.sevenuplive.modes.ControllerView;
 import mtn.sevenuplive.modes.DisplayGrid;
 import mtn.sevenuplive.modes.Displays;
 import mtn.sevenuplive.modes.LoopRecorder;
@@ -139,10 +140,13 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 
 		int totalGrids = x_grids * y_grids;
 
-		//Create the same number of views as there are grids
 		PatternizerModel patternizerModel = new PatternizerModel(ModeConstants.PATTERN_MODE, midiSampleOut, GRID_WIDTH, GRID_HEIGHT);
+		ControllerModel controllerModel = new ControllerModel(ModeConstants.CONTROL_MODE, midiSampleOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT);
+		//Create the same number of views as there are grids
 		PatternizerView[] patternizerViews = new PatternizerView[totalGrids];
 
+		ControllerView[] controllerViews = new ControllerView[totalGrids];
+		
 		MelodizerModel melodyModel1 = new MelodizerModel(ModeConstants.MELODY_MODE,midiMelodyOut, GRID_WIDTH, GRID_HEIGHT); // Melodizer 1 
 		MelodizerModel melodyModel2 = new MelodizerModel(ModeConstants.MELODY2_MODE,midiMelody2Out, GRID_WIDTH, GRID_HEIGHT); // Melodizer 2
 
@@ -152,12 +156,13 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 		for(int i=0;i<patternizerViews.length;i++)
 		{
 			patternizerViews[i] = new PatternizerView(ModeConstants.PATTERN_MODE, GRID_WIDTH, GRID_HEIGHT, patternizerModel);
+			controllerViews[i] = new ControllerView(ModeConstants.CONTROL_MODE, GRID_WIDTH, GRID_HEIGHT, controllerModel);
 			melodizerViews1[i] = new MelodizerView(ModeConstants.MELODY_MODE, GRID_WIDTH, GRID_HEIGHT, melodyModel1);
 			melodizerViews2[i] = new MelodizerView(ModeConstants.MELODY2_MODE, GRID_WIDTH, GRID_HEIGHT, melodyModel2);
 		}
 
 		allmodes = new AllModes(patternizerModel, patternizerViews, 
-				new Controller(ModeConstants.CONTROL_MODE, midiSampleOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT),
+				controllerModel, controllerViews,
 				new Sequencer(ModeConstants.SEQ_MODE, GRID_WIDTH, GRID_HEIGHT), 
 				melodyModel1, melodizerViews1,
 				melodyModel2, melodizerViews2,

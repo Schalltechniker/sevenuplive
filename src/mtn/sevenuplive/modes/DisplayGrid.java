@@ -220,7 +220,7 @@ public class DisplayGrid {
 					if (curMode == ModeConstants.PATTERN_MODE) {
 						navGrid = allmodes.getPatternizerView(grid_index).getNavGrid();
 					} else if (curMode == ModeConstants.CONTROL_MODE) {
-						navGrid = allmodes.getController().getNavGrid();
+						navGrid = allmodes.getControllerView(grid_index).getNavGrid();
 					} else if (curMode == ModeConstants.SEQ_MODE) {
 						navGrid = allmodes.getSequencer().getNavGrid();
 					} else if (curMode == ModeConstants.LOOP_MODE) {
@@ -252,8 +252,8 @@ public class DisplayGrid {
 					}
 					else if(y == ModeConstants.CONTROL_MODE)
 					{
-						curDisplayGrid = allmodes.getController().getDisplayGrid();
-						navGrid = allmodes.getController().getNavGrid();
+						curDisplayGrid = allmodes.getControllerView(grid_index).getDisplayGrid();
+						navGrid = allmodes.getControllerView(grid_index).getNavGrid();
 					}
 					else if(y == ModeConstants.SEQ_MODE)
 					{
@@ -324,7 +324,7 @@ public class DisplayGrid {
 					}
 					else if(curMode == ModeConstants.CONTROL_MODE)
 					{
-						allmodes.getController().press(x, y);
+						allmodes.getControllerView(grid_index).press(x, y);
 					}
 					else if(curMode == ModeConstants.SEQ_MODE)
 					{
@@ -364,7 +364,7 @@ public class DisplayGrid {
 			}
 			else if(curMode == ModeConstants.CONTROL_MODE)
 			{
-				allmodes.getController().press(x, y);
+				allmodes.getControllerView(grid_index).press(x, y);
 			}
 			// seq mode
 			else if(curMode == ModeConstants.SEQ_MODE)
