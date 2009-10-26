@@ -25,6 +25,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 
 	// Address for P5Osc
 	private NetAddress myRemoteLocation;
+	private NetAddress myLocalLocation;
 	
 	private MonomeListener listener;
 	
@@ -184,8 +185,9 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		oscP5.send(m, myRemoteLocation);
 	}
 
-	private void initOsc(String host, int sendPort, int receivePort) {
+	public void initOsc(String host, int sendPort, int receivePort) {
 		myRemoteLocation = new NetAddress(host, sendPort);
+		myLocalLocation = new NetAddress(host, receivePort);
 		oscP5 = new OscP5(new OSCReceiver(this), receivePort);
 	}
 	
@@ -262,9 +264,14 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	////////////////////////////////////////////////// cleanup
 
 	protected void finalize() throws Throwable {
-		oscP5.disconnectFromTEMP();                                                                                                                
-		oscP5 = null;
+		forceShutdown();
 		super.finalize();
+	}
+	
+	public void forceShutdown() throws Throwable {
+		oscP5.stop();
+		oscP5.disconnect(myLocalLocation);
+		oscP5.disconnect(myRemoteLocation);
 	}
 	
 	/**

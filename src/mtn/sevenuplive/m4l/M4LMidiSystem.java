@@ -2,11 +2,14 @@ package mtn.sevenuplive.m4l;
 
 import java.util.HashMap;
 
+import mtn.sevenuplive.max.mxj.SevenUp4Live;
+
 import processing.core.PApplet;
 
 public class M4LMidiSystem implements M4LMidi {
 
 	private static M4LMidiSystem instance;
+	private static SevenUp4Live app;
 	
 	public static M4LMidi getInstance() {
 		if (instance == null) {
@@ -22,12 +25,10 @@ public class M4LMidiSystem implements M4LMidi {
 	private HashMap<Integer, M4LMidiIn> inputDeviceMap = new HashMap<Integer, M4LMidiIn>();
 	private HashMap<Integer, M4LMidiOut> outputDeviceMap = new HashMap<Integer, M4LMidiOut>();
 	
-	public static M4LMidi getInstance(processing.core.PApplet core) {
-		
-		//@TODO Not sure what we need to do with core yet
-		return getInstance();	
+	public static void init(SevenUp4Live app) {
+		M4LMidiSystem.app = app;
 	}
-
+	
 	public void closePorts() {
 		// TODO Auto-generated method stub
 	}
@@ -64,7 +65,19 @@ public class M4LMidiSystem implements M4LMidi {
 		if (device != null)
 			return device;
 		
-		device = new M4LForwardingMidiOutPort(ch, null);
+		eSevenUp4OutputDevices deviceType = deviceName == null ? null : eSevenUp4OutputDevices.valueOf(deviceName);
+		
+		if (deviceType != null ) {
+			if (deviceType == eSevenUp4OutputDevices.Melodizer1) {
+				device = new M4LForwardingMidiOutPort(app.getMelodizerOutput(ch, 1));
+			} else if (deviceType == eSevenUp4OutputDevices.Melodizer2) {
+				device = new M4LForwardingMidiOutPort(app.getMelodizerOutput(ch, 2));
+			}
+		}  
+		
+		if (device == null)
+			device = new M4LForwardingMidiOutPort(null);
+		
 		outputDeviceMap.put(ch, device);
 		return device;
 	}

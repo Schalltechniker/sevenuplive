@@ -17,9 +17,8 @@ public class SevenUp4Live extends MaxObject {
 	// There can be only one of these
 	private static SevenUp4Live instance;
 	
-	private SevenUp4LiveMelodizerClient melodizer1;
-	
-	private SevenUp4LiveMelodizerClient melodizer2;
+	private SevenUp4LiveMelodizerClient[] melodizer1;
+	private SevenUp4LiveMelodizerClient[] melodizer2;
 	
 	private static final String[] INLET_ASSIST = new String[]{
 		"messages",
@@ -37,25 +36,67 @@ public class SevenUp4Live extends MaxObject {
 		setInletAssist(INLET_ASSIST);
 		setOutletAssist(OUTLET_ASSIST);
 		
+		// If MAX is creating a new instance, then we need to switch out all the innards to
+		// point to the new one
 		if (instance != null) {
+			post("7up instance already exists...transferring control to new instance");
+			post("Shutting down old instance...");
 			instance.shutdown();
+			post("Old instance shutdown");
+			this.clock = instance.clock;
+			this.applet = instance.applet;
+			this.melodizer1 = instance.melodizer1;
+			this.melodizer2 = instance.melodizer2;
+			
+			// Disconnect old one
+			instance.clock = null;
+			instance.applet = null;
+			instance.melodizer1 = null;
+			instance.melodizer2 = null;
+			
+			for (int i = 0; i < 7; i++) {
+				this.melodizer1[i].setApp(this);
+				this.melodizer2[i].setApp(this);
+			}
+			post("Transfer complete");
+		} else {
+			init();
 		}
 		
 		instance = this;	
-		
-		M4LMidiOut[] m1outs = new M4LMidiOut[7];
-		M4LMidiOut[] m2outs = new M4LMidiOut[7];
+	}
+	
+	protected void loadbang() {
+		if (applet != null) {
+			instance.applet.stop();
+			instance.applet.teardown();
+		}
+	}
+	
+	private void init() {
+		M4LMidiSystem.init(this);
+		melodizer1 = new SevenUp4LiveMelodizerClient[7];
+		melodizer2 = new SevenUp4LiveMelodizerClient[7];
 		
 		// Wire up our ports
 		for (int i = 0; i < 7; i++) {
-			m1outs[i] = M4LMidiSystem.getInstance().getMidiOut(i, M4LMidiSystem.eSevenUp4OutputDevices.Melodizer1.toString());
-			m2outs[i] = M4LMidiSystem.getInstance().getMidiOut(i, M4LMidiSystem.eSevenUp4OutputDevices.Melodizer2.toString());
+			melodizer1[i] = new SevenUp4LiveMelodizerClient(this, 1, i);
+			melodizer2[i] = new SevenUp4LiveMelodizerClient(this, 2, i);
 		}
-		
-		melodizer1 = new SevenUp4LiveMelodizerClient(this, m1outs);
-		melodizer2 = new SevenUp4LiveMelodizerClient(this, m2outs);
-		
-		instance = this;
+	}
+	
+	public M4LMidiOut getMelodizerOutput(int ch, int instance) {
+		switch (instance) {
+		case 1:
+			if (ch < 8)
+				return melodizer1[ch];
+		break;
+		case 2:
+			if (ch < 8)
+				return melodizer2[ch];
+		break;
+		}
+		return null;
 	}
 	
 	public void bang() {
@@ -66,17 +107,21 @@ public class SevenUp4Live extends MaxObject {
 	 * Initializes SevenUp with the current connection settings and starts it's heart 
 	 */
 	public void initialize() {
-		if (applet != null) {
-			post("7up is already initialized...");
+		if (instance.applet != null) {
+			if (instance.applet.isRunning()) {
+				post("7up is already initialized...");
+			} else {
+				ConnectionSettings settings = new ConnectionSettings();
+				instance.applet = new SevenUpApplet(settings);
+				instance.applet.setVisible(false);
+				post("7up started");
+			}
 		} else {
 			post("Initializing 7up heart...");
 			
 			ConnectionSettings settings = new ConnectionSettings();
-			applet = new SevenUpApplet(settings);
-			applet.setVisible(false);
-			
-			applet.setup();
-			
+			instance.applet = new SevenUpApplet(settings);
+			instance.applet.setVisible(false);
 			post("7up started");
 		}
 	}
@@ -85,12 +130,11 @@ public class SevenUp4Live extends MaxObject {
 	 * Shuts down SevenUps heart and releases the OSC ports 
 	 */
 	public void shutdown() {
-		if (applet == null) {
+		if (instance.applet == null) {
 			post("Cannot shutdown 7up since has not been initialized yet");
 		} else {
 			post("Shutting down 7up...");
-			applet.stop();
-			applet = null;
+			instance.applet.teardown();
 			post("7up is shutdown");
 		}
 	}
@@ -105,28 +149,28 @@ public class SevenUp4Live extends MaxObject {
 				switch (i) {
 				case 0:
 					//post("C4");
-					if (clock != null)
-						clock.sendBigTick();
+					if (instance.clock != null)
+						instance.clock.sendBigTick();
 					break;
 				case 1:
 					//post("D#4");
-					if (clock != null)
-						clock.sendSmallTick();
+					if (instance.clock != null)
+						instance.clock.sendSmallTick();
 					break;
 				case 2:
 					//post("C7");
-					if (clock != null)
-						clock.pumpSequencerHeart();
+					if (instance.clock != null)
+						instance.clock.pumpSequencerHeart();
 					break;
 				case 3:
 					//post("F7");
-					if (clock != null)
-						clock.pumpLooperHeart();
+					if (instance.clock != null)
+						instance.clock.pumpLooperHeart();
 					break;
 				case 4:
 					//post("E7");
-					if (clock != null)
-						clock.pumpMelodizerHeart();
+					if (instance.clock != null)
+						instance.clock.pumpMelodizerHeart();
 					break;
 				default:
 					post("Clock does not understand " + i);
@@ -156,23 +200,5 @@ public class SevenUp4Live extends MaxObject {
 		SevenUp4Live.clock = clock;
 	}
     
-	public SevenUp4LiveMelodizerClient getMelodizer1() {
-		return melodizer1;
-	}
-
-	public void setMelodizer1(SevenUp4LiveMelodizerClient melodizer1) {
-		this.melodizer1 = melodizer1;
-	}
-
-	public SevenUp4LiveMelodizerClient getMelodizer2() {
-		return melodizer2;
-	}
-
-	public void setMelodizer2(SevenUp4LiveMelodizerClient melodizer2) {
-		this.melodizer2 = melodizer2;
-	}
-
-    
-	
 
 }

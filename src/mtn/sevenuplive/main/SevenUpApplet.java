@@ -31,13 +31,17 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	private Scale monomeScale;
 	private M4LMidi midiIO;
 	private ConnectionSettings sevenUpConnections;
-	private SevenUp4Live parent;
 	
 	private int monomeType = MonomeUp.MONOME_64;
 	
 	/** Dirty flag for changes to the patch */
 	private boolean dirty; 
+	private boolean isRunning = false;
 	
+	public boolean isRunning() {
+		return isRunning;
+	}
+
 	public SevenUpApplet(ConnectionSettings _sevenUpConnections)
 	{
 		sevenUpConnections = _sevenUpConnections;
@@ -47,10 +51,9 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	public void setup()
 	{
 	   frameRate(35);
-	   size(300, 200);
 	   
 	   xmlIO = new XMLInOut(this);
-	   midiIO = M4LMidiSystem.getInstance(this);
+	   midiIO = M4LMidiSystem.getInstance();
 	   midiIO.printDevices();
 	   monomeScale = new Scale(ScaleName.Major);
 	   
@@ -129,7 +132,11 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	   midiIO.plug(this, "noteOnCh13", sevenUpConnections.midiInputDeviceIndex, 12);
 	   midiIO.plug(this, "noteOnCh14", sevenUpConnections.midiInputDeviceIndex, 13);
 	   midiIO.plug(this, "noteOnCh15", sevenUpConnections.midiInputDeviceIndex, 14);
+	   
+	   isRunning = true;
 	}
+	
+	
 	
 	private Scale getScaleFromString(String scaleName)
 	{
@@ -225,9 +232,24 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 		m.draw();
 	}
 	
+	public void teardown() {
+		
+		try {
+			if (m != null) {
+				m.forceShutdown();
+			}
+			this.stop();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		isRunning = false;
+	}
+	
 	public void finalize()
 	{
-		m.lightsOff();
+		if (m != null) {
+			m.lightsOff();
+		}
 		m = null;
 	}
 	
