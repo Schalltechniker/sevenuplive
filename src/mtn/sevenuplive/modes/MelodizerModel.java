@@ -295,7 +295,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 	 * @param tc
 	 * @return First grid position, higher coordinate top/left if duplicates, null if not found
 	 */
-	private GridPosition convertNoteToGridPositionWithContext(int note, TranspositionContext tc) {
+	/*private GridPosition convertNoteToGridPositionWithContext(int note, TranspositionContext tc) {
 		int gridNote;
 
 		for(int j=0;j<7;j++)
@@ -311,7 +311,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 			}
 		}	
 		return null;
-	}
+	}*/
 
 	
 	public int getKeyFromCoords(int x, int y)

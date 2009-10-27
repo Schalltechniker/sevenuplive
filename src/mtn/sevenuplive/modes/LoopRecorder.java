@@ -127,7 +127,6 @@ public class LoopRecorder extends Mode {
 	
 	public void step()
 	{
-		Integer sequencedStep;
 		int curChokeGroup;
 		
 		//If a loop sequence is playing, call heartbeat
