@@ -200,7 +200,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		//Sample/Loop/Masterizer out on channel 8
 		midiSampleOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
 		midiMasterOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
-		midiLoopOut = midiIO.getMidiOut(7, sevenUpConnections.looperOuputDeviceName);
+		midiLoopOut = midiIO.getMidiOut(7, sevenUpConnections.looperOutputDeviceName);
 
 
 		//Create 7 channels (0-6) for melody out

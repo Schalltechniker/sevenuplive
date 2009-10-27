@@ -20,8 +20,9 @@ public class SevenUp4Live extends MaxObject {
 	private SevenUp4LiveMelodizerClient[] melodizer1;
 	private SevenUp4LiveMelodizerClient[] melodizer2;
 	private SevenUp4LiveStepperClient stepper;
+	private SevenUp4LiveLooperClient looper;
 	
-	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet}; 
+	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet}; 
 	
 	private static final String[] INLET_ASSIST = new String[]{
 		"messages",
@@ -29,13 +30,16 @@ public class SevenUp4Live extends MaxObject {
 	};
 	private static final String[] OUTLET_ASSIST = new String[]{
 		"Melodizer Midi Out",
-		"Stepper Midi Out"
+		"Stepper Midi Out",
+		"Looper Midi Out"
 	};
 	
 	public SevenUp4Live(Atom[] args)
 	{
 		declareInlets(new int[]{DataTypes.ALL, DataTypes.INT});
-		declareOutlets(new int[]{DataTypes.MESSAGE, DataTypes.MESSAGE});
+		declareOutlets(new int[]{DataTypes.MESSAGE, 
+				DataTypes.MESSAGE,
+				DataTypes.MESSAGE});
 		
 		setInletAssist(INLET_ASSIST);
 		setOutletAssist(OUTLET_ASSIST);
@@ -73,6 +77,9 @@ public class SevenUp4Live extends MaxObject {
 		
 		/** 1 Instance on Channel 8 index 7 */
 		stepper = new SevenUp4LiveStepperClient(this, 1, 7);
+		
+		/** 1 Instance on Channel 8 index 7 */
+		looper = new SevenUp4LiveLooperClient(this, 1, 7);
 	}
 	
 	public M4LMidiOut getMelodizerOutput(int ch, int instance) {
@@ -92,6 +99,13 @@ public class SevenUp4Live extends MaxObject {
 	public M4LMidiOut getStepperOutput(int ch, int instance) {
 		if (ch == 7) // Stepper currently works on channel 7 period
 			return stepper;
+		else
+			return null;
+	}
+	
+	public M4LMidiOut getLooperOutput(int ch, int instance) {
+		if (ch == 7) // Looper currently works on channel 7 period
+			return looper;
 		else
 			return null;
 	}
