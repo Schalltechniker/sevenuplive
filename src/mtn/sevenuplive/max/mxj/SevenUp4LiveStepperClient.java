@@ -6,13 +6,15 @@ import mtn.sevenuplive.m4l.Note;
 
 import com.cycling74.max.Atom;
 
-public class SevenUp4LiveMelodizerClient implements M4LMidiOut {
+public class SevenUp4LiveStepperClient implements M4LMidiOut {
 	
 	private int instanceNum;
 	private int channel;
 	private SevenUp4Live app;
+	private static final int stepperCh = 7; // channel 8 
+	private static final int instNum = 1; // There is only ever 1 
 	
-	public SevenUp4LiveMelodizerClient(SevenUp4Live app, int instanceNum, int ch) {
+	public SevenUp4LiveStepperClient(SevenUp4Live app, int instanceNum, int ch) {
 		
 		this.instanceNum = instanceNum;
 		this.app = app;
@@ -26,9 +28,9 @@ public class SevenUp4LiveMelodizerClient implements M4LMidiOut {
 	public void sendNoteOff(Note note) {
 		SevenUp4Live.post("Got note OFF: " + note);
 		
-		app.outlet(SevenUp4Live.eOutlets.MelodizerMidiOutlet.ordinal(), new Atom[]{
-				Atom.newAtom(instanceNum),
-				Atom.newAtom(channel + 1),
+		app.outlet(SevenUp4Live.eOutlets.StepperMidiOutlet.ordinal(), new Atom[]{
+				Atom.newAtom(instNum),
+				Atom.newAtom(stepperCh + 1),
 				Atom.newAtom(144),
 				Atom.newAtom(note.getPitch()), 
 				Atom.newAtom(note.getVelocity())});
@@ -37,9 +39,9 @@ public class SevenUp4LiveMelodizerClient implements M4LMidiOut {
 	public void sendNoteOn(Note note) {
 		SevenUp4Live.post("Got note ON: " + note);
 		
-		app.outlet(SevenUp4Live.eOutlets.MelodizerMidiOutlet.ordinal(), new Atom[]{
-				Atom.newAtom(instanceNum),
-				Atom.newAtom(channel + 1),
+		app.outlet(SevenUp4Live.eOutlets.StepperMidiOutlet.ordinal(), new Atom[]{
+				Atom.newAtom(instNum),
+				Atom.newAtom(stepperCh + 1),
 				Atom.newAtom(144),
 				Atom.newAtom(note.getPitch()), 
 				Atom.newAtom(note.getVelocity())});

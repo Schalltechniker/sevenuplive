@@ -19,19 +19,23 @@ public class SevenUp4Live extends MaxObject {
 	
 	private SevenUp4LiveMelodizerClient[] melodizer1;
 	private SevenUp4LiveMelodizerClient[] melodizer2;
+	private SevenUp4LiveStepperClient stepper;
+	
+	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet}; 
 	
 	private static final String[] INLET_ASSIST = new String[]{
 		"messages",
 		"clock in (0=C4,1=D#4,2=C7,3=E7,4=F7)"
 	};
 	private static final String[] OUTLET_ASSIST = new String[]{
-		"outlet 1 help"
+		"Melodizer Midi Out",
+		"Stepper Midi Out"
 	};
 	
 	public SevenUp4Live(Atom[] args)
 	{
 		declareInlets(new int[]{DataTypes.ALL, DataTypes.INT});
-		declareOutlets(new int[]{DataTypes.ALL});
+		declareOutlets(new int[]{DataTypes.MESSAGE, DataTypes.MESSAGE});
 		
 		setInletAssist(INLET_ASSIST);
 		setOutletAssist(OUTLET_ASSIST);
@@ -66,6 +70,9 @@ public class SevenUp4Live extends MaxObject {
 			melodizer1[i] = new SevenUp4LiveMelodizerClient(this, 1, i);
 			melodizer2[i] = new SevenUp4LiveMelodizerClient(this, 2, i);
 		}
+		
+		/** 1 Instance on Channel 8 index 7 */
+		stepper = new SevenUp4LiveStepperClient(this, 1, 7);
 	}
 	
 	public M4LMidiOut getMelodizerOutput(int ch, int instance) {
@@ -80,6 +87,13 @@ public class SevenUp4Live extends MaxObject {
 		break;
 		}
 		return null;
+	}
+	
+	public M4LMidiOut getStepperOutput(int ch, int instance) {
+		if (ch == 7) // Stepper currently works on channel 7 period
+			return stepper;
+		else
+			return null;
 	}
 	
 	public void bang() {

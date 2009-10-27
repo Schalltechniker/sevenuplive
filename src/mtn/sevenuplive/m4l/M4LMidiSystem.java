@@ -83,6 +83,8 @@ public class M4LMidiSystem implements M4LMidi {
 				device = new M4LForwardingMidiOutPort(app.getMelodizerOutput(ch, 1));
 			} else if (deviceType == eSevenUp4OutputDevices.Melodizer2) {
 				device = new M4LForwardingMidiOutPort(app.getMelodizerOutput(ch, 2));
+			} else if (deviceType == eSevenUp4OutputDevices.Stepper) {
+				device = new M4LForwardingMidiOutPort(app.getStepperOutput(ch, 2));
 			}
 		}  
 		
