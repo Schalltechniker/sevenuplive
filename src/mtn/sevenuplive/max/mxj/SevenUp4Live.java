@@ -22,7 +22,7 @@ public class SevenUp4Live extends MaxObject {
 	private SevenUp4LiveStepperClient stepper;
 	private SevenUp4LiveLooperClient looper;
 	
-	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet}; 
+	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, InitializationDataOutlet}; 
 	
 	private static final String[] INLET_ASSIST = new String[]{
 		"messages",
@@ -31,7 +31,8 @@ public class SevenUp4Live extends MaxObject {
 	private static final String[] OUTLET_ASSIST = new String[]{
 		"Melodizer Midi Out",
 		"Stepper Midi Out",
-		"Looper Midi Out"
+		"Looper Midi Out",
+		"Data Initialization Out"
 	};
 	
 	public SevenUp4Live(Atom[] args)
@@ -39,6 +40,7 @@ public class SevenUp4Live extends MaxObject {
 		declareInlets(new int[]{DataTypes.ALL, DataTypes.INT});
 		declareOutlets(new int[]{
 				DataTypes.MESSAGE, 
+				DataTypes.MESSAGE,
 				DataTypes.MESSAGE,
 				DataTypes.MESSAGE
 				});
@@ -59,11 +61,28 @@ public class SevenUp4Live extends MaxObject {
 		post("New 7up instance created");
 	}
 	
+	protected void bang() {
+		post("Hello world!! This is SevenUp in MAX");
+		
+		// Send initialization data
+		outlet(eOutlets.InitializationDataOutlet.ordinal(), new Atom[]{
+			Atom.newAtom("connection"),
+			Atom.newAtom("monomes"),
+			Atom.newAtom("Monome64"),
+			Atom.newAtom("Monome128H"),
+			Atom.newAtom("Monome128V"),
+			Atom.newAtom("Monome256")
+		});
+	}
+	
 	protected void loadbang() {
 		if (instance.applet != null) {
 			instance.applet.stop();
 			instance.applet.teardown();
 		}
+		
+		// forces data refresh
+		bang();
 	}
 	
 	private void init() {
@@ -112,10 +131,6 @@ public class SevenUp4Live extends MaxObject {
 			return null;
 	}
 	
-	public void bang() {
-		post("Hello world!! This is SevenUp in MAX");
-	}
-    
 	/**
 	 * Initializes SevenUp with the current connection settings and starts it's heart 
 	 */
