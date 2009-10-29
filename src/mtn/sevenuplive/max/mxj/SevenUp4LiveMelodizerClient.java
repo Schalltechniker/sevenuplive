@@ -20,26 +20,35 @@ public class SevenUp4LiveMelodizerClient implements M4LMidiOut {
 	}
 	
 	public void sendController(M4LController controller) {
-		SevenUp4Live.post("Got Controller: " + controller);
+		//SevenUp4Live.post("Got Controller: " + controller);
+		
+		app.outlet(SevenUp4Live.eOutlets.MelodizerMidiOutlet.ordinal(), new Atom[]{
+			Atom.newAtom(instanceNum),
+			Atom.newAtom(channel + 1),
+			Atom.newAtom(M4LMidiOut.CC),
+			Atom.newAtom(controller.getCC()), 
+			Atom.newAtom(controller.getValue())});
 	}
 
 	public void sendNoteOff(Note note) {
-		SevenUp4Live.post("Got note OFF: " + note);
+		//SevenUp4Live.post("Got note OFF: " + note);
 		
 		app.outlet(SevenUp4Live.eOutlets.MelodizerMidiOutlet.ordinal(), new Atom[]{
 				Atom.newAtom(instanceNum),
 				Atom.newAtom(channel + 1),
+				Atom.newAtom(M4LMidiOut.NOTE),
 				Atom.newAtom(144),
 				Atom.newAtom(note.getPitch()), 
 				Atom.newAtom(note.getVelocity())});
 	}
 
 	public void sendNoteOn(Note note) {
-		SevenUp4Live.post("Got note ON: " + note);
+		//SevenUp4Live.post("Got note ON: " + note);
 		
 		app.outlet(SevenUp4Live.eOutlets.MelodizerMidiOutlet.ordinal(), new Atom[]{
 				Atom.newAtom(instanceNum),
 				Atom.newAtom(channel + 1),
+				Atom.newAtom(M4LMidiOut.NOTE),
 				Atom.newAtom(144),
 				Atom.newAtom(note.getPitch()), 
 				Atom.newAtom(note.getVelocity())});

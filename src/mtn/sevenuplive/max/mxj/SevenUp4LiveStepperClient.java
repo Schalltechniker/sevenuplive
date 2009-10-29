@@ -22,7 +22,14 @@ public class SevenUp4LiveStepperClient implements M4LMidiOut {
 	}
 	
 	public void sendController(M4LController controller) {
-		SevenUp4Live.post("Got Controller: " + controller);
+		//SevenUp4Live.post("Got Controller: " + controller);
+		
+		app.outlet(SevenUp4Live.eOutlets.StepperMidiOutlet.ordinal(), new Atom[]{
+			Atom.newAtom(instNum),
+			Atom.newAtom(channel + 1),
+			Atom.newAtom(M4LMidiOut.CC),
+			Atom.newAtom(controller.getCC()), 
+			Atom.newAtom(controller.getValue())});
 	}
 
 	public void sendNoteOff(Note note) {
@@ -31,6 +38,7 @@ public class SevenUp4LiveStepperClient implements M4LMidiOut {
 		app.outlet(SevenUp4Live.eOutlets.StepperMidiOutlet.ordinal(), new Atom[]{
 				Atom.newAtom(instNum),
 				Atom.newAtom(stepperCh + 1),
+				Atom.newAtom(M4LMidiOut.NOTE),
 				Atom.newAtom(144),
 				Atom.newAtom(note.getPitch()), 
 				Atom.newAtom(note.getVelocity())});
@@ -42,6 +50,7 @@ public class SevenUp4LiveStepperClient implements M4LMidiOut {
 		app.outlet(SevenUp4Live.eOutlets.StepperMidiOutlet.ordinal(), new Atom[]{
 				Atom.newAtom(instNum),
 				Atom.newAtom(stepperCh + 1),
+				Atom.newAtom(M4LMidiOut.NOTE),
 				Atom.newAtom(144),
 				Atom.newAtom(note.getPitch()), 
 				Atom.newAtom(note.getVelocity())});

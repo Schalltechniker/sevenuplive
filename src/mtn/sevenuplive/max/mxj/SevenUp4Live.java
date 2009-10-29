@@ -37,9 +37,11 @@ public class SevenUp4Live extends MaxObject {
 	public SevenUp4Live(Atom[] args)
 	{
 		declareInlets(new int[]{DataTypes.ALL, DataTypes.INT});
-		declareOutlets(new int[]{DataTypes.MESSAGE, 
+		declareOutlets(new int[]{
+				DataTypes.MESSAGE, 
 				DataTypes.MESSAGE,
-				DataTypes.MESSAGE});
+				DataTypes.MESSAGE
+				});
 		
 		setInletAssist(INLET_ASSIST);
 		setOutletAssist(OUTLET_ASSIST);

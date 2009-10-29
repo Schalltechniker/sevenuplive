@@ -23,6 +23,13 @@ public class SevenUp4LiveLooperClient implements M4LMidiOut {
 	
 	public void sendController(M4LController controller) {
 		SevenUp4Live.post("Got Controller: " + controller);
+		
+		app.outlet(SevenUp4Live.eOutlets.LooperMidiOutlet.ordinal(), new Atom[]{
+			Atom.newAtom(instNum),
+			Atom.newAtom(looperCh + 1),
+			Atom.newAtom(M4LMidiOut.CC),
+			Atom.newAtom(controller.getCC()), 
+			Atom.newAtom(controller.getValue())});
 	}
 
 	public void sendNoteOff(Note note) {
@@ -31,6 +38,7 @@ public class SevenUp4LiveLooperClient implements M4LMidiOut {
 		app.outlet(SevenUp4Live.eOutlets.LooperMidiOutlet.ordinal(), new Atom[]{
 				Atom.newAtom(instNum),
 				Atom.newAtom(looperCh + 1),
+				Atom.newAtom(M4LMidiOut.NOTE),
 				Atom.newAtom(144),
 				Atom.newAtom(note.getPitch()), 
 				Atom.newAtom(note.getVelocity())});
@@ -42,6 +50,7 @@ public class SevenUp4LiveLooperClient implements M4LMidiOut {
 		app.outlet(SevenUp4Live.eOutlets.LooperMidiOutlet.ordinal(), new Atom[]{
 				Atom.newAtom(instNum),
 				Atom.newAtom(looperCh + 1),
+				Atom.newAtom(M4LMidiOut.NOTE),
 				Atom.newAtom(144),
 				Atom.newAtom(note.getPitch()), 
 				Atom.newAtom(note.getVelocity())});
