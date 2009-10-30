@@ -252,6 +252,16 @@ public class SevenUp4Live extends MaxObject {
 		}
 	}
 	
+	public void writepatch(Atom[] patchparams) {
+		if (patchparams.length == 2) {
+			String patchname = patchparams[0].toString();
+			String filename = patchparams[1].toString();
+			post("Writing patch [" +  patchname + "] to  [" + filename + "]");
+			
+			//applet.openSevenUpPatch(patchPath)
+		}
+	}
+	
 	public void inlet(float f)
 	{
 	}

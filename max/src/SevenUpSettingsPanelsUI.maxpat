@@ -82,8 +82,9 @@
 					"id" : "obj-5",
 					"name" : "SevenUpMelodizer1SettingsPanel.maxpat",
 					"numinlets" : 0,
-					"numoutlets" : 0,
-					"presentation_rect" : [ 61.0, 383.0, 305.0, 127.0 ]
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"presentation_rect" : [ 61.0, 384.0, 305.0, 127.0 ]
 				}
 
 			}
@@ -192,12 +193,12 @@
 			"obj-5::obj-2" : [ "live.menu[2]", "live.menu", 0 ],
 			"obj-5::obj-33" : [ "live.menu[19]", "live.menu", 0 ],
 			"obj-2::obj-1" : [ "live.menu[10]", "live.menu", 0 ],
-			"obj-5::obj-3" : [ "live.dial[2]", "live.dial", 0 ],
 			"obj-5::obj-36" : [ "live.menu[13]", "live.menu", 0 ],
 			"obj-1::obj-4" : [ "live.toggle", "live.toggle", 0 ],
 			"obj-6::obj-6" : [ "live.gain~[2]", "live.gain~", 0 ],
 			"obj-1::obj-15" : [ "live.menu[11]", "live.menu", 0 ],
 			"obj-1::obj-14" : [ "live.numbox[1]", "live.numbox", 0 ],
+			"obj-5::obj-9" : [ "live.menu[1]", "live.menu", 0 ],
 			"obj-6::obj-4" : [ "live.gain~", "live.gain~", 0 ],
 			"obj-1::obj-13" : [ "live.numbox", "live.numbox", 0 ],
 			"obj-5::obj-8" : [ "live.menu[16]", "live.menu", 0 ]

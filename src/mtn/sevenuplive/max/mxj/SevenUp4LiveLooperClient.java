@@ -34,7 +34,6 @@ public class SevenUp4LiveLooperClient implements M4LMidiOut {
 
 	public void sendNoteOff(Note note) {
 		SevenUp4Live.post("Got note OFF: " + note);
-		
 		app.outlet(SevenUp4Live.eOutlets.LooperMidiOutlet.ordinal(), new Atom[]{
 				Atom.newAtom(instNum),
 				Atom.newAtom(looperCh + 1),
