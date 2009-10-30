@@ -22,10 +22,12 @@ public class SevenUp4Live extends MaxObject {
 	private SevenUp4LiveStepperClient stepper;
 	private SevenUp4LiveLooperClient looper;
 	
+	private ConnectionSettings settings = new ConnectionSettings();
+	
 	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, InitializationDataOutlet}; 
 	
 	private static final String[] INLET_ASSIST = new String[]{
-		"messages",
+		"messages (initialize, shutdown, monome (0,1,2..etc), hostaddress (127.0.0.1), listenport, hostport)",
 		"clock in (0=C4,1=D#4,2=C7,3=E7,4=F7)"
 	};
 	private static final String[] OUTLET_ASSIST = new String[]{
@@ -66,12 +68,11 @@ public class SevenUp4Live extends MaxObject {
 		
 		// Send initialization data
 		outlet(eOutlets.InitializationDataOutlet.ordinal(), new Atom[]{
-			Atom.newAtom("connection"),
 			Atom.newAtom("monomes"),
-			Atom.newAtom("Monome64"),
-			Atom.newAtom("Monome128H"),
-			Atom.newAtom("Monome128V"),
-			Atom.newAtom("Monome256")
+			Atom.newAtom("Monome64 Monome128H Monome128V")
+			//Atom.newAtom("Monome128H"),
+			//Atom.newAtom("Monome128V"),
+			//Atom.newAtom("Monome256")
 		});
 	}
 	
@@ -139,15 +140,12 @@ public class SevenUp4Live extends MaxObject {
 			if (applet.isRunning()) {
 				post("7up is already initialized...");
 			} else {
-				ConnectionSettings settings = new ConnectionSettings();
 				applet = new SevenUpApplet(settings);
 				applet.setVisible(false);
 				post("7up started");
 			}
 		} else {
 			post("Initializing 7up heart...");
-			
-			ConnectionSettings settings = new ConnectionSettings();
 			applet = new SevenUpApplet(settings);
 			applet.setVisible(false);
 			post("7up started");
@@ -209,6 +207,51 @@ public class SevenUp4Live extends MaxObject {
 		}
 	}
     
+	public void monome(Atom[] list)
+	{
+		if (list.length > 0) {
+			int type = list[0].getInt();
+			if (type < 0)
+				type = 0;
+			post("Setting monome via atom to type [" + Integer.toString(type) + "]");
+			settings.monomeType = type;
+		}
+	}
+	
+	public void hostaddress(Atom[] list)
+	{
+		if (list.length > 0) {
+			String address = list[0].getString();
+			if (address == null)
+				return;
+			
+			post("Setting monome hostaddress atom to [" + address + "]");
+			settings.oscHostAddress = address;
+		}
+	}
+	
+	public void listenport(Atom[] list)
+	{
+		if (list.length > 0) {
+			int listenport = list[0].getInt();
+			if (listenport < 0)
+				listenport = 0;
+			post("Setting monome listenport to  [" + Integer.toString(listenport) + "]");
+			settings.oscListenPort = listenport;		
+		}
+	}
+	
+	public void hostport(Atom[] list)
+	{
+		if (list.length > 0) {
+			int hostport = list[0].getInt();
+			if (hostport < 0)
+				hostport = 0;
+			post("Setting monome hostport to  [" + Integer.toString(hostport) + "]");
+			settings.oscHostPort = hostport;		
+		}
+	}
+	
 	public void inlet(float f)
 	{
 	}
