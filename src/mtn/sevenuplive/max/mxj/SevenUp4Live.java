@@ -32,6 +32,8 @@ public class SevenUp4Live extends MaxObject {
 	
 	private ConnectionSettings settings = new ConnectionSettings();
 	
+	private boolean clockStateChange = true;
+	
 	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, InitializationDataOutlet}; 
 	
 	private static final String[] INLET_ASSIST = new String[]{
@@ -182,28 +184,32 @@ public class SevenUp4Live extends MaxObject {
 		switch (inletNum) {
 			case 1:
 				switch (i) {
+				case -1:
+					post("CLOCK START/STOP");
+					clockStateChange = true;	
+					break;
 				case 0:
-					//post("C4");
+					post("C4");
 					if (clock != null)
 						clock.sendBigTick();
 					break;
 				case 1:
-					//post("D#4");
+					post("D#4");
 					if (clock != null)
 						clock.sendSmallTick();
 					break;
 				case 2:
-					//post("C7");
+					post("C7");
 					if (clock != null)
 						clock.pumpSequencerHeart();
 					break;
 				case 3:
-					//post("F7");
+					post("F7");
 					if (clock != null)
 						clock.pumpLooperHeart();
 					break;
 				case 4:
-					//post("E7");
+					post("E7");
 					if (clock != null)
 						clock.pumpMelodizerHeart();
 					break;
