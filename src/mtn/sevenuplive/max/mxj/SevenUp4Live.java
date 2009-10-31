@@ -1,5 +1,13 @@
 package mtn.sevenuplive.max.mxj;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.jdom.Document;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
+
 import mtn.sevenuplive.m4l.M4LMidiOut;
 import mtn.sevenuplive.m4l.M4LMidiSystem;
 import mtn.sevenuplive.main.ConnectionSettings;
@@ -253,12 +261,20 @@ public class SevenUp4Live extends MaxObject {
 	}
 	
 	public void writepatch(Atom[] patchparams) {
-		if (patchparams.length == 2) {
-			String patchname = patchparams[0].toString();
-			String filename = patchparams[1].toString();
-			post("Writing patch [" +  patchname + "] to  [" + filename + "]");
-			
-			//applet.openSevenUpPatch(patchPath)
+		post("writepatch() called with " + patchparams.length + " params");
+		if (patchparams.length > 0) {
+			String filepath = patchparams[0].toString();
+			post("Writing patch [" + filepath + "]");
+			savePatch(filepath);
+		}
+	}
+	
+	public void readpatch(Atom[] patchparams) {
+		post("readpatch() called with " + patchparams.length + " params");
+		if (patchparams.length > 0) {
+			String filepath = patchparams[0].toString();
+			post("Reading patch [" + filepath + "]");
+			loadPatch(filepath);
 		}
 	}
 	
@@ -281,6 +297,63 @@ public class SevenUp4Live extends MaxObject {
 	public static void setClock(SevenUpClock clock) {
 		SevenUp4Live.clock = clock;
 	}
-    
+	
+	private void savePatch(String filepath) {
 
+		if (applet == null) {
+			post("Could not save patch [" + filepath + "] applet must be initialized first");
+			return;
+		}
+		
+		FileWriter fileWriter = null;
+		
+		try {
+			if (filepath != null) {
+				java.io.File file = new File(filepath);
+				org.jdom.Document doc = applet.toJDOMXMLDocument(file.getName());
+				org.jdom.output.XMLOutputter fmt = new XMLOutputter();
+
+				fileWriter = new FileWriter(file);
+				fmt.output(doc, fileWriter);
+			}
+		} catch (Exception e) {
+			post("Could not save patch: " + e);
+		} finally { // standard java closing resources in finally
+			if (fileWriter != null) {
+				try {
+					fileWriter.close();
+				} catch (IOException e1) {
+					// drop it
+				}
+			}	
+		}
+	}
+	
+	private void loadPatch(String filepath) {
+		
+		if (applet == null) {
+			post("Could not load patch [" + filepath + "] applet must be initialized first");
+			return;
+		}
+		
+		try {
+			if (filepath != null) {
+				java.io.File file = new File(filepath);
+				SAXBuilder builder = new SAXBuilder();
+				try
+				{
+					Document doc = builder.build(file);
+					applet.loadJDOMXMLDocument(doc);
+				}
+				catch(Exception ex)
+				{
+					post(ex.getMessage());   
+				}
+			}
+		} catch (Exception e) {
+			post("Could not save patch: " + e);
+		} 	
+
+	}
+	
 }

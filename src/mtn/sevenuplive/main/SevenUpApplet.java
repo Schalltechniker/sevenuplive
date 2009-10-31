@@ -136,7 +136,13 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	   isRunning = true;
 	}
 	
-	
+	public ConnectionSettings getSevenUpConnections() {
+		return sevenUpConnections;
+	}
+
+	public void setSevenUpConnections(ConnectionSettings sevenUpConnections) {
+		this.sevenUpConnections = sevenUpConnections;
+	}
 	
 	private Scale getScaleFromString(String scaleName)
 	{
