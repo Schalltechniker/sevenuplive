@@ -128,7 +128,6 @@ public class Loop {
 		// When we change a step, res needs to reset to 0.
 		resCounter = 0;
 		
-		
 		step++;
 		if(this.step > 7) {
 			this.step = 0;

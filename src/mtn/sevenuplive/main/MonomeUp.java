@@ -45,6 +45,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	private ArrayList<Element> xmlPatches;
 	private int curPatchIndex=0;
 	private String patchTitle = "";
+	private int curFrame;
+	private boolean noteOnOccuredInLastFrame = false;
 
 
 	// Monome 
@@ -225,10 +227,13 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 		panic();
 	}
 
-	public void draw() {
+	public void draw(int curFrame) {
 		for (DisplayGrid grid : grids) {
 			grid.draw();
 		}
+		
+		this.curFrame = curFrame;
+		noteOnOccuredInLastFrame  = false;
 	}
 
 	public void panic()
@@ -325,12 +330,13 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 			allmodes.getMelodizer1Model().reset();
 			allmodes.getMelodizer2Model().reset();
 		}
-		//Start loops
+		//Start loops from MIDI
 		else if(noteOnPitch >= C2 && noteOnPitch < G2){
 			int loopNum = noteOnPitch - C2;
 			AllModes.getInstance().getLooper().playLoop(loopNum, 0);
-			AllModes.getInstance().getLooper().stepOneLoop(loopNum);
-
+			//Check to see if the noteon has occured yet already, if so, step one loop (because it missed it's change to step with the normal noteon)
+			if(noteOnOccuredInLastFrame)
+				AllModes.getInstance().getLooper().stepOneLoop(loopNum);
 		}
 		//Stop loops
 		else if(noteOnPitch >= G2 && noteOnPitch <= CSHARP3){

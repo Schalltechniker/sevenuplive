@@ -31,6 +31,7 @@ public class SevenUpApplet extends processing.core.PApplet
 	private SevenUpPanel parentPanel;
 	
 	private int monomeType = MonomeUp.MONOME_64;
+	private static int FRAMERATE = 35;
 	
 	/** Dirty flag for changes to the patch */
 	private boolean dirty; 
@@ -45,7 +46,7 @@ public class SevenUpApplet extends processing.core.PApplet
 	public void setup()
 	{
 	   
-	   frameRate(35);
+	   frameRate(FRAMERATE);
 	   size(300, 200);
 	   
 	   xmlIO = new XMLInOut(this);
@@ -219,7 +220,7 @@ public class SevenUpApplet extends processing.core.PApplet
 	
 	public void draw()
 	{
-		m.draw();
+		m.draw(this.frameCount % FRAMERATE);
 	}
 	
 	public void finalize()

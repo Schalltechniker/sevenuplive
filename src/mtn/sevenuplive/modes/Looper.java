@@ -200,6 +200,7 @@ public class Looper extends Mode {
 			{
 				stopLoop(i);
 				stopLoopsOnNextStep[i] = false;
+				
 			}
 			else		
 				stepOneLoop(i);
@@ -222,9 +223,8 @@ public class Looper extends Mode {
         		resCounter = loops[i].getResCounter();
         		step = loops[i].getStep();
         		
-        		//In buzz you have to send the controller AFTER the note is played
+        		//In Buzz you have to send the controller AFTER the note is played
         		int loopCtrlValue = (loops[i].getStep() * 16);
-        		
         		
         		// Only send the controller if we are changing position. This allows the sample to play smoothly and linearly.
         		if (pressedRow > -1) {
@@ -250,8 +250,7 @@ public class Looper extends Mode {
         					}
         					// If it's a one shot loop, then we stop after the first iteration
         	        		if (loops[i].isLastResInStep()) {
-                				System.out.println("stop 0");
-        	    				stopLoop(i);
+                				stopLoop(i);
         	    				loops[i].setPressedRow(-1);
         	    				pressedRow = -1;
         	    			}
@@ -286,9 +285,9 @@ public class Looper extends Mode {
 	        	        					sendNote = true;
 	        	        				} else if (step == 0) { // We only retrigger at step 0 in other modes
 	        	        					sendNote = true;
-		        	        				
 	        	        				}
 	        	        			}	
+	        	        			
 	        	        			if (sendNote)
 	        	        				midiOut.sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16 +1, 0));
         	        			}
@@ -301,7 +300,9 @@ public class Looper extends Mode {
         		}	
         	
         		if(loops[i].isPlaying())
+        		{
         			loops[i].nextResCount();
+        		}
         	}
    
 	}
