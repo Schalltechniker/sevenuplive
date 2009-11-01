@@ -37,9 +37,9 @@ public class SevenUp4LiveMelodizerClient implements M4LMidiOut {
 				Atom.newAtom(instanceNum),
 				Atom.newAtom(channel + 1),
 				Atom.newAtom(M4LMidiOut.NOTE),
-				Atom.newAtom(144),
+				Atom.newAtom(144 + channel),
 				Atom.newAtom(note.getPitch()), 
-				Atom.newAtom(note.getVelocity())});
+				Atom.newAtom(0)});
 	}
 
 	public void sendNoteOn(Note note) {
@@ -49,7 +49,7 @@ public class SevenUp4LiveMelodizerClient implements M4LMidiOut {
 				Atom.newAtom(instanceNum),
 				Atom.newAtom(channel + 1),
 				Atom.newAtom(M4LMidiOut.NOTE),
-				Atom.newAtom(144),
+				Atom.newAtom(144 + channel),
 				Atom.newAtom(note.getPitch()), 
 				Atom.newAtom(note.getVelocity())});
 	}

@@ -32,8 +32,6 @@ public class SevenUp4Live extends MaxObject {
 	
 	private ConnectionSettings settings = new ConnectionSettings();
 	
-	private boolean clockStateChange = true;
-	
 	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, InitializationDataOutlet}; 
 	
 	private static final String[] INLET_ASSIST = new String[]{
@@ -88,7 +86,7 @@ public class SevenUp4Live extends MaxObject {
 	
 	protected void loadbang() {
 		if (instance.applet != null) {
-			instance.applet.stop();
+			instance.applet.stopClock();
 			instance.applet.teardown();
 		}
 		
@@ -170,7 +168,7 @@ public class SevenUp4Live extends MaxObject {
 			post("Cannot shutdown 7up since has not been initialized yet");
 		} else {
 			post("Shutting down 7up...");
-			instance.applet.stop();
+			instance.applet.stopClock();
 			instance.applet.teardown();
 			post("7up is shutdown");
 		}
@@ -185,9 +183,15 @@ public class SevenUp4Live extends MaxObject {
 			case 1:
 				switch (i) {
 				case -1:
-					post("CLOCK START/STOP");
-					clockStateChange = true;	
+					post("CLOCK STOP");
+					if (clock != null)
+						clock.stopClock();
 					break;
+				case -2:
+					post("CLOCK START");
+					if (clock != null)
+						clock.startClock();
+					break;	
 				case 0:
 					post("C4");
 					if (clock != null)

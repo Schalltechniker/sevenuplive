@@ -38,9 +38,9 @@ public class SevenUp4LiveLooperClient implements M4LMidiOut {
 				Atom.newAtom(instNum),
 				Atom.newAtom(looperCh + 1),
 				Atom.newAtom(M4LMidiOut.NOTE),
-				Atom.newAtom(144),
+				Atom.newAtom(144 + looperCh),
 				Atom.newAtom(note.getPitch()), 
-				Atom.newAtom(note.getVelocity())});
+				Atom.newAtom(0)});
 	}
 
 	public void sendNoteOn(Note note) {
@@ -50,7 +50,7 @@ public class SevenUp4LiveLooperClient implements M4LMidiOut {
 				Atom.newAtom(instNum),
 				Atom.newAtom(looperCh + 1),
 				Atom.newAtom(M4LMidiOut.NOTE),
-				Atom.newAtom(144),
+				Atom.newAtom(144 + looperCh),
 				Atom.newAtom(note.getPitch()), 
 				Atom.newAtom(note.getVelocity())});
 	}

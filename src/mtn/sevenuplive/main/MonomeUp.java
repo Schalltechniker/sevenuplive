@@ -629,6 +629,14 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	//////////////////////////////
 	// SevenUpClock interface
 	
+	public void startClock() {
+		// Do nothing
+	}
+	
+	public void stopClock() {
+		reset();
+	}
+
 	public void sendBigTick() {
 		allmodes.getMelodizer1Model().locatorEvent();
 		allmodes.getMelodizer2Model().locatorEvent();

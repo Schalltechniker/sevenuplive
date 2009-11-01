@@ -519,5 +519,13 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 		m.pumpLooperHeart();
 	}
 
+	public void startClock() {
+		m.startClock();
+	}
+
+	public void stopClock() {
+		m.stopClock();
+	}
+
 }
 		
