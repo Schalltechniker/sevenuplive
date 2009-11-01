@@ -127,39 +127,47 @@ public class LoopRecorder extends Mode {
 	
 	public void step()
 	{
-		Integer sequencedStep;
-		int curChokeGroup;
+		
 		
 		//If a loop sequence is playing, call heartbeat
 		for(int i=0;i<7;i++)
 		{
-			ArrayList<ControlValue> sequencedControlValues = loopSequences[i].heartbeat();
-			
-			if(sequencedControlValues != null)
+			step(i);
+		}
+	}
+	
+	public void step(int loopIndex)
+	{
+		Integer sequencedStep;
+		int curChokeGroup;
+		int i = loopIndex;
+		ArrayList<ControlValue> sequencedControlValues = loopSequences[i].heartbeat();
+		
+		if(sequencedControlValues != null)
+		{
+			for(ControlValue cv : sequencedControlValues)
 			{
-				for(ControlValue cv : sequencedControlValues)
+				if(cv != null && cv.getValue() > -1)
 				{
-					if(cv != null && cv.getValue() > -1)
+					//System.out.println("Sequence " + i + ": Returned id: " + cv.getId() + " value: " + cv.getValue());
+					//If using gating, only 1 loop can play per step.  Determine that loop.  Play it and stop the others.
+					curChokeGroup = AllModes.getInstance().getLooper().getLoop(i).getChokeGroup();
+					if(curChokeGroup > -1)
 					{
-						//System.out.println("Sequence " + i + ": Returned id: " + cv.getId() + " value: " + cv.getValue());
-						//If using gating, only 1 loop can play per step.  Determine that loop.  Play it and stop the others.
-						curChokeGroup = AllModes.getInstance().getLooper().getLoop(i).getChokeGroup();
-						if(curChokeGroup > -1)
+						AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
+						for(int k=0;k<7;k++)
 						{
-							AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
-							for(int k=0;k<7;k++)
-							{
-								if(k!=i && AllModes.getInstance().getLooper().getLoop(k).getChokeGroup() == curChokeGroup)
-									AllModes.getInstance().getLooper().setLoopStopOnNextStep(k);
-							}
-							
+							if(k!=i && AllModes.getInstance().getLooper().getLoop(k).getChokeGroup() == curChokeGroup)
+								AllModes.getInstance().getLooper().setLoopStopOnNextStep(k);
 						}
-						else
-							AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
+						
 					}
+					else
+						AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
 				}
 			}
 		}
+		
 	}
 	
 	public boolean isLoopSequencePlaying(int loopIndex)
@@ -175,7 +183,7 @@ public class LoopRecorder extends Mode {
 	public void playLoopSequence(int loopIndex)
 	{
 		loopSequences[loopIndex].play();
-		step();
+		step(loopIndex);
 	}
 	
 	public int getSeqStatus(int seqNum)
