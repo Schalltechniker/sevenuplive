@@ -15,7 +15,6 @@ import jklabs.monomic.MonomeListener;
 import jklabs.monomic.MonomeOSC;
 import mtn.sevenuplive.m4l.M4LMidi;
 import mtn.sevenuplive.m4l.M4LMidiOut;
-import mtn.sevenuplive.m4l.M4LMidiSystem;
 import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.max.mxj.SevenUpClock;
 import mtn.sevenuplive.modes.AllModes;
@@ -41,7 +40,6 @@ import org.jdom.Element;
 
 public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUpClock {
 
-	private SevenUpEnvironment parent;
 	private ArrayList<Element> xmlPatches;
 	private int curPatchIndex=0;
 	private String patchTitle = "";
@@ -60,6 +58,9 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	public static final int RECORDING = 3;
 	public static final int CUEDSTOP = 4;
 	////////////////////////////////////////
+
+	/** Dirty flag for changes to the patch */
+	private boolean dirty; 
 
 	/////////////////////////////////////
 	//CONTROLLER
@@ -125,17 +126,18 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	////////////////////////////////////
 
 	private DisplayGrid[] grids;
+	private M4LMidi midiIO;
 
-	MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, SevenUpEnvironment _parent) {
+	MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, M4LMidi midiIO) {
 		super(x_grids, y_grids);
 		sevenUpConnections = _sevenUpConnections;
 
 		xmlPatches = new ArrayList<Element>();
-		parent = _parent;
-
+		
 		int totalGrids = x_grids * y_grids;
 		
 		// Init midi communications
+		this.midiIO = midiIO;
 		initializeMidi();
 
 		//Create the same number of views as there are grids
@@ -195,8 +197,6 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 
 	private void initializeMidi()
 	{
-		M4LMidi midiIO = M4LMidiSystem.getInstance();
-		
 		//Sample/Loop/Masterizer out on channel 8
 		midiSampleOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
 		midiMasterOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
@@ -242,8 +242,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	public void monomePressed(int raw_x, int raw_y)
 	{
 		// Dirty flag for any action on a patch
-		if (!parent.isDirty()) {
-			parent.setDirty(true);
+		if (!isDirty()) {
+			setDirty(true);
 		}
 
 		GridCoordinateTarget targetd = Displays.translate(grids, raw_x, raw_y);
@@ -697,6 +697,15 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 			AllModes.getInstance().getLooper().stopLoop(loopNum);
 		}
 	}
+	
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
 
 	//////////////////////////////
 	// SevenUpClock interface

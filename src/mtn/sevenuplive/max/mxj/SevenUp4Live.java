@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import mtn.sevenuplive.m4l.M4LMidi;
 import mtn.sevenuplive.m4l.M4LMidiOut;
 import mtn.sevenuplive.m4l.M4LMidiSystem;
 import mtn.sevenuplive.main.ConnectionSettings;
@@ -21,7 +22,8 @@ public class SevenUp4Live extends MaxObject {
 	
 	// There can be only one of these
 	private static SevenUp4Live instance;
-	private static SevenUpEnvironment environment;
+	private SevenUpEnvironment environment;
+	private M4LMidi midiIO;
 	
 	private SevenUp4LiveMelodizerClient[] melodizer1;
 	private SevenUp4LiveMelodizerClient[] melodizer2;
@@ -44,7 +46,18 @@ public class SevenUp4Live extends MaxObject {
 	
 	public SevenUp4Live(Atom[] args)
 	{
-		M4LMidiSystem.init(this);
+		// If MAX is creating a new instance, then we need to switch out all the innards to
+		// point to the new one
+		if (instance != null) {
+			post("7up instance already exists...transferring control to new instance");
+			post("Shutting down old instance...");
+			try {
+				instance.shutdown();
+			} catch (Throwable t) {
+				post(t.toString());
+			} 
+			post("Old instance shutdown");
+		}
 		
 		declareInlets(new int[]{DataTypes.ALL, DataTypes.INT});
 		declareOutlets(new int[]{
@@ -57,19 +70,11 @@ public class SevenUp4Live extends MaxObject {
 		setInletAssist(INLET_ASSIST);
 		setOutletAssist(OUTLET_ASSIST);
 		
-		// If MAX is creating a new instance, then we need to switch out all the innards to
-		// point to the new one
-		if (instance != null) {
-			post("7up instance already exists...transferring control to new instance");
-			post("Shutting down old instance...");
-			instance.shutdown();
-			post("Old instance shutdown");
-		}
-		
+		midiIO = new M4LMidiSystem(this); 
 		init();
-		instance = this;
+		environment = new SevenUpEnvironment(midiIO, settings);
 		
-		environment = new SevenUpEnvironment(settings);
+		instance = this;
 		post("New 7up instance created");
 	}
 	
@@ -92,7 +97,6 @@ public class SevenUp4Live extends MaxObject {
 	}
 	
 	private void init() {
-		M4LMidiSystem.init(this);
 		melodizer1 = new SevenUp4LiveMelodizerClient[7];
 		melodizer2 = new SevenUp4LiveMelodizerClient[7];
 		

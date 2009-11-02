@@ -8,16 +8,7 @@ import processing.core.PApplet;
 
 public class M4LMidiSystem implements M4LMidi {
 
-	private static M4LMidiSystem instance;
-	private static SevenUp4Live app;
-	
-	public static M4LMidi getInstance() {
-		if (instance == null) {
-			instance = new M4LMidiSystem();
-		}
-		
-		return instance;	
-	}
+	private SevenUp4Live app;
 	
 	public enum eSevenUp4OutputDevices {Melodizer1, Melodizer2, Stepper, Looper};
 	public enum eSevenUp4InputDevices {SevenUpMidiControl};
@@ -25,8 +16,8 @@ public class M4LMidiSystem implements M4LMidi {
 	private HashMap<String, HashMap<Integer, M4LMidiIn>> inputDeviceMap = new HashMap<String, HashMap<Integer, M4LMidiIn>>();
 	private HashMap<String, HashMap<Integer, M4LMidiOut>> outputDeviceMap = new HashMap<String, HashMap<Integer, M4LMidiOut>>();
 	
-	public static void init(SevenUp4Live app) {
-		M4LMidiSystem.app = app;
+	public M4LMidiSystem(SevenUp4Live app) {
+		this.app = app;
 	}
 	
 	public void closePorts() {

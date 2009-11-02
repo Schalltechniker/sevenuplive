@@ -26,10 +26,11 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	private M4LMidi midiIO;
 	private ConnectionSettings sevenUpConnections;
 	
-	public SevenUpApplet(MonomeUp m, ConnectionSettings sevenUpConnections)
+	public SevenUpApplet(MonomeUp m, ConnectionSettings sevenUpConnections, M4LMidi midiIO)
 	{
 		this.sevenUpConnections = sevenUpConnections;
-		this.m = m; 
+		this.m = m;
+		this.midiIO = midiIO;
 		init();
 	}
 	
@@ -40,7 +41,6 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	   m.startup(sevenUpConnections.oscPrefix, sevenUpConnections.oscHostAddress, sevenUpConnections.oscHostPort, sevenUpConnections.oscListenPort);
 	   this.online = false;
 	   
-	   midiIO = M4LMidiSystem.getInstance();
 	   midiIO.printDevices();
 	   
 	   // Ch8 is the channel we listen for midi to control certain actions in SevenUp

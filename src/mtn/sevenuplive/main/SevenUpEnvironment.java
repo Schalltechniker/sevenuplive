@@ -1,12 +1,13 @@
 package mtn.sevenuplive.main;
 
-import org.jdom.Document;
-
-import proxml.XMLInOut;
-import mtn.sevenuplive.m4l.M4LMidiSystem;
+import mtn.sevenuplive.m4l.M4LMidi;
 import mtn.sevenuplive.max.mxj.SevenUpClock;
 import mtn.sevenuplive.scales.Scale;
 import mtn.sevenuplive.scales.ScaleName;
+
+import org.jdom.Document;
+
+import proxml.XMLInOut;
 
 public class SevenUpEnvironment {
 
@@ -20,13 +21,14 @@ public class SevenUpEnvironment {
 
 	private int monomeType = MonomeUp.MONOME_64;
 
+	private M4LMidi midiIO;
+	
 	private XMLInOut xmlIO;
 	
-	/** Dirty flag for changes to the patch */
-	private boolean dirty; 
-
-	public SevenUpEnvironment(ConnectionSettings sevenUpConnections) {
+	//M4LMidiSystem.init(this);
+	public SevenUpEnvironment(M4LMidi midiIO, ConnectionSettings sevenUpConnections) {
 		this.sevenUpConnections = sevenUpConnections;
+		this.midiIO = midiIO;
 		newMonome();
 	}
 	
@@ -43,8 +45,9 @@ public class SevenUpEnvironment {
 				return false;
 			}
 		} else {
-			newMonome(); // new Monome because size may have changed
-			applet = new SevenUpApplet(m, sevenUpConnections);
+			// @TODO need to have a clone function for settings OR pull all the settings at this time
+			newMonome();
+			applet = new SevenUpApplet(m, sevenUpConnections, midiIO);
 			applet.setVisible(false);
 			xmlIO = new XMLInOut(applet);
 		}
@@ -120,7 +123,7 @@ public class SevenUpEnvironment {
 		break;
 		};
 
-		m = new MonomeUp(x_grids, y_grids, sevenUpConnections, monomeScale, this);
+		m = new MonomeUp(x_grids, y_grids, sevenUpConnections, monomeScale, midiIO);
 	}
 
 	public ConnectionSettings getSevenUpConnections() {
@@ -129,15 +132,6 @@ public class SevenUpEnvironment {
 
 	public void setSevenUpConnections(ConnectionSettings sevenUpConnections) {
 		this.sevenUpConnections = sevenUpConnections;
-	}
-
-	private Scale getScaleFromString(String scaleName)
-	{
-		ScaleName sn = ScaleName.valueOf(scaleName);
-		if (sn == null)
-			return new Scale(ScaleName.Major);
-
-		return new Scale(sn);
 	}
 
 	public void setMonomeType(int monomeType) {
@@ -150,14 +144,6 @@ public class SevenUpEnvironment {
 
 	public int getLoopType(int loopNum) {
 		return m.getLoopType(loopNum);
-	}
-
-	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
-	}
-
-	public boolean isDirty() {
-		return dirty;
 	}
 
 	public void finalize()
@@ -176,7 +162,7 @@ public class SevenUpEnvironment {
 		try
 		{
 			xmlIO.loadElement(patchPath);
-			dirty = false;
+			m.setDirty(false);
 			return true;
 		}catch (Exception e)
 		{
