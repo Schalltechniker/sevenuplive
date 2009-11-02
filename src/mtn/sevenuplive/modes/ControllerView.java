@@ -12,7 +12,7 @@ public class ControllerView extends Mode {
 	    updateNavGrid();
 	}
 	
-	private void updateDisplayGrid()
+	public void updateDisplayGrid()
 	{
 		super.clearDisplayGrid();
 		//Loop through the controls in a control bank and set the y coordinate on the display grid

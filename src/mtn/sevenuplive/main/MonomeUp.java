@@ -194,7 +194,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 				startCol = i * 8;
 			}
 
-			grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i);
+			grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
 		}
 
 

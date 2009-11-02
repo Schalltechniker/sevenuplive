@@ -48,7 +48,6 @@ public class ControllerModel extends Mode {
 	       
 	       //Send the control value for the previous selected column
 	       sendMidiControls(curBank, x);
-
 	}
 
 	private void sendMidiControls(int bank, int x)

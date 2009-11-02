@@ -10,6 +10,7 @@ public class DisplayGrid {
 	private int grid_width;
 	private int grid_height;
 	private int grid_index;
+	private int totalGrids;
 
 	private int curDisplayGrid[][];
 	private int navGrid[];
@@ -44,12 +45,13 @@ public class DisplayGrid {
 	
 	private Mode defaultMode;
 
-	public DisplayGrid(Monome monome, AllModes allmodes, int start_column, int start_row, int grid_width, int grid_height, Mode defaultMode, int grid_index) {
+	public DisplayGrid(Monome monome, AllModes allmodes, int start_column, int start_row, int grid_width, int grid_height, Mode defaultMode, int grid_index, int totalGrids) {
 		this.start_row = start_row;
 		this.start_column = start_column;
 		this.grid_width = grid_width;
 		this.grid_height = grid_height;
 		this.grid_index = grid_index;
+		this.totalGrids = totalGrids;
 		
 		this.monome = monome;
 		this.allmodes = allmodes;
@@ -365,6 +367,8 @@ public class DisplayGrid {
 			else if(curMode == ModeConstants.CONTROL_MODE)
 			{
 				allmodes.getControllerView(grid_index).press(x, y);
+				for(int i=0;i < totalGrids;i++ )
+					allmodes.getControllerView(i).updateDisplayGrid();
 			}
 			// seq mode
 			else if(curMode == ModeConstants.SEQ_MODE)
@@ -376,9 +380,17 @@ public class DisplayGrid {
 			else if(curMode == ModeConstants.LOOP_RECORD_MODE)
 				allmodes.getLoopRecorder().press(x, y);
 			else if (curMode == ModeConstants.MELODY_MODE)
+			{
 				allmodes.getMelodizer1View(grid_index).press(x, y);
+				for(int i=0;i < totalGrids;i++ )
+					allmodes.getMelodizer1View(i).updateDisplayGrid();
+			}
 			else if (curMode == ModeConstants.MELODY2_MODE)
+			{
 				allmodes.getMelodizer2View(grid_index).press(x, y);
+				for(int i=0;i < totalGrids;i++ )
+					allmodes.getMelodizer2View(i).updateDisplayGrid();
+			}
 			else if(curMode == ModeConstants.MASTER_MODE)
 				allmodes.getMasterizer().press(x, y);
 		}
@@ -395,11 +407,15 @@ public class DisplayGrid {
 		{
 			if(allmodes.getMelodizer1View(grid_index).isNote(y))
 				allmodes.getMelodizer1View(grid_index).release(x, y);
+			for(int i=0;i < totalGrids;i++ )
+				allmodes.getMelodizer1View(i).updateDisplayGrid();
 		}
 		else if(curMode == ModeConstants.MELODY2_MODE && x != NAVCOL)
 		{
 			if(y<6 || allmodes.getMelodizer2View(grid_index).isNote(y))
 				allmodes.getMelodizer2View(grid_index).release(x, y);
+			for(int i=0;i < totalGrids;i++ )
+				allmodes.getMelodizer2View(i).updateDisplayGrid();
 		}
 		else if (curMode == ModeConstants.LOOP_MODE && x != NAVCOL) {
 			allmodes.getLooper().release(x, y);
