@@ -15,6 +15,7 @@ import jklabs.monomic.MonomeListener;
 import jklabs.monomic.MonomeOSC;
 import mtn.sevenuplive.m4l.M4LMidi;
 import mtn.sevenuplive.m4l.M4LMidiOut;
+import mtn.sevenuplive.m4l.M4LMidiSystem;
 import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.max.mxj.SevenUpClock;
 import mtn.sevenuplive.modes.AllModes;
@@ -40,7 +41,7 @@ import org.jdom.Element;
 
 public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUpClock {
 
-	private SevenUpApplet parent;
+	private SevenUpEnvironment parent;
 	private ArrayList<Element> xmlPatches;
 	private int curPatchIndex=0;
 	private String patchTitle = "";
@@ -113,7 +114,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	////////////////////////////////////////
 	//Midi members
 	////////////////////////////////////////
-	private M4LMidi midiIO;
+	//private M4LMidi midiIO;
 	private M4LMidiOut midiSampleOut;
 	////////////////////////////////////
 
@@ -125,19 +126,17 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 
 	private DisplayGrid[] grids;
 
-	MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, M4LMidi _midiIO, SevenUpApplet _parent) {
-		super(x_grids, y_grids, _sevenUpConnections.oscPrefix, _sevenUpConnections.oscHostAddress, _sevenUpConnections.oscHostPort, _sevenUpConnections.oscListenPort);
+	MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, SevenUpEnvironment _parent) {
+		super(x_grids, y_grids);
 		sevenUpConnections = _sevenUpConnections;
 
 		xmlPatches = new ArrayList<Element>();
 		parent = _parent;
 
-		midiIO = _midiIO;
-
+		int totalGrids = x_grids * y_grids;
+		
 		// Init midi communications
 		initializeMidi();
-
-		int totalGrids = x_grids * y_grids;
 
 		//Create the same number of views as there are grids
 		PatternizerModel patternizerModel = new PatternizerModel(ModeConstants.PATTERN_MODE, midiSampleOut, GRID_WIDTH, GRID_HEIGHT);
@@ -190,13 +189,14 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 			grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i);
 		}
 
-
 		// Turn on to debug monome OSC connection */
 		//this.setDebug(Monome.FINE);
 	} 
 
 	private void initializeMidi()
 	{
+		M4LMidi midiIO = M4LMidiSystem.getInstance();
+		
 		//Sample/Loop/Masterizer out on channel 8
 		midiSampleOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
 		midiMasterOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
@@ -219,7 +219,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 
 		panic();
 	}
-
+	
 	public void draw() {
 		for (DisplayGrid grid : grids) {
 			grid.draw();
@@ -557,6 +557,67 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	public int getLoopType(int loopNum) {
 		return allmodes.getLooper().getLoop(loopNum).getType();
 	}
+	
+	public void setMelody1ClipMode(boolean b) {
+		if (b) {
+			AllModes.getInstance().getMelodizer1Model().setCurrentMode(MelodizerModel.eMelodizerMode.CLIP);
+		} else {
+			AllModes.getInstance().getMelodizer1Model().setCurrentMode(MelodizerModel.eMelodizerMode.KEYBOARD);
+		}
+		
+	}
+	
+	public void setMelody1Mode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer1Model().setCurrentMode(mode);
+	}
+	
+	public MelodizerModel.eMelodizerMode getMelody1Mode()
+	{
+		return AllModes.getInstance().getMelodizer1Model().getCurrentMode();
+	}
+	
+	public void setMelody2Mode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer2Model().setCurrentMode(mode);
+	}
+	
+	public MelodizerModel.eMelodizerMode getMelody2Mode()
+	{
+		return AllModes.getInstance().getMelodizer2Model().getCurrentMode();
+	}
+	
+	public void setMelody1Transpose(boolean transpose) {
+		AllModes.getInstance().getMelodizer1Model().setTranspose(transpose);
+	}
+
+	public boolean getMelody1Transpose() {
+		return AllModes.getInstance().getMelodizer1Model().getTranspose();
+	}
+	
+	public void setMelody1AltMode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer1Model().setAltMode(mode);
+	}
+	
+	public MelodizerModel.eMelodizerMode getMelody1AltMode()
+	{
+		return AllModes.getInstance().getMelodizer1Model().getAltMode();
+	}
+	
+	public void setMelody2Transpose(boolean transpose) {
+		AllModes.getInstance().getMelodizer2Model().setTranspose(transpose);
+	}
+
+	public boolean getMelody2Transpose() {
+		return AllModes.getInstance().getMelodizer2Model().getTranspose();
+	}
+
+	public void setMelody2AltMode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer2Model().setAltMode(mode);
+	}
+	
+	public MelodizerModel.eMelodizerMode getMelody2AltMode()
+	{
+		return AllModes.getInstance().getMelodizer2Model().getAltMode();
+	}
 
 	public void reset() {
 		for(int i=0;i<7;i++)
@@ -588,6 +649,17 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		allmodes.getSequencer().curSeqRow = 0;
 	}
 	
+	public Document toJDOMXMLDocument(String fileName)
+	{
+		setPatchTitle(fileName);
+		return toXMLDocument(fileName);
+	}
+	
+	public boolean loadJDOMXMLDocument(Document XMLDoc)
+	{
+		return loadXML(XMLDoc);
+	}
+	
 	/**
 	 * Receive notes from Live that tell SevenUp where the beat is
 	 * @param note
@@ -598,11 +670,11 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	{
 		if(noteOnPitch == E4)
 		{
-			parent.loadPrevPatch();
+			loadPrevPatch();
 		}
 		else if(noteOnPitch == F4)
 		{
-			parent.loadNextPatch();
+			loadNextPatch();
 		}
 		//Reset all modes
 		else if(noteOnPitch == FSHARP4)

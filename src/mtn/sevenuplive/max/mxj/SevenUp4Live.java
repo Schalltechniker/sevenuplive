@@ -4,14 +4,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.jdom.Document;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
-
 import mtn.sevenuplive.m4l.M4LMidiOut;
 import mtn.sevenuplive.m4l.M4LMidiSystem;
 import mtn.sevenuplive.main.ConnectionSettings;
-import mtn.sevenuplive.main.SevenUpApplet;
+import mtn.sevenuplive.main.SevenUpEnvironment;
+
+import org.jdom.Document;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
 
 import com.cycling74.max.Atom;
 import com.cycling74.max.DataTypes;
@@ -19,17 +19,14 @@ import com.cycling74.max.MaxObject;
 
 public class SevenUp4Live extends MaxObject {
 	
-	private SevenUpApplet applet;
-	private static SevenUpClock clock;
-	
 	// There can be only one of these
 	private static SevenUp4Live instance;
+	private static SevenUpEnvironment environment;
 	
 	private SevenUp4LiveMelodizerClient[] melodizer1;
 	private SevenUp4LiveMelodizerClient[] melodizer2;
 	private SevenUp4LiveStepperClient stepper;
 	private SevenUp4LiveLooperClient looper;
-	
 	private ConnectionSettings settings = new ConnectionSettings();
 	
 	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, InitializationDataOutlet}; 
@@ -47,6 +44,8 @@ public class SevenUp4Live extends MaxObject {
 	
 	public SevenUp4Live(Atom[] args)
 	{
+		M4LMidiSystem.init(this);
+		
 		declareInlets(new int[]{DataTypes.ALL, DataTypes.INT});
 		declareOutlets(new int[]{
 				DataTypes.MESSAGE, 
@@ -65,9 +64,12 @@ public class SevenUp4Live extends MaxObject {
 			post("Shutting down old instance...");
 			instance.shutdown();
 			post("Old instance shutdown");
-		} 
+		}
+		
 		init();
-		instance = this;	
+		instance = this;
+		
+		environment = new SevenUpEnvironment(settings);
 		post("New 7up instance created");
 	}
 	
@@ -85,11 +87,6 @@ public class SevenUp4Live extends MaxObject {
 	}
 	
 	protected void loadbang() {
-		if (instance.applet != null) {
-			instance.applet.stopClock();
-			instance.applet.teardown();
-		}
-		
 		// forces data refresh
 		bang();
 	}
@@ -144,34 +141,14 @@ public class SevenUp4Live extends MaxObject {
 	 * Initializes SevenUp with the current connection settings and starts it's heart 
 	 */
 	public void initialize() {
-		if (applet != null) {
-			if (applet.isRunning()) {
-				post("7up is already initialized...");
-			} else {
-				applet = new SevenUpApplet(settings);
-				applet.setVisible(false);
-				post("7up started");
-			}
-		} else {
-			post("Initializing 7up heart...");
-			applet = new SevenUpApplet(settings);
-			applet.setVisible(false);
-			post("7up started");
-		}
+		environment.startSevenUp();
 	}
     
 	/**
 	 * Shuts down SevenUps heart and releases the OSC ports 
 	 */
 	public void shutdown() {
-		if (instance.applet == null) {
-			post("Cannot shutdown 7up since has not been initialized yet");
-		} else {
-			post("Shutting down 7up...");
-			instance.applet.stopClock();
-			instance.applet.teardown();
-			post("7up is shutdown");
-		}
+		environment.stopSevenUp();
 	}
     
 	public void inlet(int i)
@@ -184,38 +161,38 @@ public class SevenUp4Live extends MaxObject {
 				switch (i) {
 				case -1:
 					post("CLOCK STOP");
-					if (clock != null)
-						clock.stopClock();
+					if (environment.getClock() != null)
+						environment.getClock().stopClock();
 					break;
 				case -2:
 					post("CLOCK START");
-					if (clock != null)
-						clock.startClock();
+					if (environment.getClock() != null)
+						environment.getClock().startClock();
 					break;	
 				case 0:
 					post("C4");
-					if (clock != null)
-						clock.sendBigTick();
+					if (environment.getClock() != null)
+						environment.getClock().sendBigTick();
 					break;
 				case 1:
 					post("D#4");
-					if (clock != null)
-						clock.sendSmallTick();
+					if (environment.getClock() != null)
+						environment.getClock().sendSmallTick();
 					break;
 				case 2:
 					post("C7");
-					if (clock != null)
-						clock.pumpSequencerHeart();
+					if (environment.getClock() != null)
+						environment.getClock().pumpSequencerHeart();
 					break;
 				case 3:
 					post("F7");
-					if (clock != null)
-						clock.pumpLooperHeart();
+					if (environment.getClock() != null)
+						environment.getClock().pumpLooperHeart();
 					break;
 				case 4:
 					post("E7");
-					if (clock != null)
-						clock.pumpMelodizerHeart();
+					if (environment.getClock() != null)
+						environment.getClock().pumpMelodizerHeart();
 					break;
 				default:
 					post("Clock does not understand " + i);
@@ -304,23 +281,14 @@ public class SevenUp4Live extends MaxObject {
 		return instance;
 	}
 	
-	public static void setClock(SevenUpClock clock) {
-		SevenUp4Live.clock = clock;
-	}
-	
 	private void savePatch(String filepath) {
 
-		if (applet == null) {
-			post("Could not save patch [" + filepath + "] applet must be initialized first");
-			return;
-		}
-		
 		FileWriter fileWriter = null;
 		
 		try {
 			if (filepath != null) {
 				java.io.File file = new File(filepath);
-				org.jdom.Document doc = applet.toJDOMXMLDocument(file.getName());
+				org.jdom.Document doc = environment.toJDOMXMLDocument(file.getName());
 				org.jdom.output.XMLOutputter fmt = new XMLOutputter();
 
 				fileWriter = new FileWriter(file);
@@ -341,11 +309,6 @@ public class SevenUp4Live extends MaxObject {
 	
 	private void loadPatch(String filepath) {
 		
-		if (applet == null) {
-			post("Could not load patch [" + filepath + "] applet must be initialized first");
-			return;
-		}
-		
 		try {
 			if (filepath != null) {
 				java.io.File file = new File(filepath);
@@ -353,7 +316,7 @@ public class SevenUp4Live extends MaxObject {
 				try
 				{
 					Document doc = builder.build(file);
-					applet.loadJDOMXMLDocument(doc);
+					environment.loadJDOMXMLDocument(doc);
 				}
 				catch(Exception ex)
 				{
