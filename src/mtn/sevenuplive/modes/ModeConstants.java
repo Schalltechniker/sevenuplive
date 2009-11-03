@@ -20,8 +20,8 @@ public interface ModeConstants {
 	public static final int MASTER_MODE = 7;
 	public static final int SAMPLE_MODE = 31;
 	public static final int CHOPPER_MODE = 41;
-	public static final int MEL_ON_BUTTON_PRESS = 1;
-	public static final int MEL_QUANTIZED = 2;
+	public static final int MEL_ON_BUTTON_PRESS = 0;
+	public static final int MEL_QUANTIZED = 1;
 	
 	/** Initial default value when there is no explicit default  */ 
 	public static final int NOT_SET = -1;

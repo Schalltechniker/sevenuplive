@@ -8,7 +8,11 @@ import mtn.sevenuplive.m4l.M4LMidi;
 import mtn.sevenuplive.m4l.M4LMidiOut;
 import mtn.sevenuplive.m4l.M4LMidiSystem;
 import mtn.sevenuplive.main.ConnectionSettings;
+import mtn.sevenuplive.main.MonomeUp;
 import mtn.sevenuplive.main.SevenUpEnvironment;
+import mtn.sevenuplive.modes.MelodizerModel.eMelodizerMode;
+import mtn.sevenuplive.scales.Scale;
+import mtn.sevenuplive.scales.ScaleName;
 
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
@@ -34,7 +38,7 @@ public class SevenUp4Live extends MaxObject {
 	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, InitializationDataOutlet}; 
 	
 	private static final String[] INLET_ASSIST = new String[]{
-		"messages (initialize, shutdown, monome (0,1,2..etc), hostaddress (127.0.0.1), listenport, hostport)",
+		"messages (initialize, shutdown, monome (0,1,2..etc), hostaddress (127.0.0.1), listenport, hostport, melodizer1)",
 		"clock in (0=C4,1=D#4,2=C7,3=E7,4=F7)"
 	};
 	private static final String[] OUTLET_ASSIST = new String[]{
@@ -267,6 +271,56 @@ public class SevenUp4Live extends MaxObject {
 			post("Reading patch [" + filepath + "]");
 			loadPatch(filepath);
 		}
+	}
+	
+	//////////////////// Monome Settings /////////////////////////////
+	
+	public void melodizer1(Atom[] atoms) {
+		MonomeUp m = environment.getMonome();
+		if (atoms != null && atoms.length > 1 && m != null) {
+			String operation = atoms[0].toString();
+			if (operation.equals("scalename")) {
+				if (atoms[1] != null)
+					m.setMelody1Scale(new Scale(ScaleName.valueOf(atoms[1].toString())));
+			} else if (operation.equals("recmode")) {
+				if (atoms[1] != null && atoms[1].isInt()) {
+					int mode = atoms[1].toInt();
+					m.setMel1RecMode(mode);
+				}
+			} else if (operation.equals("toolmode")) {
+				if (atoms[1] != null && atoms[1].isString()) {
+					String toolmode = atoms[0].toString();
+					m.setMelody1Mode(eMelodizerMode.valueOf(toolmode));
+				}
+			} else if (operation.equals("transpose")) {
+				if (atoms[1] != null && atoms[1].isInt()) {
+					int transpose = atoms[1].toInt();
+					m.setMelody1Transpose(transpose == 0 ? false : true);
+				}
+			} else if (operation.equals("transposegroup")) {
+				if (atoms.length > 2 && atoms[1] != null && atoms[1].isInt() && atoms[2] != null && atoms[2].isInt()) {
+					int slot = atoms[1].toInt();
+					int group = atoms[2].toInt();
+					m.setMel2TransposeGroup(slot, group);
+				}
+			} 
+		}
+	}
+	
+	public void recmode(Atom[] atoms) {
+		// @TODO
+	}
+	
+	public void toolmode(Atom[] atoms) {
+		// @TODO
+	}
+	
+	public void transpose(Atom[] atoms) {
+		// @TODO
+	}
+	
+	public void transposegroup(Atom[] atoms) {
+		// @TODO
 	}
 	
 	public void inlet(float f)

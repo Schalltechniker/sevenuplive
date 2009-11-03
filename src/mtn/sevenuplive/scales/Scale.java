@@ -533,7 +533,17 @@ public class Scale {
 			Degrees[5] = 8;
 			Degrees[6] = 10;
 			break;	
-	
+		default: // Major is the default
+			Name = ScaleName.Major;
+			label = "Major";
+			Degrees[0] = 0;
+			Degrees[1] = 2;
+			Degrees[2] = 4;
+			Degrees[3] = 5;
+			Degrees[4] = 7;
+			Degrees[5] = 9;
+			Degrees[6] = 11;
+			break;
 		}
 	}
 

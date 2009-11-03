@@ -29,7 +29,6 @@ public class SevenUpEnvironment {
 	public SevenUpEnvironment(M4LMidi midiIO, ConnectionSettings sevenUpConnections) {
 		this.sevenUpConnections = sevenUpConnections;
 		this.midiIO = midiIO;
-		newMonome();
 	}
 	
 	public SevenUpClock getClock() {
@@ -39,13 +38,17 @@ public class SevenUpEnvironment {
 		return null;
 	}
 	
+	public MonomeUp getMonome() {
+		return m;
+	}
+	
 	public boolean startSevenUp() {
 		if (applet != null) {
 			if (applet.isRunning()) {
 				return false;
 			}
 		} else {
-			// @TODO need to have a clone function for settings OR pull all the settings at this time
+			// @TODO need to pull all the settings at this time
 			newMonome();
 			applet = new SevenUpApplet(m, sevenUpConnections, midiIO);
 			applet.setVisible(false);
