@@ -252,6 +252,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	}
 	
 	public void forceShutdown() throws Throwable {
+		lightsOff();
 		oscP5.stop();
 		oscP5.disconnect(myLocalLocation);
 		oscP5.disconnect(myRemoteLocation);

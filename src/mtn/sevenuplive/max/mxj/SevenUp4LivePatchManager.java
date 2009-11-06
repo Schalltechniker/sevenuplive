@@ -4,9 +4,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import mtn.sevenuplive.main.MonomeUp;
+import mtn.sevenuplive.max.mxj.SevenUp4Live.eOutletCategories;
+import mtn.sevenuplive.scales.Scale;
+
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+
+import com.cycling74.max.Atom;
 
 public class SevenUp4LivePatchManager {
 	
@@ -72,30 +78,138 @@ public class SevenUp4LivePatchManager {
 	 * Push all Patch Settings to the UI
 	 */
 	private void pushAllPatchSettings() {
-		pushLooperSettings();
-		pushMelodizer1Settings();
-		pushMelodizer2Settings();
-		pushControllerSettings();
-		pushTiltSettings();
+		MonomeUp m = app.getEnvironment().getMonome();
+		
+		pushLooperSettings(m);
+		pushMelodizer1Settings(m);
+		pushMelodizer2Settings(m);
+		pushControllerSettings(m);
+		pushTiltSettings(m);
 	}
 	
-	private void pushLooperSettings() {
+	private void pushLooperSettings(MonomeUp m) {
 		
 	}
 	
-	private void pushMelodizer1Settings() {
+	private void pushMelodizer1Settings(MonomeUp m) {
+		
+		// Send the Scalename
+		app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+			Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer1.toString()),
+			Atom.newAtom("scalename"),
+			Atom.newAtom(m.getMelody1Scale().Name.toString())
+			});
+		
+		// Send the record mode
+		app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+			Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer1.toString()),
+			Atom.newAtom("recmode"),
+			Atom.newAtom(m.getMel1RecMode())
+			});
+		
+		// Send the tool mode
+		String modeString = null;
+		if (m.getMelody1Mode() == m.getMelody1AltMode()) {
+			modeString = m.getMelody1Mode().toString(); 
+		} else {
+			modeString = m.getMelody1Mode().toString() + "/" + m.getMelody1AltMode().toString(); 
+		}
+		app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+			Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer1.toString()),
+			Atom.newAtom("toolmode"),
+			Atom.newAtom(modeString)
+			});
+		
+		// Send transpose
+		app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+			Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer1.toString()),
+			Atom.newAtom("transpose"),
+			Atom.newAtom(m.getMelody1Transpose() ? 1 : 0)
+			});
+		
+		// Send transpose groups
+		for (int i = 0; i < 7; i++) {
+			app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+				Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer1.toString()),
+				Atom.newAtom("transposegroup"),
+				Atom.newAtom(i),
+				Atom.newAtom(m.getMel1TransposeGroup(i) + 1) // -1 means no group so to get to 0 index we add 1
+				});
+		}
+		
+		// Send sustain modes
+		for (int i = 0; i < 7; i++) {
+			app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+				Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer1.toString()),
+				Atom.newAtom("sustainmode"),
+				Atom.newAtom(i),
+				Atom.newAtom(m.getMel1TransposeSustain(i) ? 1 : 0) 
+				});
+		}
+	}
+	
+	private void pushMelodizer2Settings(MonomeUp m) {
+		
+		// Send the Scalename
+		app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+			Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer2.toString()),
+			Atom.newAtom("scalename"),
+			Atom.newAtom(m.getMelody2Scale().Name.toString())
+			});
+		
+		// Send the record mode
+		app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+			Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer2.toString()),
+			Atom.newAtom("recmode"),
+			Atom.newAtom(m.getMel2RecMode())
+			});
+		
+		// Send the tool mode
+		String modeString = null;
+		if (m.getMelody2Mode() == m.getMelody2AltMode()) {
+			modeString = m.getMelody2Mode().toString(); 
+		} else {
+			modeString = m.getMelody2Mode().toString() + "/" + m.getMelody2AltMode().toString(); 
+		}
+		app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+			Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer2.toString()),
+			Atom.newAtom("toolmode"),
+			Atom.newAtom(modeString)
+			});
+		
+		// Send transpose
+		app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+			Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer2.toString()),
+			Atom.newAtom("transpose"),
+			Atom.newAtom(m.getMelody2Transpose() ? 1 : 0)
+			});
+		
+		// Send transpose groups
+		for (int i = 0; i < 7; i++) {
+			app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+				Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer2.toString()),
+				Atom.newAtom("transposegroup"),
+				Atom.newAtom(i),
+				Atom.newAtom(m.getMel2TransposeGroup(i) + 1) // -1 means no group so to get to 0 index we add 1
+				});
+		}
+		
+		// Send sustain modes
+		for (int i = 0; i < 7; i++) {
+			app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+				Atom.newAtom(SevenUp4Live.eOutletCategories.melodizer2.toString()),
+				Atom.newAtom("sustainmode"),
+				Atom.newAtom(i),
+				Atom.newAtom(m.getMel2TransposeSustain(i) ? 1 : 0) 
+				});
+		}
+	}
+	
+	private void pushControllerSettings(MonomeUp m) {
 		
 	}
 	
-	private void pushMelodizer2Settings() {
-		
-	}
-	
-	private void pushControllerSettings() {
-		
-	}
-	
-	private void pushTiltSettings() {
+	private void pushTiltSettings(MonomeUp m) {
 		
 	}
 }
