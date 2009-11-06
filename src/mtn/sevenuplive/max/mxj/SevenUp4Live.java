@@ -289,8 +289,15 @@ public class SevenUp4Live extends MaxObject {
 				}
 			} else if (operation.equals("toolmode")) {
 				if (atoms[1] != null && atoms[1].isString()) {
-					String toolmode = atoms[0].toString();
-					m.setMelody1Mode(eMelodizerMode.valueOf(toolmode));
+					String toolmode[] = atoms[0].toString().split("/");
+					if (toolmode.length == 1) {
+						m.setMelody1Mode(eMelodizerMode.valueOf(toolmode[0]));
+						m.setMelody1AltMode(eMelodizerMode.valueOf(toolmode[0]));
+					} else if (toolmode.length == 2) {
+						m.setMelody1Mode(eMelodizerMode.valueOf(toolmode[0]));
+						m.setMelody1AltMode(eMelodizerMode.valueOf(toolmode[1]));
+					}
+					
 				}
 			} else if (operation.equals("transpose")) {
 				if (atoms[1] != null && atoms[1].isInt()) {
@@ -301,7 +308,66 @@ public class SevenUp4Live extends MaxObject {
 				if (atoms.length > 2 && atoms[1] != null && atoms[1].isInt() && atoms[2] != null && atoms[2].isInt()) {
 					int slot = atoms[1].toInt();
 					int group = atoms[2].toInt();
-					m.setMel2TransposeGroup(slot, group);
+					m.setMel1TransposeGroup(slot, group);
+				}
+			} else if (operation.equals("sustainmode")) {
+				if (atoms.length > 2 && atoms[1] != null && atoms[1].isInt() && atoms[2] != null && atoms[2].isInt()) {
+					int slot = atoms[1].toInt();
+					int mode = atoms[2].toInt();
+					if (mode == 0) {
+						m.setMel1TransposeSustain(slot, false);
+					} else{
+						m.setMel1TransposeSustain(slot, true);
+					}
+				}
+			} 
+		}
+	}
+	
+	public void melodizer2(Atom[] atoms) {
+		MonomeUp m = environment.getMonome();
+		if (atoms != null && atoms.length > 1 && m != null) {
+			String operation = atoms[0].toString();
+			if (operation.equals("scalename")) {
+				if (atoms[1] != null)
+					m.setMelody1Scale(new Scale(ScaleName.valueOf(atoms[1].toString())));
+			} else if (operation.equals("recmode")) {
+				if (atoms[1] != null && atoms[1].isInt()) {
+					int mode = atoms[1].toInt();
+					m.setMel1RecMode(mode);
+				}
+			} else if (operation.equals("toolmode")) {
+				if (atoms[1] != null && atoms[1].isString()) {
+					String toolmode[] = atoms[0].toString().split("/");
+					if (toolmode.length == 1) {
+						m.setMelody1Mode(eMelodizerMode.valueOf(toolmode[0]));
+						m.setMelody1AltMode(eMelodizerMode.valueOf(toolmode[0]));
+					} else if (toolmode.length == 2) {
+						m.setMelody1Mode(eMelodizerMode.valueOf(toolmode[0]));
+						m.setMelody1AltMode(eMelodizerMode.valueOf(toolmode[1]));
+					}
+					
+				}
+			} else if (operation.equals("transpose")) {
+				if (atoms[1] != null && atoms[1].isInt()) {
+					int transpose = atoms[1].toInt();
+					m.setMelody1Transpose(transpose == 0 ? false : true);
+				}
+			} else if (operation.equals("transposegroup")) {
+				if (atoms.length > 2 && atoms[1] != null && atoms[1].isInt() && atoms[2] != null && atoms[2].isInt()) {
+					int slot = atoms[1].toInt();
+					int group = atoms[2].toInt();
+					m.setMel1TransposeGroup(slot, group);
+				}
+			} else if (operation.equals("sustainmode")) {
+				if (atoms.length > 2 && atoms[1] != null && atoms[1].isInt() && atoms[2] != null && atoms[2].isInt()) {
+					int slot = atoms[1].toInt();
+					int mode = atoms[2].toInt();
+					if (mode == 0) {
+						m.setMel1TransposeSustain(slot, false);
+					} else{
+						m.setMel1TransposeSustain(slot, true);
+					}
 				}
 			} 
 		}
