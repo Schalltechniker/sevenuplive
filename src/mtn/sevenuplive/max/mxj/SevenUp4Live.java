@@ -12,6 +12,7 @@ import mtn.sevenuplive.m4l.M4LMidiSystem;
 import mtn.sevenuplive.main.ConnectionSettings;
 import mtn.sevenuplive.main.MonomeUp;
 import mtn.sevenuplive.main.SevenUpEnvironment;
+import mtn.sevenuplive.modes.MelodizerModel;
 import mtn.sevenuplive.modes.MelodizerModel.eMelodizerMode;
 import mtn.sevenuplive.scales.Scale;
 import mtn.sevenuplive.scales.ScaleName;
@@ -29,24 +30,27 @@ public class SevenUp4Live extends MaxObject {
 	// There can be only one of these
 	private static SevenUp4Live instance;
 	private SevenUpEnvironment environment;
+	
 	private M4LMidi midiIO;
 	
+	private SevenUp4LivePatchManager pmanage;
 	private SevenUp4LiveMelodizerClient[] melodizer1;
 	private SevenUp4LiveMelodizerClient[] melodizer2;
 	private SevenUp4LiveStepperClient stepper;
 	private SevenUp4LiveLooperClient looper;
 	private ConnectionSettings settings = new ConnectionSettings();
 	
-	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, InitializationDataOutlet}; 
+	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, PatchDataOutlet, InitializationDataOutlet}; 
 	
 	private static final String[] INLET_ASSIST = new String[]{
-		"messages (initialize, shutdown, monome (0,1,2..etc), hostaddress (127.0.0.1), listenport, hostport, melodizer1, melodizer2)",
+		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), listenport, hostport, melodizer1, melodizer2)",
 		"clock in (0=C4,1=D#4,2=C7,3=E7,4=F7)"
 	};
 	private static final String[] OUTLET_ASSIST = new String[]{
 		"Melodizer Midi Out",
 		"Stepper Midi Out",
 		"Looper Midi Out",
+		"Patch Data Out",
 		"Data Initialization Out"
 	};
 	
@@ -63,11 +67,11 @@ public class SevenUp4Live extends MaxObject {
 		Monome8x64,
 		Monome9x64,
 		Monome10x64};
-	
+		
 	public SevenUp4Live(Atom[] args)
 	{
-		// If MAX is creating a new instance, then we need to switch out all the innards to
-		// point to the new one
+		// If MAX is creating a new instance, then we need to 
+		// point to the new one, and shutdown old one
 		if (instance != null) {
 			post("7up instance already exists...transferring control to new instance");
 			post("Shutting down old instance...");
@@ -82,6 +86,7 @@ public class SevenUp4Live extends MaxObject {
 		declareInlets(new int[]{DataTypes.ALL, DataTypes.INT});
 		declareOutlets(new int[]{
 				DataTypes.MESSAGE, 
+				DataTypes.MESSAGE,
 				DataTypes.MESSAGE,
 				DataTypes.MESSAGE,
 				DataTypes.MESSAGE
@@ -111,6 +116,7 @@ public class SevenUp4Live extends MaxObject {
 	}
 	
 	private void init() {
+		pmanage = new SevenUp4LivePatchManager(this); 
 		melodizer1 = new SevenUp4LiveMelodizerClient[7];
 		melodizer2 = new SevenUp4LiveMelodizerClient[7];
 		
@@ -127,6 +133,10 @@ public class SevenUp4Live extends MaxObject {
 		looper = new SevenUp4LiveLooperClient(this, 1, 7);
 	}
 	
+	public SevenUpEnvironment getEnvironment() {
+		return environment;
+	}
+
 	public M4LMidiOut getMelodizerOutput(int ch, int instance) {
 		switch (instance) {
 		case 1:
@@ -243,6 +253,18 @@ public class SevenUp4Live extends MaxObject {
 		}
 	}
 	
+	public void oscprefix(Atom[] list)
+	{
+		if (list.length > 0) {
+			String prefix = list[0].getString();
+			if (prefix == null)
+				return;
+			
+			post("Setting monome prefix atom to [" + prefix + "]");
+			settings.oscPrefix = prefix;
+		}
+	}
+	
 	public void listenport(Atom[] list)
 	{
 		if (list.length > 0) {
@@ -270,7 +292,7 @@ public class SevenUp4Live extends MaxObject {
 		if (patchparams.length > 0) {
 			String filepath = patchparams[0].toString();
 			post("Writing patch [" + filepath + "]");
-			savePatch(filepath);
+			pmanage.savePatch(filepath);
 		}
 	}
 	
@@ -279,13 +301,14 @@ public class SevenUp4Live extends MaxObject {
 		if (patchparams.length > 0) {
 			String filepath = patchparams[0].toString();
 			post("Reading patch [" + filepath + "]");
-			loadPatch(filepath);
+			pmanage.loadPatch(filepath);
 		}
 	}
 	
 	private void initializeUI() {
 		initializeMonomeChoices();
 		initializeScales();
+		initializeMelodizerTools();
 	}
 	
 	private void initializeMonomeChoices() {
@@ -295,11 +318,12 @@ public class SevenUp4Live extends MaxObject {
 			monomeList.add(monomeName);
 		
 		}
-		Atom[] atoms = new Atom[monomeList.size() + 1];
-		atoms[0] = Atom.newAtom("monomes");
+		Atom[] atoms = new Atom[monomeList.size() + 2];
+		atoms[0] = Atom.newAtom("connections");
+		atoms[1] = Atom.newAtom("monomes");
 		
 		for (int i = 0; i < monomeList.size(); i++) {
-			atoms[i + 1] = Atom.newAtom(monomeList.get(i).toString());
+			atoms[i + 2] = Atom.newAtom(monomeList.get(i).toString());
 		}
 		
 		// Send initialization data
@@ -312,11 +336,57 @@ public class SevenUp4Live extends MaxObject {
 		for (ScaleName scaleName : ScaleName.values()) {
 			scaleList.add(scaleName);
 		}
-		Atom[] atoms = new Atom[scaleList.size() + 1];
-		atoms[0] = Atom.newAtom("scales");
+		Atom[] atoms = new Atom[scaleList.size() + 2];
+		atoms[0] = Atom.newAtom("melodizer1");
+		atoms[1] = Atom.newAtom("scales");
 		
 		for (int i = 0; i < scaleList.size(); i++) {
-			atoms[i + 1] = Atom.newAtom(scaleList.get(i).toString());
+			atoms[i + 2] = Atom.newAtom(scaleList.get(i).toString());
+		}
+		
+		// Send initialization data
+		outlet(eOutlets.InitializationDataOutlet.ordinal(), atoms);
+		
+		atoms[0] = Atom.newAtom("melodizer2");
+		
+		// Send initialization data
+		outlet(eOutlets.InitializationDataOutlet.ordinal(), atoms);
+	}
+	
+	private void initializeMelodizerTools() {
+		List<String> modelList = new ArrayList<String>();
+		
+		modelList.add(MelodizerModel.eMelodizerMode.KEYBOARD.toString());
+		modelList.add(MelodizerModel.eMelodizerMode.POSITION.toString());
+		modelList.add(MelodizerModel.eMelodizerMode.NONE.toString());
+		modelList.add(MelodizerModel.eMelodizerMode.CLIP.toString());
+		modelList.add(MelodizerModel.eMelodizerMode.KEYBOARD.toString() + "/" + MelodizerModel.eMelodizerMode.POSITION.toString());
+		modelList.add(MelodizerModel.eMelodizerMode.KEYBOARD.toString() + "/" + MelodizerModel.eMelodizerMode.NONE.toString());
+		modelList.add(MelodizerModel.eMelodizerMode.POSITION.toString() + "/" + MelodizerModel.eMelodizerMode.NONE.toString());
+		
+		// Melodizer 1
+		Atom[] atoms = new Atom[modelList.size() + 2];
+		atoms[0] = Atom.newAtom("melodizer1");
+		atoms[1] = Atom.newAtom("toolmodes");
+		
+		
+		for (int i = 0; i < modelList.size(); i++) {
+			atoms[i + 2] = Atom.newAtom(modelList.get(i).toString());
+		}
+		
+		// Send initialization data
+		outlet(eOutlets.InitializationDataOutlet.ordinal(), atoms);
+		
+		// Melodizer 2
+		
+		// No clip mode in Melodizer1
+		modelList.remove(MelodizerModel.eMelodizerMode.CLIP.toString());
+		atoms = new Atom[modelList.size() + 2];
+		atoms[0] = Atom.newAtom("melodizer2");
+		atoms[1] = Atom.newAtom("toolmodes");
+		
+		for (int i = 0; i < modelList.size(); i++) {
+			atoms[i + 2] = Atom.newAtom(modelList.get(i).toString());
 		}
 		
 		// Send initialization data
@@ -438,53 +508,5 @@ public class SevenUp4Live extends MaxObject {
 	public static SevenUp4Live getInstance() {
 		return instance;
 	}
-	
-	private void savePatch(String filepath) {
-
-		FileWriter fileWriter = null;
 		
-		try {
-			if (filepath != null) {
-				java.io.File file = new File(filepath);
-				org.jdom.Document doc = environment.toJDOMXMLDocument(file.getName());
-				org.jdom.output.XMLOutputter fmt = new XMLOutputter();
-
-				fileWriter = new FileWriter(file);
-				fmt.output(doc, fileWriter);
-			}
-		} catch (Exception e) {
-			post("Could not save patch: " + e);
-		} finally { // standard java closing resources in finally
-			if (fileWriter != null) {
-				try {
-					fileWriter.close();
-				} catch (IOException e1) {
-					// drop it
-				}
-			}	
-		}
-	}
-	
-	private void loadPatch(String filepath) {
-		
-		try {
-			if (filepath != null) {
-				java.io.File file = new File(filepath);
-				SAXBuilder builder = new SAXBuilder();
-				try
-				{
-					Document doc = builder.build(file);
-					environment.loadJDOMXMLDocument(doc);
-				}
-				catch(Exception ex)
-				{
-					post(ex.getMessage());   
-				}
-			}
-		} catch (Exception e) {
-			post("Could not save patch: " + e);
-		} 	
-
-	}
-	
 }
