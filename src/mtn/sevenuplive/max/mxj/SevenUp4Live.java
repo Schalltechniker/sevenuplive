@@ -3,6 +3,8 @@ package mtn.sevenuplive.max.mxj;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import mtn.sevenuplive.m4l.M4LMidi;
 import mtn.sevenuplive.m4l.M4LMidiOut;
@@ -38,7 +40,7 @@ public class SevenUp4Live extends MaxObject {
 	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, InitializationDataOutlet}; 
 	
 	private static final String[] INLET_ASSIST = new String[]{
-		"messages (initialize, shutdown, monome (0,1,2..etc), hostaddress (127.0.0.1), listenport, hostport, melodizer1)",
+		"messages (initialize, shutdown, monome (0,1,2..etc), hostaddress (127.0.0.1), listenport, hostport, melodizer1, melodizer2)",
 		"clock in (0=C4,1=D#4,2=C7,3=E7,4=F7)"
 	};
 	private static final String[] OUTLET_ASSIST = new String[]{
@@ -47,6 +49,20 @@ public class SevenUp4Live extends MaxObject {
 		"Looper Midi Out",
 		"Data Initialization Out"
 	};
+	
+	public enum eMonomeChoices {Monome64,
+		Monome128H,
+		Monome128V,
+		Monome3x64,
+		Monome256,
+		Monome2x256,
+		Monome3x256,
+		Monome5x64,
+		Monome6x64,
+		Monome7x64,
+		Monome8x64,
+		Monome9x64,
+		Monome10x64};
 	
 	public SevenUp4Live(Atom[] args)
 	{
@@ -84,17 +100,11 @@ public class SevenUp4Live extends MaxObject {
 	
 	protected void bang() {
 		post("Hello world!! This is SevenUp in MAX");
-		
-		// Send initialization data
-		outlet(eOutlets.InitializationDataOutlet.ordinal(), new Atom[]{
-			Atom.newAtom("monomes"),
-			Atom.newAtom("Monome64 Monome128H Monome128V")
-			//Atom.newAtom("Monome128H"),
-			//Atom.newAtom("Monome128V"),
-			//Atom.newAtom("Monome256")
-		});
+		post("Initializing UI...");
+		initializeUI();
+		post("ready!");
 	}
-	
+
 	protected void loadbang() {
 		// forces data refresh
 		bang();
@@ -273,6 +283,46 @@ public class SevenUp4Live extends MaxObject {
 		}
 	}
 	
+	private void initializeUI() {
+		initializeMonomeChoices();
+		initializeScales();
+	}
+	
+	private void initializeMonomeChoices() {
+		List<eMonomeChoices> monomeList = new ArrayList<eMonomeChoices>();
+		
+		for (eMonomeChoices monomeName : eMonomeChoices.values()) {
+			monomeList.add(monomeName);
+		
+		}
+		Atom[] atoms = new Atom[monomeList.size() + 1];
+		atoms[0] = Atom.newAtom("monomes");
+		
+		for (int i = 0; i < monomeList.size(); i++) {
+			atoms[i + 1] = Atom.newAtom(monomeList.get(i).toString());
+		}
+		
+		// Send initialization data
+		outlet(eOutlets.InitializationDataOutlet.ordinal(), atoms);
+	}
+	
+	private void initializeScales() {
+		List<ScaleName> scaleList = new ArrayList<ScaleName>();
+		
+		for (ScaleName scaleName : ScaleName.values()) {
+			scaleList.add(scaleName);
+		}
+		Atom[] atoms = new Atom[scaleList.size() + 1];
+		atoms[0] = Atom.newAtom("scales");
+		
+		for (int i = 0; i < scaleList.size(); i++) {
+			atoms[i + 1] = Atom.newAtom(scaleList.get(i).toString());
+		}
+		
+		// Send initialization data
+		outlet(eOutlets.InitializationDataOutlet.ordinal(), atoms);
+	}
+	
 	//////////////////// Monome Settings /////////////////////////////
 	
 	public void melodizer1(Atom[] atoms) {
@@ -289,7 +339,7 @@ public class SevenUp4Live extends MaxObject {
 				}
 			} else if (operation.equals("toolmode")) {
 				if (atoms[1] != null && atoms[1].isString()) {
-					String toolmode[] = atoms[0].toString().split("/");
+					String toolmode[] = atoms[1].toString().split("/");
 					if (toolmode.length == 1) {
 						m.setMelody1Mode(eMelodizerMode.valueOf(toolmode[0]));
 						m.setMelody1AltMode(eMelodizerMode.valueOf(toolmode[0]));
@@ -338,7 +388,7 @@ public class SevenUp4Live extends MaxObject {
 				}
 			} else if (operation.equals("toolmode")) {
 				if (atoms[1] != null && atoms[1].isString()) {
-					String toolmode[] = atoms[0].toString().split("/");
+					String toolmode[] = atoms[1].toString().split("/");
 					if (toolmode.length == 1) {
 						m.setMelody1Mode(eMelodizerMode.valueOf(toolmode[0]));
 						m.setMelody1AltMode(eMelodizerMode.valueOf(toolmode[0]));
@@ -371,22 +421,6 @@ public class SevenUp4Live extends MaxObject {
 				}
 			} 
 		}
-	}
-	
-	public void recmode(Atom[] atoms) {
-		// @TODO
-	}
-	
-	public void toolmode(Atom[] atoms) {
-		// @TODO
-	}
-	
-	public void transpose(Atom[] atoms) {
-		// @TODO
-	}
-	
-	public void transposegroup(Atom[] atoms) {
-		// @TODO
 	}
 	
 	public void inlet(float f)
