@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import mtn.sevenuplive.main.MonomeUp;
 import mtn.sevenuplive.max.mxj.SevenUp4Live.eOutletCategories;
+import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.scales.Scale;
 
 import org.jdom.Document;
@@ -89,6 +90,61 @@ public class SevenUp4LivePatchManager {
 	
 	private void pushLooperSettings(MonomeUp m) {
 		
+		// Send gate choked loops
+		app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+			Atom.newAtom(SevenUp4Live.eOutletCategories.looper.toString()),
+			Atom.newAtom("gatechokedloops"),
+			Atom.newAtom(AllModes.getInstance().getLooper().getGateLoopChokes() ? 1 : 0)
+			});
+		
+		// Send choke groups
+		for (int i = 0; i < 7; i++) {
+			app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+				Atom.newAtom(SevenUp4Live.eOutletCategories.looper.toString()),
+				Atom.newAtom("chokegroup"),
+				Atom.newAtom(i),
+				Atom.newAtom(m.getLoopChokeGroup(i) + 1) // -1 means no group so to get to 0 index we add 1
+				});
+		}
+		
+		// Send loop mode
+		for (int i = 0; i < 7; i++) {
+			app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+				Atom.newAtom(SevenUp4Live.eOutletCategories.looper.toString()),
+				Atom.newAtom("loopmode"),
+				Atom.newAtom(i),
+				Atom.newAtom(m.getLoopType(i)) 
+				});
+		}
+		
+		// Send loop length
+		for (int i = 0; i < 7; i++) {
+			int index = 0;
+			float looplength = m.getLoopLength(i);
+			
+			if (looplength == 0.5) {
+				index = 0;
+			} else if (looplength == 1) {
+				index = 1;
+			} else if (looplength == 2) {
+				index = 2;
+			} else if (looplength == 4) {
+				index = 3;
+			} else if (looplength == 8) {
+				index = 4;
+			} else if (looplength == 16) {
+				index = 5;
+			} else if (looplength == 32) {
+				index = 6;
+			}
+			
+			app.outlet(SevenUp4Live.eOutlets.PatchDataOutlet.ordinal(), new Atom[] {
+				Atom.newAtom(SevenUp4Live.eOutletCategories.looper.toString()),
+				Atom.newAtom("looplength"),
+				Atom.newAtom(i),
+				Atom.newAtom(index) 
+				});
+		}
 	}
 	
 	private void pushMelodizer1Settings(MonomeUp m) {

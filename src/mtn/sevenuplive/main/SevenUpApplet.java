@@ -10,11 +10,8 @@
 
 package mtn.sevenuplive.main;
 import mtn.sevenuplive.m4l.M4LMidi;
-import mtn.sevenuplive.m4l.M4LMidiSystem;
 import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.max.mxj.SevenUpClock;
-
-import proxml.XMLInOut;
 
 public class SevenUpApplet extends processing.core.PApplet implements SevenUpClock
 {

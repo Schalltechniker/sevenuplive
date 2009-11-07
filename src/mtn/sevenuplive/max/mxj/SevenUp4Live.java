@@ -1,8 +1,5 @@
 package mtn.sevenuplive.max.mxj;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,14 +9,11 @@ import mtn.sevenuplive.m4l.M4LMidiSystem;
 import mtn.sevenuplive.main.ConnectionSettings;
 import mtn.sevenuplive.main.MonomeUp;
 import mtn.sevenuplive.main.SevenUpEnvironment;
+import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.modes.MelodizerModel;
 import mtn.sevenuplive.modes.MelodizerModel.eMelodizerMode;
 import mtn.sevenuplive.scales.Scale;
 import mtn.sevenuplive.scales.ScaleName;
-
-import org.jdom.Document;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
 
 import com.cycling74.max.Atom;
 import com.cycling74.max.DataTypes;
@@ -44,7 +38,8 @@ public class SevenUp4Live extends MaxObject {
 	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, PatchDataOutlet, InitializationDataOutlet}; 
 	
 	private static final String[] INLET_ASSIST = new String[]{
-		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), listenport, hostport, melodizer1, melodizer2)",
+		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), listenport, hostport, looper, melodizer1, melodizer2)",
+		"Midi In",
 		"clock in (0=C4,1=D#4,2=C7,3=E7,4=F7)"
 	};
 	private static final String[] OUTLET_ASSIST = new String[]{
@@ -84,7 +79,7 @@ public class SevenUp4Live extends MaxObject {
 			post("Old instance shutdown");
 		}
 		
-		declareInlets(new int[]{DataTypes.ALL, DataTypes.INT});
+		declareInlets(new int[]{DataTypes.ALL, DataTypes.MESSAGE, DataTypes.INT});
 		declareOutlets(new int[]{
 				DataTypes.MESSAGE, 
 				DataTypes.MESSAGE,
@@ -182,44 +177,44 @@ public class SevenUp4Live extends MaxObject {
     
 	public void inlet(int i)
 	{
-		int inletNum = getInlet();; 
+		int inletNum = getInlet();
 		//post("I got an integer in inlet "+ inletNum);
 		
 		switch (inletNum) {
-			case 1:
+			case 2:
 				switch (i) {
 				case -1:
-					post("CLOCK STOP");
+					//post("CLOCK STOP");
 					if (environment.getClock() != null)
 						environment.getClock().stopClock();
 					break;
 				case -2:
-					post("CLOCK START");
+					//post("CLOCK START");
 					if (environment.getClock() != null)
 						environment.getClock().startClock();
 					break;	
 				case 0:
-					post("C4");
+					//post("C4");
 					if (environment.getClock() != null)
 						environment.getClock().sendBigTick();
 					break;
 				case 1:
-					post("D#4");
+					//post("D#4");
 					if (environment.getClock() != null)
 						environment.getClock().sendSmallTick();
 					break;
 				case 2:
-					post("C7");
+					//post("C7");
 					if (environment.getClock() != null)
 						environment.getClock().pumpSequencerHeart();
 					break;
 				case 3:
-					post("F7");
+					//post("F7");
 					if (environment.getClock() != null)
 						environment.getClock().pumpLooperHeart();
 					break;
 				case 4:
-					post("E7");
+					//post("E7");
 					if (environment.getClock() != null)
 						environment.getClock().pumpMelodizerHeart();
 					break;
@@ -494,6 +489,37 @@ public class SevenUp4Live extends MaxObject {
 		}
 	}
 	
+	public void looper(Atom[] atoms) {
+		MonomeUp m = environment.getMonome();
+		if (atoms != null && atoms.length > 1 && m != null) {
+			String operation = atoms[0].toString();
+			if (operation.equals("gatechokedloops")) {
+				if (atoms[1] != null && atoms[1].isInt()) {
+					int gatechokedloops = atoms[1].toInt();
+					AllModes.getInstance().getLooper().setGateLoopChokes(gatechokedloops == 0 ? false : true);
+				}
+			} else if (operation.equals("chokegroup")) {
+				if (atoms.length > 2 && atoms[1] != null && atoms[1].isInt() && atoms[2] != null && atoms[2].isInt()) {
+					int slot = atoms[1].toInt();
+					int group = atoms[2].toInt();
+					m.setLoopChoke(slot, group - 1);
+				}
+			} else if (operation.equals("loopmode")) {
+				if (atoms.length > 2 && atoms[1] != null && atoms[1].isInt() && atoms[2] != null && atoms[2].isInt()) {
+					int slot = atoms[1].toInt();
+					int type = atoms[2].toInt();
+					m.setLoopType(slot, type);
+				}
+			} else if (operation.equals("looplength")) {
+				if (atoms.length > 2 && atoms[1] != null && atoms[1].isInt() && atoms[2] != null && atoms[2].isInt()) {
+					int slot = atoms[1].toInt();
+					float length = atoms[2].toFloat();
+					m.setLoopLength(slot, length);
+				}
+			}  
+		}
+	}
+	
 	public void inlet(float f)
 	{
 	}
@@ -501,6 +527,8 @@ public class SevenUp4Live extends MaxObject {
     
 	public void list(Atom[] list)
 	{
+		int inletNum = getInlet();
+		post("Got atoms on inlet #" + inletNum);
 	}
 
 	/////////////////////////////////////////////
