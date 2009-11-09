@@ -2,7 +2,9 @@ package mtn.sevenuplive.modes;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import mtn.sevenuplive.main.MonomeUp;
+
 import org.jdom.Element;
 
 public class LoopRecorder extends Mode {

@@ -3,7 +3,6 @@ package mtn.sevenuplive.m4l;
 import java.util.HashMap;
 
 import mtn.sevenuplive.max.mxj.SevenUp4Live;
-
 import processing.core.PApplet;
 
 public class M4LMidiSystem implements M4LMidi {

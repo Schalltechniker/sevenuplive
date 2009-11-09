@@ -5,9 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import mtn.sevenuplive.main.MonomeUp;
-import mtn.sevenuplive.max.mxj.SevenUp4Live.eOutletCategories;
 import mtn.sevenuplive.modes.AllModes;
-import mtn.sevenuplive.scales.Scale;
 
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
