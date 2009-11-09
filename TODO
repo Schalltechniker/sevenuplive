@@ -2,8 +2,7 @@ FEATURES
 -Explore ideas of collapsing entire patterns into single buttons.  Same for melodies.
 -External controller to start/stop recording
 -Tilt control
--set controller to use 7*7 different controller knobs. use MVC method so independent actors can manipulate
-
+-controller - when using 2+ monomes, allow other people to see controller changes in real time
 BUGS
 - When loading a patch, patternizers do not update their UI until you move away from page and come back again
 - SamplePatchPack.xml is not really a patch pack. Needs to be updated.
@@ -13,5 +12,4 @@ which where new notes are triggered or not depending on loop mode.
 -Bug in melodizer code where the first note may not be played directly after recording a sequence and another note is held down
 - Bug reported where pattern slots in Masterizer are not clearer when the pattern is dropped (recoded as empty) in a Melodizer. - FIXED 1.4 beta 4
 - Send note OFFS when switching patches mid-stride
- 
 

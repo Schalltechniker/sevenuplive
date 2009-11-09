@@ -173,8 +173,8 @@ public class Masterizer extends Mode {
    	 	}
 		else if(x == CONTROLER_COL && y < 7)
 		{
-			if(AllModes.controller.bankHasValues(y))
-				AllModes.controller.sendAllBankValues(y);
+			if(AllModes.controllerModel.bankHasValues(y))
+				AllModes.controllerModel.sendAllBankValues(y);
 		}
 		updateDisplayGrid();
 	}
@@ -194,7 +194,7 @@ public class Masterizer extends Mode {
 		//CONTROLLER
 		for(int i=0;i<7;i++)
 		{
-			if(AllModes.controller.bankHasValues(i))
+			if(AllModes.controllerModel.bankHasValues(i))
 				ctrlSequenceRows[i] = DisplayGrid.FASTBLINK;
 			else
 				ctrlSequenceRows[i] = DisplayGrid.OFF;

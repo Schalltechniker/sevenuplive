@@ -11,7 +11,8 @@ public class AllModes implements EventDispatcher {
 	static PatternizerModel patternizerModel;
 	static MelodizerModel melody1Model;
 	static MelodizerModel melody2Model;
-	static Controller controller;
+	static ControllerView controllerViews[];
+	static ControllerModel controllerModel;
 	static Sequencer sequencer;
 	static Looper looper;
 	static LoopRecorder loopRecorder;
@@ -42,13 +43,14 @@ public class AllModes implements EventDispatcher {
 	 * @param masterizer
 	 * @param startup 
 	 */
-	public AllModes(PatternizerModel patternizerModel, PatternizerView[] patternizerViews, Controller controller,
+	public AllModes(PatternizerModel patternizerModel, PatternizerView[] patternizerViews, ControllerModel controllerModel, ControllerView controllerViews[],
 			Sequencer sequencer, MelodizerModel melody1Model, MelodizerView[] melodizer1Views, MelodizerModel melody2Model, MelodizerView[] melodizer2Views,
 			Looper looper, LoopRecorder loopRecorder, Masterizer masterizer, StartupMode startup) {
 		super();
 		AllModes.patternizerModel = patternizerModel;
 		AllModes.patternizerViews = patternizerViews;
-		AllModes.controller = controller;
+		AllModes.controllerModel = controllerModel;
+		AllModes.controllerViews = controllerViews;
 		AllModes.sequencer = sequencer;
 		AllModes.melody1Model = melody1Model;
 		AllModes.melody2Model = melody2Model;
@@ -71,8 +73,12 @@ public class AllModes implements EventDispatcher {
 		return patternizerModel;
 	}
 
-	public Controller getController() {
-		return controller;
+	public ControllerView getControllerView(int i) {
+		return controllerViews[i];
+	}
+	
+	public ControllerModel getControllerModel(){
+		return controllerModel;
 	}
 
 	public Sequencer getSequencer() {
@@ -116,7 +122,7 @@ public class AllModes implements EventDispatcher {
 	 * @param event
 	 */
 	public void sendEvent(Event event) {
-		controller.sendEvent(event);
+		controllerModel.sendEvent(event);
 		sequencer.sendEvent(event);
 		looper.sendEvent(event);
 		loopRecorder.sendEvent(event);
@@ -128,7 +134,7 @@ public class AllModes implements EventDispatcher {
 	}
 
 	public void subscribe(Event event, EventListener target) {
-		controller.subscribe(event ,target);
+		controllerModel.subscribe(event ,target);
 		sequencer.subscribe(event, target);
 		looper.subscribe(event, target);
 		loopRecorder.subscribe(event, target);
@@ -140,7 +146,7 @@ public class AllModes implements EventDispatcher {
 	}
 
 	public void unsubscribe(Event event, EventListener target) {
-		controller.unsubscribe(event ,target);
+		controllerModel.unsubscribe(event ,target);
 		sequencer.unsubscribe(event, target);
 		looper.unsubscribe(event, target);
 		loopRecorder.unsubscribe(event, target);

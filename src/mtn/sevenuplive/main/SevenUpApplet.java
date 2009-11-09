@@ -19,6 +19,7 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	private MonomeUp m;
 	
 	private boolean isRunning = false;
+	private static int FRAMERATE = 35;
 	
 	private M4LMidi midiIO;
 	private ConnectionSettings sevenUpConnections;
@@ -33,7 +34,7 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	
 	public void setup()
 	{
-	   frameRate(35);
+	   frameRate(FRAMERATE);
 	   
 	   m.startup(sevenUpConnections.oscPrefix, sevenUpConnections.oscHostAddress, sevenUpConnections.oscHostPort, sevenUpConnections.oscListenPort);
 	   this.online = false;
@@ -75,7 +76,7 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	
 	public void draw()
 	{
-		m.draw();
+		m.draw(this.frameCount % FRAMERATE);
 	}
 	
 	public void finalize()

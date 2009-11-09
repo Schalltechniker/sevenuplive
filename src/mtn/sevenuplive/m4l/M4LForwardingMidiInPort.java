@@ -3,8 +3,6 @@ package mtn.sevenuplive.m4l;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import mtn.sevenuplive.modes.Controller;
-
 import processing.core.PApplet;
 
 public class M4LForwardingMidiInPort implements M4LMidiIn, M4LMidiOut {
@@ -18,7 +16,7 @@ public class M4LForwardingMidiInPort implements M4LMidiIn, M4LMidiOut {
 		
 		try {
 			if (forwardingPort != null) {
-				callbackOnControllerMethod = forwardingPort.getClass().getMethod(callbackFunction, Controller.class);
+				callbackOnControllerMethod = forwardingPort.getClass().getMethod(callbackFunction, M4LController.class);
 			}	
 		} catch (SecurityException e) {
 			// Do nothing
