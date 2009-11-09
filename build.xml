@@ -38,6 +38,7 @@
 		<fileset file="${lib.folder}/${jdom.jar}"/>
 		<fileset file="${lib.folder}/${oscP5.jar}"/>
 		<fileset file="${lib.folder}/${proxml.jar}"/>
+    	<fileset file="${MAX_HOME}/${max.jar}"/>
 	</path>
 	
   </target>
@@ -57,8 +58,7 @@
   <target name="_makedistdirs">
     <mkdir dir="${out.folder}/windows/supporting"/>
   	<mkdir dir="${out.folder}/osx/supporting"/>
-  	<mkdir dir="${out.folder}/osx"/>
-	<mkdir dir="${dist.folder}/windows"/>
+  	<mkdir dir="${dist.folder}/windows"/>
 	<mkdir dir="${dist.folder}/osx"/>
   </target>
 	  	
@@ -113,7 +113,13 @@
   	  		<include name="*.*"/>
   	    </fileset>
   	</copy>
-  	  	
+  	
+  	<copy todir="${out.folder}/windows/max" flatten="false">
+  		<fileset dir="${max.folder}">
+  			<include name="*.*"/>
+  		</fileset>
+  	</copy>
+  	
   	<copy todir="${out.folder}/windows/supporting" flatten="false">
         <fileset dir="${lib.folder}">
             <include name="${core.jar}"/>
@@ -130,55 +136,28 @@
   	  		<include name="*.*"/>
   		</fileset>
   	</copy>
+  
+  	<copy todir="${out.folder}/osx/max" flatten="false">
+  	  	<fileset dir="${max.folder}">
+  			<include name="*.*"/>
+  		</fileset>
+  	</copy>
+  	
   	<copy todir="${out.folder}/osx" flatten="false">
   		<fileset dir="${resources.folder}/content/osx">
   	  		<include name="*.*"/>
   	    </fileset>
   	</copy>
   		
-  	<copy todir="${out.folder}/osx/SevenUpLive.app" flatten="false">
-        <fileset dir="${resources.folder}/osx/SevenUpLive.app"/>
-    </copy>
-	  
-	<!-- Need to do string substituition in info.plist for #RELEASE.VERSION# in Mac Application package -->   
-    <replaceregexp file="${out.folder}/osx/SevenUpLive.app/Contents/info.plist"
-		               match="#RELEASE\.VERSION#"
-                       replace="${release.version}"
-                       byline="true"/>
-	
-	<mkdir dir="${out.folder}/osx/SevenUpLive.app/Contents/Resources/Java"/>
-  	
-  	<copy todir="${out.folder}/osx/SevenUpLive.app/Contents/Resources/Java" flatten="false">
+  	<copy todir="${out.folder}/osx/supporting" flatten="false">
         <fileset dir="${lib.folder}">
             <include name="${core.jar}"/>
             <include name="${jdom.jar}"/>
             <include name="${oscP5.jar}"/>
             <include name="${proxml.jar}"/>
+        	<include name="SevenUpLive-${release.version}.jar"/>
         </fileset>
     </copy>
-    
-  	<copy todir="${out.folder}/osx/SevenUpLive.app/Contents/Resources" flatten="false">
-        <fileset dir="${resources.folder}/osx">
-            <include name="SevenUpLive.icns"/>
-        </fileset>
-    </copy>
-    
-    <copy todir="${out.folder}/osx/SevenUpLive.app/Contents/Resources/Java">
-        <fileset dir="${out.folder}/osx/supporting">
-            <include name="SevenUpLive-${release.version}.jar"/>
-        </fileset>
-    </copy>
-    
-  	<copy todir="${out.folder}/osx/supporting" flatten="false">
-  	        <fileset dir="${lib.folder}">
-  	            <include name="${core.jar}"/>
-  	            <include name="${jdom.jar}"/>
-  	            <include name="${oscP5.jar}"/>
-  	            <include name="${proxml.jar}"/>
-  	        	<include name="SevenUpLive-${release.version}.jar"/>
-  	        </fileset>
-  	    </copy>
-  	    
   	
     <!-- Now zip everything into a distribution for Windows -->
     <jar jarfile="${dist.folder}/windows/SevenUpLiveWindows-${release.version}.zip">
@@ -188,10 +167,6 @@
     <tar tarfile="${dist.folder}/osx/SevenUpLiveOSX-${release.version}.tar.gz" compression="gzip" longfile="gnu">
     	<tarfileset dir="${out.folder}/osx">
     	    <include name="*/**"/>
-    		<exclude name="SevenUpLiveOSX-${release.version}.jar"/>
-    	</tarfileset>
-    	<tarfileset dir="${out.folder}/osx" mode="755">
-    		<include name="SevenUpLive.app/Contents/MacOS/JavaApplicationStub"/>
     	</tarfileset>
     </tar>
     
