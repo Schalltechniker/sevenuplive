@@ -57,15 +57,19 @@ public class MelodizerView extends Mode {
 		} else if (e.getType().equals(KeyTransposeGroupEvent.KEY_TRANSPOSE_GROUP_EVENT)) {
 			if (model.getCurrentMode() != MelodizerModel.eMelodizerMode.CLIP) {
 				KeyTransposeGroupEvent ktge = (KeyTransposeGroupEvent)e;
-				if (ktge.getGroup() == model.getTransposeGroup(curSeqBank)) {
-					changeKey(false, ktge.getKeyX(), ktge.getKeyY());
+				for (int seqbank = 0; seqbank < 7; seqbank++) {
+					if (ktge.getGroup() == model.getTransposeGroup(seqbank)) {
+						changeKey(false, seqbank, ktge.getKeyX(), ktge.getKeyY());
+					}
 				}
 			}
 		} else if (e.getType().equals(PositionTransposeGroupEvent.POSITION_TRANSPOSE_GROUP_EVENT)) {
 			if (model.getCurrentMode() != MelodizerModel.eMelodizerMode.CLIP) {
 				PositionTransposeGroupEvent ptge = (PositionTransposeGroupEvent)e;
-				if (ptge.getGroup() == model.getTransposeGroup(curSeqBank)) {
-					changePosition(false, ptge.getPosition());
+				for (int seqbank = 0; seqbank < 7; seqbank++) {
+					if (ptge.getGroup() == model.getTransposeGroup(seqbank)) {
+						changePosition(false, seqbank, ptge.getPosition());
+					}
 				}
 			}
 		}  
@@ -319,7 +323,7 @@ public class MelodizerView extends Mode {
 		//User is pressing a button in the key area
 		else if (model.currentMode == MelodizerModel.eMelodizerMode.KEYBOARD)
 		{
-			changeKey(true, x, y); // Change directly
+			changeKey(true, curSeqBank, x, y); // Change directly
 			
 			// If we are in a group then send a group transpose event
 			if (model.getTransposeGroup(curSeqBank) != -1) {
@@ -328,7 +332,7 @@ public class MelodizerView extends Mode {
 			}
 		} else if (model.currentMode == MelodizerModel.eMelodizerMode.POSITION) {
 			
-			changePosition(true, x); // Change directly
+			changePosition(true, curSeqBank, x); // Change directly
 			
 			// If we are in a group then send a group transpose event
 			if (model.getTransposeGroup(curSeqBank) != -1) {
@@ -339,9 +343,9 @@ public class MelodizerView extends Mode {
 		
 	}
 	
-	private void changeKey(boolean direct, int x, int y) {
+	private void changeKey(boolean direct, int seqbank, int x, int y) {
 		// If we are already here then don't transpose further
-		if (!direct && model.key[curSeqBank] == model.getKeyFromCoords( x, y))
+		if (!direct && model.key[seqbank] == model.getKeyFromCoords( x, y))
 			return;
 		
 		//User is changing keys
@@ -349,36 +353,36 @@ public class MelodizerView extends Mode {
 		{
 			// If transposing we want the old pitch here
 			if (model.transpose) 
-				model.displayNote[curSeqBank][i] = DisplayGrid.OFF;
+				model.displayNote[seqbank][i] = DisplayGrid.OFF;
 			
 		}
 
-		int curKeyValue = model.key[curSeqBank];
+		int curKeyValue = model.key[seqbank];
 
 		//Set new key
-		model.key[curSeqBank] = model.getKeyFromCoords( x, y);
-		int keyDif = curKeyValue - model.key[curSeqBank];
+		model.key[seqbank] = model.getKeyFromCoords( x, y);
+		int keyDif = curKeyValue - model.key[seqbank];
 		if (model.transpose) {
-			model.transposeDirty[curSeqBank] = true;
-			model.markStartTransposeOffsets(curSeqBank);
+			model.transposeDirty[seqbank] = true;
+			model.markStartTransposeOffsets(seqbank);
 		}
 		//Release notes from old key
 		for(int i=0; i<128;i++)
 		{ 
-			if(model.heldNote[curSeqBank][i])
+			if(model.heldNote[seqbank][i])
 			{
 				Note melodyRelease;
 				melodyRelease = new Note(i,0, 0);
-				model.midiMelodyOut[curSeqBank].sendNoteOff(melodyRelease);
-				model.addEvent(curSeqBank, melodyRelease);
-				model.heldNote[curSeqBank][i] = false;
+				model.midiMelodyOut[seqbank].sendNoteOff(melodyRelease);
+				model.addEvent(seqbank, melodyRelease);
+				model.heldNote[seqbank][i] = false;
 				
 				// If !transposing we want the new pitch here
 				if (!model.transpose) 
-					model.displayNote[curSeqBank][i] = DisplayGrid.OFF;
+					model.displayNote[seqbank][i] = DisplayGrid.OFF;
 				
 				if ((i-keyDif) >= 0)
-					model.newHeldNote[curSeqBank][i-keyDif] = true;
+					model.newHeldNote[seqbank][i-keyDif] = true;
 
 				//System.out.println("  Killing " + i);
 			}
@@ -387,15 +391,15 @@ public class MelodizerView extends Mode {
 		//Send notes for new key
 		for(int i=0; i<128;i++)
 		{ 
-			if(model.newHeldNote[curSeqBank][i])
+			if(model.newHeldNote[seqbank][i])
 			{		
 				Note melodySend;
 				melodySend = new Note(i,100, 0);
-				model.midiMelodyOut[curSeqBank].sendNoteOn(melodySend);
-				model.addEvent(curSeqBank, melodySend);
-				model.heldNote[curSeqBank][i] = true;
-				model.displayNote[curSeqBank][i] = DisplayGrid.SOLID;
-				model.newHeldNote[curSeqBank][i] = false;
+				model.midiMelodyOut[seqbank].sendNoteOn(melodySend);
+				model.addEvent(seqbank, melodySend);
+				model.heldNote[seqbank][i] = true;
+				model.displayNote[seqbank][i] = DisplayGrid.SOLID;
+				model.newHeldNote[seqbank][i] = false;
 				//System.out.println("Sending " + i);
 			}
 		}
@@ -404,9 +408,9 @@ public class MelodizerView extends Mode {
 			updateDisplayGrid();
 	}
 	
-	private void changePosition(boolean direct, int x) {
+	private void changePosition(boolean direct, int seqbank, int x) {
 		// If already here then do nothing
-		if (!direct && model.offset[curSeqBank] == x)
+		if (!direct && model.offset[seqbank] == x)
 			return;
 		
 		GridPosition[] oldPositions = new GridPosition[128]; 
@@ -414,40 +418,40 @@ public class MelodizerView extends Mode {
 		// Mark all old positions
 		for(int i=0; i<128;i++)
 		{
-			oldPositions[i] = model.convertNoteToGridPosition(i, curSeqBank);
+			oldPositions[i] = model.convertNoteToGridPosition(i, seqbank);
 			
 			// If transposing we want the old pitch here
 			if (model.transpose) 
-				model.displayNote[curSeqBank][i] = DisplayGrid.OFF;
+				model.displayNote[seqbank][i] = DisplayGrid.OFF;
 			
 		}
 
 		//Set new offset
-		model.offset[curSeqBank] = x;
+		model.offset[seqbank] = x;
 		if (model.transpose) {
-			model.transposeDirty[curSeqBank] = true;
-			model.markStartTransposeOffsets(curSeqBank);
+			model.transposeDirty[seqbank] = true;
+			model.markStartTransposeOffsets(seqbank);
 		}
 		//Release notes from old offset
 		for(int i=0; i<128;i++)
 		{ 
-			if(model.heldNote[curSeqBank][i])
+			if(model.heldNote[seqbank][i])
 			{
 				Note melodyRelease;
 				melodyRelease = new Note(i,0, 0);
-				model.midiMelodyOut[curSeqBank].sendNoteOff(melodyRelease);
-				model.addEvent(curSeqBank, melodyRelease);
-				model.heldNote[curSeqBank][i] = false;
+				model.midiMelodyOut[seqbank].sendNoteOff(melodyRelease);
+				model.addEvent(seqbank, melodyRelease);
+				model.heldNote[seqbank][i] = false;
 				
 				// If !transposing we want the new pitch here
 				if (!model.transpose)
-					model.displayNote[curSeqBank][i] = DisplayGrid.OFF;
+					model.displayNote[seqbank][i] = DisplayGrid.OFF;
 				
 				// Can't compute if we don't know the original position
 				if (oldPositions[i] != null) { 
 					// Because offset has changed, new note will be a different note from same grid position
-					int newNote = model.convertGridPositionToNote(oldPositions[i].x, oldPositions[i].y, curSeqBank);
-					model.newHeldNote[curSeqBank][newNote] = true;
+					int newNote = model.convertGridPositionToNote(oldPositions[i].x, oldPositions[i].y, seqbank);
+					model.newHeldNote[seqbank][newNote] = true;
 				}
 			}
 		}
@@ -455,15 +459,15 @@ public class MelodizerView extends Mode {
 		//Send notes for new key
 		for(int i=0; i<128;i++)
 		{ 
-			if(model.newHeldNote[curSeqBank][i])
+			if(model.newHeldNote[seqbank][i])
 			{		
 				Note melodySend;
 				melodySend = new Note(i,100, 0);
-				model.midiMelodyOut[curSeqBank].sendNoteOn(melodySend);
-				model.addEvent(curSeqBank, melodySend);
-				model.heldNote[curSeqBank][i] = true;
-				model.displayNote[curSeqBank][i] = DisplayGrid.SOLID;
-				model.newHeldNote[curSeqBank][i] = false;
+				model.midiMelodyOut[seqbank].sendNoteOn(melodySend);
+				model.addEvent(seqbank, melodySend);
+				model.heldNote[seqbank][i] = true;
+				model.displayNote[seqbank][i] = DisplayGrid.SOLID;
+				model.newHeldNote[seqbank][i] = false;
 			}
 		}
 		

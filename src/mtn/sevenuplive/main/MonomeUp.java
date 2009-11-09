@@ -44,10 +44,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	private ArrayList<Element> xmlPatches;
 	private int curPatchIndex=0;
 	private String patchTitle = "";
-	private int curFrame;
-	private boolean noteOnOccuredInLastFrame = false;
-
-
+	
 	// Monome 
 	public static final int MONOME_64 = 0;
 	public static final int MONOME_128H = 1;
@@ -110,16 +107,15 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	/////////////////////////////////////
 
 	/////////////////////////////////////
-	//MASTERIZER
+	//CONTROLLERS
 	/////////////////////////////////////
-	private M4LMidiOut midiMasterOut;
+	private M4LMidiOut midiControllerOut;
 	/////////////////////////////////////
 
 	////////////////////////////////////////
 	//Midi members
 	////////////////////////////////////////
-	//private M4LMidi midiIO;
-	private M4LMidiOut midiSampleOut;
+	private M4LMidiOut midiStepperOut;
 	////////////////////////////////////
 
 	private ConnectionSettings sevenUpConnections;
@@ -143,10 +139,10 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		this.midiIO = midiIO;
 		initializeMidi();
 
-		ControllerModel controllerModel = new ControllerModel(ModeConstants.CONTROL_MODE, midiSampleOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT);
+		ControllerModel controllerModel = new ControllerModel(ModeConstants.CONTROL_MODE, midiControllerOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT);
 
 		//Create the same number of views as there are grids
-		PatternizerModel patternizerModel = new PatternizerModel(ModeConstants.PATTERN_MODE, midiSampleOut, GRID_WIDTH, GRID_HEIGHT);
+		PatternizerModel patternizerModel = new PatternizerModel(ModeConstants.PATTERN_MODE, midiStepperOut, GRID_WIDTH, GRID_HEIGHT);
 		PatternizerView[] patternizerViews = new PatternizerView[totalGrids];
 
 		ControllerView[] controllerViews = new ControllerView[totalGrids];
@@ -172,7 +168,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 				melodyModel2, melodizerViews2,
 				new Looper(ModeConstants.LOOP_MODE, midiLoopOut, this, GRID_WIDTH, GRID_HEIGHT), 
 				new LoopRecorder(ModeConstants.LOOP_RECORD_MODE, this, GRID_WIDTH, GRID_HEIGHT), 
-				new Masterizer(ModeConstants.MASTER_MODE, midiMelodyOut, midiMelody2Out, midiMasterOut, this, GRID_WIDTH, GRID_HEIGHT),
+				new Masterizer(ModeConstants.MASTER_MODE, midiControllerOut, this, GRID_WIDTH, GRID_HEIGHT),
 				new StartupMode(totalGrids, 75, 2));
 
 		//Set initial display grids
@@ -206,8 +202,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	private void initializeMidi()
 	{
 		//Sample/Loop/Masterizer out on channel 8
-		midiSampleOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
-		midiMasterOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
+		midiStepperOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
+		midiControllerOut = midiIO.getMidiOut(7, sevenUpConnections.controllerOutputDeviceName);
 		midiLoopOut = midiIO.getMidiOut(7, sevenUpConnections.looperOutputDeviceName);
 
 
@@ -232,10 +228,6 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		for (DisplayGrid grid : grids) {
 			grid.draw();
 		}
-		
-		this.curFrame = curFrame;
-		if(curFrame % 4 == 0)
-		noteOnOccuredInLastFrame  = false;
 	}
 
 	public void panic()

@@ -22,13 +22,11 @@ public class Masterizer extends Mode {
 	int loopRecorderRows[]; 
 	
 	//MELODY
-	private M4LMidiOut midiMelodyOut[];
 	private final static int MELODY_COL = 4;
 	private int melodyRows[];
 	private boolean mel1Cue[];
 
 	//MELODY2
-	private M4LMidiOut midiMelody2Out[];
 	private int melody2Col = 5;
 	private int melody2Rows[];
 	private boolean mel2Cue[];
@@ -43,7 +41,7 @@ public class Masterizer extends Mode {
 	//MASTER
 	private M4LMidiOut midiMasterOut;
 	
-	public Masterizer(int _navRow, M4LMidiOut _midiMelodyOut[], M4LMidiOut _midiMelody2Out[], M4LMidiOut _midiMasterOut, mtn.sevenuplive.main.MonomeUp _m,  int grid_width, int grid_height)
+	public Masterizer(int _navRow, M4LMidiOut _midiMasterOut, mtn.sevenuplive.main.MonomeUp _m,  int grid_width, int grid_height)
 	{
 		super(_navRow, grid_width, grid_height);
 		displayGrid = new int[7][8];
@@ -62,12 +60,10 @@ public class Masterizer extends Mode {
 		//MELODY
 		melodyRows = new int[8];
 		mel1Cue = new boolean[8];
-		midiMelodyOut = _midiMelodyOut;
 		
 		//MELODY2
 		melody2Rows = new int[8];
 		mel2Cue = new boolean[8];
-		midiMelody2Out = _midiMelody2Out;
 		
 		//MASTER
 		midiMasterOut = _midiMasterOut;

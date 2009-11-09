@@ -30,12 +30,13 @@ public class SevenUp4Live extends MaxObject {
 	private SevenUp4LivePatchManager pmanage;
 	private SevenUp4LiveMelodizerClient[] melodizer1;
 	private SevenUp4LiveMelodizerClient[] melodizer2;
-	private SevenUp4LiveStepperClient stepper;
-	private SevenUp4LiveLooperClient looper;
+	private SevenUp4LiveStepperClient[] stepper;
+	private SevenUp4LiveLooperClient[] looper;
+	private SevenUp4LiveControllerClient[] controller;
 	private ConnectionSettings settings = new ConnectionSettings();
 	
 	public static enum eOutletCategories {connections, looper, melodizer1, melodizer2, controller, tilt};
-	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, PatchDataOutlet, InitializationDataOutlet}; 
+	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, ControllerMidiOutlet, PatchDataOutlet, InitializationDataOutlet}; 
 	
 	private static final String[] INLET_ASSIST = new String[]{
 		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), listenport, hostport, looper, melodizer1, melodizer2)",
@@ -46,6 +47,7 @@ public class SevenUp4Live extends MaxObject {
 		"Melodizer Midi Out",
 		"Stepper Midi Out",
 		"Looper Midi Out",
+		"Controller Midi Out",
 		"Patch Data Out",
 		"Data Initialization Out"
 	};
@@ -85,6 +87,7 @@ public class SevenUp4Live extends MaxObject {
 				DataTypes.MESSAGE,
 				DataTypes.MESSAGE,
 				DataTypes.MESSAGE,
+				DataTypes.MESSAGE,
 				DataTypes.MESSAGE
 				});
 		
@@ -113,20 +116,21 @@ public class SevenUp4Live extends MaxObject {
 	
 	private void init() {
 		pmanage = new SevenUp4LivePatchManager(this); 
-		melodizer1 = new SevenUp4LiveMelodizerClient[7];
-		melodizer2 = new SevenUp4LiveMelodizerClient[7];
+		melodizer1 = new SevenUp4LiveMelodizerClient[16];
+		melodizer2 = new SevenUp4LiveMelodizerClient[16];
+		stepper = new SevenUp4LiveStepperClient[16];
+		looper = new SevenUp4LiveLooperClient[16];
+		controller = new SevenUp4LiveControllerClient[16];
 		
 		// Wire up our ports
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 15; i++) {
 			melodizer1[i] = new SevenUp4LiveMelodizerClient(this, 1, i);
 			melodizer2[i] = new SevenUp4LiveMelodizerClient(this, 2, i);
+			stepper[i] = new SevenUp4LiveStepperClient(this, 1, i);
+			looper[i] = new SevenUp4LiveLooperClient(this, 1, i);
+			controller[i] = new SevenUp4LiveControllerClient(this, 1, i);
 		}
 		
-		/** 1 Instance on Channel 8 index 7 */
-		stepper = new SevenUp4LiveStepperClient(this, 1, 7);
-		
-		/** 1 Instance on Channel 8 index 7 */
-		looper = new SevenUp4LiveLooperClient(this, 1, 7);
 	}
 	
 	public SevenUpEnvironment getEnvironment() {
@@ -136,11 +140,11 @@ public class SevenUp4Live extends MaxObject {
 	public M4LMidiOut getMelodizerOutput(int ch, int instance) {
 		switch (instance) {
 		case 1:
-			if (ch < 8)
+			if (ch < 16)
 				return melodizer1[ch];
 		break;
 		case 2:
-			if (ch < 8)
+			if (ch < 16)
 				return melodizer2[ch];
 		break;
 		}
@@ -148,15 +152,22 @@ public class SevenUp4Live extends MaxObject {
 	}
 	
 	public M4LMidiOut getStepperOutput(int ch, int instance) {
-		if (ch == 7) // Stepper currently works on channel 7 period
-			return stepper;
+		if (ch < 16) 
+			return stepper[ch];
 		else
 			return null;
 	}
 	
 	public M4LMidiOut getLooperOutput(int ch, int instance) {
-		if (ch == 7) // Looper currently works on channel 7 period
-			return looper;
+		if (ch < 16) 
+			return looper[ch];
+		else
+			return null;
+	}
+	
+	public M4LMidiOut getControllerOutput(int ch, int instance) {
+		if (ch < 16) 
+			return controller[ch];
 		else
 			return null;
 	}
@@ -529,6 +540,14 @@ public class SevenUp4Live extends MaxObject {
 	{
 		int inletNum = getInlet();
 		post("Got atoms on inlet #" + inletNum);
+		
+		if (inletNum == 1) { // This is MIDI_IN inlet 
+			if (list != null) {
+				for (Atom atom : list) {
+					post("MIDIIN: " + atom.toString());
+				}
+			}
+		}
 	}
 
 	/////////////////////////////////////////////

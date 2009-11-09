@@ -9,7 +9,7 @@ public class M4LMidiSystem implements M4LMidi {
 
 	private SevenUp4Live app;
 	
-	public enum eSevenUp4OutputDevices {Melodizer1, Melodizer2, Stepper, Looper};
+	public enum eSevenUp4OutputDevices {Melodizer1, Melodizer2, Stepper, Looper, Controller};
 	public enum eSevenUp4InputDevices {SevenUpMidiControl};
 	
 	private HashMap<String, HashMap<Integer, M4LMidiIn>> inputDeviceMap = new HashMap<String, HashMap<Integer, M4LMidiIn>>();
@@ -77,6 +77,8 @@ public class M4LMidiSystem implements M4LMidi {
 				device = new M4LForwardingMidiOutPort(app.getStepperOutput(ch, 1));
 			} else if (deviceType == eSevenUp4OutputDevices.Looper) {
 				device = new M4LForwardingMidiOutPort(app.getLooperOutput(ch, 1));
+			} else if (deviceType == eSevenUp4OutputDevices.Controller) {
+				device = new M4LForwardingMidiOutPort(app.getControllerOutput(ch, 1));
 			}
 		}  
 		
