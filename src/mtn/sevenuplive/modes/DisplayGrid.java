@@ -1,7 +1,7 @@
 package mtn.sevenuplive.modes;
 
-import mtn.sevenuplive.modes.events.MenuFocusEvent;
 import jklabs.monomic.Monome;
+import mtn.sevenuplive.modes.events.MenuFocusEvent;
 
 public class DisplayGrid {
 

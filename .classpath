@@ -4,9 +4,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="SEVENUP_HOME/lib/core.jar"/>
 	<classpathentry kind="var" path="SEVENUP_HOME/lib/jdom.jar"/>
-	<classpathentry kind="var" path="SEVENUP_HOME/lib/libProMandoMidiJNILib.jar"/>
 	<classpathentry kind="var" path="SEVENUP_HOME/lib/oscP5.jar"/>
-	<classpathentry kind="var" path="SEVENUP_HOME/lib/promidi.jar"/>
 	<classpathentry kind="var" path="SEVENUP_HOME/lib/proxml.jar"/>
+	<classpathentry kind="var" path="MAX_HOME/Cycling &apos;74/java/lib/max.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

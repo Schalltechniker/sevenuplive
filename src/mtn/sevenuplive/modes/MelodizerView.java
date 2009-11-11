@@ -2,6 +2,7 @@ package mtn.sevenuplive.modes;
 
 import java.util.ArrayList;
 
+import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.main.MonomeUp;
 import mtn.sevenuplive.modes.MelodizerModel.GridPosition;
 import mtn.sevenuplive.modes.events.ClearDisplayEvent;
@@ -11,7 +12,6 @@ import mtn.sevenuplive.modes.events.KeyTransposeGroupEvent;
 import mtn.sevenuplive.modes.events.PositionTransposeGroupEvent;
 import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
 import mtn.sevenuplive.modes.events.UpdateNavEvent;
-import promidi.Note;
 
 public class MelodizerView extends Mode {
 	

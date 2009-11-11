@@ -22,36 +22,16 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	private static final String ADC = "adc_val";
 	private static final String ADC_ENABLE = "adc_enable";
 	private static final String INTENSITY = "intensity";
-
+	
 	// Address for P5Osc
 	private NetAddress myRemoteLocation;
+	private NetAddress myLocalLocation;
 	
 	private MonomeListener listener;
 	
 	// osc addresses for this instance
 	protected String led, row, col, shutdown, button, test, adc, adc_enable, intensity;
 	
-	public MonomeOSC() {
-		this(null, "box");
-	}
-	
-	/**
-	 *  8x8 Monome on localhost sendPort 8080 receivePort 8000
-	 * @param boxName
-	 */
-	public MonomeOSC(String boxName) {
-		this(boxName, "127.0.0.1");
-	}
-
-	/**
-	 * Construct a 1 byte x 1 byte or 8x8 monome 
-	 * @param boxName prefix to use "box" or "mlr" etc
-	 * @param host host, port default to sendPort 8080 and receivePort 8000 
-	 */
-	public MonomeOSC(String boxName, String host) {
-		this(1, 1, boxName, host, 8080, 8000);
-	}
-
 	/**
 	 * Construct any monome grid in byte(8) button increments
 	 * @param x_bytes size of monome width in bytes, 1 byte = 8 buttons  
@@ -61,13 +41,8 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	 * @param sendPort port to send on
 	 * @param receivePort port to receive on
 	 */
-	public MonomeOSC(int x_bytes, int y_bytes, String boxName, String host, int sendPort, int receivePort) {
+	public MonomeOSC(int x_bytes, int y_bytes) {
 		super(x_bytes, y_bytes);
-		
-		initOsc(host, sendPort, receivePort);
-		
-		setBoxName(boxName);
-		super.init();
 	}
 
 	/**
@@ -80,17 +55,26 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	 * @param sendPort port to send on
 	 * @param receivePort port to receive on
 	 */
-	public MonomeOSC(MonomeListener listener, int x_bytes, int y_bytes, String boxName, String host, int sendPort, int receivePort) {
+	public MonomeOSC(MonomeListener listener, int x_bytes, int y_bytes) {
 		super(x_bytes, y_bytes);
-		
 		this.listener = listener;
+	}
+
+	/**
+	 * You have to call this to start the OSC communications
+	 * @param boxName
+	 * @param host
+	 * @param sendPort
+	 * @param receivePort
+	 */
+	public void startup(String boxName, String host, int sendPort, int receivePort) {
+		this.boxName = boxName;
 		
 		initOsc(host, sendPort, receivePort);
-		
 		setBoxName(boxName);
 		super.init();
 	}
-
+	
 	public String getBoxName() {
 		return boxName;
 	}
@@ -184,8 +168,9 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		oscP5.send(m, myRemoteLocation);
 	}
 
-	private void initOsc(String host, int sendPort, int receivePort) {
+	public void initOsc(String host, int sendPort, int receivePort) {
 		myRemoteLocation = new NetAddress(host, sendPort);
+		myLocalLocation = new NetAddress(host, receivePort);
 		oscP5 = new OscP5(new OSCReceiver(this), receivePort);
 	}
 	
@@ -262,9 +247,15 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	////////////////////////////////////////////////// cleanup
 
 	protected void finalize() throws Throwable {
-		oscP5.disconnectFromTEMP();                                                                                                                
-		oscP5 = null;
+		forceShutdown();
 		super.finalize();
+	}
+	
+	public void forceShutdown() throws Throwable {
+		lightsOff();
+		oscP5.stop();
+		oscP5.disconnect(myLocalLocation);
+		oscP5.disconnect(myRemoteLocation);
 	}
 	
 	/**

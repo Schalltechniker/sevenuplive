@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
+import mtn.sevenuplive.m4l.M4LMidiOut;
+import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.main.MonomeUp;
 import mtn.sevenuplive.modes.events.ClearDisplayEvent;
 import mtn.sevenuplive.modes.events.ClearNavEvent;
@@ -19,9 +21,6 @@ import mtn.sevenuplive.scales.ScaleName;
 
 import org.jdom.Attribute;
 import org.jdom.Element;
-
-import promidi.MidiOut;
-import promidi.Note;
 
 /**
  * @author Adam Ribaudo
@@ -75,7 +74,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 	public int clipNotes[][]; //When clipMode=true.  Array of ints holding [channel][pitch] of clips being launched/stopped
 	public boolean[][] heldNote;
 	public boolean[][] newHeldNote;
-	public MidiOut midiMelodyOut[];
+	public M4LMidiOut midiMelodyOut[];
 	private Scale melodyScale;
 	private Scale clipScale = new Scale(ScaleName.Major);
 
@@ -96,7 +95,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 	
 	private int _navRow;
 
-	public MelodizerModel(int _navRow, MidiOut _midiMelodyOut[], int grid_width, int grid_height) {
+	public MelodizerModel(int _navRow, M4LMidiOut _midiMelodyOut[], int grid_width, int grid_height) {
 		
 		midiMelodyOut = _midiMelodyOut;
 		displayNote = new int[7][128];
@@ -296,7 +295,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 	 * @param tc
 	 * @return First grid position, higher coordinate top/left if duplicates, null if not found
 	 */
-	private GridPosition convertNoteToGridPositionWithContext(int note, TranspositionContext tc) {
+	/*private GridPosition convertNoteToGridPositionWithContext(int note, TranspositionContext tc) {
 		int gridNote;
 
 		for(int j=0;j<7;j++)
@@ -312,7 +311,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 			}
 		}	
 		return null;
-	}
+	}*/
 
 	
 	public int getKeyFromCoords(int x, int y)

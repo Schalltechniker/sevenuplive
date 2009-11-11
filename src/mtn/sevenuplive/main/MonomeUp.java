@@ -1,5 +1,5 @@
 /**
- * SevenUp for Monome's 40h
+ * SevenUp for Monome
  * @author Adam Ribaudo
  * arribaud@gmail.com
  * 12/09/2007
@@ -13,6 +13,10 @@ import java.util.List;
 
 import jklabs.monomic.MonomeListener;
 import jklabs.monomic.MonomeOSC;
+import mtn.sevenuplive.m4l.M4LMidi;
+import mtn.sevenuplive.m4l.M4LMidiOut;
+import mtn.sevenuplive.m4l.Note;
+import mtn.sevenuplive.max.mxj.SevenUpClock;
 import mtn.sevenuplive.modes.AllModes;
 import mtn.sevenuplive.modes.ControllerModel;
 import mtn.sevenuplive.modes.ControllerView;
@@ -35,20 +39,12 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 
-import promidi.MidiIO;
-import promidi.MidiOut;
-import promidi.Note;
+public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUpClock {
 
-public final class MonomeUp extends MonomeOSC implements MonomeListener {
-
-	private SevenUpPanel parentPanel;
 	private ArrayList<Element> xmlPatches;
 	private int curPatchIndex=0;
 	private String patchTitle = "";
-	private int curFrame;
-	private boolean noteOnOccuredInLastFrame = false;
-
-
+	
 	// Monome 
 	public static final int MONOME_64 = 0;
 	public static final int MONOME_128H = 1;
@@ -62,6 +58,9 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	public static final int RECORDING = 3;
 	public static final int CUEDSTOP = 4;
 	////////////////////////////////////////
+
+	/** Dirty flag for changes to the patch */
+	private boolean dirty; 
 
 	/////////////////////////////////////
 	//CONTROLLER
@@ -96,28 +95,27 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	//////////////////////////////////////
 	//LOOPER
 	/////////////////////////////////////
-	private MidiOut midiLoopOut;
+	private M4LMidiOut midiLoopOut;
 	private Boolean areLoopsGated = false;
 	////////////////////////////////////////
 
 	////////////////////////////////////////
 	//MELODIZER
 	////////////////////////////////////////
-	private MidiOut midiMelodyOut[];
-	private MidiOut midiMelody2Out[];
+	private M4LMidiOut midiMelodyOut[];
+	private M4LMidiOut midiMelody2Out[];
 	/////////////////////////////////////
 
 	/////////////////////////////////////
-	//MASTERIZER
+	//CONTROLLERS
 	/////////////////////////////////////
-	private MidiOut midiMasterOut;
+	private M4LMidiOut midiControllerOut;
 	/////////////////////////////////////
 
 	////////////////////////////////////////
 	//Midi members
 	////////////////////////////////////////
-	private MidiIO midiIO;
-	private MidiOut midiSampleOut;
+	private M4LMidiOut midiStepperOut;
 	////////////////////////////////////
 
 	private ConnectionSettings sevenUpConnections;
@@ -127,24 +125,24 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	////////////////////////////////////
 
 	private DisplayGrid[] grids;
+	private M4LMidi midiIO;
 
-	MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, promidi.MidiIO _midiIO, SevenUpPanel _parentPanel) {
-		super(x_grids, y_grids, _sevenUpConnections.oscPrefix, _sevenUpConnections.oscHostAddress, _sevenUpConnections.oscHostPort, _sevenUpConnections.oscListenPort);
+	MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, M4LMidi midiIO) {
+		super(x_grids, y_grids);
 		sevenUpConnections = _sevenUpConnections;
 
 		xmlPatches = new ArrayList<Element>();
-		parentPanel = _parentPanel;
-
-		midiIO = _midiIO;
-
+		
+		int totalGrids = x_grids * y_grids;
+		
 		// Init midi communications
+		this.midiIO = midiIO;
 		initializeMidi();
 
-		int totalGrids = x_grids * y_grids;
+		ControllerModel controllerModel = new ControllerModel(ModeConstants.CONTROL_MODE, midiControllerOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT);
 
-		PatternizerModel patternizerModel = new PatternizerModel(ModeConstants.PATTERN_MODE, midiSampleOut, GRID_WIDTH, GRID_HEIGHT);
-		ControllerModel controllerModel = new ControllerModel(ModeConstants.CONTROL_MODE, midiSampleOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT);
 		//Create the same number of views as there are grids
+		PatternizerModel patternizerModel = new PatternizerModel(ModeConstants.PATTERN_MODE, midiStepperOut, GRID_WIDTH, GRID_HEIGHT);
 		PatternizerView[] patternizerViews = new PatternizerView[totalGrids];
 
 		ControllerView[] controllerViews = new ControllerView[totalGrids];
@@ -170,7 +168,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 				melodyModel2, melodizerViews2,
 				new Looper(ModeConstants.LOOP_MODE, midiLoopOut, this, GRID_WIDTH, GRID_HEIGHT), 
 				new LoopRecorder(ModeConstants.LOOP_RECORD_MODE, this, GRID_WIDTH, GRID_HEIGHT), 
-				new Masterizer(ModeConstants.MASTER_MODE, midiMelodyOut, midiMelody2Out, midiMasterOut, this, GRID_WIDTH, GRID_HEIGHT),
+				new Masterizer(ModeConstants.MASTER_MODE, midiControllerOut, this, GRID_WIDTH, GRID_HEIGHT),
 				new StartupMode(totalGrids, 75, 2));
 
 		//Set initial display grids
@@ -197,7 +195,6 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 			grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
 		}
 
-
 		// Turn on to debug monome OSC connection */
 		//this.setDebug(Monome.FINE);
 	} 
@@ -205,20 +202,20 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	private void initializeMidi()
 	{
 		//Sample/Loop/Masterizer out on channel 8
-		midiSampleOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
-		midiMasterOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
-		midiLoopOut = midiIO.getMidiOut(7, sevenUpConnections.looperOuputDeviceName);
+		midiStepperOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
+		midiControllerOut = midiIO.getMidiOut(7, sevenUpConnections.controllerOutputDeviceName);
+		midiLoopOut = midiIO.getMidiOut(7, sevenUpConnections.looperOutputDeviceName);
 
 
 		//Create 7 channels (0-6) for melody out
-		midiMelodyOut = new MidiOut[7];
+		midiMelodyOut = new M4LMidiOut[7];
 		for(int i = 0; i<midiMelodyOut.length; i++)
 		{
 			midiMelodyOut[i] = midiIO.getMidiOut(i, sevenUpConnections.melod1OutputDeviceName);
 		}
 
 		//Create 7 channels (0-6) for melody2 out
-		midiMelody2Out = new MidiOut[7];
+		midiMelody2Out = new M4LMidiOut[7];
 		for(int i = 0; i<midiMelody2Out.length; i++)
 		{
 			midiMelody2Out[i] = midiIO.getMidiOut(i, sevenUpConnections.melod2OutputDeviceName);
@@ -226,15 +223,11 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 
 		panic();
 	}
-
+	
 	public void draw(int curFrame) {
 		for (DisplayGrid grid : grids) {
 			grid.draw();
 		}
-		
-		this.curFrame = curFrame;
-		if(curFrame % 2 == 0)
-		noteOnOccuredInLastFrame  = false;
 	}
 
 	public void panic()
@@ -253,8 +246,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	public void monomePressed(int raw_x, int raw_y)
 	{
 		// Dirty flag for any action on a patch
-		if (!parentPanel.isDirty()) {
-			parentPanel.setDirty(true);
+		if (!isDirty()) {
+			setDirty(true);
 		}
 
 		GridCoordinateTarget targetd = Displays.translate(grids, raw_x, raw_y);
@@ -278,72 +271,6 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 		//Does pressing stop send a midi note?
 		//System.out.println("CLIP LAUNCH PITCH: " + pitch + " VEL: " + vel + " CHAN: " + channel);
 		allmodes.getMelodizer1Model().clipLaunch(pitch, vel, channel);
-	}
-
-	/**
-	 * Receive notes from Live that tell SevenUp where the beat is
-	 * @param note
-	 */
-	void noteOn(int noteOnPitch)
-	{
-		if (noteOnPitch == C7)
-		{
-			for (DisplayGrid grid : grids) {
-				grid.displayCursor();
-			}
-			// Make sure we only step once
-			allmodes.getSequencer().step();
-		}
-		else if(noteOnPitch == E7)
-		{
-			allmodes.getMelodizer1Model().heartbeat();
-			allmodes.getMelodizer2Model().heartbeat();
-		}
-		else if(noteOnPitch == F7)
-		{	
-			allmodes.getLoopRecorder().updateDisplayGrid();
-			allmodes.getLooper().step();
-			allmodes.getLoopRecorder().step();  
-		}
-		else if(noteOnPitch == C4 || noteOnPitch == CSHARP4 || noteOnPitch == DSHARP4)
-		{
-			if(noteOnPitch == C4)
-			{
-				allmodes.getMelodizer1Model().locatorEvent();
-				allmodes.getMelodizer2Model().locatorEvent();
-			}
-			allmodes.getMasterizer().locatorEvent(noteOnPitch);
-			allmodes.getMasterizer().updateDisplayGrid();
-		}
-		else if(noteOnPitch == E4)
-		{
-			parentPanel.loadPrevPatch();
-		}
-		else if(noteOnPitch == F4)
-		{
-			parentPanel.loadNextPatch();
-		}
-		//Reset all modes
-		else if(noteOnPitch == FSHARP4)
-		{
-			allmodes.getSequencer().reset();
-			allmodes.getLooper().reset();
-			allmodes.getMelodizer1Model().reset();
-			allmodes.getMelodizer2Model().reset();
-		}
-		//Start loops from MIDI
-		else if(noteOnPitch >= C2 && noteOnPitch < G2){
-			int loopNum = noteOnPitch - C2;
-			AllModes.getInstance().getLooper().playLoop(loopNum, 0);
-			//Check to see if the noteon has occured yet already, if so, step one loop (because it missed it's change to step with the normal noteon)
-			if(noteOnOccuredInLastFrame)
-				AllModes.getInstance().getLooper().stepOneLoop(loopNum);
-		}
-		//Stop loops
-		else if(noteOnPitch >= G2 && noteOnPitch <= CSHARP3){
-			int loopNum = noteOnPitch - G2;
-			AllModes.getInstance().getLooper().stopLoop(loopNum);
-		}
 	}
 
 	/***
@@ -560,6 +487,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 
 	public boolean getGateLoopChokes()
 	{
+		// @TODO this looks hackish, why are we setting in a getter?
 		allmodes.getLoopRecorder().setGateLoopChokes(allmodes.getLooper().getGateLoopChokes());
 		return allmodes.getLooper().getGateLoopChokes();
 	}
@@ -634,6 +562,67 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 	public int getLoopType(int loopNum) {
 		return allmodes.getLooper().getLoop(loopNum).getType();
 	}
+	
+	public void setMelody1ClipMode(boolean b) {
+		if (b) {
+			AllModes.getInstance().getMelodizer1Model().setCurrentMode(MelodizerModel.eMelodizerMode.CLIP);
+		} else {
+			AllModes.getInstance().getMelodizer1Model().setCurrentMode(MelodizerModel.eMelodizerMode.KEYBOARD);
+		}
+		
+	}
+	
+	public void setMelody1Mode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer1Model().setCurrentMode(mode);
+	}
+	
+	public MelodizerModel.eMelodizerMode getMelody1Mode()
+	{
+		return AllModes.getInstance().getMelodizer1Model().getCurrentMode();
+	}
+	
+	public void setMelody2Mode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer2Model().setCurrentMode(mode);
+	}
+	
+	public MelodizerModel.eMelodizerMode getMelody2Mode()
+	{
+		return AllModes.getInstance().getMelodizer2Model().getCurrentMode();
+	}
+	
+	public void setMelody1Transpose(boolean transpose) {
+		AllModes.getInstance().getMelodizer1Model().setTranspose(transpose);
+	}
+
+	public boolean getMelody1Transpose() {
+		return AllModes.getInstance().getMelodizer1Model().getTranspose();
+	}
+	
+	public void setMelody1AltMode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer1Model().setAltMode(mode);
+	}
+	
+	public MelodizerModel.eMelodizerMode getMelody1AltMode()
+	{
+		return AllModes.getInstance().getMelodizer1Model().getAltMode();
+	}
+	
+	public void setMelody2Transpose(boolean transpose) {
+		AllModes.getInstance().getMelodizer2Model().setTranspose(transpose);
+	}
+
+	public boolean getMelody2Transpose() {
+		return AllModes.getInstance().getMelodizer2Model().getTranspose();
+	}
+
+	public void setMelody2AltMode(MelodizerModel.eMelodizerMode mode) {
+		AllModes.getInstance().getMelodizer2Model().setAltMode(mode);
+	}
+	
+	public MelodizerModel.eMelodizerMode getMelody2AltMode()
+	{
+		return AllModes.getInstance().getMelodizer2Model().getAltMode();
+	}
 
 	public void reset() {
 		for(int i=0;i<7;i++)
@@ -664,5 +653,113 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 		allmodes.getPatternizerModel().curPatternRow = 0;
 		allmodes.getSequencer().curSeqRow = 0;
 	}
+	
+	public Document toJDOMXMLDocument(String fileName)
+	{
+		setPatchTitle(fileName);
+		return toXMLDocument(fileName);
+	}
+	
+	public boolean loadJDOMXMLDocument(Document XMLDoc)
+	{
+		return loadXML(XMLDoc);
+	}
+	
+	/**
+	 * Receive notes from Live that tell SevenUp where the beat is
+	 * @param note
+	 */
+	
+	// @TODO We need this connected still to receive external midi events
+	void noteOn(int noteOnPitch)
+	{
+		if(noteOnPitch == E4)
+		{
+			loadPrevPatch();
+		}
+		else if(noteOnPitch == F4)
+		{
+			loadNextPatch();
+		}
+		//Reset all modes
+		else if(noteOnPitch == FSHARP4)
+		{
+			allmodes.getSequencer().reset();
+			allmodes.getLooper().reset();
+			allmodes.getMelodizer1Model().reset();
+			allmodes.getMelodizer2Model().reset();
+		}
+		//Start loops
+		else if(noteOnPitch >= C2 && noteOnPitch < G2){
+			int loopNum = noteOnPitch - C2;
+			AllModes.getInstance().getLooper().playLoop(loopNum, 0);
+			AllModes.getInstance().getLooper().stepOneLoop(loopNum);
 
+		}
+		//Stop loops
+		else if(noteOnPitch >= G2 && noteOnPitch <= CSHARP3){
+			int loopNum = noteOnPitch - G2;
+			AllModes.getInstance().getLooper().stopLoop(loopNum);
+		}
+	}
+	
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+
+	//////////////////////////////
+	// SevenUpClock interface
+	
+	public void startClock() {
+		// Do nothing
+	}
+	
+	public void stopClock() {
+		reset();
+	}
+
+	public void sendBigTick() {
+		allmodes.getMelodizer1Model().locatorEvent();
+		allmodes.getMelodizer2Model().locatorEvent();
+		//@TODO clean this up
+		allmodes.getMasterizer().locatorEventC4();
+		allmodes.getMasterizer().updateDisplayGrid();
+	}
+
+	public void pumpSequencerHeart() {
+		for (DisplayGrid grid : grids) {
+			grid.displayCursor();
+		}
+		// Make sure we only step once
+		allmodes.getSequencer().step();
+	}
+
+	public void sendSmallTick() {
+		//@TODO clean up naming here
+		allmodes.getMasterizer().locatorEventDSharp4();
+		allmodes.getMasterizer().updateDisplayGrid();
+	}
+	
+	public void cSharp4() {
+		//@TODO clean up naming here
+		allmodes.getMasterizer().locatorEventCSharp4();
+		allmodes.getMasterizer().updateDisplayGrid();
+	}
+
+	public void pumpMelodizerHeart() {
+		allmodes.getMelodizer1Model().heartbeat();
+		allmodes.getMelodizer2Model().heartbeat();
+	}
+
+	public void pumpLooperHeart() {
+		allmodes.getLoopRecorder().updateDisplayGrid();
+		allmodes.getLooper().step();
+		allmodes.getLoopRecorder().step();  
+	}
+	
 }

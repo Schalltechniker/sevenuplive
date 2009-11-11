@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+
 import mtn.sevenuplive.main.MonomeUp;
+
 import org.jdom.Attribute;
 import org.jdom.Element;
-import promidi.Note;
 
 public class CtrlSequence {
 	

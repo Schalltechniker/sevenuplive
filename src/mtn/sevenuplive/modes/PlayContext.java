@@ -2,7 +2,7 @@ package mtn.sevenuplive.modes;
 
 import java.util.ArrayList;
 
-import promidi.Note;
+import mtn.sevenuplive.m4l.Note;
 
 public interface PlayContext {
 	

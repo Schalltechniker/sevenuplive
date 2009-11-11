@@ -1,8 +1,8 @@
 package mtn.sevenuplive.modes;
 
+import mtn.sevenuplive.m4l.M4LMidiOut;
+import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.main.MonomeUp;
-import promidi.MidiOut;
-import promidi.Note;
 
 public class Masterizer extends Mode {
 	//SEQUENCER
@@ -22,13 +22,11 @@ public class Masterizer extends Mode {
 	int loopRecorderRows[]; 
 	
 	//MELODY
-	private MidiOut midiMelodyOut[];
 	private final static int MELODY_COL = 4;
 	private int melodyRows[];
 	private boolean mel1Cue[];
 
 	//MELODY2
-	private MidiOut midiMelody2Out[];
 	private int melody2Col = 5;
 	private int melody2Rows[];
 	private boolean mel2Cue[];
@@ -41,9 +39,9 @@ public class Masterizer extends Mode {
 	private int locatorMode = PLAYMODE;
 	
 	//MASTER
-	private MidiOut midiMasterOut;
+	private M4LMidiOut midiMasterOut;
 	
-	public Masterizer(int _navRow, MidiOut _midiMelodyOut[], MidiOut _midiMelody2Out[],MidiOut _midiMasterOut, mtn.sevenuplive.main.MonomeUp _m,  int grid_width, int grid_height)
+	public Masterizer(int _navRow, M4LMidiOut _midiMasterOut, mtn.sevenuplive.main.MonomeUp _m,  int grid_width, int grid_height)
 	{
 		super(_navRow, grid_width, grid_height);
 		displayGrid = new int[7][8];
@@ -62,12 +60,10 @@ public class Masterizer extends Mode {
 		//MELODY
 		melodyRows = new int[8];
 		mel1Cue = new boolean[8];
-		midiMelodyOut = _midiMelodyOut;
 		
 		//MELODY2
 		melody2Rows = new int[8];
 		mel2Cue = new boolean[8];
-		midiMelody2Out = _midiMelody2Out;
 		
 		//MASTER
 		midiMasterOut = _midiMasterOut;
@@ -275,70 +271,64 @@ public class Masterizer extends Mode {
 		
 	}
 	
-	/***
-	 * Handles the transport locator column that updates based on the location of the DAW
-	 * @param noteValue
-	 */
-	public void locatorEvent(int noteValue)
+	//@TODO does this event exist anymore?
+	public void locatorEventCSharp4()
 	{
-		if(noteValue == MonomeUp.C4)
-		{
-			//Begin play for locator mode
-			locatorMode = PLAYMODE;
+		//Begin a record mode (length of record shows by speed of steps)
+		locatorMode = RECMODE;
+		locatorRows = new int[8];
+		locatorRows[0] = DisplayGrid.FASTBLINK;
+	}
+	
+	public void locatorEventDSharp4()
+	{
+		int currentStep = -1;
+		
+		//Step in current mode
+		//Find the current step
+		for(int i =0; i<locatorRows.length;i++)
+			if(locatorRows[i]!=DisplayGrid.OFF)
+				currentStep = i;
+		
+		//Only if the locator knows where the current step is do we step forward
+		if(currentStep > -1)
+		{	
 			locatorRows = new int[8];
-			locatorRows[0] = DisplayGrid.SOLID;
-			
-			//If cued, trigger melodizer start or stop
-			for(int i=0;i<8;i++)
+			if(locatorMode == PLAYMODE)
+				locatorRows[(currentStep + 1) % 8] = DisplayGrid.SOLID;
+			else if(locatorMode == RECMODE)
+				locatorRows[(currentStep + 1) % 8] = DisplayGrid.FASTBLINK;
+		}
+	}
+	
+	public void locatorEventC4()
+	{
+		//Begin play for locator mode
+		locatorMode = PLAYMODE;
+		locatorRows = new int[8];
+		locatorRows[0] = DisplayGrid.SOLID;
+		
+		//If cued, trigger melodizer start or stop
+		for(int i=0;i<8;i++)
+		{
+			if(mel1Cue[i] == true)
 			{
-				if(mel1Cue[i] == true)
-				{
-					if(AllModes.melody1Model.getSeqStatus(i) == MonomeUp.PLAYING)
-						stopMel1Seq(i);
-					else
-						AllModes.melody1Model.playSeq(i);
-					mel1Cue[i]=false;
-					
-				}
-			
-				if(mel2Cue[i] == true)
-				{
-					if(AllModes.melody2Model.getSeqStatus(i) == MonomeUp.PLAYING)
-						stopMel2Seq(i);
-					else
-						AllModes.melody2Model.playSeq(i);
-					
-					mel2Cue[i] = false;
-				}
+				if(AllModes.melody1Model.getSeqStatus(i) == MonomeUp.PLAYING)
+					stopMel1Seq(i);
+				else
+					AllModes.melody1Model.playSeq(i);
+				mel1Cue[i]=false;
+				
 			}
 		
-			
-		}
-		else if(noteValue == MonomeUp.CSHARP4)
-		{
-			//Begin a record mode (length of record shows by speed of steps)
-			locatorMode = RECMODE;
-			locatorRows = new int[8];
-			locatorRows[0] = DisplayGrid.FASTBLINK;
-		}
-		else if(noteValue == MonomeUp.DSHARP4)
-		{
-			int currentStep = -1;
-			
-			//Step in current mode
-			//Find the current step
-			for(int i =0; i<locatorRows.length;i++)
-				if(locatorRows[i]!=DisplayGrid.OFF)
-					currentStep = i;
-			
-			//Only if the locator knows where the current step is do we step forward
-			if(currentStep > -1)
-			{	
-				locatorRows = new int[8];
-				if(locatorMode == PLAYMODE)
-					locatorRows[(currentStep + 1) % 8] = DisplayGrid.SOLID;
-				else if(locatorMode == RECMODE)
-					locatorRows[(currentStep + 1) % 8] = DisplayGrid.FASTBLINK;
+			if(mel2Cue[i] == true)
+			{
+				if(AllModes.melody2Model.getSeqStatus(i) == MonomeUp.PLAYING)
+					stopMel2Seq(i);
+				else
+					AllModes.melody2Model.playSeq(i);
+				
+				mel2Cue[i] = false;
 			}
 		}
 	}
