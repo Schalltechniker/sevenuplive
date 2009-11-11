@@ -233,7 +233,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener {
 		}
 		
 		this.curFrame = curFrame;
-		if(curFrame % 4 == 0)
+		if(curFrame % 2 == 0)
 		noteOnOccuredInLastFrame  = false;
 	}
 
