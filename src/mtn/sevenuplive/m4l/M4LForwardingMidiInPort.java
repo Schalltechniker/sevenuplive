@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 
 import processing.core.PApplet;
 
-public class M4LForwardingMidiInPort implements M4LMidiIn, M4LMidiOut {
+public class M4LForwardingMidiInPort implements M4LMidiIn {
 
 	private PApplet forwardingPort;
 	private Method callbackOnNoteMethod;
@@ -48,7 +48,7 @@ public class M4LForwardingMidiInPort implements M4LMidiIn, M4LMidiOut {
 			return;
 		
 		try {
-			callbackOnControllerMethod.invoke(callbackOnNoteMethod, controller);
+			callbackOnControllerMethod.invoke(forwardingPort, controller);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -63,7 +63,7 @@ public class M4LForwardingMidiInPort implements M4LMidiIn, M4LMidiOut {
 			return;
 		
 		try {
-			callbackOnNoteMethod.invoke(callbackOnNoteMethod, note);
+			callbackOnNoteMethod.invoke(forwardingPort, note);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -78,7 +78,7 @@ public class M4LForwardingMidiInPort implements M4LMidiIn, M4LMidiOut {
 			return;
 		
 		try {
-			callbackOnNoteMethod.invoke(callbackOnNoteMethod, note);
+			callbackOnNoteMethod.invoke(forwardingPort, note);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
