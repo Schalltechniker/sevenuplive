@@ -550,7 +550,7 @@ public class SevenUp4Live extends MaxObject {
 		if (inletNum == 1) { // This is MIDI_IN inlet 
 			if (atoms != null) {
 				if (atoms.length == 3) { // We need 3 elements [Pitch,Velocity, Channel] in that order
-					min = midiIO.getMidiIn(atoms[2].toInt(), settings.midiInputDeviceName);
+					min = midiIO.getMidiIn(atoms[2].toInt() - 1 , settings.midiInputDeviceName);
 					note = new Note(atoms[0].toInt(), atoms[1].toInt(), 0, 144);
 					if (min != null) {
 						if (atoms[1].toInt() == 0) {
