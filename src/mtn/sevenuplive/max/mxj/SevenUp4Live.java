@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mtn.sevenuplive.m4l.M4LMidi;
+import mtn.sevenuplive.m4l.M4LMidiIn;
 import mtn.sevenuplive.m4l.M4LMidiOut;
 import mtn.sevenuplive.m4l.M4LMidiSystem;
+import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.main.ConnectionSettings;
 import mtn.sevenuplive.main.MonomeUp;
 import mtn.sevenuplive.main.SevenUpEnvironment;
@@ -536,15 +538,27 @@ public class SevenUp4Live extends MaxObject {
 	}
     
     
-	public void list(Atom[] list)
+	public void list(Atom[] atoms)
 	{
 		int inletNum = getInlet();
 		post("Got atoms on inlet #" + inletNum);
 		
+		M4LMidiIn min = null;
+		Note note = null;
+		
+		// Midi IN Notes come as Pitch,Velocity, Channel
 		if (inletNum == 1) { // This is MIDI_IN inlet 
-			if (list != null) {
-				for (Atom atom : list) {
-					post("MIDIIN: " + atom.toString());
+			if (atoms != null) {
+				if (atoms.length == 3) { // We need 3 elements [Pitch,Velocity, Channel] in that order
+					min = midiIO.getMidiIn(atoms[2].toInt(), settings.midiInputDeviceName);
+					note = new Note(atoms[0].toInt(), atoms[1].toInt(), 0, 144);
+					if (min != null) {
+						if (atoms[1].toInt() == 0) {
+							min.sendNoteOff(note);
+						} else {
+							min.sendNoteOn(note);
+						}
+					}
 				}
 			}
 		}
