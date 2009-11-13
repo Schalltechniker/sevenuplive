@@ -76,7 +76,7 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 	public boolean[][] newHeldNote;
 	public M4LMidiOut midiMelodyOut[];
 	private Scale melodyScale;
-	private Scale clipScale = new Scale(ScaleName.Major);
+	private Scale clipScale = new Scale(ScaleName.Chromatic);
 
 	private int recMode = ModeConstants.MEL_ON_BUTTON_PRESS;
 	
@@ -808,6 +808,11 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		{
 			clipNotes[channel][pitch] = DisplayGrid.OFF;
 			//System.out.println("Setting " + pitch + " OFF for channel " + channel);
+		}
+		else if (vel == 125)//Clip present
+		{
+			clipNotes[channel][pitch] = DisplayGrid.FASTBLINK;
+			//System.out.println("Setting " + pitch + " SLOWBLINK");
 		}
 		else if(vel == 126)//CUE
 		{
