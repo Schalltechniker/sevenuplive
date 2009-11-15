@@ -7,10 +7,13 @@ function list(x,y,position)
       return;
 
    // The first outlet is for normal fire events.  The second outlet is for stop events
-   if( y == 7 ) {
-     outlet(1, x);
-   } else {
+   //if( y > 7 ) {
+     //outlet(1, x);
+   //} else {
+
+    // For now we don't process any press for stop
      outlet(0, [x,y]);
-   }
+
+   //}
 }
 list.immediate = 1;
