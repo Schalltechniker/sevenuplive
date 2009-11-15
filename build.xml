@@ -22,6 +22,7 @@
   	
   	<echo>Locations in build</echo>
   	<echo>Sources=${src.folder}</echo>
+  	<echo>M4L Sources=${max.folder}</echo>
   	<echo>Libraries=${lib.folder}</echo>
   	<echo>Binaries=${bin.folder}</echo>
   	<echo>Distribution=${dist.folder}</echo>
@@ -45,7 +46,7 @@
 
 	
   <target name="build" depends="_init">
-    <!-- We must build as 1.5 source for OSX distro -->
+    <!-- Build as 1.5 source for Compatibility reasons -->
   	<javac srcdir="${src.folder}" destdir="${bin.folder}" classpathref="sevenup.classpath" source="1.5" target="1.5"/>
   </target>
 
@@ -56,23 +57,12 @@
   </target>
 	
   <target name="_makedistdirs">
-    <mkdir dir="${out.folder}/windows/supporting"/>
-  	<mkdir dir="${out.folder}/osx/supporting"/>
-  	<mkdir dir="${dist.folder}/windows"/>
-	<mkdir dir="${dist.folder}/osx"/>
+    <mkdir dir="${out.folder}/supporting"/>
   </target>
 	  	
   
   <target name="jar" depends="build, _makedistdirs">
-    <jar jarfile="${out.folder}/windows/SevenUpLive-${release.version}.jar">
-        <fileset dir="${bin.folder}"/>
-        <manifest>
-            <attribute name="Class-Path" value="./supporting/${core.jar} ./supporting/${jdom.jar} ./supporting/${oscP5.jar} ./supporting/${proxml.jar}"/>
-            <attribute name="Main-Class" value="mtn.sevenuplive.main.MainApp"/>
-        </manifest>
-    </jar>
-    
-    <jar jarfile="${out.folder}/osx/supporting/SevenUpLive-${release.version}.jar">
+    <jar jarfile="${out.folder}/supporting/SevenUpLive-${release.version}.jar">
         <fileset dir="${bin.folder}"/>
         <manifest>
             <attribute name="Class-Path" value="${core.jar} ${jdom.jar} ${oscP5.jar} ${proxml.jar}"/>
@@ -81,75 +71,51 @@
   </target>
   
   <target name="zipsrc" depends="_init, _makedistdirs">
-    <jar jarfile="${out.folder}/osx/SevenUpLive-${release.version}-src.zip">
+    <jar jarfile="${out.folder}/SevenUpLive-${release.version}-src.zip">
+        <fileset dir=".">
+            <include name="README"/>
+            <include name="COPYING"/>
+            <include name="COPYING.LESSER"/>
+        </fileset>
         <fileset dir="${src.folder}"/>
-    </jar>
-    <jar jarfile="${out.folder}/windows/SevenUpLive-${release.version}-src.zip">
-        <fileset dir="${src.folder}"/>
+        <fileset dir="${max.folder}"/>
     </jar>
   </target>
   
   <target name="doc" depends="_init">
-  	<mkdir dir="${out.folder}/windows/doc"/>
-  	<mkdir dir="${out.folder}/osx/doc"/>
-    <copy todir="${out.folder}/windows/doc" flatten="false">
-        <fileset dir="${doc.folder}"/>
-    </copy>
-    <copy todir="${out.folder}/osx/doc" flatten="false">
+  	<mkdir dir="${out.folder}/doc"/>
+    <copy todir="${out.folder}/doc" flatten="false">
         <fileset dir="${doc.folder}"/>
     </copy>
   </target>
   
   <target name="dist" depends="jar, zipsrc, doc">
+    <mkdir dir="${dist.folder}"/>
     
-    <!-- For the PC -->
-  	<copy todir="${out.folder}/windows" flatten="false">
-  	  	<fileset dir="${resources.folder}/content">
-  	  		<include name="*.*"/>
-  		</fileset>
-  	</copy>
-  	<copy todir="${out.folder}/windows" flatten="false">
-  		<fileset dir="${resources.folder}/content/windows">
-  	  		<include name="*.*"/>
-  	    </fileset>
-  	</copy>
-  	
-  	<copy todir="${out.folder}/windows/max" flatten="false">
-  		<fileset dir="${max.folder}">
-  			<include name="*.*"/>
-  		</fileset>
-  	</copy>
-  	
-  	<copy todir="${out.folder}/windows/supporting" flatten="false">
-        <fileset dir="${lib.folder}">
-            <include name="${core.jar}"/>
-            <include name="${jdom.jar}"/>
-            <include name="${oscP5.jar}"/>
-            <include name="${proxml.jar}"/>
-        </fileset>
-    </copy>
-        
-  	<!-- For the MAC -->
-  	
-  	<copy todir="${out.folder}/osx" flatten="false">
+    <copy todir="${out.folder}" flatten="false">
   	  	<fileset dir="${resources.folder}/content">
   	  		<include name="*.*"/>
   		</fileset>
   	</copy>
   
-  	<copy todir="${out.folder}/osx/max" flatten="false">
+  	<copy todir="${out.folder}/m4l" flatten="false">
   	  	<fileset dir="${max.folder}">
   			<include name="*.*"/>
   		</fileset>
   	</copy>
   	
-  	<copy todir="${out.folder}/osx" flatten="false">
-  		<fileset dir="${resources.folder}/content/osx">
+  	<copy todir="${out.folder}" flatten="false">
+  		<fileset dir="${resources.folder}/content">
   	  		<include name="*.*"/>
   	    </fileset>
+  	    <fileset dir=".">
+            <include name="README"/>
+            <include name="COPYING"/>
+            <include name="COPYING.LESSER"/>
+        </fileset>
   	</copy>
   		
-  	<copy todir="${out.folder}/osx/supporting" flatten="false">
+  	<copy todir="${out.folder}/supporting" flatten="false">
         <fileset dir="${lib.folder}">
             <include name="${core.jar}"/>
             <include name="${jdom.jar}"/>
@@ -159,16 +125,10 @@
         </fileset>
     </copy>
   	
-    <!-- Now zip everything into a distribution for Windows -->
-    <jar jarfile="${dist.folder}/windows/SevenUpLiveWindows-${release.version}.zip">
-        <fileset dir="${out.folder}/windows"/>
+    <!-- Now zip everything into a distribution -->
+    <jar jarfile="${dist.folder}/SevenUpLive-${release.version}.zip">
+        <fileset dir="${out.folder}"/>
     </jar>
-    
-    <tar tarfile="${dist.folder}/osx/SevenUpLiveOSX-${release.version}.tar.gz" compression="gzip" longfile="gnu">
-    	<tarfileset dir="${out.folder}/osx">
-    	    <include name="*/**"/>
-    	</tarfileset>
-    </tar>
     
   </target>
   
