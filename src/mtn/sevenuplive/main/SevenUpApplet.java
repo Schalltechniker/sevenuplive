@@ -1,12 +1,24 @@
-/**
- * SevenUp for Monome's 40h
- * @author Adam Ribaudo
- * arribaud@gmail.com
- * 12/09/2007
- * Copyright 2007 - All rights reserved
- * 
- * SevenUpApplet Class - initializes the SevenUpApplet that extends processing's core PApplet class.  Sends COM port to MonomeUp and opens the Midi input device.
- */
+/*
+	Copyright 2009 Adam Ribaldo 
+	 
+	Developed by Adam Ribaldo, Chris Lloyd
+    
+    This file is part of SevenUpLive.
+    http://www.makingthenoise.com/sevenup/
+
+    SevenUpLive is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SevenUpLive is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with SevenUpLive.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 package mtn.sevenuplive.main;
 import mtn.sevenuplive.m4l.M4LMidi;
