@@ -60,7 +60,8 @@ public class SevenUp4Live extends MaxObject {
 	private ConnectionSettings settings = new ConnectionSettings();
 	
 	public static enum eOutletCategories {connections, looper, melodizer1, melodizer2, controller, tilt};
-	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, ControllerMidiOutlet, PatchDataOutlet, InitializationDataOutlet}; 
+	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, ControllerMidiOutlet, PatchDataOutlet, InitializationDataOutlet, LifecycleDataOutlet};
+	public static enum eLifecycle {started, stopped};
 	
 	private static final String[] INLET_ASSIST = new String[]{
 		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), listenport, hostport, looper, melodizer1, melodizer2)",
@@ -73,7 +74,8 @@ public class SevenUp4Live extends MaxObject {
 		"Looper Midi Out",
 		"Controller Midi Out",
 		"Patch Data Out",
-		"Data Initialization Out"
+		"Data Initialization Out",
+		"Lifecycle Out"
 	};
 	
 	public enum eMonomeChoices {Monome64,
@@ -108,6 +110,7 @@ public class SevenUp4Live extends MaxObject {
 		declareInlets(new int[]{DataTypes.ALL, DataTypes.MESSAGE, DataTypes.INT});
 		declareOutlets(new int[]{
 				DataTypes.MESSAGE, 
+				DataTypes.MESSAGE,
 				DataTypes.MESSAGE,
 				DataTypes.MESSAGE,
 				DataTypes.MESSAGE,
@@ -201,6 +204,10 @@ public class SevenUp4Live extends MaxObject {
 	 */
 	public void initialize() {
 		environment.startSevenUp();
+		
+		// You can only push UI settings back to Seven Up after it has started, so these events are critical
+		// For the UI to be able to know when it can configure 7up
+		outlet(eOutlets.LifecycleDataOutlet.ordinal(), Atom.newAtom(eLifecycle.started.toString()));
 	}
     
 	/**
@@ -208,6 +215,8 @@ public class SevenUp4Live extends MaxObject {
 	 */
 	public void shutdown() {
 		environment.stopSevenUp();
+		
+		outlet(eOutlets.LifecycleDataOutlet.ordinal(), Atom.newAtom(eLifecycle.stopped.toString()));
 	}
     
 	public void inlet(int i)
