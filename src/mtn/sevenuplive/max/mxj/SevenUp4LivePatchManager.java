@@ -28,6 +28,8 @@ import java.io.IOException;
 
 import mtn.sevenuplive.main.MonomeUp;
 import mtn.sevenuplive.modes.AllModes;
+import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
+import mtn.sevenuplive.modes.events.UpdateNavEvent;
 
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
@@ -82,6 +84,25 @@ public class SevenUp4LivePatchManager {
 					
 					// OK Push everything to the UI
 					pushAllPatchSettings();
+					
+					// Make sure all views are updated
+					AllModes.getInstance().getMelodizer1Model().sendEvent(new UpdateDisplayEvent());
+					AllModes.getInstance().getMelodizer2Model().sendEvent(new UpdateDisplayEvent());
+					AllModes.getInstance().getPatternizerModel().sendEvent(new UpdateDisplayEvent());
+					AllModes.getInstance().getControllerModel().sendEvent(new UpdateDisplayEvent());
+					AllModes.getInstance().getSequencer().sendEvent(new UpdateDisplayEvent());
+					AllModes.getInstance().getMasterizer().sendEvent(new UpdateDisplayEvent());
+					AllModes.getInstance().getLooper().sendEvent(new UpdateDisplayEvent());
+					AllModes.getInstance().getLoopRecorder().sendEvent(new UpdateDisplayEvent());
+					
+					AllModes.getInstance().getMelodizer1Model().sendEvent(new UpdateNavEvent());
+					AllModes.getInstance().getMelodizer2Model().sendEvent(new UpdateNavEvent());
+					AllModes.getInstance().getPatternizerModel().sendEvent(new UpdateNavEvent());
+					AllModes.getInstance().getControllerModel().sendEvent(new UpdateNavEvent());
+					AllModes.getInstance().getSequencer().sendEvent(new UpdateNavEvent());
+					AllModes.getInstance().getMasterizer().sendEvent(new UpdateNavEvent());
+					AllModes.getInstance().getLooper().sendEvent(new UpdateNavEvent());
+					AllModes.getInstance().getLoopRecorder().sendEvent(new UpdateNavEvent());
 				}
 				catch(Exception ex)
 				{

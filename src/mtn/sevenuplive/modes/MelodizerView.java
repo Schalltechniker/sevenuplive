@@ -60,7 +60,6 @@ public class MelodizerView extends Mode {
 	}
 	
 	public void onEvent(Event e) {
-		super.onEvent(e);
 		
 		if (e.getType().equals(UpdateDisplayEvent.UPDATE_DISPLAY_EVENT)) {
 			UpdateDisplayEvent ude = (UpdateDisplayEvent)e;

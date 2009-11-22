@@ -28,6 +28,9 @@ import mtn.sevenuplive.m4l.M4LController;
 import mtn.sevenuplive.m4l.M4LMidiOut;
 import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.main.MonomeUp;
+import mtn.sevenuplive.modes.events.Event;
+import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
+import mtn.sevenuplive.modes.events.UpdateNavEvent;
 
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -54,6 +57,18 @@ public class Looper extends Mode {
 			loops[i] = new Loop();
 		
 		midiOut = _midiOut;
+		
+		// Subscribe to the events we want to receive
+		subscribe(new UpdateDisplayEvent(), this);
+		subscribe(new UpdateNavEvent(), this);
+	}
+	
+	public void onEvent(Event e) {
+		if (e.getType().equals(UpdateDisplayEvent.UPDATE_DISPLAY_EVENT)) {
+			updateDisplayGrid(); 
+		} else if (e.getType().equals(UpdateNavEvent.UPDATE_NAV_EVENT)) {
+			updateNavGrid(); 
+		}
 	}
 	
 	public int getNumLoops()

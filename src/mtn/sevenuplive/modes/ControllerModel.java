@@ -23,8 +23,11 @@
 package mtn.sevenuplive.modes;
 import mtn.sevenuplive.m4l.M4LController;
 import mtn.sevenuplive.m4l.M4LMidiOut;
+import mtn.sevenuplive.modes.events.Event;
+import mtn.sevenuplive.modes.events.EventDispatcher;
+import mtn.sevenuplive.modes.events.EventListener;
 
-public class ControllerModel extends Mode {
+public class ControllerModel extends Mode implements EventListener, EventDispatcher {
 
 	private M4LMidiOut midiControlOut;
 	public Integer controls[][];
@@ -100,6 +103,13 @@ public class ControllerModel extends Mode {
 			if(controls[bank][i] > -1)
 				sendMidiControls(bank, i);
 		}		
+	}
+
+
+	@Override
+	public void onEvent(Event e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
