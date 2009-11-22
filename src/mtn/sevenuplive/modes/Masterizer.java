@@ -25,6 +25,10 @@ package mtn.sevenuplive.modes;
 import mtn.sevenuplive.m4l.M4LMidiOut;
 import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.main.MonomeUp;
+import mtn.sevenuplive.modes.events.ClearDisplayEvent;
+import mtn.sevenuplive.modes.events.ClearNavEvent;
+import mtn.sevenuplive.modes.events.Event;
+import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
 
 public class Masterizer extends Mode {
 	//SEQUENCER
@@ -92,6 +96,18 @@ public class Masterizer extends Mode {
 		
 		//LOCATOR
 		locatorRows = new int[8];
+		
+		// Subscribe to the events we want to receive
+		this.subscribe(new UpdateDisplayEvent(), this);
+		
+	}
+	
+	public void onEvent(Event e) {
+		
+		if (e.getType().equals(UpdateDisplayEvent.UPDATE_DISPLAY_EVENT)) {
+			UpdateDisplayEvent ude = (UpdateDisplayEvent)e;
+			updateDisplayGrid(); 
+		}
 	}
 	
 	public void press(int x, int y)

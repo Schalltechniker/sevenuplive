@@ -72,9 +72,10 @@ public abstract class Mode extends EventDispatcherImpl implements ModeConstants,
 		return navGrid;
 	}
 	
-	public void onEvent(Event e) {
-		// Do nothing...to be overridden as necessary by concrete class
-	}
+	/**
+	 * Must override
+	 */
+	public abstract void onEvent(Event e);
 	
 	protected void clearDisplayGrid()
 	{

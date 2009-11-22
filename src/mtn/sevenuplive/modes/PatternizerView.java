@@ -22,6 +22,11 @@
 
 package mtn.sevenuplive.modes;
 
+import mtn.sevenuplive.modes.events.ClearDisplayEvent;
+import mtn.sevenuplive.modes.events.ClearNavEvent;
+import mtn.sevenuplive.modes.events.Event;
+import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
+
 /***
  * The patternizer view allows different windows into the same patternizer.  Each grid can view a different pattern at the same time.
  * @author Adam Ribaudo
@@ -38,8 +43,29 @@ public class PatternizerView extends Mode {
 		pressedNavButtons = new int[8];
 		this.patternizerModel = patternizerModel;
 		
+		// Subscribe to the events we want to receive
+		patternizerModel.subscribe(new UpdateDisplayEvent(), this);
+		patternizerModel.subscribe(new ClearDisplayEvent(), this);
+		patternizerModel.subscribe(new ClearNavEvent(), this);
+		
 		updateDisplayGrid();
 	}
+	
+	public void onEvent(Event e) {
+		
+		if (e.getType().equals(UpdateDisplayEvent.UPDATE_DISPLAY_EVENT)) {
+			UpdateDisplayEvent ude = (UpdateDisplayEvent)e;
+			if (ude.getSlot() == selectedPattern || ude.getSlot() == -1) {
+				
+				updateDisplayGrid();
+			} 
+		} else if (e.getType().equals(ClearDisplayEvent.CLEAR_DISPLAY_EVENT)) {
+			clearDisplayGrid();
+		} else if (e.getType().equals(ClearNavEvent.CLEAR_NAV_EVENT)) {
+			clearNavGrid();
+		} 
+	}
+
 
 	public void updateDisplayGrid()
 	{

@@ -22,6 +22,10 @@
 
 package mtn.sevenuplive.modes;
 
+import mtn.sevenuplive.modes.events.Event;
+import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
+import mtn.sevenuplive.modes.events.UpdateNavEvent;
+
 public class ControllerView extends Mode {
 
 	private int curBank = 0;
@@ -30,8 +34,21 @@ public class ControllerView extends Mode {
 	public ControllerView(int _navRow,int grid_width, int grid_height, ControllerModel controllerModel) {
 		super(_navRow, grid_width, grid_height);
 		this.controllerModel = controllerModel;
+		
+		// Subscribe to the events we want to receive
+		controllerModel.subscribe(new UpdateDisplayEvent(), this);
+		controllerModel.subscribe(new UpdateNavEvent(), this);
+		
 	    updateDisplayGrid();
 	    updateNavGrid();
+	}
+	
+	public void onEvent(Event e) {
+		if (e.getType().equals(UpdateDisplayEvent.UPDATE_DISPLAY_EVENT)) {
+			updateDisplayGrid(); 
+		} else if (e.getType().equals(UpdateNavEvent.UPDATE_NAV_EVENT)) {
+			updateNavGrid(); 
+		}
 	}
 	
 	public void updateDisplayGrid()

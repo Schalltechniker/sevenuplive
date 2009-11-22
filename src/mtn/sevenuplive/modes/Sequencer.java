@@ -24,6 +24,9 @@ package mtn.sevenuplive.modes;
 
 import java.util.List;
 
+import mtn.sevenuplive.modes.events.Event;
+import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
+
 import org.jdom.Attribute;
 import org.jdom.Element;
 
@@ -43,7 +46,19 @@ public class Sequencer extends Mode {
 		for(int i=0; i<7;i++)
 			sequenceBanks[i] = new SequenceBank();
 		displayGrid = new int[7][8];
+		
+		// Subscribe to the events we want to receive
+		this.subscribe(new UpdateDisplayEvent(), this);
+		
 		updateDisplay();
+	}
+	
+	public void onEvent(Event e) {
+		
+		if (e.getType().equals(UpdateDisplayEvent.UPDATE_DISPLAY_EVENT)) {
+			UpdateDisplayEvent ude = (UpdateDisplayEvent)e;
+			updateDisplay(); 
+		}
 	}
 	
 	public void step()

@@ -24,6 +24,8 @@ package mtn.sevenuplive.modes;
 
 import java.util.Random;
 
+import mtn.sevenuplive.modes.events.Event;
+
 /**
  * Mode that is only accessed at startup to do the startup sequence
  */
@@ -112,6 +114,12 @@ public class StartupMode extends Mode {
 	 */
 	public int getMyNavRow() {
 		return STARTUP_MODE;
+	}
+
+	@Override
+	public void onEvent(Event e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

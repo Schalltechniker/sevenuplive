@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mtn.sevenuplive.main.MonomeUp;
+import mtn.sevenuplive.modes.events.Event;
+import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
+import mtn.sevenuplive.modes.events.UpdateNavEvent;
 
 import org.jdom.Element;
 
@@ -40,6 +43,18 @@ public class LoopRecorder extends Mode {
 		loopSequences = new CtrlSequence[7];
 		for(int i=0;i<7;i++)
 			loopSequences[i] = new CtrlSequence(i);
+		
+		// Subscribe to the events we want to receive
+		subscribe(new UpdateDisplayEvent(), this);
+		subscribe(new UpdateNavEvent(), this);
+	}
+	
+	public void onEvent(Event e) {
+		if (e.getType().equals(UpdateDisplayEvent.UPDATE_DISPLAY_EVENT)) {
+			updateDisplayGrid(); 
+		} else if (e.getType().equals(UpdateNavEvent.UPDATE_NAV_EVENT)) {
+			updateNavGrid(); 
+		}
 	}
 	
 	public void updateDisplayGrid()
