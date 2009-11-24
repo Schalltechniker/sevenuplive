@@ -29,3 +29,5 @@ FEATURES
 -Create a "resampler" object that would be audio effect that captures sound in real time and loads it into a designated looper slot in real time.  This would require us to create our own custom Simpler object that is hooked into this. 
 BUGS
 -changing loop length not working
+BUGS
+-Add a check to make sure user installed the java classes correctly and provide output in either the max window or in the UI to notify the user
