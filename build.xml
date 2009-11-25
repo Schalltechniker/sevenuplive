@@ -58,6 +58,7 @@
 	
   <target name="_makedistdirs">
     <mkdir dir="${out.folder}/supporting"/>
+  	<mkdir dir="${out.folder}/components"/>
   </target>
 	  	
   
@@ -98,7 +99,7 @@
   		</fileset>
   	</copy>
   
-  	<copy todir="${out.folder}/m4l" flatten="false">
+  	<copy todir="${out.folder}/components" flatten="false">
   	  	<fileset dir="${max.folder}">
   			<include name="*.*"/>
   		</fileset>
