@@ -340,8 +340,7 @@ In order to use 7up Live you'll need:
     <li>In order to do this, Navigate to Devices -&gt; Instruments -&gt; Drum Rack -&gt; SevenUp 
         -&gt; StepperDrumRack and drag it into a new track.</li>
     <li>Next, navigate to Devices -&gt; Midi Effects -&gt; Max Midi Effect -&gt; SevenUp -&gt; 
-        Stepper and drag into the same track as the &quot;StepperDrumRack&quot; but make sure it 
-        is first in the device chain.</li>
+        Stepper and drag it in front of the &quot;StepperDrumRack&quot;.</li>
     <li>Press play and you should notice that the rows of your monome are blinking in 
         time with Ableton.</li>
     <li>Try pressing the buttons of the *first 7 columns* of the monome and notice that they'll each play a corresponding sample 
@@ -404,13 +403,12 @@ In order to use 7up Live you'll need:
     <p><img src="images/tut_stepper.png"</p>
     <p>In order to add a stepper to your set, make sure you have already added the 
         SevenUp core to your set (see the &quot;Getting Started&quot; section) and follow these 
-        instructions:s:</p>
+        instructions:</p>
         <ol>
         <li>Navigate to Devices -&gt; Instruments -&gt; Drum Rack -&gt; SevenUp 
         -&gt; StepperDrumRack and drag it into a new track.</li><li>
     Next, navigate to Devices -&gt; Midi Effects -&gt; Max Midi Effect -&gt; SevenUp -&gt; 
-        Stepper and drag it into the same track as the &quot;StepperDrumRack&quot; but make sure it 
-        is first in the device chain.</li>
+                Stepper and drag it in front of the &quot;StepperDrumRack&quot;.</li>
     <li>Press play and you should notice that the rows of your monome are blinking in 
         time with Ableton.</li>
     <li>Try pressing the buttons of the *first 7 columns* of the monome and notice that 
@@ -527,7 +525,8 @@ In order to use 7up Live you'll need:
     <ul>
         <li>You are able to send the current values in a single bank from the Materizer</li>
     </ul>
-    <h2>Looper</h2><table>
+    <h2>Looper</h2>
+<table>
         <tr>
             <td>
                 Nav Position</td>
@@ -568,9 +567,21 @@ In order to use 7up Live you'll need:
         because SevenUp has no way of knowing how long your loop in Ableton is, you must use 
         the Looper interface to assign each loop&#39;s length measured by bars.
     </p>
-<p></p>
+<p><img src="images/tut_looper.png" /></p>
+    <p>In order to use the loop, follow these steps:</p>
+    <ol>
+        <li>Navigate to Devices -&gt; Instruments -&gt; Drum Rack -&gt; SevenUp -&gt; Looper and drag it 
+            into a new track</li>
+        <li>Navigate to Devices -&gt; Midi Effects -&gt; Max Effect -&gt; SevenUp -&gt; SevenUpLooper 
+            and drag it into the same track before the drum rack.&nbsp; Your device chain 
+            should now look like this:<ul><li>sdf</li></ul></li>
+        <li> Notice that when you turn the knobs on the looper device, the macro knobs of 
+            the drum rack also move and change the &quot;Start Offset&quot; knobs of the individual 
+            Simpler devices held within.&nbsp; By pressing different rows and columns on the 
+            monome, you&#39;ll be starting different loops at different offsets respectively.<ul><li>Please note that because the loops provided in the preset were consolidated at 70bpm, they will only sound correct at 70 (or 140) bpm.</li></ul></li>
+    </ol>
     </div>
-<div id="footer">Copyright Adam Ribaudo &amp; Christopher Lloyd 2010</div>
+<div id="footer">Copyright Adam Ribaudo &amp; Christopher Lloyd 201000</div>
 </div>
 </div>
 </div>
