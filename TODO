@@ -27,6 +27,7 @@ v2.0 MFL Specific
 FEATURES
 -Move loop type/length/chop group mapping to the individual looper device (to allow for multiple looper devices in the future)
 -Create a "resampler" object that would be audio effect that captures sound in real time and loads it into a designated looper slot in real time.  This would require us to create our own custom Simpler object that is hooked into this. 
+-Rename all references from SevenUp to 7up
 BUGS
 -changing loop length not working
 BUGS

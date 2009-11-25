@@ -11,7 +11,15 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
 	padding:0;
 }
 
-.chris
+table, td
+{
+    border-style:solid;
+    border-width:1px;
+    margin:5px;
+    padding:4px;
+}
+
+.important
 {
 color:red;
 font-weight:bold;
@@ -43,6 +51,14 @@ h1
 	font-size:1.2em;
 	margin-bottom:7px;
 	color:#362020;
+}
+
+h2
+{
+    background-color:#d7d7d7;
+    font-size: 1.2em;
+    color:#362020;
+    padding:5px;
 }
 
 body
@@ -80,6 +96,12 @@ a:hover
 	background-color:#9ccccc;
 	width:1000px;
 	height:auto;
+}
+
+#container a
+{
+	color:#186767;
+	text-decoration: underline;
 }
 
 #containerLeft{
@@ -155,6 +177,7 @@ padding-right:10px;
 	border-color:#362020;
 	padding-top:10px;
 	padding-bottom:10px;
+	color:#000000;
 }
 
 #leftColumn li
@@ -168,8 +191,7 @@ padding-right:10px;
 
 #leftColumn ol
 {
-	margin-left: 20px;
-}
+        }
 
 #mainContent
 {
@@ -184,11 +206,7 @@ padding-right:10px;
 	border-width:1px;
 }
 
-#mainContent a
-{
-	color:#186767;
-	text-decoration: underline;
-}
+
 
 #mainContent a:hover
 {
@@ -228,7 +246,7 @@ padding-right:10px;
 <div id="header">
         <img id="logo" alt="SevenUpLive logo" src="images/logo2.png" />
         <div class="title">
-        	<h1>7up Live</h1>
+        	<h1>SevenUp Live</h1>
         	<span class="tagline">monome + ableton live = 7</span>
         </div>
        <div class="video">
@@ -244,6 +262,18 @@ padding-right:10px;
             <li><a href="#">Requirements</a></li>
             <li><a href="#">Download & Install</a></li>
             <li><a href="#">Getting Started</a></li>
+            <li><a href="#">SevenUp Concepts</a></li>
+            <li>
+            <ol>
+                <li>Navigation</li>
+                <li>Stepper</li>
+                <li>Sequencer</li>
+                <li>Looper</li>
+                <li>Loop Recorder</li>
+                <li>Melodizer</li>
+            </ol>
+            </li>
+            <li>Advances Concepts</li>
         </ol>
 </div>
 <div id="mainContent">
@@ -265,46 +295,281 @@ In order to use 7up Live you'll need:
 <ul>
 	<li>A <a href="http://monome.org">monome</a> (any type will do)</li>
 	<li><a href="http://www.ableton.com">Ableton Live 8.1</a> or greater with <a href="http://www.ableton.com/maxforlive">Max4Live</a> installed</li>
+	<li><a href="http://cycling74.com/downloads/">Max 5.1 Runtime</a> (free) or <a href="http://cycling74.com/shop/">Max 5.1 Full</a> (costs $$).  You'll only need the full edition if you plan on creating your own components.</li>
+	<ul><li><span class="important">Please note that at the time of this writing, there is no Max Runtime that supports Max4Live.</span></li></ul>
 	<li><a href="http://monome.org/data/app/monomeserial">MonomeSerial</a> in order for your monome to comunicate with 7up</li>
 	<li>The <a href="http://www.java.com/en/download/index.jsp" >Java Runtime Environment</a> 1.5 or greater (most people will have this installed already)</li>
 </ul>
 <h1>Download and Installation</h1>
-<span class="chris">are users going to have to set any file path prefs for max?</span>
 <p>You can download the latest version of 7up <a href="#">here</a><img src="images/download.png" class="download" />. </p>
-<p>In order to install 7up you'll need to follow these instructions:</p>
+<p>In order to install SevenUp you'll need to follow these instructions:</p>
 <ol>
 <li>Unzip the download package to a directory of your choosing</li>
-<li>Copy the files in the "Supporting" folder into Max's "Java" folder</li>
- <ul>
- <li>For Windows this will be C:\Program Files\Cycling '74\Max 5.0\Cycling '74\java\lib</li>
- <li>For Mac this will be /Applications/Max5/Cycling '74/java/lib</li>
- </ul>
+<li>Copy the files in the "Supporting" folder into Max's "Java" folder<ul>
+    <li>For Windows this will be C:\Program Files\Cycling '74\Max 5.0\Cycling '74\java\lib</li>
+    <li>For Mac this will be /Applications/Max5/Cycling '74/java/lib</li>
+    </ul>
+    </li>
+    <li>Install the included Live pack &quot;SevenUp 2.0 Template.alp&quot; by opening Ableton 
+        Live and choosing &quot;Install Live Pack...&quot; from the file menu.&nbsp; </li>
+    <li>Open the newly installed project, SevenUp 2.0 Template.als, navigate to File -&gt; 
+        Manage Files....&nbsp; You shuld now see a column on the right with some 
+        options.&nbsp;&nbsp; Press &quot;Manage Project&quot; and then the &quot;Export&quot; button which 
+        is located at the bottom.&nbsp; This is important in order to install the 
+        SevenUp presets and devices into your device library.</li></li>
 </ol>
 
 <h1>Getting Started</h1>
-<p>We've provided a sample Ableton Live set <a href="#">here</a><img src="images/download.png" class="download" /> loaded with all of the components, but it's by no means required and we'd suggest you read the instructions below to learn how to make a set from scratch.</p>
+<p>Now that you&#39;ve exported the SevenUp devices, samples, and presets into your 
+    master library, you can add SevenUp into any new or existing project.&nbsp; Open 
+    up a new project and we&#39;ll walk through creating a basic set.</p>
 <ol>
 <li>Open Monome Serial and note your prefix, host port, and listen port</li>
-<li>Open Ableton Live</li>
-<li>Use Ableton's file browser to navigate where 7up Live was unpackaged and drag "SevenUp4Live.amxd" into a new track.</li>
-<ul>
-	<li>This is the brain of 7up and should always be loaded first before any other 7up components.</li>
-	<li>Only load one "SevenUp4Live.amxd" into any set.</li>
-</ul>
+<li>Open Ableton Live, open your device list and navigate to Instruments -&gt; Max 
+    Instrument -&gt; SevenUp.&nbsp; Drag the SevenUpLive device into a new track. </li>
+&nbsp;<ul>
+        <li>This is the brain of 7up and should always be loaded first before any other SevenUp components.</li>
+        <li>Only load one "SevenUp4Live.amxd" into any set at a time.</li>
+    </ul>
+    </li>
 <li>You should now see the following in your device chain:</li>
 <ul><li class="nobullet"><img src="images/74l_core_connection.png" /> </li></ul>
 <li>Check to see that your prefix, host and listen port are set correctly and press the "Start/Stop Connection" button.  If all went well, you should see a blinking "7" appear on your monome!</li>
-<li>Next, we'll try using a simple component, the Stepper.  The Stepper allows you to create patterns of samples, typically beats.  In order to do this, use the file browser to drag "SevenUpStepper.amxd" into a new track.</li>
-<li>Next, drag a "Drum Rack" device (in the instruments folder) into the same track so that's it's after the Stepper</li>
-<li>Next, drag some samples in the pads labeled C3 to F#3 and press play.  You should see a line move vertically down the monome.</li>
-<li>Try pressing the buttons of the *first 7 columns* of the monome and notice that they'll each play a corresponding sample that was dropped into the drum rack.  You should be able to hear sound at this point and your setup should now look something like this:</li>
-<ul>
-<li class="nobullet"><img src="images/74l_stepper.png" /></li>
-</ul>
-
+<li>Next, we&#39;ll try using a simple component, the Stepper. The Stepper allows you to 
+    create patterns of samples, typically beats. </li>
+    <li>In order to do this, Navigate to Devices -&gt; Instruments -&gt; Drum Rack -&gt; SevenUp 
+        -&gt; StepperDrumRack and drag it into a new track.</li>
+    <li>Next, navigate to Devices -&gt; Midi Effects -&gt; Max Midi Effect -&gt; SevenUp -&gt; 
+        Stepper and drag into the same track as the &quot;StepperDrumRack&quot; but make sure it 
+        is first in the device chain.</li>
+    <li>Press play and you should notice that the rows of your monome are blinking in 
+        time with Ableton.</li>
+    <li>Try pressing the buttons of the *first 7 columns* of the monome and notice that they'll each play a corresponding sample 
+        in the drum rack.  You should be able to hear sound at this point and your setup should now look something like this:</li>
+        <ul>
+            <li class="nobullet">
+                <img src="images/74l_stepper.png" /></li>
+        </ul>
 </ol>
-<!-- end mainContent div -->
-</div>
+
+    <br />
+    Great! Now you&#39;re using SevenUp Live 2.0.&nbsp; Read on to learn more about the 
+    other navigating through SevenUp and using the remaining components<!-- end mainContent div -->.<br />
+    <br />
+    <h1>SevenUp Concepts</h1>
+    <h2>Navigation</h2>
+    <p>Learning how to navigate through SevenUp is simple as soon as you understand that 
+        the right-most column of any 8x8 grid is *always* a navigation column that 
+        allows you to enter into different modes of SevenUp.&nbsp; There will be at most 
+        1 solid light in that column and it&#39;s location designates which mode you&#39;re in.&nbsp; 
+        Blinking lights in that column indicate sub-functions specific to that mode.&nbsp; 
+        In order to change from one mode to another, simply press the solid light once, 
+        and then choose a different mode to enter.</p>
+    <p><img src="images/tut_navigation.png" /></p>
+    <h2>Stepper</h2>
+     <table>
+        <tr>
+            <td>
+                Nav Position</td>
+            <td>
+                1&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+                Max4Live Component?</td>
+            <td>
+                Yes</td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Presets</td>
+            <td>
+                Nothing</td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Patches</td>
+            <td>
+                Patterns</td>
+        </tr>
+    </table>
+    <p>The stepper is the first mode that you enter after initializing 
+        SevenUp.  It&#39;s purpose is to sequence patterns of samples to be 
+        triggered.&nbsp; Once you&#39;ve laid out a group of samples to trigger, also 
+        known as a pattern, they will be triggered from top to bottom in time with 
+        Ableton&#39;s transport.&nbsp; You have the ability to store up to 7 different patterns by clicking 
+        on any sub-menu in the nav menu (sub-menu buttons are those that are NOT solid 
+        in the nav menu).&nbsp; The layout of the stepper interface is 
+        shown below:</p>
+    <p><img src="images/tut_stepper.png"</p>
+    <p>In order to add a stepper to your set, make sure you have already added the 
+        SevenUp core to your set (see the &quot;Getting Started&quot; section) and follow these 
+        instructions:s:</p>
+        <ol>
+        <li>Navigate to Devices -&gt; Instruments -&gt; Drum Rack -&gt; SevenUp 
+        -&gt; StepperDrumRack and drag it into a new track.</li><li>
+    Next, navigate to Devices -&gt; Midi Effects -&gt; Max Midi Effect -&gt; SevenUp -&gt; 
+        Stepper and drag it into the same track as the &quot;StepperDrumRack&quot; but make sure it 
+        is first in the device chain.</li>
+    <li>Press play and you should notice that the rows of your monome are blinking in 
+        time with Ableton.</li>
+    <li>Try pressing the buttons of the *first 7 columns* of the monome and notice that 
+        they&#39;ll each play a corresponding sample in the drum rack (Notes C3-F#4)</li>
+        </ol>
+    <p>Additional&nbsp; Notes:</p>
+    <ul>
+        <li>You can copy 1 pattern to another by 
+            holding down the first pattern and then pressing another pattern.&nbsp; </li>
+        <li>You can clear 
+            a pattern by holding down that pattern&#39;s button for 3 seconds.&nbsp; </li>
+        <li>When you press a 
+            sample trigger, it will first be flashing to indicate low velocity, pressing it 
+            again will make it solid to indicate a high velocity.</li>
+        <li><b>Tip</b>: Try placing a &quot;Pitch&quot; or &quot;Chord&quot; midi effect after the stepper. Now you can add 
+            samples to additional slots in the drum rack and trigger them using the same 
+            Stepper.</li>
+    </ul>
+    <p>Patterns stored in the Stepper are meant to be sequenced using Sequencer mode 
+        which is explained next.</p>
+<h2>Sequencer</h2>
+    <table>
+        <tr>
+            <td>
+                Nav Position</td>
+            <td>
+                2</td>
+        </tr>
+        <tr>
+            <td>
+                Max4Live Component?</td>
+            <td>
+                No</td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Presets</td>
+            <td>
+                n/a</td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Patches</td>
+            <td>
+                Sequences of Patterns</td>
+        </tr>
+    </table>
+    <p>The Sequencer allows you to sequence groups of patterns.&nbsp; This 
+        is helpful in order to break up the repetetiveness of an 8-step pattern.&nbsp; In 
+        this mode, each column on the left-side corresponds to one of the seven possible 
+        patterns.&nbsp; Each row then corresponds to playing one measure of that pattern.&nbsp; 
+        The diagram below shows a sequence that plays: Pattern 1, Pattern 2, Pattern 1, 
+        Pattern 3, Pattern 1, Pattern 2, Pattern 1, Pattern 4.</p>
+    <p><img src="images/tut_sequencer.png"</p>
+        
+    <p>This mode does not have a corresponding Max4Live component and is simply controlled using the second mode of SevenUp.  Your arrangements of sequences will be stored in SevenUp patches but NOT in SevenUp presets.</p>
+    <p>Additional nots about the sequencer:</p>
+    <ul>
+        <li>You can trigger individual banks of sequences from the Masterizer mode</li>
+        <li>You can trigger an individual pattern row to play by pressing it&#39;s solid button 
+            in the left area</li>
+    </ul>
+    <h2>Controller</h2>
+<table>
+        <tr>
+            <td>
+                Nav Position</td>
+            <td>
+                3&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+                Max4Live Component?</td>
+            <td>
+                Yes </td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Presets</td>
+            <td>
+                No</td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Patches</td>
+            <td>
+                No</td>
+        </tr>
+    </table>
+<p>
+    The Controller allows you to MIDI map 7 banks of 7 sliders to various knobs in Ableton for a 
+    grand total of 49 unique sliders. While in the Masterizer mode, 
+    you can re-trigger the banks of controllers that you have 
+    positioned.</p>
+    <p><img src="images/tut_controller.png" /></p>
+    <p>In order to use the controller you&#39;ll need to do the following:</p>
+    <ol>
+        <li>Open Ableton Live&#39;s MIDI preferences and make sure that you have at least one 
+            MIDI device that is both sending output and input.&nbsp; In the input section, 
+            make sure that that same device has &quot;Remove&quot; enabled.</li>
+        <li>Navigate to Devices -&gt; Midi Effects -&gt; Max Midi Effect -&gt; SevenUp -&gt; Controller 
+            and drag it into a new track.</li>
+        <li>Navigate to Devices -&gt; Instruments -&gt; External Instrument and drag it into the 
+            same track. At this point your device chain should look like this: 
+            <ul><li><img src="images/74l_controller.png"</li></ul></li>
+        <li>With the External Instrument selected, choose the MIDI device from step 1 as the 
+            input.</li>
+        <li>Enter &quot;MIDI&quot; mode by clicking the &quot;MIDI&quot; icon in the top right.&nbsp; Select a 
+            knob, slider, or button and press a control slider on your monome.&nbsp; You 
+            should notice that the parameter is mapped to a MIDI control.</li>
+    </ol>
+    <p>
+        Additional notes about the controller:</p>
+    <ul>
+        <li>You are able to send the current values in a single bank from the Materizer</li>
+    </ul>
+    <h2>Looper</h2><table>
+        <tr>
+            <td>
+                Nav Position</td>
+            <td>
+                4</td>
+        </tr>
+        <tr>
+            <td>
+                Max4Live Component?</td>
+            <td>
+                Yes </td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Presets</td>
+            <td>
+                Yes</td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Patches</td>
+            <td>
+                Yes</td>
+        </tr>
+    </table>
+
+    <p>
+        The looper mode allows you to play up to 7 different loops at any 
+        offset.&nbsp; This allows you to chop up loops similar to MLR.&nbsp; Each column 
+        on the left hand side corresponds to a loop. If you press any row in a 
+        loop column, the loop will play at that offset. Each column also 
+        has a corresponding row in the right nav column which can also be used to start 
+        and stop the loop.
+    </p>
+    <p>
+        It&#39;s important to understand that loops loaded into the looper 
+        must already match your BPM (which may require consolidating a loop). Also, 
+        because SevenUp has no way of knowing how long your loop in Ableton is, you must use 
+        the Looper interface to assign each loop&#39;s length measured by bars.
+    </p>
+<p></p>
+    </div>
 <div id="footer">Copyright Adam Ribaudo &amp; Christopher Lloyd 2010</div>
 </div>
 </div>
