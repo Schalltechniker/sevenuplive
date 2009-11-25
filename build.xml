@@ -100,7 +100,7 @@
   	</copy>
   
   	<copy todir="${out.folder}/components" flatten="false">
-  	  	<fileset dir="${max.folder}">
+  	  	<fileset dir="./components">
   			<include name="*.*"/>
   		</fileset>
   	</copy>
