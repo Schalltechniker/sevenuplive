@@ -565,9 +565,15 @@ public class SevenUp4Live extends MaxObject {
 					m.setLoopType(slot, type);
 				}
 			} else if (operation.equals("looplength")) {
-				if (atoms.length > 2 && atoms[1] != null && atoms[1].isInt() && atoms[2] != null && atoms[2].isInt()) {
+				if (atoms.length > 2 && atoms[1] != null && atoms[1].isInt() && atoms[2] != null && (atoms[2].isFloat() || atoms[2].isInt())) {
 					int slot = atoms[1].toInt();
-					float length = atoms[2].toFloat();
+					float length;
+					if (atoms[2].isFloat()) {
+						length = atoms[2].toFloat(); 
+					} else {
+						length = atoms[2].toInt();
+					}
+					post("setting loop length to " + length);
 					m.setLoopLength(slot, length);
 				}
 			}  
