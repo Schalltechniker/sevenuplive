@@ -61,7 +61,7 @@ public class SevenUp4Live extends MaxObject {
 	
 	public static enum eOutletCategories {connections, looper, melodizer1, melodizer2, controller, tilt};
 	public static enum eOutlets {MelodizerMidiOutlet, StepperMidiOutlet, LooperMidiOutlet, ControllerMidiOutlet, PatchDataOutlet, InitializationDataOutlet, LifecycleDataOutlet};
-	public static enum eLifecycle {started, stopped};
+	public static enum eLifecycle {started, stopped, dirty};
 	
 	private static final String[] INLET_ASSIST = new String[]{
 		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), listenport, hostport, looper, melodizer1, melodizer2)",
@@ -214,9 +214,19 @@ public class SevenUp4Live extends MaxObject {
 	 * Shuts down SevenUps heart and releases the OSC ports 
 	 */
 	public void shutdown() {
+		dirty();	
+		
 		environment.stopSevenUp();
 		
 		outlet(eOutlets.LifecycleDataOutlet.ordinal(), Atom.newAtom(eLifecycle.stopped.toString()));
+	}
+	
+	/**
+	 * Send this message to echo back a dirty message on the Lifecycle channel if the current patch is dirty...has changes
+	 */
+	public void dirty() {
+		if (environment.getMonome() != null && environment.getMonome().isDirty())
+			outlet(eOutlets.LifecycleDataOutlet.ordinal(), Atom.newAtom(eLifecycle.dirty.toString()));
 	}
     
 	public void inlet(int i)
