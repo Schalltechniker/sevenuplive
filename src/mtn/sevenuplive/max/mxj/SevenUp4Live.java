@@ -573,7 +573,7 @@ public class SevenUp4Live extends MaxObject {
 					} else {
 						length = atoms[2].toInt();
 					}
-					post("setting loop length to " + length);
+					//post("setting loop length to " + length);
 					m.setLoopLength(slot, length);
 				}
 			}  
@@ -588,7 +588,7 @@ public class SevenUp4Live extends MaxObject {
 	public void list(Atom[] atoms)
 	{
 		int inletNum = getInlet();
-		post("Got atoms on inlet #" + inletNum);
+		//post("Got atoms on inlet #" + inletNum);
 		
 		M4LMidiIn min = null;
 		Note note = null;
