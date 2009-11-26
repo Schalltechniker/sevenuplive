@@ -39,6 +39,83 @@ public class Scale {
 	public Scale(ScaleName name){
 		Degrees = new int[7];
 		switch(name){
+        case Minor:
+            Name = ScaleName.Minor;
+            label = "Minor";
+            Degrees[0] = 0;
+            Degrees[1] = 2;
+            Degrees[2] = 3;
+            Degrees[3] = 5;
+            Degrees[4] = 7;
+            Degrees[5] = 8;
+            Degrees[6] = 10;
+            break;     
+       case HarmonicMinor:
+            Name = ScaleName.HarmonicMinor;
+            label = "Harmonic Minor";
+            Degrees[0] = 0;
+            Degrees[1] = 2;
+            Degrees[2] = 3;
+            Degrees[3] = 5;
+            Degrees[4] = 7;
+            Degrees[5] = 8;
+            Degrees[6] = 11;
+            break;
+       case Phrygian:
+            Name = ScaleName.Phrygian;
+            label = "Phrygian";
+            Degrees[0] = 0;
+            Degrees[1] = 1;
+            Degrees[2] = 3;
+            Degrees[3] = 5;
+            Degrees[4] = 7;
+            Degrees[5] = 8;
+            Degrees[6] = 10;
+            break;
+      case Mixolydian:
+            Name = ScaleName.Mixolydian;
+            label = "Mixolydian";
+            Degrees[0] = 0;
+            Degrees[1] = 2;
+            Degrees[2] = 4;
+            Degrees[3] = 5;
+            Degrees[4] = 7;
+            Degrees[5] = 9;
+            Degrees[6] = 10;
+            break;
+      case Diminished:
+            Name = ScaleName.Diminished;
+            label = "Diminished";
+            Degrees[0] = 0;
+            Degrees[1] = 2;
+            Degrees[2] = 3;
+            Degrees[3] = 5;
+            Degrees[4] = 6;
+            Degrees[5] = 8;
+            Degrees[6] = 9;
+            break;
+      case WholeTone:
+            Name = ScaleName.WholeTone;
+            label = "Whole Tone";
+            Degrees = new int[6];
+            Degrees[0] = 0;
+            Degrees[1] = 2;
+            Degrees[2] = 4;
+            Degrees[3] = 6;
+            Degrees[4] = 8;
+            Degrees[5] = 10;
+            break;
+       case Augmented:
+            Name = ScaleName.Augmented;
+            label = "Augmented";
+            Degrees = new int[6];
+            Degrees[0] = 0;
+            Degrees[1] = 3;
+            Degrees[2] = 4;
+            Degrees[3] = 7;
+            Degrees[4] = 8;
+            Degrees[5] = 11;
+            break;
 		case MinorPentatonic:
 			Name = ScaleName.MinorPentatonic;
 			label = "Pentatonic (Minor)";
@@ -147,9 +224,9 @@ public class Scale {
 			Degrees[5] = 8;
 			Degrees[6] = 10;
 			break;
-		case Minor:
-			Name = ScaleName.Minor;
-			label = "Minor";
+		case MelodicMinor:
+			Name = ScaleName.MelodicMinor;
+			label = "Melodic Minor";
 			Degrees[0] = 0;
 			Degrees[1] = 2;
 			Degrees[2] = 3;

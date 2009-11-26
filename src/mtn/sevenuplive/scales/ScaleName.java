@@ -26,6 +26,13 @@ package mtn.sevenuplive.scales;
  * DO NOT ENABLE a scale unless a case is written in Scale Class 
  */
 public enum ScaleName {
+	Minor,
+	HarmonicMinor,
+	Phrygian,
+	Mixolydian,
+	Diminished,
+	WholeTone,
+	Augmented,
 	Billian,
 	Blues,
 	Chinese,
@@ -59,7 +66,7 @@ public enum ScaleName {
 	LydianSharp2,
 	Major,
 	Miles,
-	Minor,
+	MelodicMinor,
 	MinorBlues,
 	MinorPentatonic,
 	MinorSeven,
