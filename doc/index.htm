@@ -56,7 +56,7 @@ h1
 h2
 {
     background-color:#d7d7d7;
-    font-size: 1.2em;
+    font-size: 1.1em;
     color:#362020;
     padding:5px;
 }
@@ -279,6 +279,8 @@ padding-right:10px;
                 <li>Melodizer</li>
             </ol>
             </li>
+            <li>Patches &amp; Presets</li>
+            <li>Troubleshooting</li>
             <li>Advances Concepts</li>
         </ol>
 </div>
@@ -371,6 +373,11 @@ In order to use 7up Live you'll need:
         In order to change from one mode to another, simply press the solid light once, 
         and then choose a different mode to enter.</p>
     <p><img src="images/tut_navigation.png" /></p>
+    <p>It&#39;s also important to know how to navigate throught the components in Ableton 
+        Live.&nbsp; The important thing to know is that the SevenUp component that you 
+        dragged in first is the &quot;Core&quot;.&nbsp; All other components communicate through 
+        it.&nbsp; In some cases, components are configured entirely from the core, in 
+        other cases, components are configured from their individual interface.</p>
     <h2>1. Stepper</h2>
      <table>
         <tr>
@@ -591,6 +598,9 @@ In order to use 7up Live you'll need:
     <p>
         Additional notes about the Looper:</p>
     <ul>
+        <li>In order to change the loop mode and loop length of the Looper while in &quot;Slave&quot; 
+            mode, you&#39;ll need to navigate to the SevenUpLive core and click on the &quot;Looper&quot; 
+            tab:<ul><li><img src="images/74l_looper_core.png" /></li></ul></li>
         <li>The master/slave button is covered in the &quot;advanced topics&quot; section.&nbsp; It&#39;s 
             recommended that you leave it in &quot;Slave&quot; mode if you are just starting with 
             SevenUp
@@ -708,8 +718,72 @@ In order to use 7up Live you'll need:
 
     <p>The Melodizer allows you to record and play sequences of melodies in any key of any scale.  
     This is done by using the monome like a keyboard with only 7 keys moving horizontally and 6 octaves moving vertically.</p>
-
-
+    <p><img src="images/tut_melodizer.png"</p>
+    <p>The interface is split into 3 different areas: sequences, keys, and notes.  The sequences are listed out vertically within the navigation column and represent banks that can hold a recorded sequence of notes.  To begin recording, press the currently selected sequence once to cue, start playing your pattern, and then press again to stop and playback.  The keys area at the bottom allows you to switch the key of the scale you chose in the SevenUp interface (for example D major instead of C major which is the default).  Pressing within the notes area allows you to play the notes of the currently selected scale and key with each row representing a single octave.</p>
+    <p>In order to use the melodizer, follow these steps:</p>
+    <ol>
+        <li>Navigate to Devices -&gt; MIDI Effects -&gt; Max Effects-&gt; SevenUp -&gt; SevenUpMelodizer 
+            and drag it into a new track.</li>
+        <li>Select &quot;Slot 1&quot; and &quot;Melodizer 1&quot; within the interface of the Melodizer</li>
+        <li>Drag any instrument after the Melodizer.&nbsp; Your device chain should now look 
+            like this:<ul><li><img src="images/74l_melodizer.png"</li></ul></li>
+        <li>Check to ensure that your monome is currently using Melodizer 1 (the 6th 
+            navigation row should be solid) and that you&#39;re using sequence 1 (the 1st 
+            navigation row should be blinking quickly).</li>
+        <li>Press any buttons in the top left quadrant and you should hear sound coming out 
+            of your VST or instrument.&nbsp; If you want to record these notes, first press 
+            your sequence slot to cue it and then press it again when you want to stop 
+            recording.</li>
+        <li>In order to change the current scale, recording mode, and other options, navigate to where you 
+            placed the SevenUpLive core device and click the &quot;Melodizer 1&quot; tab:<ul><li><img src="images/74l_melodizer_core.png" /></li></ul></li>
+    </ol>
+    <p>
+       The SevenUpLive core interface provides a number of options for how you want the 
+            Melodizer to record and play back sequences.&nbsp; These are covered in the 
+            &quot;Advanced Concepts&quot; section.</p>
+    <h2>Clip Launcher</h2>
+    <p>The clip launcher allows you to bind buttons on the monome to session view clips in Ableton.  There can only be one Clip Launcher loaded into your set at one time and once it's loaded, it switches the Melodizer 1 mode into clip launch mode.</p>
+    <h1>Saving Patches and Presets</h1>
+    <p>Patches and presets are two ways of storing information about your SevenUp Live 
+        set and it&#39;s important to understand the difference between them.</p>
+    <p>Presets - Presets are a pre-existing concept in Ableton Live that allow you to 
+        store the current configuration of a device into your project library.&nbsp; 
+        Presets store things like the current drop-down options of a device, or the 
+        positions of its knobs.&nbsp; In order to store a preset, click on the &quot;Save&quot; 
+        icon in the top right of any Ableton or SevenUp device.&nbsp; Presents, however, 
+        do NOT store things like the patterns of sequences you recorded in SevenUp, 
+        that&#39;s why we need patches.</p>
+    <p>Patches - Patches are XML files that you can save on your hard disk in order to 
+        save and load SevenUp information like Melodzier and Loop Recorder sequences.&nbsp; 
+        In order to save a patch, navigate to the SevenUp Live core, click the &quot;Patches&quot; 
+        tab, press the &quot;Save Patch&quot; button, and choose a location on your hard drive to 
+        save your patch.&nbsp; Loading patches is handled in a similar fashion:<ul><li><img src="images/74l_patcher.png" /></li></ul></p>
+    <h1>Multiple Monomes</h1>
+    <p>Native within SevenUp is the ability to use multiple monomes or multiple grids of 
+        the same monome to view multiple modes of SevenUp concurrently.&nbsp; For 
+        instance, 1 monome could be looking at the Stepper while another could be 
+        looking at the Controller.</p>
+    <p>In order to set this specific example up:</p>
+    <ol>
+        <li>Plug all monomes you plan on using into your computer</li>
+        <li>Open MonomeSerial and configure the &quot;Starting Column&quot; and &quot;Starting Row&quot; of each 
+            monome to be unique and consecutive.&nbsp; For instance, if you have 2 64&#39;s, set 
+            the first&#39;s start column/row to 0/0 and the second&#39;s to 0/8.&nbsp; This way, 
+            they can be uniquely addressed by SevenUp</li>
+        <li>Start Ableton Live, load in the SevenUpLive core, and before you press 
+            start/stop connections, choose &quot;Monome128V&quot; from the monome virtual grid size 
+            dropdown.<ol>
+                <li>In this case we use 128V (which stands for vertical) because we set the start 
+                    *row* of the second 64 to 8.&nbsp; If we had set the start *column* to 8 
+                    instead, we could have selected &quot;Monome128H&quot; (horizontal).</li>
+            </ol>
+        </li>
+        <li>Press &quot;Start/Stop Connections&quot; and you should see the blinking 7 appears on both 
+            monomes</li>
+    </ol>
+    <p>
+        Different combinations of monomes and monome types can be used with SevenUp.&nbsp; 
+        The &quot;Monome Virtual Grid Size</p>
     <h1>Troubleshooting</h1>
     <div id="troubleshooting">
     <ol>
