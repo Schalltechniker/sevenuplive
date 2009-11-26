@@ -29,12 +29,12 @@ import mtn.sevenuplive.modes.events.EventListener;
 
 public class ControllerModel extends Mode implements EventListener, EventDispatcher {
 
-	private M4LMidiOut midiControlOut;
+	private M4LMidiOut midiControlOut[];
 	public Integer controls[][];
 	private Integer startingController;
 	
 	
-	public ControllerModel(int _navRow, M4LMidiOut _midiControlOut, int _startingController, int grid_width, int grid_height) {
+	public ControllerModel(int _navRow, M4LMidiOut[] _midiControlOut, int _startingController, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
 		midiControlOut = _midiControlOut;
 		controls = new Integer[7][7];
@@ -84,7 +84,8 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 			   controlValue = 127;
 		   
 		   //send controlvalue to control corresponding to the current control grid and the column
-		   midiControlOut.sendController(new M4LController(startingController + x + (bank * 7), controlValue));
+		   midiControlOut[bank].sendController(new M4LController(startingController + x, controlValue));
+		   midiControlOut[7].sendController(new M4LController(startingController + x + (bank * 7), controlValue));
 	 }
 
 	public boolean bankHasValues(int bank) {

@@ -109,7 +109,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	//////////////////////////////////////
 	//LOOPER
 	/////////////////////////////////////
-	private M4LMidiOut midiLoopOut;
+	private M4LMidiOut midiLoopOut[];
 	private Boolean areLoopsGated = false;
 	////////////////////////////////////////
 
@@ -123,13 +123,13 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	/////////////////////////////////////
 	//CONTROLLERS
 	/////////////////////////////////////
-	private M4LMidiOut midiControllerOut;
+	private M4LMidiOut midiControllerOut[];
 	/////////////////////////////////////
 
 	////////////////////////////////////////
 	//Midi members
 	////////////////////////////////////////
-	private M4LMidiOut midiStepperOut;
+	private M4LMidiOut midiStepperOut[];
 	////////////////////////////////////
 
 	private ConnectionSettings sevenUpConnections;
@@ -215,11 +215,26 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 
 	private void initializeMidi()
 	{
-		//Sample/Loop/Masterizer out on channel 8
-		midiStepperOut = midiIO.getMidiOut(7, sevenUpConnections.stepperOutputDeviceName);
-		midiControllerOut = midiIO.getMidiOut(7, sevenUpConnections.controllerOutputDeviceName);
-		midiLoopOut = midiIO.getMidiOut(7, sevenUpConnections.looperOutputDeviceName);
+		//Create 8 channels (0-7) for controller out, ch 8 sends a wider range of CCs for all pads on one channel + master channel
+		midiControllerOut = new M4LMidiOut[8];
+		for(int i = 0; i<midiControllerOut.length; i++)
+		{
+			midiControllerOut[i] = midiIO.getMidiOut(i, sevenUpConnections.controllerOutputDeviceName);
+		}
 
+		//Create 7 channels (0-6) for stepper out
+		midiStepperOut = new M4LMidiOut[7];
+		for(int i = 0; i<midiStepperOut.length; i++)
+		{
+			midiStepperOut[i] = midiIO.getMidiOut(i, sevenUpConnections.stepperOutputDeviceName);
+		}
+
+		//Create 7 channels (0-6) for looper out
+		midiLoopOut = new M4LMidiOut[7];
+		for(int i = 0; i<midiLoopOut.length; i++)
+		{
+			midiLoopOut[i] = midiIO.getMidiOut(i, sevenUpConnections.looperOutputDeviceName);
+		}
 
 		//Create 7 channels (0-6) for melody out
 		midiMelodyOut = new M4LMidiOut[7];

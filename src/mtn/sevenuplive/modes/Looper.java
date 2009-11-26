@@ -41,13 +41,13 @@ public class Looper extends Mode {
 	
 	private final static int OFFSET_START_CTRL = 96;
 	
-	private M4LMidiOut midiOut;
+	private M4LMidiOut[] midiOut;
 	private Boolean gateLoopChokes = true;
 	private boolean muteNotes = false;
 
 	public boolean[] stopLoopsOnNextStep;
 	
-	public Looper(int _navRow, M4LMidiOut _midiOut, mtn.sevenuplive.main.MonomeUp _m, int grid_width, int grid_height) {
+	public Looper(int _navRow, M4LMidiOut[] _midiOut, mtn.sevenuplive.main.MonomeUp _m, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
 		
 		stopLoopsOnNextStep = new boolean[7];
@@ -134,7 +134,7 @@ public class Looper extends Mode {
 		if(AllModes.getInstance().getLoopRecorder().isLoopSequencePlaying(loopIndex) || loops[loopIndex].isPlaying())
 		{
 			loops[loopIndex].stop();
-			midiOut.sendNoteOff(new Note(MonomeUp.C3+loopIndex,127, 0));
+			midiOut[loopIndex].sendNoteOff(new Note(MonomeUp.C3+loopIndex,127, 0));
 		}
 		else
 		{
@@ -155,7 +155,7 @@ public class Looper extends Mode {
 		updateNavGrid();
 		AllModes.loopRecorder.updateNavGrid();
 		if (loops[loopNum].getType() != Loop.HIT)
-			midiOut.sendNoteOff(new Note(MonomeUp.C3+loopNum,127, 0));
+			midiOut[loopNum].sendNoteOff(new Note(MonomeUp.C3+loopNum,127, 0));
 	}
 	
 	public void setLoopStopOnNextStep(int loopNum)
@@ -190,7 +190,7 @@ public class Looper extends Mode {
 			
 			stopLoopsOnNextStep[x] = false;
 			int loopCtrlValue = (y * 16);
-			midiOut.sendController(new M4LController(OFFSET_START_CTRL+x, loopCtrlValue));
+			midiOut[x].sendController(new M4LController(OFFSET_START_CTRL+x, loopCtrlValue));
 			playLoop(x, y);
 			}
 	
@@ -268,9 +268,9 @@ public class Looper extends Mode {
         			switch (loops[i].getType()) {
         				case Loop.HIT: // Hits we let it run to the end of the sample and don't send a noteOff on release
         					if (loops[i].getTrigger(step) == true) {
-        						midiOut.sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
+        						midiOut[i].sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
         						if(!muteNotes)
-        							midiOut.sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16  +1, 0));
+        							midiOut[i].sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16  +1, 0));
         						loops[i].setTrigger(step, false);
         					} else {
         						stopLoop(i);
@@ -280,9 +280,9 @@ public class Looper extends Mode {
         				case Loop.MOMENTARY:
         				case Loop.SLICE:
         					if (resCounter == 0 || loops[i].getTrigger(step)) {
-        						midiOut.sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
+        						midiOut[i].sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
         						if(!muteNotes)
-        							midiOut.sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16 +1, 0));
+        							midiOut[i].sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16 +1, 0));
         						loops[i].setTrigger(step, false);
         					}
         					// If it's a one shot loop, then we stop after the first iteration
@@ -304,7 +304,7 @@ public class Looper extends Mode {
         				case Loop.STEP:
         				default:
         					if (resCounter == 0) 
-        						midiOut.sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
+        						midiOut[i].sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
         				
         					//Send note every time looprow is 0 or at it's offset
         	        		if((resCounter == 0) && (step == 0 || pressedRow > -1))
@@ -326,7 +326,7 @@ public class Looper extends Mode {
 	        	        			}	
 	        	        			
 	        	        			if (sendNote)
-	        	        				midiOut.sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16 +1, 0));
+	        	        				midiOut[i].sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16 +1, 0));
         	        			}
         	        			pressedRow = -1;
         	        				

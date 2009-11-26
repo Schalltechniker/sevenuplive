@@ -40,9 +40,9 @@ public class PatternizerModel extends EventDispatcherImpl {
 	private int pressedNavButtons[];
 	public int selectedPattern = 0;
 	public int curPatternRow = 0;
-	private M4LMidiOut midiSampleOut;
+	private M4LMidiOut[] midiSampleOut;
 
-	public PatternizerModel(int _navRow, M4LMidiOut _midiSampleOut, int grid_width, int grid_height) {
+	public PatternizerModel(int _navRow, M4LMidiOut[] _midiSampleOut, int grid_width, int grid_height) {
 		midiSampleOut = _midiSampleOut;
 		patternGrids = new int[7][7][8];
 	}
@@ -108,7 +108,7 @@ public class PatternizerModel extends EventDispatcherImpl {
 	
 	            noteSend = new Note(sendPitch,sendVel, 0);
 	            
-	            midiSampleOut.sendNoteOn(noteSend);
+	            midiSampleOut[patternNum].sendNoteOn(noteSend);
 	          } 
 	        }
         curPatternRow++;

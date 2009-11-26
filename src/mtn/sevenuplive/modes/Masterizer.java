@@ -65,9 +65,9 @@ public class Masterizer extends Mode {
 	private int locatorMode = PLAYMODE;
 	
 	//MASTER
-	private M4LMidiOut midiMasterOut;
+	private M4LMidiOut[] midiMasterOut;
 	
-	public Masterizer(int _navRow, M4LMidiOut _midiMasterOut, mtn.sevenuplive.main.MonomeUp _m,  int grid_width, int grid_height)
+	public Masterizer(int _navRow, M4LMidiOut[] _midiMasterOut, mtn.sevenuplive.main.MonomeUp _m,  int grid_width, int grid_height)
 	{
 		super(_navRow, grid_width, grid_height);
 		displayGrid = new int[7][8];
@@ -123,7 +123,9 @@ public class Masterizer extends Mode {
 			else if(navGrid[y] == DisplayGrid.SLOWBLINK)
 			{
 				navGrid[y] = DisplayGrid.OFF;
-				midiMasterOut.sendNoteOn(new Note(MonomeUp.C4 + y,127, 0));
+				
+				// Channel 8 is the master channel
+				midiMasterOut[7].sendNoteOn(new Note(MonomeUp.C4 + y,127, 0));
 			}
 		}
 		else if(x == SEQUENCER_COL)
