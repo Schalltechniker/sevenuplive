@@ -127,6 +127,11 @@ public class Looper extends Mode {
 		//updateNavGrid(); // @TODO clloyd not needed, done in play and stop functions
 	}
 	
+	public void sendCtrlVal(int loopNum, int ctrlVal)
+	{
+		midiOut[loopNum].sendController(new M4LController(OFFSET_START_CTRL+loopNum, ctrlVal));
+	}
+	
 	private void pressNavCol(int y)
 	{
 		int loopIndex = getSubMenuFromYCoord(y);
@@ -324,7 +329,7 @@ public class Looper extends Mode {
         			stopLoopsOnNextStep[i]=true;
         		
         		//After the note is sent, increase the res counter
-    			//If the res counter moves to another step, set the offset to prepare it for the next note send
+    			//Set the new offset to prepare it for the next note send
         		loops[i].nextResCount();
     			loopCtrlValue = (loops[i].getStep() * 16);
 				midiOut[i].sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
