@@ -138,6 +138,7 @@ public class Looper extends Mode {
 		}
 		else
 		{
+			midiOut[loopIndex].sendController(new M4LController(OFFSET_START_CTRL+loopIndex, 0));
 			playLoop(loopIndex, 0);
 		}
 		
@@ -192,7 +193,7 @@ public class Looper extends Mode {
 			int loopCtrlValue = (y * 16);
 			midiOut[x].sendController(new M4LController(OFFSET_START_CTRL+x, loopCtrlValue));
 			playLoop(x, y);
-			}
+	}
 	
 	// NOTE: Not used
 	/*private int getSizeOfStoppedLoopsInChokeGroup(int chokeGroup)
@@ -227,8 +228,6 @@ public class Looper extends Mode {
 	
 	public void step()
 	{
-		
-		
 		updateDisplayGrid();
 		
 		for(int i=0;i<7;i++)
@@ -236,13 +235,12 @@ public class Looper extends Mode {
 			if(stopLoopsOnNextStep[i])
 			{
 				stopLoop(i);
+				loops[i].setPressedRow(-1);
 				stopLoopsOnNextStep[i] = false;
-				
 			}
 			else		
 				stepOneLoop(i);
-		}
-		
+		}	
 	}
 	
 	
@@ -268,7 +266,7 @@ public class Looper extends Mode {
         			switch (loops[i].getType()) {
         				case Loop.HIT: // Hits we let it run to the end of the sample and don't send a noteOff on release
         					if (loops[i].getTrigger(step) == true) {
-        						midiOut[i].sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
+        						//midiOut[i].sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
         						if(!muteNotes)
         							midiOut[i].sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16  +1, 0));
         						loops[i].setTrigger(step, false);
@@ -280,33 +278,15 @@ public class Looper extends Mode {
         				case Loop.MOMENTARY:
         				case Loop.SLICE:
         					if (resCounter == 0 || loops[i].getTrigger(step)) {
-        						midiOut[i].sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
         						if(!muteNotes)
         							midiOut[i].sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16 +1, 0));
-        						loops[i].setTrigger(step, false);
+    							loops[i].setTrigger(step, false);
         					}
-        					// If it's a one shot loop, then we stop after the first iteration
-        	        		if (loops[i].isLastResInStep()) {
-                				stopLoop(i);
-        	    				loops[i].setPressedRow(-1);
-        	    				pressedRow = -1;
-        	    			}
-        				// Don't break here, flow into SHOT	
         				case Loop.SHOT:
-        					// If it's a one shot loop, then we stop after the first iteration
-        	        		if (loops[i].getType() == Loop.SHOT && loops[i].isLastResStep()) {
-        	    				stopLoop(i);
-        	    				loops[i].setPressedRow(-1);
-        	    				pressedRow = -1;
-        	    			}
-        	        	// Don't break flow into LOOP	
         				case Loop.LOOP:
         				case Loop.STEP:
         				default:
-        					if (resCounter == 0) 
-        						midiOut[i].sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
-        				
-        					//Send note every time looprow is 0 or at it's offset
+        						//Send note every time looprow is 0 or at it's offset
         	        		if((resCounter == 0) && (step == 0 || pressedRow > -1))
         	        		{
         	        			if (!muteNotes) {
@@ -317,29 +297,41 @@ public class Looper extends Mode {
 	        	        			}	
 	        	        			
         	        				// We only want to retrigger when necessary to avoid additional microfades or minor timing issues.
-	        	        			if (resCounter == 0 && loops[i].getIteration() > 0) {
+	        	        			if (resCounter == 0) {
 	        	        				if (loops[i].getType() == Loop.STEP) { // Else we are stepping in Loop.STEP mode and we retrigger every step
 	        	        					sendNote = true;
-	        	        				} else if (step == 0) { // We only retrigger at step 0 in other modes
+	        	        				} else if (step == 0 && loops[i].getIteration() > 0) { // We only retrigger at step 0 in other modes
 	        	        					sendNote = true;
 	        	        				}
 	        	        			}	
 	        	        			
 	        	        			if (sendNote)
+	        	        			{
 	        	        				midiOut[i].sendNoteOn(new Note(MonomeUp.C3+i,pressedRow * 16 +1, 0));
+	        	        			}
         	        			}
         	        			pressedRow = -1;
-        	        				
+        	        			
         	        		}
-        					break;
+        	        		
+    	        			break;
         					
         			};
         		}	
-        	
-        		if(loops[i].isPlaying())
-        		{
-        			loops[i].nextResCount();
-        		}
+        		
+        		//If in slice mode, stop it once it reaches its resolution
+        		if (loops[i].getType() == Loop.SLICE && (loops[i].isLastResInStep() || loops[i].getResolution() == 1) )
+        			stopLoopsOnNextStep[i]=true;
+        		
+        		//After the note is sent, increase the res counter
+    			//If the res counter moves to another step, set the offset to prepare it for the next note send
+        		loops[i].nextResCount();
+    			loopCtrlValue = (loops[i].getStep() * 16);
+				midiOut[i].sendController(new M4LController(OFFSET_START_CTRL+i, loopCtrlValue));
+			
+				//If it's a one shot loop, then we stop after the first iteration
+        		if (loops[i].getType() == Loop.SHOT && loops[i].getIteration() > 0)
+        			stopLoopsOnNextStep[i]=true;
         	}
    
 	}
