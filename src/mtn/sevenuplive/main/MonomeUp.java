@@ -658,7 +658,10 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		{
 			//If the loop is already playing, set the step to 0
 			if(allmodes.getLooper().isLoopPlaying(i))
+			{
 				allmodes.getLooper().getLoop(i).setStep(0);
+				allmodes.getLooper().sendCtrlVal(i, 0);
+			}
 
 			if(allmodes.getLoopRecorder().isLoopSequencePlaying(i))
 			{
