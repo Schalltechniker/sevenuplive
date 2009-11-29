@@ -242,6 +242,11 @@ padding-right:10px;
 	font-size:.7em;
 }
 
+        .style1
+        {
+            width: 100%;
+        }
+
 -->
 </style>
 </head>
@@ -277,11 +282,14 @@ padding-right:10px;
                 <li>Looper</li>
                 <li>Loop Recorder</li>
                 <li>Melodizer</li>
+                <li>Clip Launcher</li>
+                <li>Masterizer</li>
             </ol>
             </li>
             <li>Patches &amp; Presets</li>
             <li>Troubleshooting</li>
             <li>Advances Concepts</li>
+            <li>Alternate Components</li>
         </ol>
 </div>
 <div id="mainContent">
@@ -313,7 +321,8 @@ In order to use 7up Live you'll need:
 <p>In order to install SevenUp you'll need to follow these instructions:</p>
 <ol>
 <li>Unzip the download package to a directory of your choosing</li>
-<li>Copy the files in the "Supporting" folder into Max's "Java" folder<ul>
+<li>Copy the files in the "Supporting" folder into Max's "Java" folder
+<ul>
     <li>For Windows this will be C:\Program Files\Cycling '74\Max 5.0\Cycling '74\java\lib</li>
     <li>For Mac this will be /Applications/Max5/Cycling '74/java/lib</li>
     </ul>
@@ -324,7 +333,7 @@ In order to use 7up Live you'll need:
         Manage Files....&nbsp; You shuld now see a column on the right with some 
         options.&nbsp;&nbsp; Press &quot;Manage Project&quot; and then the &quot;Export&quot; button which 
         is located at the bottom.&nbsp; This is important in order to install the 
-        SevenUp presets and devices into your device library.</li></li>
+        SevenUp presets and devices into your device library.</li>
 </ol>
 
 <h1>Getting Started</h1>
@@ -510,6 +519,12 @@ In order to use 7up Live you'll need:
             <td>
                 No</td>
         </tr>
+        <tr>
+            <td>
+                Alternate Components</td>
+            <td>
+                RackMacroController</td>
+        </tr>
     </table>
 <p>
     The Controller allows you to MIDI map 7 banks of 7 sliders to various knobs in Ableton for a 
@@ -665,7 +680,7 @@ In order to use 7up Live you'll need:
             <td>
                 Saves with Presets</td>
             <td>
-                No</td>
+                n/a</td>
         </tr>
         <tr>
             <td>
@@ -688,7 +703,7 @@ In order to use 7up Live you'll need:
         track and arm it once again for recording.&nbsp; If you want to start and stop 
         recorded sequences without clearing them, use the Masterizer mode explainer 
         later.</p>
-    <h2>6 &amp; 7. Melodizer 1 & 2</h2>
+    <h2>6. Melodizer 1 & 2</h2>
 <table>
         <tr>
             <td>
@@ -706,7 +721,7 @@ In order to use 7up Live you'll need:
             <td>
                 Saves with Presets</td>
             <td>
-                Slot #</td>
+                                Slot #</td>
         </tr>
         <tr>
             <td>
@@ -741,8 +756,230 @@ In order to use 7up Live you'll need:
        The SevenUpLive core interface provides a number of options for how you want the 
             Melodizer to record and play back sequences.&nbsp; These are covered in the 
             &quot;Advanced Concepts&quot; section.</p>
-    <h2>Clip Launcher</h2>
-    <p>The clip launcher allows you to bind buttons on the monome to session view clips in Ableton.  There can only be one Clip Launcher loaded into your set at one time and once it's loaded, it switches the Melodizer 1 mode into clip launch mode.</p>
+    <h2>7. Clip Launcher</h2>
+    <table>
+        <tr>
+            <td>
+                Nav Positionon</td>
+            <td>
+                6&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+                Max4Live Component?</td>
+            <td>
+                Yes</td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Presets</td>
+            <td>
+                Nothing</td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Patches</td>
+            <td>
+                Recorded sequences</td>
+        </tr>
+    </table>
+    <p>The SevenUp Clip Launcher component allows you to launch clips with your monome and receive feedback on the state of your clips as either cued, stopped, or playing.  "Clip mode" is only available for Melodizer1 and there can be only 1 "ClipLaunch" component in your set, otherwise 
+    they will conflict with each other.  By Dropping it into your set, Melodizer 1 will switch to clip mode automatically.</p>
+    <p>Please note that once you drag in the Clip Launcher you should any Melodizer 1 components or turn them off.  Also, if you have recorded patterns in 
+    Melodizer 1, these notes will fire clips now instead of playing notes.</p>
+
+<p>In order to start using the Clip Launcher:</p>
+
+<ol><li>Navigate to Devices -&gt; Midi Effects -&gt; Max Effects -&gt; SevenUp -&gt; Clip 
+    Launcher and drag it into a new Midi Track<ul><li>This should switch Melodizer 1 into CLIP mode automatically. Go to the Melodizer1 tab pane in SevenUpLive core to make sure that the Toolmode is set to "Clip".
+</li></ul></li>
+    <li>Switch your current mode to Melodizer 1 (6th row in nav column).&nbsp; When the active pattern slot (the fast blinking pad in 
+        the nav column) is 1, then you are viewing tracks 1-6 as columns, and clips/scenes 1-7 
+        as rows.<ul>
+            <li>The bottom-most row of the pads is used to stop clips in each track column, except 
+                for the bottom pad of the 7th column which is used to stop all clips.</li>
+            <li>The 7th column from left is used to trigger scenes 1-7.</li>
+        </ul>
+    </li>
+    <li>If you were to move to the second pattern slot in the navigation column, you&#39;d be 
+        working with Tracks 1-6 and Scenes 8-14.&nbsp; It all breaks down like this:<ul><li>
+            <table class="style1">
+                <tr>
+                    <td>
+                        Pattern Slot</td>
+                    <td>
+                        Tracks</td>
+                    <td>
+                        Scenes</td>
+                </tr>
+                <tr>
+                    <td>
+                        1</td>
+                    <td>
+                        1-6</td>
+                    <td>
+                        1-7</td>
+                </tr>
+                <tr>
+                    <td>
+                        2</td>
+                    <td>
+                        1-6</td>
+                    <td>
+                        8-14</td>
+                </tr>
+                <tr>
+                    <td>
+                        3</td>
+                    <td>
+                        7-12</td>
+                    <td>
+                        1-7</td>
+                </tr>
+                <tr>
+                    <td>
+                        4</td>
+                    <td>
+                        7-12</td>
+                    <td>
+                        8-14</td>
+                </tr>
+                <tr>
+                    <td>
+                        5</td>
+                    <td>
+                        14-20</td>
+                    <td>
+                        1-7</td>
+                </tr>
+                <tr>
+                    <td>
+                        6</td>
+                    <td>
+                        14-20</td>
+                    <td>
+                        8-14</td>
+                </tr>
+                <tr>
+                    <td>
+                        7</td>
+                    <td>
+                        n/a (reserved)</td>
+                    <td>
+                        n/a (reserved)</td>
+                </tr>
+            </table>
+            </li></ul></li>
+    
+    <li>Now make sure you have pattern slot 1 selected and drag an audio or midi clip the first track and first scene of your set.</li>
+    <li>After a few seconds, you should see the clip positions reflected on the monome.&nbsp; 
+        Idle clips are shown on the monome blinking quickly, cued clips blink slowly, 
+        and playing clips are solid.&nbsp; If you press the pad on the monome 
+        representing your clip, it should play. If you press the pad at the very bottom of the column, 
+        it should stop the clip. </li>
+    <li>Now if you add 2 more clips to tracks 2 and 3, you should see 3 lights on your 
+        monome.&nbsp; By pressing the first row of the 7th column, you can launch the 
+        entire scene, thus playing all 3 clips at once.</li>
+    <li>By pressing on a blinking pattern slot, you can cue the Clip Launcher to record 
+        your button presses just as you would with the Melodizers or the Loop Recorder.</li>
+    </ol>
+<p>Please note that it&#39;s recommended you turn the Clip Launcher power button OFF 
+    to stop polling for new clip positions when it&#39;s not necessary in order to save 
+    on processing time.</p>
+    <h2>8. Masterizer</h2>
+     <table>
+        <tr>
+            <td>
+                Nav Positionon</td>
+            <td>
+                8&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+                Max4Live Component?</td>
+            <td>
+                No</td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Presets</td>
+            <td>
+                Nothing</td>
+        </tr>
+        <tr>
+            <td>
+                Saves with Patches</td>
+            <td>
+                Nothing</td>
+        </tr>
+    </table>
+    <p>
+        The purpose of the masterizer is to provide an interface 
+        where you can control what is going on in each of the other modes.&nbsp; It&#39;s 
+        for this reason that the Masterizer interface is the least intuitive.&nbsp; The 
+        left side of the Masterizer mode uses each column to control another mode as 
+        such:</p>
+    <ul>
+        <li>Column 1:<ul>
+
+            <li>This column shows the current sequence that is playing.&nbsp; You 
+                can change sequences by pressing a button in this column.&nbsp; Notice that the 
+                sequence waits for the current pattern to finish before changing
+   </li>
+            </ul>
+ </li>
+        <li><ul>
+           
+            <li>This column allows you to trigger control banks 1-7.&nbsp; Any 
+                control bank that has values set will show as flashing.
+              </li>
+            </ul>
+    </li>
+        <li>Column 3:<ul>
+
+            <li>This column allows you to start or stop loops.
+   </li>
+            </ul>
+    </li>
+        <li>Column 4:<ul>
+          
+            <li>This column allows you to start or stop looprecorder 
+                sequences</li>
+            </ul>
+        </li>
+        <li>Column 5:
+            <ul>
+                
+                <li>This column allows you to enable or disable melodizer 1 
+                    sequences.&nbsp; If there is a recorded sequence, it will show up as a flashing 
+                    light.</li>
+            </ul>
+           </li>
+        <li>Column 6:<ul>
+  
+            <li>Same as column 5 but for melodizer 2.
+                </li>
+            </ul>
+           </li>
+        <li>Column 7:<ul>
+          
+            <li>This column displays the current location of the Ableton 
+                Live track.&nbsp; This is useful when using effects that rely on the position of the 
+                Live song.</li>
+            </ul>
+          </li>
+        <li>Column 8:<ul>
+         
+            <li>The sub-nav buttons of the Masterizer send MIDI notes C4-G4 
+                on Channel 8 in order to allow transport control.&nbsp; For instance, the top most 
+                button could be mapped to &quot;Play&quot;, the second button to &quot;Stop&quot;, and the 3rd 
+                button to &quot;Locator 1&quot;.&nbsp; Each of these buttons must be pressed TWICE to 
+                activate.&nbsp; This is to prevent accidentally pressing transport buttons which 
+                could potentially make a big mess out of a performance.</li>
+            </ul>
+        </li>
+    </ul>
+    <p>&nbsp;</p>
     <h1>Saving Patches and Presets</h1>
     <p>Patches and presets are two ways of storing information about your SevenUp Live 
         set and it&#39;s important to understand the difference between them.</p>
@@ -784,6 +1021,14 @@ In order to use 7up Live you'll need:
     <p>
         Different combinations of monomes and monome types can be used with SevenUp.&nbsp; 
         The &quot;Monome Virtual Grid Size</p>
+    <h1>Known Issues</h1>
+    <ol>
+        <li>On Windows, we&#39;ve seen the Core take an abnormal amount of time to load or 
+            connect.&nbsp; Once connected, any future connect times in the same set are 
+            normal.</li>
+        <li>On Windows, we&#39;ve seen the Melodizer cause a short CPU spike when the first 
+            pattern is recorded.&nbsp; This doesn&#39;t happen on subsequent recordings.</li>
+    </ol>
     <h1>Troubleshooting</h1>
     <div id="troubleshooting">
     <ol>
@@ -800,6 +1045,13 @@ In order to use 7up Live you'll need:
     <li>If you move your Drum Rack macro knobs and your Simpler start offset knobs don't move...
     <ul><li>This may be the case if you replaced one of the Simplers entirely rather than replacing just the sample inside of it or if you didn't use the provided Drum Rack preset.  The start offset knobs are controlled using maco mapping, so to fix this simply right click on each Simpler's start knob in order and choose "Map to macro 1", "Map to macro 2", etc.  *IMPORTANT* once this is done, you'll need to click the "Map Mode" button on the Drum Rack, go to the "Macro Mappings" window on the left and change each of the "Max" values that you just mapped to "99.2%".  Crazy right?</li></ul></li>
     </ul></li></ol>
+    
+    <h1>Change Log</h1>
+    <ul><li>2.0 - 11/29/2009 - Initial release of 2.0 =D</li></ul>
+    <h1>Contact</h1>
+    <p>
+    Source code is available here: http://code.google.com/p/sevenuplive/. </p>
+    Please contact us if you're interested in helping with development or have found a bug - <a href='&#109;a&#105;lt&#111;&#58;s%65ve&#110;u%70&#108;ive&#64;go%6F&#37;&#54;&#55;&#108;e&#37;67r&#111;u&#37;&#55;0%73&#46;&#37;63om'>s&#101;venuplive&#64;googlegro&#117;&#112;s&#46;com</a>
     </div>
     
     
