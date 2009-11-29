@@ -25,6 +25,7 @@ package mtn.sevenuplive.modes;
 import java.util.ArrayList;
 import java.util.List;
 
+import mtn.sevenuplive.m4l.M4LController;
 import mtn.sevenuplive.main.MonomeUp;
 import mtn.sevenuplive.modes.events.Event;
 import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
@@ -120,6 +121,7 @@ public class LoopRecorder extends Mode {
 		}
 		
 		AllModes.getInstance().getLooper().stopLoopsOnNextStep[x] = false;
+		AllModes.getInstance().getLooper().sendCtrlVal(x, y * 16);
 		AllModes.getInstance().getLooper().playLoop(x, y);
 	}
 	
