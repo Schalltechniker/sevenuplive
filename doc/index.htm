@@ -5,14 +5,17 @@
     <script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
     <script language="text/javascript" src="js/jquery.dimensions.js"></script>
     <script language="javascript">
-		    var name = "#floatMenu";
+	var name = "#floatMenu";
     var menuYloc = null;
-	
-    $(document).ready(function(){
-        menuYloc = parseInt($(name).css("top").substring(0,$(name).css("top").indexOf("px")))
-        $(window).scroll(function () { 
-            var offset = menuYloc+$(document).scrollTop()+"px";
-            $(name).animate({top:offset},{duration:500,queue:false});
+
+    $(document).ready(function() {
+        menuYloc = parseInt($(name).css("top").substring(0, $(name).css("top").indexOf("px")))
+        $(window).scroll(function() {
+            if ($(document).scrollTop() > 300) {
+                var offset = (menuYloc + $(document).scrollTop() - 300) + "px";
+                $(name).animate({ top: offset }, { duration: 400, queue: false });
+            }
+            else { $(name).animate({ top: 370 }, { duration: 400, queue: false }); }
         });
     }); 
 
@@ -188,7 +191,7 @@ padding-right:10px;
 #leftColumn
 {
 	width:200px;
-	height:600px;
+	height:9000px;
 	float:left;
 	clear:left;
 	background-color:#e0e5da;
@@ -212,13 +215,13 @@ padding-right:10px;
 
 #leftColumn ol
 {
-        }
+}
 
 #mainContent
 {
 	float:right;
-	width: 755px;
-	padding-left:10px;
+	width: 750px;
+	padding-left:15px;
 	padding-right:10px;
 	padding-top:10px;
 	background-color:white;
@@ -261,13 +264,10 @@ padding-right:10px;
 	height:400px;
 	background-color:#0D0;
 }
-.style1 {
-      width: 100%;
-}
+
 #floatMenu {
     position:absolute;
-    top:150px;
-    margin-left:300px;
+    top:370px;
     width:200px;
 }
 #floatMenu ul {
@@ -312,6 +312,7 @@ padding-right:10px;
 </div>
 
 <div id="leftColumn">
+<div id="floatMenu">
         <ol>
             <li><a href="#introduction">Introduction</a></li>
             <li><a href="#requirements">Requirements</a></li>
@@ -338,6 +339,7 @@ padding-right:10px;
              <li><a href="#changelog">Change Log</a></li>
               <li><a href="#contact">Contact</a></li>
         </ol>
+</div>
 </div>
 <div id="mainContent">
 <a id="introduction"></a>
@@ -1124,22 +1126,6 @@ In order to use SevenUp Live you'll need:
 </div>
 </div>
 </div>
-<div id="floatMenu">
-        <ul class="menu1">
-            <li><a href="#" onclick="return false;"> Home </a></li>
-        </ul>
-        
-       <ul class="menu2">
-            <li><a href="#" onclick="return false;"> Table of content </a></li>
-            <li><a href="#" onclick="return false;"> Exam </a></li>
-            <li><a href="#" onclick="return false;"> Wiki </a></li>
-        </ul>
-        
-        <ul class="menu3">
-            <li><a href="#" onclick="return false;"> Technical support </a></li>
-        </ul>
-</div>
-
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
