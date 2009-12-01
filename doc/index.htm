@@ -1053,7 +1053,7 @@ In order to use SevenUp Live you'll need:
         store the current configuration of a device into your project library.&nbsp; 
         Presets store things like the current drop-down options of a device, or the 
         positions of its knobs.&nbsp; In order to store a preset, click on the &quot;Save&quot; 
-        icon in the top right of any Ableton or SevenUp device.&nbsp; Presents, however, 
+        icon in the top right of any Ableton or SevenUp device.&nbsp; Presets, however, 
         do NOT store things like the patterns of sequences you recorded in SevenUp, 
         that&#39;s why we need patches.</p>
     <p>Patches - Patches are XML files that you can save on your hard disk in order to 
@@ -1099,21 +1099,24 @@ In order to use SevenUp Live you'll need:
             normal.</li>
         <li>On Windows, we&#39;ve seen the Melodizer cause a short CPU spike when the first 
             pattern is recorded.&nbsp; This doesn&#39;t happen on subsequent recordings.</li>
+        <li>Grooves do not work with SevenUp currently</li>
     </ol>
     <a id="troubleshooting"></a>
     <h1>Troubleshooting</h1>
     <div id="troubleshooting">
     <ol>
-        <li>My loop(s) always play at the same start point no matter where I press on the monome</li>
-        <li>skfd</li>
+        <li><b>My loop(s) always play at the same start point no matter where I press on the monome</b></li>
     </ol>
 
-    <ol><li>My loop(s) always play at the same start point no matter where I press on the monome
-    <p>
+        <p>
+            &nbsp;</p>
+
+    <ol>
+        <li><b>My loop(s) always play at the same start point no matter where I press on the monome</b>
+            <p>
     Loops are triggered at different points because the Looper component controls the macro knobs of the drum rack after it which in turn controls the start offset knobs of the Simplers in the drum rack.
       If any of the links in this chain become broken, the start offset knobs of your Simplers will stop responding and your loops will always play at the same point.  This is fairly simple to fix.  
-    </p>
-    <ul><li>If you move your Looper knobs and the Drum Rack macro knobs don't move...<ul><li>This may be the case if you either dropped the Looper into the track before you dropped the Drum Rack into the track or if you deleted the Drum Rack and created a new one.  To fix this, simply delete the Looper and drag in a new one.</li></ul></li>
+    If you move your Looper knobs and the Drum Rack macro knobs don't move...<ul><li>This may be the case if you either dropped the Looper into the track before you dropped the Drum Rack into the track or if you deleted the Drum Rack and created a new one.  To fix this, simply delete the Looper and drag in a new one.</li></ul></li>
     <li>If you move your Drum Rack macro knobs and your Simpler start offset knobs don't move...
     <ul><li>This may be the case if you replaced one of the Simplers entirely rather than replacing just the sample inside of it or if you didn't use the provided Drum Rack preset.  The start offset knobs are controlled using maco mapping, so to fix this simply right click on each Simpler's start knob in order and choose "Map to macro 1", "Map to macro 2", etc.  *IMPORTANT* once this is done, you'll need to click the "Map Mode" button on the Drum Rack, go to the "Macro Mappings" window on the left and change each of the "Max" values that you just mapped to "99.2%".  Crazy right?</li></ul></li>
     </ul></li></ol>
