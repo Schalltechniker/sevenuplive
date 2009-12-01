@@ -68,17 +68,21 @@ li img
 
 h1
 {
+    background-color:#dbe0dc;
 	font-size:1.2em;
-	margin-bottom:7px;
+	padding:2px;
+	margin-top:5px;
+	margin-bottom:5px;
 	color:#362020;
 }
 
 h2
 {
-    background-color:#d7d7d7;
+    /*background-color:#d7d7d7;*/
     font-size: 1.1em;
     color:#362020;
-    padding:5px;
+    text-decoration:underline;
+    padding:3px;
 }
 
 h3
@@ -355,6 +359,8 @@ With it, your monome is fully integrated into your Live workflow, allowing you t
  all the Live's native functionality like preset saving/loading and automation. 
 </p>
 <p class="separate"><a href="http://vimeo.com/1860696">Check</a> <a href="http://vimeo.com/1854975">out</a> <a href="http://vimeo.com/6780585">some</a> <a href="http://vimeo.com/7042276">videos</a> to <a href="http://www.vimeo.com/6187026">see</a> what you can do with SevenUp.</p>
+    <p class="separate">If you&#39;re looking for SevenUp 1.0 which launched as a separate 
+        Java application, you can find it <a href="sevenup1.htm">here</a>.</p>
 <a id="requirements"></a>
 <h1>Requirements</h1>
 <p>
@@ -1061,7 +1067,7 @@ In order to use SevenUp Live you'll need:
         <li>If you have previously saved a patch in SevenUpCore...then you save the core as 
             a preset...the preset will load that patch everytime you load it.</li>
     </ul>
-    <h1>Multiple Monomes    <p>Native within SevenUp is the ability to use multiple monomes or multiple grids of 
+    <h1>Multiple Monomes </h1>   <p>Native within SevenUp is the ability to use multiple monomes or multiple grids of 
         the same monome to view multiple modes of SevenUp concurrently.&nbsp; For 
         instance, 1 monome could be looking at the Stepper while another could be 
         looking at the Controller.</p>
@@ -1111,6 +1117,12 @@ In order to use SevenUp Live you'll need:
     <li>If you move your Drum Rack macro knobs and your Simpler start offset knobs don't move...
     <ul><li>This may be the case if you replaced one of the Simplers entirely rather than replacing just the sample inside of it or if you didn't use the provided Drum Rack preset.  The start offset knobs are controlled using maco mapping, so to fix this simply right click on each Simpler's start knob in order and choose "Map to macro 1", "Map to macro 2", etc.  *IMPORTANT* once this is done, you'll need to click the "Map Mode" button on the Drum Rack, go to the "Macro Mappings" window on the left and change each of the "Max" values that you just mapped to "99.2%".  Crazy right?</li></ul></li>
     </ul></li></ol>
+    <a id="alternatecomponents"></a>
+    <h1>Alternate Components</h1>
+    <p>SevenUp components are modules and extensible.  This means that they can be interchanged with components created by us and others in order to extend or radically alter their functionality.  This area will document components outside of the standard set mentioned above.</p>
+    <h3>Controller - Rack Macro Controller (Audio and Midi)</h3>
+    <p><img src="images/icon_sevenuprackmacrocontroller.png" /></p>
+    <p>The rack macro controllers are alternate controllers that make it easy to map 7up <a href="#Controller">Controller</a> sliders to the macro knobs of a drum rack or instrument rack.  In order to use them, simply drag them immediately before the drum rack or instrument rack.</p><p>The MIDI version will drag into a MIDI track and the audio version will drag into an audio track.</p>
     <a id="changelog"></a>
     <h1>Change Log</h1>
     <ul><li>2.0 - 11/29/2009 - Initial release of 2.0 =D</li></ul>
