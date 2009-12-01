@@ -99,6 +99,11 @@ a{
 	text-decoration:none;
 }
 
+p.separate a
+{
+    text-decoration:underline!important;
+}
+
 a:hover
 {
 	text-decoration:underline;
@@ -328,7 +333,7 @@ padding-right:10px;
                 <li><a href="#looprecorder">5. Loop Recorder</a></li>
                 <li><a href="#melodizers">6. Melodizers</a></li>
                 <li><a href="#cliplauncher">7. Clip Launcher</a></li>
-                <li><a href="#materizer">8. Masterizer</a></li>
+                <li><a href="#masterizer">8. Masterizer</a></li>
             </ol>
             </li>
             <li><a href="#patchesandpresets">Patches &amp; Presets</a></li>
@@ -343,17 +348,13 @@ padding-right:10px;
 <div id="mainContent">
 <a id="introduction"></a>
 <h1>Introduction</h1>
-<p>SevenUp Live is an application written for the <a href="http://monome.org">monome</a> and <a href="http://ableton.com">Ableton Live</a>'s Max4Live that 
+<p>SevenUp Live is an application written for the <a href="http://monome.org">monome</a> and <a href="http://ableton.com">Ableton Live</a>'s MaxForLive that 
     places 7 unique pieces of functionality into any number of 8x8 grids.  
 With it, your monome is fully integrated into your Live workflow, allowing you to sequence beats, chop up loops, record melodies, and send control signals.  Each 
     SevenUp component is represented as a device in Live that retains
  all the Live's native functionality like preset saving/loading and automation. 
 </p>
-<p>Check out some videos to see what you can do with SevenUp: </p>
-<ul>
-	<li><a href="#">Video 1</a></p></li>
-	<li><a href="#">Video 2</a></p></li>
-</ul>
+<p class="separate"><a href="http://vimeo.com/1860696">Check</a> <a href="http://vimeo.com/1854975">out</a> <a href="http://vimeo.com/6780585">some</a> <a href="http://vimeo.com/7042276">videos</a> to <a href="http://www.vimeo.com/6187026">see</a> what you can do with SevenUp.</p>
 <a id="requirements"></a>
 <h1>Requirements</h1>
 <p>
@@ -361,21 +362,19 @@ In order to use SevenUp Live you'll need:
 </p>
 <ul>
 	<li>A <a href="http://monome.org">monome</a> (any model will do)</li>
-	<li><a href="http://www.ableton.com">Ableton Live 8.1</a> or greater with <a href="http://www.ableton.com/maxforlive">Max4Live</a> installed</li>
-	<li><a href="http://cycling74.com/downloads/">Max 5.1 Runtime</a> (free) or <a href="http://cycling74.com/shop/">Max 5.1 Full</a> (costs $$).  You'll only need the full edition if you plan on creating your own components.
-	<ul><li><span class="important">Please note that at the time of this writing, there is no Max Runtime that supports Max4Live.</span></li></ul></li>
-	
+	<li><a href="http://www.ableton.com">Ableton Live 8.1</a> or greater with <a href="http://www.ableton.com/maxforlive">MaxForLive</a> installed</li>
+	<li><a href="http://cycling74.com/downloads/">Max 5.1</a> installed</li>
 	<li><a href="http://monome.org/data/app/monomeserial">MonomeSerial</a> in order for 
         your monome to comunicate with SevenUp</li>
 	<li><a href="http://www.java.com/en/download/index.jsp" >Java Runtime Environment</a> 1.5 or greater (most people will have this installed already)</li>
 </ul>
 <a id="download"></a>
 <h1>Download and Installation</h1>
-<p>You can download the latest version of 7up <a onclick="javascript: pageTracker._trackPageview('/DOWNLOAD/2.0');" href="#">here</a><img src="images/download.png" class="download" />. </p>
+<p>You can download the latest version of 7up <a onclick="javascript: pageTracker._trackPageview('/DOWNLOAD/2.0');" href="SevenUpLive-v2.0.zip">here</a><img src="images/download.png" class="download" />. </p>
 <p>In order to install SevenUp you'll need to follow these instructions:</p>
 <ol>
 <li>Unzip the download package to a directory of your choosing</li>
-<li>Copy the files in the "Supporting" folder into Max's "Java" folder
+<li>Copy the files in the "Supporting" folder into Max's ".../java/lib" folder
 <ul>
     <li>For Windows this will be C:\Program Files\Cycling '74\Max 5.0\Cycling '74\java\lib</li>
     <li>For Mac this will be /Applications/Max5/Cycling '74/java/lib</li>
@@ -384,7 +383,7 @@ In order to use SevenUp Live you'll need:
     <li>Install the included Live pack &quot;SevenUp 2.0 Template.alp&quot; by opening Ableton 
         Live and choosing &quot;Install Live Pack...&quot; from the file menu.&nbsp; </li>
     <li>Open the newly installed project, SevenUp 2.0 Template.als, navigate to File -&gt; 
-        Manage Files....&nbsp; You shuld now see a column on the right with some 
+        Manage Files....&nbsp; You should now see a column on the right with some 
         options.&nbsp;&nbsp; Press &quot;Manage Project&quot; and then the &quot;Export&quot; button which 
         is located at the bottom.&nbsp; <b>This is important in order to install the 
         SevenUp presets and devices into your device library.</b></li>
@@ -451,7 +450,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 Yes</td>
         </tr>
@@ -516,7 +515,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 No</td>
         </tr>
@@ -541,8 +540,8 @@ In order to use SevenUp Live you'll need:
         Pattern 3, Pattern 1, Pattern 2, Pattern 1, Pattern 4.</p>
     <p><img src="images/tut_sequencer.png"/></p>
         
-    <p>This mode does not have a corresponding Max4Live component and is simply controlled using the second mode of SevenUp.  Your arrangements of sequences will be stored in SevenUp patches but NOT in SevenUp presets.</p>
-    <p>Additional nots about the sequencer:</p>
+    <p>This mode does not have a corresponding MaxForLive component and is simply controlled using the second mode of SevenUp.  Your arrangements of sequences will be stored in SevenUp patches but NOT in SevenUp presets.</p>
+    <p>Additional notes about the sequencer:</p>
     <ul>
         <li>You can trigger individual banks of sequences from the Masterizer mode</li>
         <li>You can trigger an individual pattern row to play by pressing it&#39;s solid button 
@@ -559,7 +558,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 Yes </td>
         </tr>
@@ -592,7 +591,7 @@ In order to use SevenUp Live you'll need:
     <ol>
         <li>Open Ableton Live&#39;s MIDI preferences and make sure that you have at least one 
             MIDI device that is both sending output and input.&nbsp; In the input section, 
-            make sure that that same device has &quot;Remove&quot; enabled.</li>
+            make sure that that same device has &quot;Remote&quot; enabled.</li>
         <li>Navigate to Devices -&gt; Midi Effects -&gt; Max Midi Effect -&gt; SevenUp -&gt; Controller 
             and drag it into a new track.</li>
         <li>Navigate to Devices -&gt; Instruments -&gt; External Instrument and drag it into the 
@@ -607,7 +606,7 @@ In order to use SevenUp Live you'll need:
     <p>
         Additional notes about the controller:</p>
     <ul>
-        <li>You are able to push out the current values in a single bank from the Materizer</li>
+        <li>You are able to push out the current values in a single bank from the Masterizer</li>
     </ul>
     <a id="looper"></a>
     <h2>4. Looper</h2>
@@ -615,13 +614,13 @@ In order to use SevenUp Live you'll need:
 <table>
         <tr>
             <td>
-                Nav Positionon</td>
+                Nav Position</td>
             <td>
                 4</td>
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 Yes </td>
         </tr>
@@ -660,7 +659,7 @@ In order to use SevenUp Live you'll need:
             into a new track</li>
         <li>Navigate to Devices -&gt; Midi Effects -&gt; Max Effect -&gt; SevenUp -&gt; SevenUpLooper 
             and drag it into the same track before the drum rack.&nbsp; Your device chain 
-            should now look like this:<ul><li>sdf</li></ul></li>
+            should now look like this:<ul><li><img src="images/74l_looper.png"/></li></ul></li>
         <li> Notice that when you turn the knobs on the looper device, the macro knobs of 
             the drum rack also move and change the &quot;Start Offset&quot; knobs of the individual 
             Simpler devices held within.&nbsp; By pressing different rows and columns on the 
@@ -711,13 +710,12 @@ In order to use SevenUp Live you'll need:
     it plays at 130 BPM while in arrangement or session view.</p>
     <p>In order to consolidate a sample and place it in the loop, follow these steps: </p>
     <ol>
-        <li>Right-click on your sample and click "Consolidate" (or select it and press Ctrl-J)</li>
         <li>Drag your sample into Ableton&#39;s session view (the horizontal one), right-click 
             your sample and choose &quot;Consolidate&quot; or select it and press &quot;Ctrl-J&quot;.</li>
         <li>Select the track with the looper and navigate to the Simpler whose sample you 
             want to replace</li>
         <li>Drag the consolidated track into the sample window of the Simpler as shown 
-            below:<ul><li><p class="important">NEED IMAGE HERE</p></li></ul></li>
+            below:<ul><li>sdf</li></ul></li>
     </ol>
     <a id="looprecorder"></a>
     <h2>5. Loop Recorder</h2>
@@ -730,7 +728,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 No</td>
         </tr>
@@ -772,7 +770,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 Yes</td>
         </tr>
@@ -826,7 +824,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 Yes</td>
         </tr>
@@ -844,8 +842,8 @@ In order to use SevenUp Live you'll need:
         </tr>
     </table>
     <p>The SevenUp Clip Launcher component allows you to launch clips with your monome and receive feedback on the state of your clips as either cued, stopped, or playing.  "Clip mode" is only available for Melodizer1 and there can be only 1 "ClipLaunch" component in your set, otherwise 
-    they will conflict with each other.  By Dropping it into your set, Melodizer 1 will switch to clip mode automatically.</p>
-    <p>Please note that once you drag in the Clip Launcher you should any Melodizer 1 components or turn them off.  Also, if you have recorded patterns in 
+    they will conflict with each other.  By dropping it into your set, Melodizer 1 will switch to clip mode automatically.</p>
+    <p>Please note that once you drag in the Clip Launcher you should first remove any Melodizer 1 components or turn them off.  Also, if you have recorded patterns in 
     Melodizer 1, these notes will fire clips now instead of playing notes.</p>
 
 <p>In order to start using the Clip Launcher:</p>
@@ -892,9 +890,9 @@ In order to use SevenUp Live you'll need:
                     <td>
                         3</td>
                     <td>
-                        7-12</td>
+                        1-6&nbsp;</td>
                     <td>
-                        1-7</td>
+                        15-21</td>
                 </tr>
                 <tr>
                     <td>
@@ -902,23 +900,23 @@ In order to use SevenUp Live you'll need:
                     <td>
                         7-12</td>
                     <td>
-                        8-14</td>
+                        1-7</td>
                 </tr>
                 <tr>
                     <td>
                         5</td>
                     <td>
-                        14-20</td>
+                        7-12</td>
                     <td>
-                        1-7</td>
+                        8-14</td>
                 </tr>
                 <tr>
                     <td>
                         6</td>
                     <td>
-                        14-20</td>
+                        7-12</td>
                     <td>
-                        8-14</td>
+                        15-21</td>
                 </tr>
                 <tr>
                     <td>
@@ -957,7 +955,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 No</td>
         </tr>
@@ -1056,9 +1054,14 @@ In order to use SevenUp Live you'll need:
         save and load SevenUp information like Melodzier and Loop Recorder sequences.&nbsp; 
         In order to save a patch, navigate to the SevenUp Live core, click the &quot;Patches&quot; 
         tab, press the &quot;Save Patch&quot; button, and choose a location on your hard drive to 
-        save your patch.&nbsp; Loading patches is handled in a similar fashion:<ul><li><img src="images/74l_patcher.png" /></li></ul></p>
-    <h1>Multiple Monomes</h1>
-    <p>Native within SevenUp is the ability to use multiple monomes or multiple grids of 
+        save your patch.&nbsp; Loading patches is handled in a similar fashion:<p><img src="images/74l_patcher.png" /></p>
+        <p>
+                Additional notes about patches and presets:</p>
+                <ul>
+        <li>If you have previously saved a patch in SevenUpCore...then you save the core as 
+            a preset...the preset will load that patch everytime you load it.</li>
+    </ul>
+    <h1>Multiple Monomes    <p>Native within SevenUp is the ability to use multiple monomes or multiple grids of 
         the same monome to view multiple modes of SevenUp concurrently.&nbsp; For 
         instance, 1 monome could be looking at the Stepper while another could be 
         looking at the Controller.</p>
