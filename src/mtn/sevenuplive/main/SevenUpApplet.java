@@ -31,7 +31,7 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	private MonomeUp m;
 	
 	private boolean isRunning = false;
-	private static int FRAMERATE = 35;
+	private static int FRAMERATE = 25;
 	
 	private M4LMidi midiIO;
 	private ConnectionSettings sevenUpConnections;
