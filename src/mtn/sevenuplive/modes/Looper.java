@@ -127,9 +127,9 @@ public class Looper extends Mode {
 		//updateNavGrid(); // @TODO clloyd not needed, done in play and stop functions
 	}
 	
-	public void sendCtrlVal(int loopNum, int ctrlVal)
+	public void sendCtrlVal(int loopNum, int step)
 	{
-		midiOut[loopNum].sendController(new M4LController(OFFSET_START_CTRL+loopNum, ctrlVal));
+		midiOut[loopNum].sendController(new M4LController(OFFSET_START_CTRL+loopNum, step * 16));
 	}
 	
 	private void pressNavCol(int y)
@@ -174,6 +174,7 @@ public class Looper extends Mode {
 		loops[loopNum].setTrigger(step, true);
 		loops[loopNum].setStep(step);
 		loops[loopNum].setPressedRow(step);
+		sendCtrlVal(loopNum, step);
 		updateNavGrid();
 		AllModes.loopRecorder.updateNavGrid();
 	}

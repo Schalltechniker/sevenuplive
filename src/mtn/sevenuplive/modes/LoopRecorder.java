@@ -121,7 +121,6 @@ public class LoopRecorder extends Mode {
 		}
 		
 		AllModes.getInstance().getLooper().stopLoopsOnNextStep[x] = false;
-		AllModes.getInstance().getLooper().sendCtrlVal(x, y * 16);
 		AllModes.getInstance().getLooper().playLoop(x, y);
 	}
 	
@@ -160,7 +159,11 @@ public class LoopRecorder extends Mode {
 				for(ControlValue cv : sequencedControlValues)
 				{
 					if(cv != null && cv.getValue() > -1)
+					{
+						//Send ctrl val for looper before playing it
+						AllModes.getInstance().getLooper().sendCtrlVal(cv.getId(), cv.getValue());
 						AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
+					}
 				}
 			}
 		}
@@ -168,9 +171,6 @@ public class LoopRecorder extends Mode {
 	
 	public void step()
 	{
-
-		
-		
 		//If a loop sequence is playing, call heartbeat
 		for(int i=0;i<7;i++)
 		{
@@ -205,7 +205,9 @@ public class LoopRecorder extends Mode {
 						
 					}
 					else
+					{
 						AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
+					}
 				}
 			}
 		}
