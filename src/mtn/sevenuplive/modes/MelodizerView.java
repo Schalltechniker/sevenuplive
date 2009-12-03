@@ -339,6 +339,14 @@ public class MelodizerView extends Mode {
 			if(model.currentMode != MelodizerModel.eMelodizerMode.CLIP)
 				model.displayNote[curSeqBank][melodyPitch] = DisplayGrid.SOLID;
 			model.midiMelodyOut[curSeqBank].sendNoteOn(melodySend);
+			
+			/* 
+			 If we are in clip mode then we want to immediately send our matching noteOff in case
+			 some instruments happen to be listening, otherwise we'd get a stuck note
+			*/
+			if (model.currentMode == MelodizerModel.eMelodizerMode.CLIP)
+				model.midiMelodyOut[curSeqBank].sendNoteOff(melodySend);
+			
 			model.addEvent(curSeqBank, melodySend);
 		}
 		//User is pressing a button in the key area

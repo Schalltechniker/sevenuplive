@@ -43,8 +43,15 @@ public class M4LForwardingMidiOutPort implements M4LMidiOut {
 	}
 
 	public void sendNoteOff(Note note) {
-		if (forwardingPort != null)
-			forwardingPort.sendNoteOff(note);
+		Note noteoff = note;
+		if (forwardingPort != null) {
+			// Make sure note has 0 velocity
+			if (note.getVelocity() != 0) {
+				noteoff = new Note(note.getPitch(), 0, note.getLength(), note.getStatus());
+			}
+				
+			forwardingPort.sendNoteOff(noteoff);
+		}	
 	}
 
 	public void sendNoteOn(Note note) {
