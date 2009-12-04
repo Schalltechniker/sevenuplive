@@ -59,8 +59,10 @@ public class MultiValueDisplayGrid extends DisplayGrid {
 						monome.setValue(x+start_column, y+start_row, 2);
 					break;
 				case 1:
-					if(monome.getValue(x+start_column, y+start_row) != 3)
-						monome.setValue(x+start_column, y+start_row, 3);
+					if(frmCount % SLOWBLINKFRAME == 0) 
+					{
+						monome.setValue(x+start_column, y+start_row, monome.isLit(x+start_column, y+start_row) ? 0 : 3);
+					}
 					break;
 				}      
 			}
@@ -92,8 +94,10 @@ public class MultiValueDisplayGrid extends DisplayGrid {
 					monome.setValue(NAVCOL+start_column, y+start_row, 2);
 				break;
 			case 1:
-				if(monome.getValue(NAVCOL+start_column, y+start_row) != 3)
-					monome.setValue(NAVCOL+start_column, y+start_row, 3);
+				if(frmCount % SLOWBLINKFRAME == 0) 
+				{
+					monome.setValue(NAVCOL+start_column, y+start_row, monome.isLit(NAVCOL+start_column, y+start_row) ? 0 : 3);
+				}
 				break; 
 			}
 		}
