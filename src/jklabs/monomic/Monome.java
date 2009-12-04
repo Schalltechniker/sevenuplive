@@ -48,16 +48,15 @@ public class Monome {
 	protected int debug = NONE;
 	
 	private byte[][] buttonVals;
-	private byte[][] ledVals;
-
+	
 	private Method buttonPressedMethod;
 	private Method buttonReleasedMethod;
 	private Method adcInputMethod;
 
-	boolean[][] ledValues;
+	int[][] ledValues;
 	boolean[][] buttonValues;
 	
-	boolean tempRow[];
+	int tempRow[];
 	
 	protected Monome() {
 		this(1, 1); // default to 40h monome
@@ -72,17 +71,17 @@ public class Monome {
 		Monome.y_dim = y_bytes * 8;
 		
 		if (y_dim > 8) {
-			this.ledVals = new byte[y_dim][2];
+			//this.ledVals = new byte[y_dim][2];
 			this.buttonVals = new byte[y_dim][2];
 		} else {
-			this.ledVals = new byte[y_dim][1];
+			//this.ledVals = new byte[y_dim][1];
 			this.buttonVals = new byte[y_dim][1];
 		}
 		
 		
-		this.ledValues = new boolean[y_dim][x_dim];
+		this.ledValues = new int[y_dim][x_dim];
 		this.buttonValues = new boolean[y_dim][x_dim];
-		this.tempRow = new boolean[y_dim];
+		this.tempRow = new int[y_dim];
 		
 		initMatrices();
 		
@@ -94,17 +93,17 @@ public class Monome {
 		Monome.y_dim = y_bytes * 8;
 		
 		if (y_dim > 8) {
-			this.ledVals = new byte[y_dim][2];
+			//this.ledVals = new byte[y_dim][2];
 			this.buttonVals = new byte[y_dim][2];
 		} else {
-			this.ledVals = new byte[y_dim][1];
+			//this.ledVals = new byte[y_dim][1];
 			this.buttonVals = new byte[y_dim][1];
 		}
 		
 		
-		this.ledValues = new boolean[y_dim][x_dim];
+		this.ledValues = new int[y_dim][x_dim];
 		this.buttonValues = new boolean[y_dim][x_dim];
-		this.tempRow = new boolean[y_dim];
+		this.tempRow = new int[y_dim];
 		
 		initMatrices();
 		
@@ -181,12 +180,17 @@ public class Monome {
 	}
 	
 	public boolean isLit(int x, int y) {
+		return ledValues[x][y] > 0;
+	}
+	
+	public int getValue(int x, int y) {
 		return ledValues[x][y];
 	}
 	
-	public byte[][] getLedValues() {
+	// NOTE: Do we need this? Needs to be made compatible with changing from boolean[][] to int[][]
+	/*public byte[][] getLedValues() {
 		return pack(ledValues, ledVals);
-	}
+	}*/
 	
 	public byte[][] getButtonValues() {
 		return pack(buttonValues, buttonVals);
@@ -408,7 +412,7 @@ public class Monome {
 		if (debug == FINE)
 			System.out.println("setting internal state of " + x + "," + y + " to " + value);
 		
-		ledValues[x][y] = (value == 1);
+		ledValues[x][y] = value;
 	}
 
 	private void setInternalButtonValue(int x, int y, int value) {
@@ -459,7 +463,8 @@ public class Monome {
 		return s.toString();
 	}
 	
-	public String getMatrixString() {
+	// NOTE: Do we need this? Needs to be made compatible with changing from boolean[][] to int[][]
+	/*public String getMatrixString() {
 		String s = "";
 		for (int y=0; y<y_dim; y++) {
 			for (int x=0; x<x_dim; x++)
@@ -467,6 +472,6 @@ public class Monome {
 			s +="\n";
 		}
 		return s;
-	}
+	}*/
 	
 }

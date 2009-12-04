@@ -42,6 +42,7 @@ import mtn.sevenuplive.modes.Masterizer;
 import mtn.sevenuplive.modes.MelodizerModel;
 import mtn.sevenuplive.modes.MelodizerView;
 import mtn.sevenuplive.modes.ModeConstants;
+import mtn.sevenuplive.modes.MultiValueDisplayGrid;
 import mtn.sevenuplive.modes.PatternizerModel;
 import mtn.sevenuplive.modes.PatternizerView;
 import mtn.sevenuplive.modes.Sequencer;
@@ -141,7 +142,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	private DisplayGrid[] grids;
 	private M4LMidi midiIO;
 
-	MonomeUp (int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, M4LMidi midiIO) {
+	MonomeUp (boolean multicolor, int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, M4LMidi midiIO) {
 		super(x_grids, y_grids);
 		sevenUpConnections = _sevenUpConnections;
 
@@ -206,7 +207,10 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 				startCol = i * 8;
 			}
 
-			grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
+			if (multicolor)
+				grids[i] = new MultiValueDisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
+			else	
+				grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
 		}
 
 		// Turn on to debug monome OSC connection */

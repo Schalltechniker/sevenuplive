@@ -27,45 +27,45 @@ import mtn.sevenuplive.modes.events.MenuFocusEvent;
 
 public class DisplayGrid {
 
-	private int start_column;
-	private int start_row;
-	private int grid_width;
-	private int grid_height;
-	private int grid_index;
-	private int totalGrids;
+	protected int start_column;
+	protected int start_row;
+	protected int grid_width;
+	protected int grid_height;
+	protected int grid_index;
+	protected int totalGrids;
 
-	private int curDisplayGrid[][];
-	private int navGrid[];
-	private int pressedButtonsLength[][];
+	protected int curDisplayGrid[][];
+	protected int navGrid[];
+	protected int pressedButtonsLength[][];
 
 	public static final int NAVCOL = 7;
 
 	///////////////////////////////////////// 
 	//Blink-speed members
 	/////////////////////////////////////////
-	private static final int FRAMES = 10;
+	protected static final int FRAMES = 10;
 	public static final int FASTBLINK = 2;
 	public static final int SLOWBLINK = 1;
 	public static final int SOLID = 3;
 	public static final int OFF = 0;
 	public static final int UNDEFINED = -1;
-	private static final  int SLOWBLINKFRAME = 10;
-	private static final int FASTBLINKFRAME = 1;
+	protected static final  int SLOWBLINKFRAME = 10;
+	protected static final int FASTBLINKFRAME = 1;
 
 	////////////////////////////////////
 	//Interface modes
 	////////////////////////////////////
-	private int menuLevel;
-	private final static int MAINMENU = 0;
-	private final static int SUBMENU = 1;
+	protected int menuLevel;
+	protected final static int MAINMENU = 0;
+	protected final static int SUBMENU = 1;
 
-	private int curMode;
-	private int frmCount;
+	protected int curMode;
+	protected int frmCount;
 
-	private Monome monome;
-	private AllModes allmodes;
+	protected Monome monome;
+	protected AllModes allmodes;
 	
-	private Mode defaultMode;
+	protected Mode defaultMode;
 
 	public DisplayGrid(Monome monome, AllModes allmodes, int start_column, int start_row, int grid_width, int grid_height, Mode defaultMode, int grid_index, int totalGrids) {
 		this.start_row = start_row;
@@ -108,9 +108,9 @@ public class DisplayGrid {
 		}
 		return false;
 	}
-
-	public void draw()
-	{
+	
+	protected void checkForStartup() {
+		
 		//Very fast int compare here to not slow us down
 		if (curMode == StartupMode.STARTUP_MODE) {
 			
@@ -125,10 +125,9 @@ public class DisplayGrid {
 			AllModes.startup.nextSequence();
 		}
 			
-		
-		//if a button is being held, count to the holdtime and fire a heldevent
-		//TODO: need to be able to handle multiple press and release
+	}
 
+	protected void drawDisplay() {
 		//draw the display grid
 		for (int x = 0; x<grid_width-1;x++)
 		{
@@ -162,7 +161,10 @@ public class DisplayGrid {
 				}      
 			}
 		}
-
+	
+	}
+	
+	protected void drawNav() {
 		//Draw navbar
 		for (int y = 0; y<grid_height;y++)
 		{
@@ -192,7 +194,18 @@ public class DisplayGrid {
 				break;
 			}
 		}
-
+	}
+	
+	public void draw()
+	{
+		//Very fast int compare here to not slow us down
+		if (curMode == StartupMode.STARTUP_MODE)
+			checkForStartup();
+			
+		
+		drawDisplay();
+		drawNav();
+		
 		//Loop through pressedNotesLength and increment the number of frames each pressed note has been held
 		for(int i=0;i<grid_width;i++)
 			for(int j=0;j<grid_height;j++)
