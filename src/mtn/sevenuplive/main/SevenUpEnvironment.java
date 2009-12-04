@@ -103,6 +103,8 @@ public class SevenUpEnvironment {
 		// Get the type of monome selected
 		monomeType = sevenUpConnections.monomeType;
 
+		boolean multicolor = false;
+		
 		// Figure out dimensions of monome grid
 		int x_grids = 1;
 		int y_grids = 1;
@@ -144,11 +146,15 @@ public class SevenUpEnvironment {
 			x_grids = 1; y_grids = 9;
 			break;
 		case 12: //10 x 64's
-		x_grids = 1; y_grids = 10;
-		break;
+			x_grids = 1; y_grids = 10;
+			break;
+		case 13: //MultiColorDevice
+			x_grids = 1; y_grids = 1;
+			multicolor = true;
+			break;	
 		};
 
-		m = new MonomeUp(x_grids, y_grids, sevenUpConnections, monomeScale, midiIO);
+		m = new MonomeUp(multicolor, x_grids, y_grids, sevenUpConnections, monomeScale, midiIO);
 	}
 
 	public ConnectionSettings getSevenUpConnections() {
