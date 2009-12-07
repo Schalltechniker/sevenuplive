@@ -151,6 +151,10 @@ public class SevenUpEnvironment {
 		case 13: //MultiColorDevice
 			x_grids = 1; y_grids = 1;
 			multicolor = true;
+			break;
+		case 14: //MultiColor256
+			x_grids = 2; y_grids = 2;
+			multicolor = true;
 			break;	
 		};
 

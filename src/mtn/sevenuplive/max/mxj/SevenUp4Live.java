@@ -91,7 +91,8 @@ public class SevenUp4Live extends MaxObject {
 		Monome8x64,
 		Monome9x64,
 		Monome10x64,
-		MultiColorDevice};
+		MultiColorDevice,
+		MultiColor256};
 		
 	public SevenUp4Live(Atom[] args)
 	{
