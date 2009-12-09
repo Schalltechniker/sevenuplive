@@ -127,9 +127,20 @@ public class Looper extends Mode {
 		//updateNavGrid(); // @TODO clloyd not needed, done in play and stop functions
 	}
 	
+	/**
+	 * Use this operation when user is causing the change in offset or when playing back loop recorder
+	 * @param loopNum
+	 * @param ctrlVal
+	 */
 	public void sendCtrlVal(int loopNum, int ctrlVal)
 	{
 		midiOut[loopNum].sendController(new M4LController(OFFSET_START_CTRL+loopNum, ctrlVal));
+		
+		// This is a special NOTE that is sent immediately. The old loop rack ignores it
+		// New components that want to detect that a trigger was fired WHEN it was fired,
+		// can intercept it.
+		midiOut[loopNum].sendNoteOn(new Note(MonomeUp.C2+loopNum, ctrlVal + 1, 0));
+		midiOut[loopNum].sendNoteOff(new Note(MonomeUp.C2+loopNum, 0, 0));
 	}
 	
 	private void pressNavCol(int y)
@@ -196,7 +207,10 @@ public class Looper extends Mode {
 			
 			stopLoopsOnNextStep[x] = false;
 			int loopCtrlValue = (y * 16);
-			midiOut[x].sendController(new M4LController(OFFSET_START_CTRL+x, loopCtrlValue));
+			
+			// USe this version since caused by user interaction
+			this.sendCtrlVal(x, loopCtrlValue);
+			
 			playLoop(x, y);
 	}
 	
