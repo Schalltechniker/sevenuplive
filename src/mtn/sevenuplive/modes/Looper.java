@@ -143,7 +143,6 @@ public class Looper extends Mode {
 		}
 		else
 		{
-			midiOut[loopIndex].sendController(new M4LController(OFFSET_START_CTRL+loopIndex, 0));
 			playLoop(loopIndex, 0);
 		}
 		
@@ -197,7 +196,6 @@ public class Looper extends Mode {
 			
 			stopLoopsOnNextStep[x] = false;
 			int loopCtrlValue = (y * 16);
-			midiOut[x].sendController(new M4LController(OFFSET_START_CTRL+x, loopCtrlValue));
 			playLoop(x, y);
 	}
 	
