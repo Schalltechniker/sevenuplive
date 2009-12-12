@@ -130,10 +130,11 @@ public class Looper extends Mode {
 	/**
 	 * Use this operation when user is causing the change in offset or when playing back loop recorder
 	 * @param loopNum
-	 * @param ctrlVal
+	 * @param step the step we are on
 	 */
-	public void sendCtrlVal(int loopNum, int ctrlVal)
+	public void sendCtrlVal(int loopNum, int step)
 	{
+		int ctrlVal = step * 16;
 		midiOut[loopNum].sendController(new M4LController(OFFSET_START_CTRL+loopNum, ctrlVal));
 		
 		// This is a special NOTE that is sent immediately. The old loop rack ignores it
@@ -186,7 +187,7 @@ public class Looper extends Mode {
 		loops[loopNum].setPressedRow(step);
 		
 		// For MindShuffler this really needs to come a tick earlier
-		sendCtrlVal(loopNum, step * 16);
+		sendCtrlVal(loopNum, step);
 		
 		updateNavGrid();
 		AllModes.loopRecorder.updateNavGrid();
@@ -209,7 +210,6 @@ public class Looper extends Mode {
 			}
 			
 			stopLoopsOnNextStep[x] = false;
-			int loopCtrlValue = (y * 16);
 			
 			playLoop(x, y);
 	}
