@@ -149,6 +149,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		xmlPatches = new ArrayList<Element>();
 		
 		int totalGrids = x_grids * y_grids;
+		System.out.println("X grids = " + x_grids + ", Y grids = " + y_grids + ", Total Grids = " + totalGrids);
 		
 		// Init midi communications
 		this.midiIO = midiIO;
@@ -192,25 +193,41 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		{
 			int startCol = 0;
 			int startRow;
-			//Determine startCol and startRow assuming all vertical monomes
-			startRow = i * 8;
-
-			//However, override for 128H or 256
+			
+			//Check for 256
 			if(x_grids > 1 && y_grids > 1) //256
 			{
-				if((i + 1) % 2 == 0)startRow = 8; else startRow = 0;
-				if(i > 1)startCol = 8; else startCol = 0;
+				//Setup first row of display grids
+				if(i < x_grids)
+				{
+					startRow = 0;
+					startCol = i * 8;
+				}
+				//Second row
+				else
+				{
+					startRow = 8;
+					startCol = (i - x_grids) * 8;
+				}
 			}
 			else if(x_grids > 1) //128H
 			{
 				startRow = 0;
 				startCol = i * 8;
 			}
+			else
+			{
+				//Determine startCol and startRow assuming all vertical monomes
+				startRow = i * 8;
+			}
 
 			if (multicolor)
 				grids[i] = new MultiValueDisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
-			else	
+			else
+			{
+				System.out.println("Creating a grid with startCol = " + startCol + " and startRow = " + startRow);
 				grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
+			}
 		}
 
 		// Turn on to debug monome OSC connection */
