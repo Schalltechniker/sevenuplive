@@ -154,7 +154,6 @@ public class Looper extends Mode {
 		}
 		else
 		{
-			midiOut[loopIndex].sendController(new M4LController(OFFSET_START_CTRL+loopIndex, 0));
 			playLoop(loopIndex, 0);
 		}
 		
@@ -185,6 +184,10 @@ public class Looper extends Mode {
 		loops[loopNum].setTrigger(step, true);
 		loops[loopNum].setStep(step);
 		loops[loopNum].setPressedRow(step);
+		
+		// For MindShuffler this really needs to come a tick earlier
+		sendCtrlVal(loopNum, step * 16);
+		
 		updateNavGrid();
 		AllModes.loopRecorder.updateNavGrid();
 	}
@@ -207,9 +210,6 @@ public class Looper extends Mode {
 			
 			stopLoopsOnNextStep[x] = false;
 			int loopCtrlValue = (y * 16);
-			
-			// USe this version since caused by user interaction
-			this.sendCtrlVal(x, loopCtrlValue);
 			
 			playLoop(x, y);
 	}
