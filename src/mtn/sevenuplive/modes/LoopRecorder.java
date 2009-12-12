@@ -160,8 +160,6 @@ public class LoopRecorder extends Mode {
 				{
 					if(cv != null && cv.getValue() > -1)
 					{
-						//Send ctrl val for looper before playing it
-						AllModes.getInstance().getLooper().sendCtrlVal(cv.getId(), cv.getValue());
 						AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
 					}
 				}
