@@ -252,12 +252,12 @@ public class SevenUp4Live extends MaxObject {
 				case 0:
 					//post("C4");
 					if (environment.getClock() != null)
-						environment.getClock().sendBigTick();
+						environment.getClock().sendFirstLocator();
 					break;
 				case 1:
 					//post("D#4");
 					if (environment.getClock() != null)
-						environment.getClock().sendSmallTick();
+						environment.getClock().sendSecondLocator();
 					break;
 				case 2:
 					//post("C7");
@@ -272,7 +272,7 @@ public class SevenUp4Live extends MaxObject {
 				case 4:
 					//post("E7");
 					if (environment.getClock() != null)
-						environment.getClock().pumpMelodizerHeart();
+						environment.getClock().pump64th();
 					break;
 				default:
 					post("Clock does not understand " + i);

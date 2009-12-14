@@ -175,24 +175,24 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 		midiIO.closeOutputs();
 	}
 
-	public void sendBigTick() {
-		m.sendBigTick();
+	public void sendFirstLocator() {
+		m.sendFirstLocator();
 	}
 
 	public void pumpSequencerHeart() {
 		m.pumpSequencerHeart();
 	}
 
-	public void sendSmallTick() {
-		m.sendSmallTick();
+	public void sendSecondLocator() {
+		m.sendSecondLocator();
 	}
 	
-	public void cSharp4() {
-		m.cSharp4();
+	public void sendLocatorRecord() {
+		m.sendLocatorRecord();
 	}
 
-	public void pumpMelodizerHeart() {
-		m.pumpMelodizerHeart();	
+	public void pump64th() {
+		m.pump64th();	
 	}
 
 	public void pumpLooperHeart() {

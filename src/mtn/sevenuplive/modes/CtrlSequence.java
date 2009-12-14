@@ -75,7 +75,41 @@ public class CtrlSequence {
 		status = MonomeUp.STOPPED;
 		//System.out.println("Sequence - " + index + " length = " + length);
 	}
-	
+
+	/**
+	 * Give us the events on the next step without actually advancing there
+	 * @return
+	 */
+	public ArrayList<ControlValue> peekstep()
+	{
+		int peekcounter = counter++;
+		
+		//account for recording never stopping
+		if(counter == Integer.MAX_VALUE - 1)
+		{
+			endRecording();
+			return null;
+		}
+		
+		//Send ControlValue if isPlaying and there is an event at the current count
+		if(status == MonomeUp.PLAYING)
+		{
+			//Reset counter to beginning if it reaches the length
+			if(peekcounter > length)
+			{
+				peekcounter = 1;
+			}
+
+			if(events.containsKey(peekcounter))
+			{
+				return events.get(peekcounter);
+			}
+			else return null;
+		}
+		
+		return null;
+	}
+
 	public ArrayList<ControlValue> heartbeat()
 	{
 		//account for recording never stopping

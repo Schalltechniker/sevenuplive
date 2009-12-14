@@ -759,11 +759,10 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		reset();
 	}
 
-	public void sendBigTick() {
+	public void sendFirstLocator() {
 		allmodes.getMelodizer1Model().locatorEvent();
 		allmodes.getMelodizer2Model().locatorEvent();
-		//@TODO clean this up
-		allmodes.getMasterizer().locatorEventC4();
+		allmodes.getMasterizer().firstLocatorEvent();
 		allmodes.getMasterizer().updateDisplayGrid();
 	}
 
@@ -775,21 +774,22 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		allmodes.getSequencer().step();
 	}
 
-	public void sendSmallTick() {
-		//@TODO clean up naming here
-		allmodes.getMasterizer().locatorEventDSharp4();
+	public void sendSecondLocator() {
+		allmodes.getMasterizer().secondLocatorEvent();
 		allmodes.getMasterizer().updateDisplayGrid();
 	}
 	
-	public void cSharp4() {
-		//@TODO clean up naming here
-		allmodes.getMasterizer().locatorEventCSharp4();
+	public void sendLocatorRecord() {
+		allmodes.getMasterizer().recordLocatorEvent();
 		allmodes.getMasterizer().updateDisplayGrid();
 	}
 
-	public void pumpMelodizerHeart() {
+	public void pump64th() {
 		allmodes.getMelodizer1Model().heartbeat();
 		allmodes.getMelodizer2Model().heartbeat();
+		
+		// Loop recorder needs smaller ticks to setup next step before taking it
+		allmodes.getLoopRecorder().tick();
 	}
 
 	public void pumpLooperHeart() {
