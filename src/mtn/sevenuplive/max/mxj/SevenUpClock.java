@@ -25,12 +25,12 @@ package mtn.sevenuplive.max.mxj;
 public interface SevenUpClock {
 	
 	//@TODO These interface names will be totally refactored when we find suitable names
-	public void sendBigTick();
-	public void sendSmallTick();
-	public void cSharp4();
+	public void sendFirstLocator();
+	public void sendSecondLocator();
+	public void sendLocatorRecord();
 	public void pumpSequencerHeart();
 	public void pumpLooperHeart();
-	public void pumpMelodizerHeart();
+	public void pump64th();
 	public void startClock();
 	public void stopClock();
 

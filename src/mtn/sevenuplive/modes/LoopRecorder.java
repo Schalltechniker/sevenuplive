@@ -25,7 +25,6 @@ package mtn.sevenuplive.modes;
 import java.util.ArrayList;
 import java.util.List;
 
-import mtn.sevenuplive.m4l.M4LController;
 import mtn.sevenuplive.main.MonomeUp;
 import mtn.sevenuplive.modes.events.Event;
 import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
@@ -38,6 +37,7 @@ public class LoopRecorder extends Mode {
 	private CtrlSequence loopSequences[];
 	private Boolean gateLoopChokes = true;
 	private int curSequence = 0;
+	private int tick = 0;
 	
 	public LoopRecorder(int _navRow, MonomeUp _m, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
@@ -167,8 +167,32 @@ public class LoopRecorder extends Mode {
 		}
 	}
 	
+	/**
+	 * Called for subticks of a step using 64th clock.
+	 * On tick 3, this sets up next loop step before we 
+	 * actually take the real step.
+	 */
+	public void tick() {
+		tick++;
+		
+		if (tick == 3) {
+			//If a loop sequence is playing, tick it over 
+			for(int i=0;i<7;i++)
+			{
+				prestep(i);
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * Take the loop step.
+	 */
 	public void step()
 	{
+		tick = 0;
+		
 		//If a loop sequence is playing, call heartbeat
 		for(int i=0;i<7;i++)
 		{
@@ -176,9 +200,12 @@ public class LoopRecorder extends Mode {
 		}
 	}
 	
+	/**
+	 * Take the loop step
+	 * @param loopIndex
+	 */
 	public void step(int loopIndex)
 	{
-		Integer sequencedStep;
 		int curChokeGroup;
 		int i = loopIndex;
 		ArrayList<ControlValue> sequencedControlValues = loopSequences[i].heartbeat();
@@ -189,12 +216,9 @@ public class LoopRecorder extends Mode {
 			{
 				if(cv != null && cv.getValue() > -1)
 				{
-					//System.out.println("Sequence " + i + ": Returned id: " + cv.getId() + " value: " + cv.getValue());
-					//If using gating, only 1 loop can play per step.  Determine that loop.  Play it and stop the others.
 					curChokeGroup = AllModes.getInstance().getLooper().getLoop(i).getChokeGroup();
 					if(curChokeGroup > -1)
 					{
-						AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
 						for(int k=0;k<7;k++)
 						{
 							if(k!=i && AllModes.getInstance().getLooper().getLoop(k).getChokeGroup() == curChokeGroup)
@@ -202,10 +226,29 @@ public class LoopRecorder extends Mode {
 						}
 						
 					}
-					else
-					{
-						AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
-					}
+				}
+			}
+		}
+		
+
+	}
+	
+	/**
+	 * Setup the next step before taking it.
+	 * @param loopIndex
+	 */
+	public void prestep(int loopIndex)
+	{
+		int i = loopIndex;
+		ArrayList<ControlValue> sequencedControlValues = loopSequences[i].peekstep();
+		
+		if(sequencedControlValues != null)
+		{
+			for(ControlValue cv : sequencedControlValues)
+			{
+				if(cv != null && cv.getValue() > -1)
+				{
+					AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
 				}
 			}
 		}
@@ -225,6 +268,7 @@ public class LoopRecorder extends Mode {
 	public void playLoopSequence(int loopIndex)
 	{
 		loopSequences[loopIndex].play();
+		prestep(loopIndex);
 		step(loopIndex);
 	}
 	

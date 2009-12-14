@@ -311,8 +311,7 @@ public class Masterizer extends Mode {
 		
 	}
 	
-	//@TODO does this event exist anymore?
-	public void locatorEventCSharp4()
+	public void recordLocatorEvent()
 	{
 		//Begin a record mode (length of record shows by speed of steps)
 		locatorMode = RECMODE;
@@ -320,7 +319,7 @@ public class Masterizer extends Mode {
 		locatorRows[0] = DisplayGrid.FASTBLINK;
 	}
 	
-	public void locatorEventDSharp4()
+	public void secondLocatorEvent()
 	{
 		int currentStep = -1;
 		
@@ -341,7 +340,7 @@ public class Masterizer extends Mode {
 		}
 	}
 	
-	public void locatorEventC4()
+	public void firstLocatorEvent()
 	{
 		//Begin play for locator mode
 		locatorMode = PLAYMODE;
