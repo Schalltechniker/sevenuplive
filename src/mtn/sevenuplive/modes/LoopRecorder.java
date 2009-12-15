@@ -38,6 +38,7 @@ public class LoopRecorder extends Mode {
 	private Boolean gateLoopChokes = true;
 	private int curSequence = 0;
 	private int tick = 0;
+	private boolean prestepfired = false;
 	
 	public LoopRecorder(int _navRow, MonomeUp _m, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
@@ -152,30 +153,22 @@ public class LoopRecorder extends Mode {
 			else if(loopSequences[getSubMenuFromYCoord(y)].getStatus() == MonomeUp.RECORDING)
 			{
 				loopSequences[getSubMenuFromYCoord(y)].endRecording();
-				loopSequences[getSubMenuFromYCoord(y)].play();
-				//Play the first offset
-				ArrayList<ControlValue> sequencedControlValues = loopSequences[getSubMenuFromYCoord(y)].heartbeat();
-				
-				for(ControlValue cv : sequencedControlValues)
-				{
-					if(cv != null && cv.getValue() > -1)
-					{
-						AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
-					}
-				}
+				playLoopSequence(getSubMenuFromYCoord(y));
 			}
 		}
 	}
 	
 	/**
-	 * Called for subticks of a step using 64th clock.
-	 * On tick 3, this sets up next loop step before we 
+	 * Called for sub s of a step using 64th clock.
+	 * On tick 3 or greater, this sets up next loop step before we 
 	 * actually take the real step.
 	 */
-	public void tick() {
+	public synchronized void tick() {
 		tick++;
-		
-		if (tick == 3) {
+		 
+		if (tick >= 3 && !prestepfired) {
+			prestepfired = true;
+			
 			//If a loop sequence is playing, tick it over 
 			for(int i=0;i<7;i++)
 			{
@@ -189,7 +182,7 @@ public class LoopRecorder extends Mode {
 	/**
 	 * Take the loop step.
 	 */
-	public void step()
+	public synchronized void step()
 	{
 		tick = 0;
 		
@@ -198,14 +191,20 @@ public class LoopRecorder extends Mode {
 		{
 			step(i);
 		}
+		
+		prestepfired = false;
 	}
 	
 	/**
 	 * Take the loop step
 	 * @param loopIndex
 	 */
-	public void step(int loopIndex)
+	public synchronized void step(int loopIndex)
 	{
+		// Skip a step if sequence was fired too late.
+		if (!prestepfired)
+			return;
+			
 		int curChokeGroup;
 		int i = loopIndex;
 		ArrayList<ControlValue> sequencedControlValues = loopSequences[i].heartbeat();
@@ -265,15 +264,10 @@ public class LoopRecorder extends Mode {
 		return loopSequences[loopIndex].hasEvents();
 	}
 	
-	public void playLoopSequence(int loopIndex)
+	public synchronized void playLoopSequence(int loopIndex)
 	{
 		loopSequences[loopIndex].play();
-		
-		// If we are passed the trigger point then fire anyway. 
-		// We are still before the step.
-		if (tick > 3)
-			prestep(loopIndex);
-		
+		prestepfired = false;
 	}
 	
 	public int getSeqStatus(int seqNum)
