@@ -75,7 +75,7 @@ public class CtrlSequence {
 		status = MonomeUp.STOPPED;
 		//System.out.println("Sequence - " + index + " length = " + length);
 	}
-
+	
 	/**
 	 * Give us the events on the next step without actually advancing there
 	 * @return
@@ -98,6 +98,8 @@ public class CtrlSequence {
 			if(peekcounter > length)
 			{
 				peekcounter = 1;
+			} else if (peekcounter > length + 1) {
+				peekcounter = 2;
 			}
 
 			if(events.containsKey(peekcounter))
