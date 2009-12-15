@@ -268,8 +268,12 @@ public class LoopRecorder extends Mode {
 	public void playLoopSequence(int loopIndex)
 	{
 		loopSequences[loopIndex].play();
-		prestep(loopIndex);
-		step(loopIndex);
+		
+		// If we are passed the trigger point then fire anyway. 
+		// We are still before the step.
+		if (tick > 3)
+			prestep(loopIndex);
+		
 	}
 	
 	public int getSeqStatus(int seqNum)

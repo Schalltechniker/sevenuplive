@@ -82,7 +82,7 @@ public class CtrlSequence {
 	 */
 	public ArrayList<ControlValue> peekstep()
 	{
-		int peekcounter = counter++;
+		int peekcounter = counter + 1;
 		
 		//account for recording never stopping
 		if(counter == Integer.MAX_VALUE - 1)
