@@ -129,7 +129,6 @@ public class Monome {
 	protected void init() {
 		testPattern(false);
 		lightsOff();
-		for (int i=0; i<4; i++) disableADC(i);
 	}
 
 	protected void getMethods(Object parent) {

@@ -159,6 +159,7 @@ public class SevenUpEnvironment {
 		};
 
 		m = new MonomeUp(multicolor, x_grids, y_grids, sevenUpConnections, monomeScale, midiIO);
+		
 	}
 
 	public ConnectionSettings getSevenUpConnections() {

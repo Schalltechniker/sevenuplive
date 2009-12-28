@@ -155,7 +155,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		this.midiIO = midiIO;
 		initializeMidi();
 
-		ControllerModel controllerModel = new ControllerModel(ModeConstants.CONTROL_MODE, midiControllerOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT);
+		ControllerModel controllerModel = new ControllerModel(ModeConstants.CONTROL_MODE, midiControllerOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT, sevenUpConnections.enabledADCports);
 
 		//Create the same number of views as there are grids
 		PatternizerModel patternizerModel = new PatternizerModel(ModeConstants.PATTERN_MODE, midiStepperOut, GRID_WIDTH, GRID_HEIGHT);
@@ -236,8 +236,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 
 	private void initializeMidi()
 	{
-		//Create 8 channels (0-7) for controller out, ch 8 sends a wider range of CCs for all pads on one channel + master channel
-		midiControllerOut = new M4LMidiOut[8];
+		//Create 8 channels (0-8) for controller out, ch 8 (index 7) sends a wider range of CCs for all pads on one channel + master channel. ch 9 (index 8) sends ADC values
+		midiControllerOut = new M4LMidiOut[9];
 		for(int i = 0; i<midiControllerOut.length; i++)
 		{
 			midiControllerOut[i] = midiIO.getMidiOut(i, sevenUpConnections.controllerOutputDeviceName);
@@ -314,6 +314,10 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		int y = targetd.getY_translated();
 
 		targetd.getDisplay().monomeReleased(x, y);
+	}
+	
+	public void monomeAdc(int x, float value) {
+		allmodes.getControllerModel().monomeAdc(x, value);
 	}
 
 	void clipLaunch(int pitch, int vel, int channel)
@@ -674,6 +678,25 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		return AllModes.getInstance().getMelodizer2Model().getAltMode();
 	}
 
+	/**
+	 * Turn on or off calibration mode.
+	 * After mode is turned off, calibration is done 
+	 * as long as a full range of ADC data was being fed
+	 * during the time calibration was turned on. 
+	 * @param on
+	 */
+	public void setADCCalibrateMode(boolean on) {
+		allmodes.getControllerModel().setADCCalibrationMode(on);
+	}
+	
+	/**
+	 * Turn on or off listening to ADC messages
+	 * @param on
+	 */
+	public void setADCActive(boolean on) {
+		allmodes.getControllerModel().setADCActive(on);
+	}
+	
 	public void reset() {
 		for(int i=0;i<7;i++)
 		{

@@ -101,7 +101,15 @@ public class ControllerView extends Mode {
 
 	}
 	
-
+	public void triggerButtonHeld(int x, int y)
+	{
+		controllerModel.holdBank(getSubMenuFromYCoord(y));
+	}
+	
+	public void triggerButtonReleased(int x, int y)
+	{
+		controllerModel.releaseBank(getSubMenuFromYCoord(y));
+	}
 	
 	
 }

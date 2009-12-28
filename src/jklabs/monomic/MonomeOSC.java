@@ -51,7 +51,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	private static final String SHUTDOWN = "shutdown";
 	private static final String BUTTON = "press";
 	private static final String TEST = "test";
-	private static final String ADC = "adc_val";
+	private static final String ADC = "adc";
 	private static final String ADC_ENABLE = "adc_enable";
 	private static final String INTENSITY = "intensity";
 	
@@ -104,6 +104,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		
 		initOsc(host, sendPort, receivePort);
 		setBoxName(boxName);
+		
 		super.init();
 	}
 	
