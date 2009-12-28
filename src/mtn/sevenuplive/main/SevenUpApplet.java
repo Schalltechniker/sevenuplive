@@ -48,7 +48,7 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	{
 	   frameRate(FRAMERATE);
 	   
-	   m.startup(sevenUpConnections.oscPrefix, sevenUpConnections.oscHostAddress, sevenUpConnections.oscHostPort, sevenUpConnections.oscListenPort);
+	   m.startup(sevenUpConnections.oscPrefix, sevenUpConnections.oscHostAddress, sevenUpConnections.oscHostPort, sevenUpConnections.oscListenPort, sevenUpConnections.enabledADCports);
 	   this.online = false;
 	   
 	   midiIO.printDevices();

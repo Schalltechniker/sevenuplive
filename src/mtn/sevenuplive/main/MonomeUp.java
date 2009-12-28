@@ -219,8 +219,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 
 	private void initializeMidi()
 	{
-		//Create 8 channels (0-7) for controller out, ch 8 sends a wider range of CCs for all pads on one channel + master channel
-		midiControllerOut = new M4LMidiOut[8];
+		//Create 8 channels (0-8) for controller out, ch 8 (index 7) sends a wider range of CCs for all pads on one channel + master channel. ch 9 (index 8) sends ADC values
+		midiControllerOut = new M4LMidiOut[9];
 		for(int i = 0; i<midiControllerOut.length; i++)
 		{
 			midiControllerOut[i] = midiIO.getMidiOut(i, sevenUpConnections.controllerOutputDeviceName);
@@ -297,6 +297,10 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		int y = targetd.getY_translated();
 
 		targetd.getDisplay().monomeReleased(x, y);
+	}
+	
+	public void monomeAdc(int x, float value) {
+		allmodes.getControllerModel().monomeAdc(x, value);
 	}
 
 	void clipLaunch(int pitch, int vel, int channel)

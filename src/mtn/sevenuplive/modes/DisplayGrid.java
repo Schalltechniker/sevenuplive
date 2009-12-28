@@ -214,13 +214,8 @@ public class DisplayGrid {
 				{
 					pressedButtonsLength[i][j]++;
 					//if the button has been held longer than 4 seconds then trigger a held event
-					if(pressedButtonsLength[i][j] >= 4 * FRAMES)
-					{	
-						triggerButtonHeld(i, j);
-						//TODO may need to make this equal 1 if i want to hold longer than 4 seconds
-						pressedButtonsLength[i][j] = 0;
-
-					}
+						
+					triggerButtonHeld(i, j, pressedButtonsLength[i][j]);
 				}
 			}
 
@@ -456,16 +451,39 @@ public class DisplayGrid {
 			allmodes.getLooper().release(x, y);
 		}
 
-		pressedButtonsLength[x][y] = 0;
-
+		triggerButtonReleased(x, y);
 	}
 
-	public void triggerButtonHeld(int x, int y)
+	public void triggerButtonHeld(int x, int y, int length)
 	{
-		if(curMode == ModeConstants.PATTERN_MODE && x == NAVCOL && y>0)
+		if(x == NAVCOL && y != curMode)
 		{
-			allmodes.getPatternizerView(grid_index).triggerButtonHeld(x, y);
-			curDisplayGrid = allmodes.getPatternizerView(grid_index).getDisplayGrid();
+			if (curMode == ModeConstants.PATTERN_MODE) {
+				if(length >= 4 * FRAMES)
+				{
+					allmodes.getPatternizerView(grid_index).triggerButtonHeld(x, y);
+					curDisplayGrid = allmodes.getPatternizerView(grid_index).getDisplayGrid();
+					pressedButtonsLength[x][y] = 0;
+				}	
+			} else if (curMode == ModeConstants.CONTROL_MODE) {
+				if(length >= 1 * FRAMES)
+				{
+					allmodes.getControllerView(grid_index).triggerButtonHeld(x, y);
+					curDisplayGrid = allmodes.getControllerView(grid_index).getDisplayGrid();
+				}
+			}
+		}
+	}
+	
+	public void triggerButtonReleased(int x, int y) {
+		pressedButtonsLength[x][y] = 0;
+		
+		if(x == NAVCOL && y != curMode)
+		{
+			// @TODO the trigger functions should be refactored to an interface
+			if (curMode == ModeConstants.CONTROL_MODE) {
+				allmodes.getControllerView(grid_index).triggerButtonReleased(x, y);
+			}
 		}
 	}
 	

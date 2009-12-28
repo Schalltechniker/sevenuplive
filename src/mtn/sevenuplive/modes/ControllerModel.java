@@ -33,6 +33,7 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 	public Integer controls[][];
 	private Integer startingController;
 	
+	private boolean[] banksHeld = new boolean[] {false, false, false, false, false, false, false};
 	
 	public ControllerModel(int _navRow, M4LMidiOut[] _midiControlOut, int _startingController, int grid_width, int grid_height) {
 		super(_navRow, grid_width, grid_height);
@@ -111,6 +112,26 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 	public void onEvent(Event e) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void monomeAdc(int x, float value) {
+		// @TODO need appropriate scaled values
+		int scaledValue = (int)Math.abs(value * 128);
+		scaledValue = Math.min(127, scaledValue);
+		
+		for (int bank = 0; bank < 7; bank++) {
+			// ch 9 (index 8) is the ADC channel
+			if (banksHeld[bank]) // Send the controller if the bank is being held
+				midiControlOut[8].sendController(new M4LController(startingController + x + (bank * 7), scaledValue));
+		}
+	}
+	
+	public void holdBank(int bank) {
+		banksHeld[bank] = true;
+	}
+	
+	public void releaseBank(int bank) {
+		banksHeld[bank] = false;
 	}
 	
 	

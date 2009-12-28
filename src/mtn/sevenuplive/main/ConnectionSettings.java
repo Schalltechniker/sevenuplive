@@ -36,4 +36,7 @@ public class ConnectionSettings {
 	public String looperOutputDeviceName = M4LMidiSystem.eSevenUp4OutputDevices.Looper.toString();
 	public String melod1OutputDeviceName = M4LMidiSystem.eSevenUp4OutputDevices.Melodizer1.toString();
 	public String melod2OutputDeviceName = M4LMidiSystem.eSevenUp4OutputDevices.Melodizer2.toString();
+	
+	// @TODO make configurable
+	public boolean[] enabledADCports = new boolean[]{true, true, true, true, true, true, true, true};
 }
