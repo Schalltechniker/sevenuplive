@@ -64,7 +64,7 @@ public class SevenUp4Live extends MaxObject {
 	public static enum eLifecycle {started, stopped, dirty};
 	
 	private static final String[] INLET_ASSIST = new String[]{
-		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), listenport, hostport, looper, melodizer1, melodizer2)",
+		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), listenport, hostport, looper, melodizer1, melodizer2, tilt)",
 		"Midi In",
 		"clock in (0=C4,1=D#4,2=C7,3=E7,4=F7)"
 	};
@@ -290,6 +290,32 @@ public class SevenUp4Live extends MaxObject {
 				type = 0;
 			post("Setting monome via atom to type [" + Integer.toString(type) + "]");
 			settings.monomeType = type;
+		}
+	}
+	
+	public void tilt(Atom[] list)
+	{
+		MonomeUp m = environment.getMonome(); 
+		if (m == null) // Nothing to do
+			return;
+		
+		if (list.length > 0) {
+			String type = list[0].getString();
+			if (type.equals("calibrate") && list.length > 1) {
+				int calibrate = list[1].getInt();
+				if (calibrate == 1) { // Turn calibrate mode ON
+					m.setADCCalibrateMode(true);
+				} else { // Turn calibrate mode OFF
+					m.setADCCalibrateMode(false);
+				}
+			} else if (type.equals("adc") && list.length > 1) {
+				int on = list[1].getInt();
+				if (on == 1) { // Turn ADC mode ON
+					m.setADCActive(true);
+				} else { // Turn ADC mode OFF
+					m.setADCActive(false);
+				}
+			}
 		}
 	}
 	

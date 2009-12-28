@@ -33,10 +33,21 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 	public Integer controls[][];
 	private Integer startingController;
 	
-	private boolean[] banksHeld = new boolean[] {false, false, false, false, false, false, false};
+	/** Turn calibration mode ON for ADC controllers */ 
+	private boolean adcCalibrateMode = false;
+	private boolean adcActive = false;
 	
-	public ControllerModel(int _navRow, M4LMidiOut[] _midiControlOut, int _startingController, int grid_width, int grid_height) {
+	private float[] adcScalar = new float[8];
+	private float[] adcCenterOffset = new float[8];
+	private float[] adcMin = new float[8];
+	private float[] adcMax = new float[8];
+	
+	private boolean[] banksHeld = new boolean[] {false, false, false, false, false, false, false};
+	private boolean[] enabledADCports;
+	
+	public ControllerModel(int _navRow, M4LMidiOut[] _midiControlOut, int _startingController, int grid_width, int grid_height, boolean[] enabledADCports) {
 		super(_navRow, grid_width, grid_height);
+		this.enabledADCports = enabledADCports;
 		midiControlOut = _midiControlOut;
 		controls = new Integer[7][7];
 		startingController = _startingController;
@@ -45,8 +56,10 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 		for(int j=0;j<7;j++)
 			for(int i=0;i<7;i++)
 				controls[j][i] = -1;
+		
+		// Need to start with a blank slate
+		resetADCCalibration();
 	}
-	
 	
 	/*
 	 * [8] //y=0
@@ -114,16 +127,24 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 		
 	}
 	
-	public void monomeAdc(int x, float value) {
-		// @TODO need appropriate scaled values
-		int scaledValue = (int)Math.abs(value * 128);
-		scaledValue = Math.min(127, scaledValue);
+	/**
+	 * Put us into ADC calibration mode
+	 * @param on
+	 */
+	public void setADCCalibrationMode(boolean on) {
+		if (adcCalibrateMode == on)
+			return; // Nothing to do
 		
-		for (int bank = 0; bank < 7; bank++) {
-			// ch 9 (index 8) is the ADC channel
-			if (banksHeld[bank]) // Send the controller if the bank is being held
-				midiControlOut[8].sendController(new M4LController(startingController + x + (bank * 7), scaledValue));
+		if (on) {
+			resetADCCalibration();
+		} else {
+			finalizeCalibration();
 		}
+		adcCalibrateMode = on;
+	}
+	
+	public void setADCActive(boolean on) {
+		adcActive = on;
 	}
 	
 	public void holdBank(int bank) {
@@ -134,5 +155,112 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 		banksHeld[bank] = false;
 	}
 	
+	public void monomeAdc(int x, float value) {
+		if (!adcActive)
+			return;
+		
+		// Filter out ADC we are not handling
+		if (x < enabledADCports.length) {
+			if (!enabledADCports[x])
+				return;
+		} else {
+			return;
+		}
+		
+		// We work in the range of 0 - 127
+		float scaledValue = value * 127;
+		scaledValue = Math.min(127, scaledValue);
+		
+		if (adcCalibrateMode) {
+			calibrate(x, scaledValue); // provide input for calibration 
+		} else {
+			scaledValue = normalizeADC(x, scaledValue); // Scale that value based on calibration data, else return original value if not calibrated
+		}
+		
+		for (int bank = 0; bank < 7; bank++) {
+			// ch 9 (index 8) is the ADC channel
+			if (banksHeld[bank]) // Send the controller if the bank is being held
+				midiControlOut[8].sendController(new M4LController(startingController + x + (bank * 8), new Float(scaledValue).intValue())); // 8 possible ADC indexes * 7 banks
+		}
+	}
 	
+	/**
+	 * Analyze range of values for proper centering and scaling
+	 * @param x
+	 * @param value
+	 */
+	private void calibrate(int x, float value) {
+		// Get new minimum
+		if (adcMin[x] == -1 || adcMin[x] > value) {
+			adcMin[x] = value;
+		} 
+		
+		// Get new maximum
+		if (adcMax[x] == -1 || adcMax[x] < value) {
+			adcMax[x] = value;
+		} 
+	}
+	
+	/**
+	 * Finalize the calibration.
+	 * We compute the proper scaling and center offset to get us 
+	 * a maximum range from 0-127
+	 */
+	private void finalizeCalibration() {
+		float center = new Float(63.5);
+		float rawCenter;
+		float centeredMax;
+		
+		for (int i = 0; i < 8; i++) {
+			// Only calibrate if we have observed Min and Max values
+			if (adcMin[i] != -1 && adcMax[i] != -1) {
+				rawCenter =  ((adcMax[i] - adcMin[i]) / 2) + adcMin[i]; // Find the center of the unscaled values
+				adcCenterOffset[i] =  rawCenter - center;
+				centeredMax = adcMax[i] + adcCenterOffset[i];
+				
+				// Compute proper scalar for full range scaling
+				adcScalar[i] = center / (centeredMax - center); 
+ 			}
+		}
+	}
+	
+	private int normalizeADC(int i, float value) {
+		float center = new Float(63.5);
+		float scaledValue;
+		
+		if (adcMin[i] != -1 && adcMax[i] != -1) {
+			scaledValue = value + adcCenterOffset[i];
+				
+			// Find offset from center
+			scaledValue = scaledValue - center;
+			
+			// Scale offset from center
+			scaledValue = scaledValue * adcScalar[i];
+			
+			// Apply computed new offset from center
+			scaledValue = center + scaledValue;
+			
+			if (scaledValue > 127)
+				scaledValue = 127;
+			else if (scaledValue < 0)
+				scaledValue = 0;
+			
+			return new Float(scaledValue).intValue();
+ 		}
+		
+		// Return original as nearest integer
+		return new Float(value).intValue();
+	}
+	
+	/**
+	 * Reset Calibration Data
+	 */
+	private void resetADCCalibration() {
+		for (int i = 0; i < 8; i++) {
+			adcScalar[i] = 127;
+			adcCenterOffset[i] = 0;
+			adcMin[i] = -1; // not set
+			adcMax[i] = -1; // not set
+		}
+	}
 }

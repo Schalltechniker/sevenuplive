@@ -154,7 +154,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		this.midiIO = midiIO;
 		initializeMidi();
 
-		ControllerModel controllerModel = new ControllerModel(ModeConstants.CONTROL_MODE, midiControllerOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT);
+		ControllerModel controllerModel = new ControllerModel(ModeConstants.CONTROL_MODE, midiControllerOut, STARTING_CONTROLLER, GRID_WIDTH, GRID_HEIGHT, sevenUpConnections.enabledADCports);
 
 		//Create the same number of views as there are grids
 		PatternizerModel patternizerModel = new PatternizerModel(ModeConstants.PATTERN_MODE, midiStepperOut, GRID_WIDTH, GRID_HEIGHT);
@@ -661,6 +661,25 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		return AllModes.getInstance().getMelodizer2Model().getAltMode();
 	}
 
+	/**
+	 * Turn on or off calibration mode.
+	 * After mode is turned off, calibration is done 
+	 * as long as a full range of ADC data was being fed
+	 * during the time calibration was turned on. 
+	 * @param on
+	 */
+	public void setADCCalibrateMode(boolean on) {
+		allmodes.getControllerModel().setADCCalibrationMode(on);
+	}
+	
+	/**
+	 * Turn on or off listening to ADC messages
+	 * @param on
+	 */
+	public void setADCActive(boolean on) {
+		allmodes.getControllerModel().setADCActive(on);
+	}
+	
 	public void reset() {
 		for(int i=0;i<7;i++)
 		{

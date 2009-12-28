@@ -37,6 +37,6 @@ public class ConnectionSettings {
 	public String melod1OutputDeviceName = M4LMidiSystem.eSevenUp4OutputDevices.Melodizer1.toString();
 	public String melod2OutputDeviceName = M4LMidiSystem.eSevenUp4OutputDevices.Melodizer2.toString();
 	
-	// @TODO make configurable
+	// We ignore input from disabled ports
 	public boolean[] enabledADCports = new boolean[]{true, true, true, true, true, true, true, true};
 }

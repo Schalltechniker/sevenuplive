@@ -99,21 +99,11 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	 * @param sendPort
 	 * @param receivePort
 	 */
-	public void startup(String boxName, String host, int sendPort, int receivePort, boolean[] enabledADCPorts) {
+	public void startup(String boxName, String host, int sendPort, int receivePort) {
 		this.boxName = boxName;
 		
 		initOsc(host, sendPort, receivePort);
 		setBoxName(boxName);
-		
-		int e = 0;
-		for (boolean enable : enabledADCPorts) {
-			if (enable) {
-				enableADC(e);
-			} else {
-				disableADC(e);
-			}
-			e++;
-		}
 		
 		super.init();
 	}
