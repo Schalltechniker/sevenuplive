@@ -13,9 +13,9 @@
         $(window).scroll(function() {
             if ($(document).scrollTop() > 300) {
                 var offset = (menuYloc + $(document).scrollTop() - 300) + "px";
-                $(name).animate({ top: offset }, { duration: 400, queue: false });
+                $(name).animate({ top: offset }, { duration: 0, queue: false });
             }
-            else { $(name).animate({ top: 370 }, { duration: 400, queue: false }); }
+            else { $(name).animate({ top: 370 }, { duration: 0, queue: false }); }
         });
     }); 
 
@@ -68,17 +68,21 @@ li img
 
 h1
 {
+    background-color:#dbe0dc;
 	font-size:1.2em;
-	margin-bottom:7px;
+	padding:2px;
+	margin-top:5px;
+	margin-bottom:5px;
 	color:#362020;
 }
 
 h2
 {
-    background-color:#d7d7d7;
+    /*background-color:#d7d7d7;*/
     font-size: 1.1em;
     color:#362020;
-    padding:5px;
+    text-decoration:underline;
+    padding:3px;
 }
 
 h3
@@ -97,6 +101,11 @@ body
 a{
 	color:#565c5f;
 	text-decoration:none;
+}
+
+p.separate a
+{
+    text-decoration:underline!important;
 }
 
 a:hover
@@ -192,7 +201,7 @@ padding-right:10px;
 #leftColumn
 {
 	width:220px;
-	height:13000px;
+	height:15500px;
 	float:left;
 	clear:left;
 	background-color:#e0e5da;
@@ -301,10 +310,8 @@ padding-right:10px;
 <div id="containerRight">
 <div id="header">
         <img id="logo2" src="images/logo2.jpg" /><span style="display:none;"> SevenUp Live </span>
-        <div class="title">
-        </div>
        <div class="video">
-       		<object width="500" height="313"><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="always" /><param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=7877824&amp;server=vimeo.com&amp;show_title=0&amp;show_byline=0&amp;show_portrait=0&amp;color=00adef&amp;fullscreen=1" /><embed src="http://vimeo.com/moogaloop.swf?clip_id=7877824&amp;server=vimeo.com&amp;show_title=0&amp;show_byline=0&amp;show_portrait=0&amp;color=00adef&amp;fullscreen=1" type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="500" height="313"></embed></object>
+       		<object width="500" height="313"><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="always" /><param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=7877824&amp;server=vimeo.com&amp;show_title=0&amp;show_byline=0&amp;show_portrait=0&amp;color=00adef&amp;fullscreen=1" /><embed src="http://vimeo.com/moogaloop.swf?clip_id=7877824&amp;server=vimeo.com&amp;show_title=0&amp;show_byline=0&amp;show_portrait=0&amp;color=00adef&amp;fullscreen=1" type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="500" height="313"></object>
        </div>
        <div class="clear"></div>
         
@@ -328,10 +335,12 @@ padding-right:10px;
                 <li><a href="#looprecorder">5. Loop Recorder</a></li>
                 <li><a href="#melodizers">6. Melodizers</a></li>
                 <li><a href="#cliplauncher">7. Clip Launcher</a></li>
-                <li><a href="#materizer">8. Masterizer</a></li>
+                <li><a href="#masterizer">8. Masterizer</a></li>
             </ol>
             </li>
             <li><a href="#patchesandpresets">Patches &amp; Presets</a></li>
+            <li><a href="#multiplemonomes">Multiple Monomes</a></li>
+            <li><a href="#knownissues">Known Issues</a>
             <li><a href="#troubleshooting">Troubleshooting</a></li>
             <li><a href="#advancedconcepts">Advances Concepts</a></li>
             <li><a href="#alternatecomponents">Alternate Components</a></li>
@@ -343,51 +352,51 @@ padding-right:10px;
 <div id="mainContent">
 <a id="introduction"></a>
 <h1>Introduction</h1>
-<p>SevenUp Live is an application written for the <a href="http://monome.org">monome</a> and <a href="http://ableton.com">Ableton Live</a>'s Max4Live that 
+<p>SevenUp Live is an application written for the <a href="http://monome.org">monome</a> and <a href="http://ableton.com">Ableton Live</a>'s MaxForLive that 
     places 7 unique pieces of functionality into any number of 8x8 grids.  
 With it, your monome is fully integrated into your Live workflow, allowing you to sequence beats, chop up loops, record melodies, and send control signals.  Each 
     SevenUp component is represented as a device in Live that retains
- all the Live's native functionality like preset saving/loading and automation. 
+ all of Live's native functionality like preset saving/loading and automation. 
 </p>
-<p>Check out some videos to see what you can do with SevenUp: </p>
-<ul>
-	<li><a href="#">Video 1</a></p></li>
-	<li><a href="#">Video 2</a></p></li>
-</ul>
+<p class="separate"><a href="http://vimeo.com/1860696">Check</a> <a href="http://vimeo.com/1854975">out</a> <a href="http://vimeo.com/6780585">some</a> <a href="http://vimeo.com/7042276">videos</a> to <a href="http://www.vimeo.com/6187026">see</a> what you can do with SevenUp.</p>
+    <p class="separate">If you&#39;re looking for SevenUp 1.0 which launched as a separate 
+        Java application, you can find it <a href="sevenup1.htm">here</a>.</p>
 <a id="requirements"></a>
 <h1>Requirements</h1>
 <p>
 In order to use SevenUp Live you'll need:
 </p>
 <ul>
-	<li>A <a href="http://monome.org">monome</a> (any model will do)</li>
-	<li><a href="http://www.ableton.com">Ableton Live 8.1</a> or greater with <a href="http://www.ableton.com/maxforlive">Max4Live</a> installed</li>
-	<li><a href="http://cycling74.com/downloads/">Max 5.1 Runtime</a> (free) or <a href="http://cycling74.com/shop/">Max 5.1 Full</a> (costs $$).  You'll only need the full edition if you plan on creating your own components.
-	<ul><li><span class="important">Please note that at the time of this writing, there is no Max Runtime that supports Max4Live.</span></li></ul></li>
-	
+	<li>One or more <a href="http://monome.org">monomes</a> (any models will do)</li>
+	<li><a href="http://www.ableton.com">Ableton Live 8.1.1</a> or greater with <a href="http://www.ableton.com/maxforlive">MaxForLive</a> installed</li>
+	<li><a href="http://cycling74.com/s/">Max 5.1</a> installed</li>
 	<li><a href="http://monome.org/data/app/monomeserial">MonomeSerial</a> in order for 
         your monome to comunicate with SevenUp</li>
-	<li><a href="http://www.java.com/en/download/index.jsp" >Java Runtime Environment</a> 1.5 or greater (most people will have this installed already)</li>
+	<li><a href="http://www.java.com/en//index.jsp" >Java Runtime Environment</a> 1.5 or greater (most people will have this installed already)</li>
 </ul>
 <a id="download"></a>
 <h1>Download and Installation</h1>
-<p>You can download the latest version of 7up <a onclick="javascript: pageTracker._trackPageview('/DOWNLOAD/2.0');" href="#">here</a><img src="images/download.png" class="download" />. </p>
+<p>You can download the latest version (2.0.3) of 7up <a onclick="javascript: pageTracker._trackPageview('//2.0.3');" href="dist/SevenUpLive-v2.0.3.zip">here</a><img src="images/download.png" class="download" />. </p>
 <p>In order to install SevenUp you'll need to follow these instructions:</p>
 <ol>
-<li>Unzip the download package to a directory of your choosing</li>
-<li>Copy the files in the "Supporting" folder into Max's "Java" folder
+<li>Unzip the  package to a directory of your choosing</li>
+<li>Copy the files in the "Supporting" folder into Max's ".../java/lib" folder
 <ul>
     <li>For Windows this will be C:\Program Files\Cycling '74\Max 5.0\Cycling '74\java\lib</li>
     <li>For Mac this will be /Applications/Max5/Cycling '74/java/lib</li>
     </ul>
     </li>
-    <li>Install the included Live pack &quot;SevenUp 2.0 Template.alp&quot; by opening Ableton 
+    <li>Install the included Live pack &quot;SevenUp 2.0.X Template.alp&quot; by opening Ableton 
         Live and choosing &quot;Install Live Pack...&quot; from the file menu.&nbsp; </li>
-    <li>Open the newly installed project, SevenUp 2.0 Template.als, navigate to File -&gt; 
-        Manage Files....&nbsp; You shuld now see a column on the right with some 
+    <li>Open the newly installed project, SevenUp 2.0.X Template.als, navigate to File -&gt; 
+        Manage Files....&nbsp; You should now see a column on the right with some 
         options.&nbsp;&nbsp; Press &quot;Manage Project&quot; and then the &quot;Export&quot; button which 
         is located at the bottom.&nbsp; <b>This is important in order to install the 
-        SevenUp presets and devices into your device library.</b></li>
+        SevenUp presets and devices into your device library.</b><ul>
+            <li>If you are upgrading your installation, as opposed to installing from scratch, 
+                you may want to delete your existing "SevenUp" folders under "Max Instruments" and "Max Effects" first before exporting.</li>
+        </ul>
+    </li>
 </ol>
 <a id="gettingstarted"></a>
 <h1>Getting Started</h1>
@@ -420,8 +429,7 @@ In order to use SevenUp Live you'll need:
 </ol>
 
     <br />
-    Great! Now you&#39;re using SevenUp Live 2.0.&nbsp; Read on to learn more about the 
-    other navigating through SevenUp and using the remaining components<!-- end mainContent div -->.<br />
+    Great! Now you&#39;re using SevenUp Live 2.0.&nbsp; Read on to learn more about navigating through SevenUp and using the remaining components<!-- end mainContent div -->.<br />
     <br />
     <a id="sevenupconcepts"></a>
     <h1>SevenUp Concepts</h1>
@@ -451,7 +459,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 Yes</td>
         </tr>
@@ -516,7 +524,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 No</td>
         </tr>
@@ -541,8 +549,8 @@ In order to use SevenUp Live you'll need:
         Pattern 3, Pattern 1, Pattern 2, Pattern 1, Pattern 4.</p>
     <p><img src="images/tut_sequencer.png"/></p>
         
-    <p>This mode does not have a corresponding Max4Live component and is simply controlled using the second mode of SevenUp.  Your arrangements of sequences will be stored in SevenUp patches but NOT in SevenUp presets.</p>
-    <p>Additional nots about the sequencer:</p>
+    <p>This mode does not have a corresponding MaxForLive component and is simply controlled using the second mode of SevenUp.  Your arrangements of sequences will be stored in SevenUp patches but NOT in SevenUp presets.</p>
+    <p>Additional notes about the sequencer:</p>
     <ul>
         <li>You can trigger individual banks of sequences from the Masterizer mode</li>
         <li>You can trigger an individual pattern row to play by pressing it&#39;s solid button 
@@ -559,7 +567,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 Yes </td>
         </tr>
@@ -579,35 +587,45 @@ In order to use SevenUp Live you'll need:
             <td>
                 Alternate Components</td>
             <td>
-                RackMacroController</td>
+                RackMacroController<br />
+                SevenUpADCController</td>
         </tr>
     </table>
 <p>
     The Controller allows you to MIDI map 7 banks of 7 sliders to various knobs in Ableton for a 
-    grand total of 49 unique sliders. While in the Masterizer mode, 
+    grand total of 49 unique sliders. When used in conjunction with the "Tilt" tab of the SevenUp Core component and the SevenUpADCController component, the monome's ADC ports and accelerometer can be used to control knobs as well.  While in the Masterizer mode, 
     you can re-trigger the banks of controllers that you have 
     positioned.</p>
     <p><img src="images/tut_controller.png" /></p>
     <p>In order to use the controller you&#39;ll need to do the following:</p>
     <ol>
-        <li>Open Ableton Live&#39;s MIDI preferences and make sure that you have at least one 
-            MIDI device that is both sending output and input.&nbsp; In the input section, 
-            make sure that that same device has &quot;Remove&quot; enabled.</li>
+        <li>Open Ableton Live&#39;s MIDI preferences for a single virtual midi device, enable its "Track" output and its "Remote" input ONLY.  An example is shown below:
+         <ul><li><img src="images/74l_controller_midiprefs.png"/></li></ul></li>
         <li>Navigate to Devices -&gt; Midi Effects -&gt; Max Midi Effect -&gt; SevenUp -&gt; Controller 
             and drag it into a new track.</li>
         <li>Navigate to Devices -&gt; Instruments -&gt; External Instrument and drag it into the 
-            same track. At this point your device chain should look like this: 
+            same track and select the MIDI device from step 1. At this point your device chain should look like this: 
             <ul><li><img src="images/74l_controller.png"/></li></ul></li>
-        <li>With the External Instrument selected, choose the MIDI device from step 1 as the 
-            input.</li>
         <li>Enter &quot;MIDI&quot; mode by clicking the &quot;MIDI&quot; icon in the top right.&nbsp; Select a 
             knob, slider, or button and press a control slider on your monome.&nbsp; You 
             should notice that the parameter is mapped to a MIDI control.</li>
     </ol>
+    <h3>Tilt Control</h3>
+    <p>If your monome has an accelerometer, you can use the values being sent over the ADC ports in order to control knobs in Ableton.  In order to do this:</p>
+    <ol>
+    <li>Make sure that you have your ADC ports enabled in monomeserial</li>
+    <li>Navigate to the "Tilt" tab in the SevenUp Core component and click the "Calibrate" button.</li>
+    <li>On the monome, navigate to "Controller" mode (nav slot 3).  In order to send ADC or Accelerometer values, you must hold down a sub-nav button while in Controller mode (the ones that are blinking quickly in the right column) you should see the tilt sliders move in SevenUp Core.  Depending on which sub-nav button you hold down, different MIDI control values will be sent.</li>
+    <li>In order to get a full range of motion, tilt your monome 360 degrees on both the X and Y axis so that SevenUp can learn where the min and max values lie.</li>
+    <li>Once you've finished calibration, click the "On" button.</li>
+    <li>In order to send these values to knobs in Ableton, the process is very similar to the steps above for the normal controller except you'll want to use a new MIDI channel so that the control values don't conflict with the normal controller.  Drag an SevenUpADCController component into a new track, then add an external instrument, then send select a virtual midi device with which to receive midi signals.  See the steps above for more detail.
+     <ul><li><img src="images/74l_adccontroller.png"/></li></ul></li>
+    </ol>
     <p>
         Additional notes about the controller:</p>
     <ul>
-        <li>You are able to push out the current values in a single bank from the Materizer</li>
+        <li>You are able to push out the current values in a single bank from the Masterizer</li>
+        <li>By default, when using tilt it may be difficult to MIDI map the X axis and Y axis independently because their values are sent at the same time.  You can mute one axis at a time in monomeserial by unchecking it's ADC port.</li>
     </ul>
     <a id="looper"></a>
     <h2>4. Looper</h2>
@@ -615,13 +633,13 @@ In order to use SevenUp Live you'll need:
 <table>
         <tr>
             <td>
-                Nav Positionon</td>
+                Nav Position</td>
             <td>
                 4</td>
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 Yes </td>
         </tr>
@@ -660,7 +678,7 @@ In order to use SevenUp Live you'll need:
             into a new track</li>
         <li>Navigate to Devices -&gt; Midi Effects -&gt; Max Effect -&gt; SevenUp -&gt; SevenUpLooper 
             and drag it into the same track before the drum rack.&nbsp; Your device chain 
-            should now look like this:<ul><li>sdf</li></ul></li>
+            should now look like this:<ul><li><img src="images/74l_looper.png"/></li></ul></li>
         <li> Notice that when you turn the knobs on the looper device, the macro knobs of 
             the drum rack also move and change the &quot;Start Offset&quot; knobs of the individual 
             Simpler devices held within.&nbsp; By pressing different rows and columns on the 
@@ -711,13 +729,12 @@ In order to use SevenUp Live you'll need:
     it plays at 130 BPM while in arrangement or session view.</p>
     <p>In order to consolidate a sample and place it in the loop, follow these steps: </p>
     <ol>
-        <li>Right-click on your sample and click "Consolidate" (or select it and press Ctrl-J)</li>
         <li>Drag your sample into Ableton&#39;s session view (the horizontal one), right-click 
             your sample and choose &quot;Consolidate&quot; or select it and press &quot;Ctrl-J&quot;.</li>
         <li>Select the track with the looper and navigate to the Simpler whose sample you 
             want to replace</li>
         <li>Drag the consolidated track into the sample window of the Simpler as shown 
-            below:<ul><li><p class="important">NEED IMAGE HERE</p></li></ul></li>
+            below:<ul><li><img src="images/looper_consolidate.png" /></li></ul></li>
     </ol>
     <a id="looprecorder"></a>
     <h2>5. Loop Recorder</h2>
@@ -730,7 +747,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 No</td>
         </tr>
@@ -772,7 +789,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 Yes</td>
         </tr>
@@ -826,7 +843,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 Yes</td>
         </tr>
@@ -844,8 +861,8 @@ In order to use SevenUp Live you'll need:
         </tr>
     </table>
     <p>The SevenUp Clip Launcher component allows you to launch clips with your monome and receive feedback on the state of your clips as either cued, stopped, or playing.  "Clip mode" is only available for Melodizer1 and there can be only 1 "ClipLaunch" component in your set, otherwise 
-    they will conflict with each other.  By Dropping it into your set, Melodizer 1 will switch to clip mode automatically.</p>
-    <p>Please note that once you drag in the Clip Launcher you should any Melodizer 1 components or turn them off.  Also, if you have recorded patterns in 
+    they will conflict with each other.  By dropping it into your set, Melodizer 1 will switch to clip mode automatically.</p>
+    <p>Please note that once you drag in the Clip Launcher you should first remove any Melodizer 1 components or turn them off.  Also, if you have recorded patterns in 
     Melodizer 1, these notes will fire clips now instead of playing notes.</p>
 
 <p>In order to start using the Clip Launcher:</p>
@@ -863,7 +880,7 @@ In order to use SevenUp Live you'll need:
     </li>
     <li>If you were to move to the second pattern slot in the navigation column, you&#39;d be 
         working with Tracks 1-6 and Scenes 8-14.&nbsp; It all breaks down like this:<ul><li>
-            <table class="style1">
+            <table>
                 <tr>
                     <td>
                         Pattern Slot</td>
@@ -892,9 +909,9 @@ In order to use SevenUp Live you'll need:
                     <td>
                         3</td>
                     <td>
-                        7-12</td>
+                        1-6&nbsp;</td>
                     <td>
-                        1-7</td>
+                        15-21</td>
                 </tr>
                 <tr>
                     <td>
@@ -902,23 +919,23 @@ In order to use SevenUp Live you'll need:
                     <td>
                         7-12</td>
                     <td>
-                        8-14</td>
+                        1-7</td>
                 </tr>
                 <tr>
                     <td>
                         5</td>
                     <td>
-                        14-20</td>
+                        7-12</td>
                     <td>
-                        1-7</td>
+                        8-14</td>
                 </tr>
                 <tr>
                     <td>
                         6</td>
                     <td>
-                        14-20</td>
+                        7-12</td>
                     <td>
-                        8-14</td>
+                        15-21</td>
                 </tr>
                 <tr>
                     <td>
@@ -957,7 +974,7 @@ In order to use SevenUp Live you'll need:
         </tr>
         <tr>
             <td>
-                Max4Live Component?</td>
+                MaxForLive Component?</td>
             <td>
                 No</td>
         </tr>
@@ -1036,7 +1053,7 @@ In order to use SevenUp Live you'll need:
                 button could be mapped to &quot;Play&quot;, the second button to &quot;Stop&quot;, and the 3rd 
                 button to &quot;Locator 1&quot;.&nbsp; Each of these buttons must be pressed TWICE to 
                 activate.&nbsp; This is to prevent accidentally pressing transport buttons which 
-                could potentially make a big mess out of a performance.</li>
+                could potentially make a big mess out of a performance.  Because there is no Masterizer component itself, these notes are sent through the <a href="#controller">Controller</a></li>
             </ul>
         </li>
     </ul>
@@ -1049,16 +1066,22 @@ In order to use SevenUp Live you'll need:
         store the current configuration of a device into your project library.&nbsp; 
         Presets store things like the current drop-down options of a device, or the 
         positions of its knobs.&nbsp; In order to store a preset, click on the &quot;Save&quot; 
-        icon in the top right of any Ableton or SevenUp device.&nbsp; Presents, however, 
+        icon in the top right of any Ableton or SevenUp device.&nbsp; Presets, however, 
         do NOT store things like the patterns of sequences you recorded in SevenUp, 
         that&#39;s why we need patches.</p>
     <p>Patches - Patches are XML files that you can save on your hard disk in order to 
         save and load SevenUp information like Melodzier and Loop Recorder sequences.&nbsp; 
         In order to save a patch, navigate to the SevenUp Live core, click the &quot;Patches&quot; 
         tab, press the &quot;Save Patch&quot; button, and choose a location on your hard drive to 
-        save your patch.&nbsp; Loading patches is handled in a similar fashion:<ul><li><img src="images/74l_patcher.png" /></li></ul></p>
-    <h1>Multiple Monomes</h1>
-    <p>Native within SevenUp is the ability to use multiple monomes or multiple grids of 
+        save your patch.&nbsp; Loading patches is handled in a similar fashion:<p><img src="images/74l_patcher.png" /></p>
+        <p>
+                Additional notes about patches and presets:</p>
+                <ul>
+        <li>If you have previously saved a patch in SevenUpCore...then you save the core as 
+            a preset...the preset will load that patch everytime you load it.</li>
+    </ul>
+     <a id="multiplemonomes"></a>
+    <h1>Using Multiple Monomes </h1>   <p>Native within SevenUp is the ability to use multiple monomes or multiple grids of 
         the same monome to view multiple modes of SevenUp concurrently.&nbsp; For 
         instance, 1 monome could be looking at the Stepper while another could be 
         looking at the Controller.</p>
@@ -1081,47 +1104,56 @@ In order to use SevenUp Live you'll need:
             monomes</li>
     </ol>
     <p>
-        Different combinations of monomes and monome types can be used with SevenUp.&nbsp; 
-        The &quot;Monome Virtual Grid Size</p>
+        Different combinations of monomes and monome types can be used with SevenUp.</p>
+        <a id="knownissues"></a>
     <h1>Known Issues</h1>
     <ol>
-        <li>On Windows, we&#39;ve seen the Core take an abnormal amount of time to load or 
-            connect.&nbsp; Once connected, any future connect times in the same set are 
-            normal.</li>
-        <li>On Windows, we&#39;ve seen the Melodizer cause a short CPU spike when the first 
-            pattern is recorded.&nbsp; This doesn&#39;t happen on subsequent recordings.</li>
+        <li>Sometimes "ghost" LEDs show up on the stepper pages meaning that LEDs light up that shouldnt.  These lights don't actually trigger sampels so it's only a display issue.  Please ignore until we can resolve.  </li>
     </ol>
     <a id="troubleshooting"></a>
     <h1>Troubleshooting</h1>
     <div id="troubleshooting">
     <ol>
-        <li>My loop(s) always play at the same start point no matter where I press on the monome</li>
-        <li>skfd</li>
+        <li><b>My loop(s) always play at the same start point no matter where I press on the monome</b></li>
     </ol>
 
-    <ol><li>My loop(s) always play at the same start point no matter where I press on the monome
-    <p>
+        <p>
+            &nbsp;</p>
+
+    <ol>
+        <li><b>My loop(s) always play at the same start point no matter where I press on the monome</b>
+            <p>
     Loops are triggered at different points because the Looper component controls the macro knobs of the drum rack after it which in turn controls the start offset knobs of the Simplers in the drum rack.
       If any of the links in this chain become broken, the start offset knobs of your Simplers will stop responding and your loops will always play at the same point.  This is fairly simple to fix.  
-    </p>
-    <ul><li>If you move your Looper knobs and the Drum Rack macro knobs don't move...<ul><li>This may be the case if you either dropped the Looper into the track before you dropped the Drum Rack into the track or if you deleted the Drum Rack and created a new one.  To fix this, simply delete the Looper and drag in a new one.</li></ul></li>
+    If you move your Looper knobs and the Drum Rack macro knobs don't move...<ul><li>This may be the case if you either dropped the Looper into the track before you dropped the Drum Rack into the track or if you deleted the Drum Rack and created a new one.  To fix this, simply delete the Looper and drag in a new one.</li></ul></li>
     <li>If you move your Drum Rack macro knobs and your Simpler start offset knobs don't move...
     <ul><li>This may be the case if you replaced one of the Simplers entirely rather than replacing just the sample inside of it or if you didn't use the provided Drum Rack preset.  The start offset knobs are controlled using maco mapping, so to fix this simply right click on each Simpler's start knob in order and choose "Map to macro 1", "Map to macro 2", etc.  *IMPORTANT* once this is done, you'll need to click the "Map Mode" button on the Drum Rack, go to the "Macro Mappings" window on the left and change each of the "Max" values that you just mapped to "99.2%".  Crazy right?</li></ul></li>
     </ul></li></ol>
+    <a id="alternatecomponents"></a>
+    <h1>Alternate Components</h1>
+    <p>SevenUp components are modular and extensible.  This means that they can be interchanged with components created by us and others in order to extend or radically alter 
+        SevenUp&#39;s functionality.  This area will document components outside of the standard set mentioned above.</p>
+    <h3>Controller - Rack Macro Controller (Audio and Midi)</h3>
+    <p><img src="images/icon_sevenuprackmacrocontroller.png" /></p>
+    <p>The rack macro controllers are alternate controllers that make it easy to map 7up <a href="#Controller">Controller</a> sliders to the macro knobs of a drum rack or instrument rack.  In order to use them, simply drag them immediately before the drum rack or instrument rack.</p><p>The MIDI version will drag into a MIDI track and the audio version will drag into an audio track.</p>
+     <h3>Looper - Mind Shuffler</h3>
+     <p>The mind shuffler is a live audio looper.  By dragging it into an audio track and feeding it input, you are able to use the "Looper" mode of SevenUp in order to chop up live audio.</p>
     <a id="changelog"></a>
     <h1>Change Log</h1>
-    <ul><li>2.0 - 11/29/2009 - Initial release of 2.0 =D</li></ul>
+    <ul>
+    <li>2.0 - 11/29/2009 - Initial release of 2.0</li>
+    <li>2.0.1 - 12/02/2009 - Fixed timing issue causing double-hits when pressing play.  Fixed offset issue when playing sequences in loop recorder.</li>
+    <li>2.0.2 - 12/16/2009 - Bug fixes to loop recorder.  Added MindShuffler component.</li>
+    <li>2.0.3 - 1/2/2010 - Tilt support added.  Bug fixes to looper.  Optional use of midi clock notes to drive SevenUp's clock which allows users to use groove.</li>
+    </ul>
     <a id="contact"></a>
     <h1>Contact</h1>
     <p>
     Source code is available here: http://code.google.com/p/sevenuplive/. </p>
     Please contact us if you're interested in helping with development or have found a bug - <a href='&#109;a&#105;lt&#111;&#58;s%65ve&#110;u%70&#108;ive&#64;go%6F&#37;&#54;&#55;&#108;e&#37;67r&#111;u&#37;&#55;0%73&#46;&#37;63om'>s&#101;venuplive&#64;googlegro&#117;&#112;s&#46;com</a>
     </div>
-    
-    
-    
     </div>
-<div id="footer">Copyright Adam Ribaudo &amp; Christopher Lloyd 201000</div>
+<div id="footer">Copyright Adam Ribaudo &amp; Christopher Lloyd 2010</div>
 </div>
 </div>
 </div>
