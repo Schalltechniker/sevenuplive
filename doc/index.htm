@@ -373,9 +373,9 @@ In order to use SevenUp Live you'll need:
         your monome to comunicate with SevenUp</li>
 	<li><a href="http://www.java.com/en//index.jsp" >Java Runtime Environment</a> 1.5 or greater (most people will have this installed already)</li>
 </ul>
-<a id=""></a>
-<h1> and Installation</h1>
-<p>You can  the latest version (2.0.3) of 7up <a onclick="javascript: pageTracker._trackPageview('//2.0.3');" href="dist/SevenUpLive-v2.0.3.zip">here</a><img src="images/.png" class="" />. </p>
+<a id="download"></a>
+<h1>Download and Installation</h1>
+<p>You can download the latest version (2.0.3) of 7up <a onclick="javascript: pageTracker._trackPageview('//2.0.3');" href="dist/SevenUpLive-v2.0.3.zip">here</a><img src="images/download.png" class="download" />. </p>
 <p>In order to install SevenUp you'll need to follow these instructions:</p>
 <ol>
 <li>Unzip the  package to a directory of your choosing</li>
@@ -614,16 +614,17 @@ In order to use SevenUp Live you'll need:
     <ol>
     <li>Make sure that you have your ADC ports enabled in monomeserial</li>
     <li>Navigate to the "Tilt" tab in the SevenUp Core component and click the "Calibrate" button.</li>
-    <li>On the monome, navigate to "Controller" mode (nav slot 3).  When you hold down any sub-nav buttons (the ones that are blinking quickly in the right column) you should see the tilt sliders move in SevenUp Core</li>
+    <li>On the monome, navigate to "Controller" mode (nav slot 3).  In order to send ADC or Accelerometer values, you must hold down a sub-nav button while in Controller mode (the ones that are blinking quickly in the right column) you should see the tilt sliders move in SevenUp Core.  Depending on which sub-nav button you hold down, different MIDI control values will be sent.</li>
     <li>In order to get a full range of motion, tilt your monome 360 degrees on both the X and Y axis so that SevenUp can learn where the min and max values lie.</li>
     <li>Once you've finished calibration, click the "On" button.</li>
-    <li>In order to send these values to knobs in Ableton, the process is very similar to the steps above for the normal controller.  Drag an SevenUpADCController component into a new track, then add an external instrument, then send select a virtual midi device with which to receive midi signals.  See the steps above for more detail.
+    <li>In order to send these values to knobs in Ableton, the process is very similar to the steps above for the normal controller except you'll want to use a new MIDI channel so that the control values don't conflict with the normal controller.  Drag an SevenUpADCController component into a new track, then add an external instrument, then send select a virtual midi device with which to receive midi signals.  See the steps above for more detail.
      <ul><li><img src="images/74l_adccontroller.png"/></li></ul></li>
     </ol>
     <p>
         Additional notes about the controller:</p>
     <ul>
         <li>You are able to push out the current values in a single bank from the Masterizer</li>
+        <li>By default, when using tilt it may be difficult to MIDI map the X axis and Y axis independently because their values are sent at the same time.  You can mute one axis at a time in monomeserial by unchecking it's ADC port.</li>
     </ul>
     <a id="looper"></a>
     <h2>4. Looper</h2>
