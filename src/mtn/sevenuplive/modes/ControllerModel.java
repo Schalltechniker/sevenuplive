@@ -190,13 +190,14 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 	 * @param value
 	 */
 	private void calibrate(int x, float value) {
+			
 		// Get new minimum
-		if (adcMin[x] == -1 || adcMin[x] > value) {
+		if (adcMin[x] == -1f || adcMin[x] > value) {
 			adcMin[x] = value;
 		} 
 		
 		// Get new maximum
-		if (adcMax[x] == -1 || adcMax[x] < value) {
+		if (adcMax[x] == -1f || adcMax[x] < value) {
 			adcMax[x] = value;
 		} 
 	}
@@ -213,10 +214,10 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 		
 		for (int i = 0; i < 8; i++) {
 			// Only calibrate if we have observed Min and Max values
-			if (adcMin[i] != -1 && adcMax[i] != -1) {
+			if (adcMin[i] != -1f && adcMax[i] != -1f) {
 				rawCenter =  ((adcMax[i] - adcMin[i]) / 2) + adcMin[i]; // Find the center of the unscaled values
 				adcCenterOffset[i] =  rawCenter - center;
-				centeredMax = adcMax[i] + adcCenterOffset[i];
+				centeredMax = adcMax[i] - adcCenterOffset[i];
 				
 				// Compute proper scalar for full range scaling
 				adcScalar[i] = center / (centeredMax - center); 
@@ -228,8 +229,8 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 		float center = new Float(63.5);
 		float scaledValue;
 		
-		if (adcMin[i] != -1 && adcMax[i] != -1) {
-			scaledValue = value + adcCenterOffset[i];
+		if (adcMin[i] != -1f && adcMax[i] != -1f) {
+			scaledValue = value - adcCenterOffset[i];
 				
 			// Find offset from center
 			scaledValue = scaledValue - center;
@@ -238,7 +239,7 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 			scaledValue = scaledValue * adcScalar[i];
 			
 			// Apply computed new offset from center
-			scaledValue = center + scaledValue;
+			scaledValue = Math.abs(center + scaledValue);
 			
 			if (scaledValue > 127)
 				scaledValue = 127;
@@ -259,8 +260,8 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 		for (int i = 0; i < 8; i++) {
 			adcScalar[i] = 127;
 			adcCenterOffset[i] = 0;
-			adcMin[i] = -1; // not set
-			adcMax[i] = -1; // not set
+			adcMin[i] = -1f; // not set
+			adcMax[i] = -1f; // not set
 		}
 	}
 }
