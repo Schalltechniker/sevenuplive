@@ -52,6 +52,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	private static final String BUTTON = "press";
 	private static final String TEST = "test";
 	private static final String ADC = "adc";
+	private static final String TILT = "tilt";
 	private static final String ADC_ENABLE = "adc_enable";
 	private static final String INTENSITY = "intensity";
 	
@@ -62,7 +63,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	private MonomeListener listener;
 	
 	// osc addresses for this instance
-	protected String led, row, col, shutdown, button, test, adc, adc_enable, intensity;
+	protected String led, row, col, shutdown, button, test, adc, tilt, adc_enable, intensity;
 	
 	/**
 	 * Construct any monome grid in byte(8) button increments
@@ -122,6 +123,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		shutdown = prependName(SHUTDOWN);
 		button = prependName(BUTTON);
 		test = prependName(TEST);
+		tilt = prependName(TILT);
 		adc = prependName(ADC);
 		adc_enable = prependName(ADC_ENABLE);
 		intensity = prependName(INTENSITY);
@@ -234,6 +236,13 @@ public class MonomeOSC extends Monome implements MonomeListener {
 				int port = oscIn.get(0).intValue();
 				float value = oscIn.get(1).floatValue();
 				handleAdcInput(port, value);
+			} 
+		} else if (oscIn.checkAddrPattern(tilt)) {
+			if (oscIn.checkTypetag("ff")) {
+				float xval = oscIn.get(0).floatValue();
+				float yval = oscIn.get(1).floatValue();
+				handleAdcInput(0, xval/255.0f);
+				handleAdcInput(1, yval/255.0f);
 			}
 		} else {
 			if (debug == FINE) {
