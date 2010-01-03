@@ -367,32 +367,33 @@ In order to use SevenUp Live you'll need:
 </p>
 <ul>
 	<li>One or more <a href="http://monome.org">monomes</a> (any models will do)</li>
-	<li><a href="http://www.ableton.com">Ableton Live 8.1</a> or greater with <a href="http://www.ableton.com/maxforlive">MaxForLive</a> installed</li>
-	<li><a href="http://cycling74.com/downloads/">Max 5.1</a> installed</li>
+	<li><a href="http://www.ableton.com">Ableton Live 8.1.1</a> or greater with <a href="http://www.ableton.com/maxforlive">MaxForLive</a> installed</li>
+	<li><a href="http://cycling74.com/s/">Max 5.1</a> installed</li>
 	<li><a href="http://monome.org/data/app/monomeserial">MonomeSerial</a> in order for 
         your monome to comunicate with SevenUp</li>
-	<li><a href="http://www.java.com/en/download/index.jsp" >Java Runtime Environment</a> 1.5 or greater (most people will have this installed already)</li>
+	<li><a href="http://www.java.com/en//index.jsp" >Java Runtime Environment</a> 1.5 or greater (most people will have this installed already)</li>
 </ul>
-<a id="download"></a>
-<h1>Download and Installation</h1>
-<p>You can download the latest version (2.0.2) of 7up <a onclick="javascript: pageTracker._trackPageview('/DOWNLOAD/2.0.2');" href="dist/SevenUpLive-v2.0.2.zip">here</a><img src="images/download.png" class="download" />. </p>
+<a id=""></a>
+<h1> and Installation</h1>
+<p>You can  the latest version (2.0.3) of 7up <a onclick="javascript: pageTracker._trackPageview('//2.0.3');" href="dist/SevenUpLive-v2.0.3.zip">here</a><img src="images/.png" class="" />. </p>
 <p>In order to install SevenUp you'll need to follow these instructions:</p>
 <ol>
-<li>Unzip the download package to a directory of your choosing</li>
+<li>Unzip the  package to a directory of your choosing</li>
 <li>Copy the files in the "Supporting" folder into Max's ".../java/lib" folder
 <ul>
     <li>For Windows this will be C:\Program Files\Cycling '74\Max 5.0\Cycling '74\java\lib</li>
     <li>For Mac this will be /Applications/Max5/Cycling '74/java/lib</li>
     </ul>
     </li>
-    <li>Install the included Live pack &quot;SevenUp 2.0 Template.alp&quot; by opening Ableton 
+    <li>Install the included Live pack &quot;SevenUp 2.0.X Template.alp&quot; by opening Ableton 
         Live and choosing &quot;Install Live Pack...&quot; from the file menu.&nbsp; </li>
-    <li>Open the newly installed project, SevenUp 2.0 Template.als, navigate to File -&gt; 
+    <li>Open the newly installed project, SevenUp 2.0.X Template.als, navigate to File -&gt; 
         Manage Files....&nbsp; You should now see a column on the right with some 
         options.&nbsp;&nbsp; Press &quot;Manage Project&quot; and then the &quot;Export&quot; button which 
         is located at the bottom.&nbsp; <b>This is important in order to install the 
         SevenUp presets and devices into your device library.</b><ul>
-            <li>If you are upgrading your installation, as opposed to installing a new installation, be sure to delete your existing "SevenUp" folders under "Max Instruments" and "Max Effects" first before exporting.</li>
+            <li>If you are upgrading your installation, as opposed to installing from scratch, 
+                you may want to delete your existing "SevenUp" folders under "Max Instruments" and "Max Effects" first before exporting.</li>
         </ul>
     </li>
 </ol>
@@ -585,30 +586,39 @@ In order to use SevenUp Live you'll need:
             <td>
                 Alternate Components</td>
             <td>
-                RackMacroController</td>
+                RackMacroController<br />
+                SevenUpADCController</td>
         </tr>
     </table>
 <p>
     The Controller allows you to MIDI map 7 banks of 7 sliders to various knobs in Ableton for a 
-    grand total of 49 unique sliders. While in the Masterizer mode, 
+    grand total of 49 unique sliders. When used in conjunction with the "Tilt" tab of the SevenUp Core component and the SevenUpADCController component, the monome's ADC ports and accelerometer can be used to control knobs as well.  While in the Masterizer mode, 
     you can re-trigger the banks of controllers that you have 
     positioned.</p>
     <p><img src="images/tut_controller.png" /></p>
     <p>In order to use the controller you&#39;ll need to do the following:</p>
     <ol>
-        <li>Open Ableton Live&#39;s MIDI preferences and make sure that you have at least one 
-            MIDI device that is both sending output and input.&nbsp; In the input section, 
-            make sure that that same device has &quot;Remote&quot; enabled.</li>
+        <li>Open Ableton Live&#39;s MIDI preferences for a single virtual midi device, enable its "Track" output and its "Remote" input ONLY.  An example is shown below:
+         <ul><li><img src="images/74l_controller_midiprefs.png"/></li></ul></li>
         <li>Navigate to Devices -&gt; Midi Effects -&gt; Max Midi Effect -&gt; SevenUp -&gt; Controller 
             and drag it into a new track.</li>
         <li>Navigate to Devices -&gt; Instruments -&gt; External Instrument and drag it into the 
-            same track. At this point your device chain should look like this: 
+            same track and select the MIDI device from step 1. At this point your device chain should look like this: 
             <ul><li><img src="images/74l_controller.png"/></li></ul></li>
-        <li>With the External Instrument selected, choose the MIDI device from step 1 as the 
-            input.</li>
         <li>Enter &quot;MIDI&quot; mode by clicking the &quot;MIDI&quot; icon in the top right.&nbsp; Select a 
             knob, slider, or button and press a control slider on your monome.&nbsp; You 
             should notice that the parameter is mapped to a MIDI control.</li>
+    </ol>
+    <h3>Tilt Control</h3>
+    <p>If your monome has an accelerometer, you can use the values being sent over the ADC ports in order to control knobs in Ableton.  In order to do this:</p>
+    <ol>
+    <li>Make sure that you have your ADC ports enabled in monomeserial</li>
+    <li>Navigate to the "Tilt" tab in the SevenUp Core component and click the "Calibrate" button.</li>
+    <li>On the monome, navigate to "Controller" mode (nav slot 3).  When you hold down any sub-nav buttons (the ones that are blinking quickly in the right column) you should see the tilt sliders move in SevenUp Core</li>
+    <li>In order to get a full range of motion, tilt your monome 360 degrees on both the X and Y axis so that SevenUp can learn where the min and max values lie.</li>
+    <li>Once you've finished calibration, click the "On" button.</li>
+    <li>In order to send these values to knobs in Ableton, the process is very similar to the steps above for the normal controller.  Drag an SevenUpADCController component into a new track, then add an external instrument, then send select a virtual midi device with which to receive midi signals.  See the steps above for more detail.
+     <ul><li><img src="images/74l_adccontroller.png"/></li></ul></li>
     </ol>
     <p>
         Additional notes about the controller:</p>
@@ -1138,7 +1148,7 @@ In order to use SevenUp Live you'll need:
     <li>2.0 - 11/29/2009 - Initial release of 2.0</li>
     <li>2.0.1 - 12/02/2009 - Fixed timing issue causing double-hits when pressing play.  Fixed offset issue when playing sequences in loop recorder.</li>
     <li>2.0.2 - 12/16/2009 - Bug fixes to loop recorder.  Added MindShuffler component.</li>
-    
+    <li>2.0.3 - 1/2/2010 - Tilt support added.  Bug fixes to looper.  Optional use of midi clock notes to drive SevenUp's clock which allows users to use groove.</li>
     </ul>
     <a id="contact"></a>
     <h1>Contact</h1>
