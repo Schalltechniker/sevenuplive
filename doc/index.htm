@@ -376,7 +376,7 @@ In order to use SevenUp Live you'll need:
 </ul>
 <a id="download"></a>
 <h1>Download and Installation</h1>
-<p>You can download the latest version (2.0.3) of 7up <a onclick="javascript: pageTracker._trackPageview('//2.0.3');" href="dist/SevenUpLive-v2.0.3.zip">here <img border="0" src="images/download.png" class="download" /></a>. </p>
+<p>You can download the latest version (2.0.4) of 7up <a onclick="javascript: pageTracker._trackPageview('//2.0.4');" href="dist/SevenUpLive-v2.0.4.zip">here <img border="0" src="images/download.png" class="download" /></a>. </p>
 <p>In order to install SevenUp you'll need to follow these instructions:</p>
 <ol>
 <li>Unzip the  package to a directory of your choosing</li>
@@ -1128,7 +1128,23 @@ In order to use SevenUp Live you'll need:
     If you move your Looper knobs and the Drum Rack macro knobs don't move...<ul><li>This may be the case if you either dropped the Looper into the track before you dropped the Drum Rack into the track or if you deleted the Drum Rack and created a new one.  To fix this, simply delete the Looper and drag in a new one.</li></ul></li>
     <li>If you move your Drum Rack macro knobs and your Simpler start offset knobs don't move...
     <ul><li>This may be the case if you replaced one of the Simplers entirely rather than replacing just the sample inside of it or if you didn't use the provided Drum Rack preset.  The start offset knobs are controlled using maco mapping, so to fix this simply right click on each Simpler's start knob in order and choose "Map to macro 1", "Map to macro 2", etc.  *IMPORTANT* once this is done, you'll need to click the "Map Mode" button on the Drum Rack, go to the "Macro Mappings" window on the left and change each of the "Max" values that you just mapped to "99.2%".  Crazy right?</li></ul></li>
-    </ul></li></ol>
+    </ol>
+     <a id="advancedconcepts"></a>
+    <h1>Advanced Concepts</h1>
+    <h2>Auto-configuration</h2>
+    <p>Starting with version 2.0.4, SevenUp may be placed in auto-configuration mode which uses Apple's Bonjour protocol in order to establish a connection with <a href="http://post.monome.org/comments.php?DiscussionID=6464">MonoRoute</a>.  This negates the need to select an OSC prefix or port numbers and allows for multiple monome applications to be used through 1 instance of monomeserial.  In order to use auto-configuration:
+    </p>
+    <ol>
+    <li>Start Monome serial</li>
+    <li>Start MonoRoute and configure it connect to monome serial</li>
+    <li>Press "Start Auto Config" on MonoRoute</li>
+    <li>Start Ableton, load in the SevenUp Live Core component, and click the "Autoconfig/On" button</li>
+    <li>At this point, SevenUp will use the bonjour service, should see that MonoRoute is running, and create a connection.  You'll notice a new application tab pop up in MonoRoute</li>
+    <li>Finally, in MonoRoute, click "Stop Auto Config" and press "Start" next to "Packet Engine"</li>
+    </ol>
+    
+    <img src="images/monoroute.png" />
+    
     <a id="alternatecomponents"></a>
     <h1>Alternate Components</h1>
     <p>SevenUp components are modular and extensible.  This means that they can be interchanged with components created by us and others in order to extend or radically alter 
@@ -1145,6 +1161,7 @@ In order to use SevenUp Live you'll need:
     <li>2.0.1 - 12/02/2009 - Fixed timing issue causing double-hits when pressing play.  Fixed offset issue when playing sequences in loop recorder.</li>
     <li>2.0.2 - 12/16/2009 - Bug fixes to loop recorder.  Added MindShuffler component.</li>
     <li>2.0.3 - 1/2/2010 - Tilt support added.  Bug fixes to looper.  Optional use of midi clock notes to drive SevenUp's clock which allows users to use groove.</li>
+    <li>2.0.4 - 1/24/2010 - Improved MIDI communication with Max 5.1.2.  Added auto-configure option which works with monoroute</li>
     </ul>
     <a id="contact"></a>
     <h1>Contact</h1>
