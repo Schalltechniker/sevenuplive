@@ -201,7 +201,7 @@ padding-right:10px;
 #leftColumn
 {
 	width:220px;
-	height:15500px;
+	height:16500px;
 	float:left;
 	clear:left;
 	background-color:#e0e5da;
@@ -360,7 +360,7 @@ With it, your monome is fully integrated into your Live workflow, allowing you t
 </p>
 <p class="separate"><a href="http://vimeo.com/1860696">Check</a> <a href="http://vimeo.com/1854975">out</a> <a href="http://vimeo.com/6780585">some</a> <a href="http://vimeo.com/7042276">videos</a> to <a href="http://www.vimeo.com/6187026">see</a> what you can do with SevenUp.</p>
     <p class="separate">If you&#39;re looking for SevenUp 1.0 which launched as a separate 
-        Java application, you can find it <a href="sevenup1.htm">here</a>.</p>
+        Java application and does not require MaxForLive, you can find it <a href="sevenup1.htm">here</a>.</p>
 <a id="requirements"></a>
 <h1>Requirements</h1>
 <p>
@@ -386,6 +386,13 @@ In order to use SevenUp Live you'll need:
     <li>For Mac this will be /Applications/Max5/Cycling '74/java/lib</li>
     </ul>
     </li>
+    <li>Download&nbsp;and install the <a href="http://recherche.ircam.fr/equipes/temps-reel/movement/muller/index.php?entry=entry060616-173626">oscbonjour max external</a> in order to enable the <a href="#advancedconcepts">auto-configure feature</a> 
+    <ul>
+    <li>For Windows this should be copied to C:\Program Files\Cycling '74\Max 5.0\Cycling '74\max-externals</li>
+    <li>For Mac this should be copied to /Applications/Max5/Cycling\ \'74/max-externals</li>
+    </ul>
+    </li>
+        
     <li>Install the included Live pack &quot;SevenUp 2.0.X Template.alp&quot; by opening Ableton 
         Live and choosing &quot;Install Live Pack...&quot; from the file menu.&nbsp; </li>
     <li>Open the newly installed project, SevenUp 2.0.X Template.als, navigate to File -&gt; 
@@ -1132,7 +1139,7 @@ In order to use SevenUp Live you'll need:
      <a id="advancedconcepts"></a>
     <h1>Advanced Concepts</h1>
     <h2>Auto-configuration</h2>
-    <p>Starting with version 2.0.4, SevenUp may be placed in auto-configuration mode which uses Apple's Bonjour protocol in order to establish a connection with <a href="http://post.monome.org/comments.php?DiscussionID=6464">MonoRoute</a>.  This negates the need to select an OSC prefix or port numbers and allows for multiple monome applications to be used through 1 instance of monomeserial.  In order to use auto-configuration:
+    <p>Starting with version 2.0.4, SevenUp may be placed in auto-configuration mode which uses Apple's Bonjour protocol in order to establish a connection with any Monome routing software that has implementing the monome <a href="http://docs.monome.org/doku.php?id=tech:autoconfig">autoconfig protocol</a> such as <a href="http://post.monome.org/comments.php?DiscussionID=6464">MonoRoute</a>.  This negates the need to select an OSC prefix or port numbers and allows for multiple monome applications to be used through 1 instance of monomeserial.  In order to use auto-configuration:
     </p>
     <ol>
     <li>Start Monome serial</li>
