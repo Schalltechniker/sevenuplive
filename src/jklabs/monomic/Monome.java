@@ -50,9 +50,9 @@ public class Monome {
 	private byte[][] buttonVals;
 	
 	private Method buttonPressedMethod;
-	private Method xbuttonPressedMethod;
 	private Method buttonReleasedMethod;
 	private Method xafterMethod;
+	private Method xbuttonPressedMethod;
 	private Method adcInputMethod;
 
 	int[][] ledValues;
@@ -166,7 +166,7 @@ public class Monome {
 		
 		// Extended Monome Protocol Message for Press with Velocity
 		try {
-			buttonPressedMethod = parent.getClass().getDeclaredMethod(
+			xbuttonPressedMethod = parent.getClass().getDeclaredMethod(
 					"monomeXPressed", xArgs);
 		} catch (NoSuchMethodException e) {
 			// not a big deal if they aren't implemented
