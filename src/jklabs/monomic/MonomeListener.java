@@ -55,5 +55,22 @@ public interface MonomeListener {
 	 */
 	public void monomeAdc(int x, float value);
 
-		
+	/**
+	 * Implement in your listener class
+	 * NOTE: This is a monome protocol unsupported extension 
+	 * @param x
+	 * @param y
+	 * @param velocity
+	 */
+	public void monomeXPressed(int x, int y, float velocity);
+	
+	/**
+	 * Implement in your listener class
+	 * NOTE: This is a monome protocol unsupported extension 
+	 * @param x
+	 * @param y
+	 * @param value
+	 */
+	public void monomeAfterTouch(int x, int y, float value);
+	
 }

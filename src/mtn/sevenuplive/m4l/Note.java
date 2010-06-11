@@ -24,27 +24,67 @@ package mtn.sevenuplive.m4l;
 
 public class Note {
 	
+	public final static float DEFAULT_VELOCITY = 100;
+	public final static int DEFAULT_DURATION = 0;
+	
 	private int pitch;
-	private int vel;
+	
+	/** Velocity is between 0...1 */ 
+	private float vel;
+	
 	private int dur;
+	
 	private int status;
 	
-	public Note(int pitch, int vel, int dur) {
+	public Note(int pitch) {
+		this(pitch, DEFAULT_VELOCITY, DEFAULT_DURATION);
+	}
+	
+	/**
+	 * @param pitch Midi pitch 0...127
+	 * @param vel between 0...1
+	 */
+	public Note(int pitch, float vel) {
+		this(pitch, vel, DEFAULT_DURATION);
+	}
+	
+	/**
+	 * @param pitch Midi pitch 0...127
+	 * @param vel between 0...1
+	 * @param dur
+	 */
+	public Note(int pitch, float vel, int dur) {
 		this(pitch, vel, dur, 144);
 	}
 	
-	public Note(int pitch, int vel, int dur, int status) {
+	/**
+	 * @param pitch Midi pitch 0...127
+	 * @param vel between 0...1
+	 * @param dur
+	 * @param status
+	 */
+	public Note(int pitch, float vel, int dur, int status) {
 		this.pitch = pitch;
 		this.vel = vel;
 		this.dur = dur;
 		this.status = status;
+		
+		// Trim to value between 0...1
+		if (vel > 1 || vel < 0) {
+			this.vel = this.vel > 1 ? 1 : this.vel;
+			this.vel = this.vel < 0 ? 0 : this.vel;
+		}
 	}
 	
 	public int getPitch(){ 
 		return pitch;
 	}
 	
-	public int getVelocity() {
+	/**
+	 * Range of velocity is between 0...1
+	 * @return
+	 */
+	public float getVelocity() {
 		return vel;
 	}
 	

@@ -413,7 +413,7 @@ public class NoteSequence {
 			{
 				xmlNote = new Element("note");
 				xmlNote.setAttribute(new Attribute("pitch", ((Integer)noteList.get(i).getPitch()).toString()));
-				xmlNote.setAttribute(new Attribute("velocity", ((Integer)noteList.get(i).getVelocity()).toString()));
+				xmlNote.setAttribute(new Attribute("velocity", ((Float)noteList.get(i).getVelocity()).toString()));
 				xmlEvent.addContent(xmlNote);
 			}
 			xmlSequence.addContent(xmlEvent);
@@ -432,7 +432,7 @@ public class NoteSequence {
 		
 		Integer eventIndex;
 		List<Element> xmlEvents;
-		Integer velocity;
+		Float velocity;
 		Integer pitch;
 		List<Element> xmlNotes;
 		ArrayList<Note> notes;
@@ -450,8 +450,7 @@ public class NoteSequence {
 			
 			for(Element xmlNote : xmlNotes)
 			{
-				// @TODO Give a default velocity and pitch if not set
-				velocity = xmlNote.getAttributeValue("velocity") == null ? new Integer(ModeConstants.NOT_SET) : Integer.parseInt(xmlNote.getAttributeValue("velocity"));
+				velocity = xmlNote.getAttributeValue("velocity") == null ? new Float(Note.DEFAULT_VELOCITY) : Float.parseFloat(xmlNote.getAttributeValue("velocity"));
 				pitch = xmlNote.getAttributeValue("pitch") == null ? new Integer(ModeConstants.NOT_SET) : Integer.parseInt(xmlNote.getAttributeValue("pitch"));
 				note = new Note(pitch,velocity, 0);
 				notes.add(note);

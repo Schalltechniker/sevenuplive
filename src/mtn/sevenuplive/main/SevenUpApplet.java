@@ -107,25 +107,25 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	}
 	
 	public void noteOnCh1(Note note){
-		m.clipLaunch(note.getPitch(), note.getVelocity(), 0);
+		m.clipLaunch(note.getPitch(), 100 , 0);
 	}
 	public void noteOnCh2(Note note){
-		m.clipLaunch(note.getPitch(), note.getVelocity(), 1);
+		m.clipLaunch(note.getPitch(), 100, 1);
 	}
 	public void noteOnCh3(Note note){
-		m.clipLaunch(note.getPitch(), note.getVelocity(), 2);
+		m.clipLaunch(note.getPitch(), 100, 2);
 	}
 	public void noteOnCh4(Note note){
-		m.clipLaunch(note.getPitch(), note.getVelocity(), 3);
+		m.clipLaunch(note.getPitch(), 100, 3);
 	}
 	public void noteOnCh5(Note note){
-		m.clipLaunch(note.getPitch(), note.getVelocity(), 4);
+		m.clipLaunch(note.getPitch(), 100, 4);
 	}
 	public void noteOnCh6(Note note){
-		m.clipLaunch(note.getPitch(), note.getVelocity(), 5);
+		m.clipLaunch(note.getPitch(), 100, 5);
 	}
 	public void noteOnCh7(Note note){
-		m.clipLaunch(note.getPitch(), note.getVelocity(), 6);
+		m.clipLaunch(note.getPitch(), 100, 6);
 	}
 	
 	public void noteOnCh9(Note note){

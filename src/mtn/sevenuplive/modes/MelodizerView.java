@@ -80,7 +80,7 @@ public class MelodizerView extends Mode {
 				KeyTransposeGroupEvent ktge = (KeyTransposeGroupEvent)e;
 				for (int seqbank = 0; seqbank < 7; seqbank++) {
 					if (ktge.getGroup() == model.getTransposeGroup(seqbank)) {
-						changeKey(false, seqbank, ktge.getKeyX(), ktge.getKeyY());
+						changeKey(false, seqbank, ktge.getKeyX(), ktge.getKeyY(), ktge.getVelocity());
 					}
 				}
 			}
@@ -89,7 +89,7 @@ public class MelodizerView extends Mode {
 				PositionTransposeGroupEvent ptge = (PositionTransposeGroupEvent)e;
 				for (int seqbank = 0; seqbank < 7; seqbank++) {
 					if (ptge.getGroup() == model.getTransposeGroup(seqbank)) {
-						changePosition(false, seqbank, ptge.getPosition());
+						changePosition(false, seqbank, ptge.getPosition(), ptge.getVelocity());
 					}
 				}
 			}
@@ -231,7 +231,7 @@ public class MelodizerView extends Mode {
 			navGrid[getYCoordFromSubMenu(curSeqBank)] = DisplayGrid.FASTBLINK;
 	}
 
-	public void press(int x, int y)
+	public void press(int x, int y, float velocity)
 	{
 
 		if(x == DisplayGrid.NAVCOL)
@@ -240,7 +240,7 @@ public class MelodizerView extends Mode {
 			updateNavGrid();
 		}
 		else
-			pressDisplay(x,y);
+			pressDisplay(x,y, velocity);
 
 		updateDisplayGrid();
 	}
@@ -319,7 +319,7 @@ public class MelodizerView extends Mode {
 		(y < 7 && model.currentMode == MelodizerModel.eMelodizerMode.POSITION);
 	}
 
-	private void pressDisplay(int x, int y)
+	private void pressDisplay(int x, int y, float velocity)
 	{
 		//User is pressing a note button (as opposed to changing key)
 		if (isNote(y))
@@ -334,7 +334,7 @@ public class MelodizerView extends Mode {
 			//System.out.println("Press note at " +  Integer.toString((x + offset[curSeqBank]) % melodyScale.Degrees.length) +  " degrees");
 			
 			Note melodySend;
-			melodySend = new Note(melodyPitch,100, 0);
+			melodySend = new Note(melodyPitch,velocity, 0);
 			model.heldNote[curSeqBank][melodyPitch] = true;
 			if(model.currentMode != MelodizerModel.eMelodizerMode.CLIP)
 				model.displayNote[curSeqBank][melodyPitch] = DisplayGrid.SOLID;
@@ -352,27 +352,27 @@ public class MelodizerView extends Mode {
 		//User is pressing a button in the key area
 		else if (model.currentMode == MelodizerModel.eMelodizerMode.KEYBOARD)
 		{
-			changeKey(true, curSeqBank, x, y); // Change directly
+			changeKey(true, curSeqBank, x, y, velocity); // Change directly
 			
 			// If we are in a group then send a group transpose event
 			if (model.getTransposeGroup(curSeqBank) != -1) {
-				AllModes.melody1Model.sendEvent(new KeyTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x, y));
-				AllModes.melody2Model.sendEvent(new KeyTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x, y));
+				AllModes.melody1Model.sendEvent(new KeyTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x, y, velocity));
+				AllModes.melody2Model.sendEvent(new KeyTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x, y, velocity));
 			}
 		} else if (model.currentMode == MelodizerModel.eMelodizerMode.POSITION) {
 			
-			changePosition(true, curSeqBank, x); // Change directly
+			changePosition(true, curSeqBank, x, velocity); // Change directly
 			
 			// If we are in a group then send a group transpose event
 			if (model.getTransposeGroup(curSeqBank) != -1) {
-				AllModes.melody1Model.sendEvent(new PositionTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x));
-				AllModes.melody2Model.sendEvent(new PositionTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x));
+				AllModes.melody1Model.sendEvent(new PositionTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x, velocity));
+				AllModes.melody2Model.sendEvent(new PositionTransposeGroupEvent(model.getTransposeGroup(curSeqBank), x, velocity));
 			}
 		}
 		
 	}
 	
-	private void changeKey(boolean direct, int seqbank, int x, int y) {
+	private void changeKey(boolean direct, int seqbank, int x, int y, float velocity) {
 		// If we are already here then don't transpose further
 		if (!direct && model.key[seqbank] == model.getKeyFromCoords( x, y))
 			return;
@@ -423,7 +423,7 @@ public class MelodizerView extends Mode {
 			if(model.newHeldNote[seqbank][i])
 			{		
 				Note melodySend;
-				melodySend = new Note(i,100, 0);
+				melodySend = new Note(i, velocity, 0);
 				model.midiMelodyOut[seqbank].sendNoteOn(melodySend);
 				model.addEvent(seqbank, melodySend);
 				model.heldNote[seqbank][i] = true;
@@ -437,7 +437,7 @@ public class MelodizerView extends Mode {
 			updateDisplayGrid();
 	}
 	
-	private void changePosition(boolean direct, int seqbank, int x) {
+	private void changePosition(boolean direct, int seqbank, int x, float velocity) {
 		// If already here then do nothing
 		if (!direct && model.offset[seqbank] == x)
 			return;
@@ -491,7 +491,7 @@ public class MelodizerView extends Mode {
 			if(model.newHeldNote[seqbank][i])
 			{		
 				Note melodySend;
-				melodySend = new Note(i,100, 0);
+				melodySend = new Note(i, velocity, 0);
 				model.midiMelodyOut[seqbank].sendNoteOn(melodySend);
 				model.addEvent(seqbank, melodySend);
 				model.heldNote[seqbank][i] = true;

@@ -23,6 +23,7 @@
 package mtn.sevenuplive.modes;
 
 import jklabs.monomic.Monome;
+import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.modes.events.MenuFocusEvent;
 
 public class DisplayGrid {
@@ -223,7 +224,15 @@ public class DisplayGrid {
 		if (frmCount == FRAMES) frmCount = 0;
 	}
 
+	public void monomeAfterTouch(int x, int y, float value) {
+		// @TODO record aftertouch if possible
+	}
+
 	public void monomePressed(int x, int y) {
+		monomeXPressed(x, y, Note.DEFAULT_VELOCITY);
+	}
+	
+	public void monomeXPressed(int x, int y, float velocity) {
 		
 		// Very fast int compare here to not slow us down
 		if (curMode == StartupMode.STARTUP_MODE) {
@@ -373,11 +382,11 @@ public class DisplayGrid {
 					}
 					else if(curMode == ModeConstants.MELODY_MODE)
 					{
-						allmodes.getMelodizer1View(grid_index).press(x, y);
+						allmodes.getMelodizer1View(grid_index).press(x, y, velocity);
 					}
 					else if(curMode == ModeConstants.MELODY2_MODE)
 					{
-						allmodes.getMelodizer2View(grid_index).press(x, y);
+						allmodes.getMelodizer2View(grid_index).press(x, y, velocity);
 					}
 					else if(curMode == ModeConstants.MASTER_MODE)
 						allmodes.getMasterizer().press(x, y);
@@ -411,13 +420,13 @@ public class DisplayGrid {
 				allmodes.getLoopRecorder().press(x, y);
 			else if (curMode == ModeConstants.MELODY_MODE)
 			{
-				allmodes.getMelodizer1View(grid_index).press(x, y);
+				allmodes.getMelodizer1View(grid_index).press(x, y, velocity);
 				for(int i=0;i < totalGrids;i++ )
 					allmodes.getMelodizer1View(i).updateDisplayGrid();
 			}
 			else if (curMode == ModeConstants.MELODY2_MODE)
 			{
-				allmodes.getMelodizer2View(grid_index).press(x, y);
+				allmodes.getMelodizer2View(grid_index).press(x, y, velocity);
 				for(int i=0;i < totalGrids;i++ )
 					allmodes.getMelodizer2View(i).updateDisplayGrid();
 			}

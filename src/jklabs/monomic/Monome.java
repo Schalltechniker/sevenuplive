@@ -50,7 +50,9 @@ public class Monome {
 	private byte[][] buttonVals;
 	
 	private Method buttonPressedMethod;
+	private Method xbuttonPressedMethod;
 	private Method buttonReleasedMethod;
+	private Method xafterMethod;
 	private Method adcInputMethod;
 
 	int[][] ledValues;
@@ -134,6 +136,7 @@ public class Monome {
 	protected void getMethods(Object parent) {
 		Class[] args = new Class[] { int.class, int.class };
 		Class[] adcArgs = new Class[] {int.class, float.class};
+		Class[] xArgs = new Class[] {int.class, int.class, float.class};
 		try {
 			buttonPressedMethod = parent.getClass().getDeclaredMethod(
 					"monomePressed", args);
@@ -149,6 +152,22 @@ public class Monome {
 		try {
 			adcInputMethod = parent.getClass().getDeclaredMethod(
 					"monomeAdc", adcArgs);
+		} catch (NoSuchMethodException e) {
+			// not a big deal if they aren't implemented
+		}
+		
+		// Extended Monome Protocol Message for Aftertouch
+		try {
+			xafterMethod = parent.getClass().getDeclaredMethod(
+					"monomeAfterTouch", xArgs);
+		} catch (NoSuchMethodException e) {
+			// not a big deal if they aren't implemented
+		}
+		
+		// Extended Monome Protocol Message for Press with Velocity
+		try {
+			buttonPressedMethod = parent.getClass().getDeclaredMethod(
+					"monomeXPressed", xArgs);
 		} catch (NoSuchMethodException e) {
 			// not a big deal if they aren't implemented
 		}
@@ -405,6 +424,59 @@ public class Monome {
 		}		
 	}
 
+	protected synchronized void handleExtendedInputEvent(int x, int y, float value) {
+		if (x<0 || y<0) return;
+		
+		Method m = null;
+		
+		if (value > 0) { // Press ON or OFF 
+			setInternalButtonValue(x, y, 1);
+			m = xbuttonPressedMethod;
+			
+			// call the method passing velocity
+			try {
+				m.invoke(this, Integer.valueOf(x), Integer.valueOf(y), Float.valueOf(value));
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		} else {
+			setInternalButtonValue(x, y, 0);
+			m = buttonReleasedMethod;
+			
+			try {
+				m.invoke(this, Integer.valueOf(x), Integer.valueOf(y));
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+				
+	}
+	
+	protected synchronized void handleAfterTouchEvent(int x, int y, float value) {
+		if (x<0 || y<0) return;
+		
+		Method m = xafterMethod;
+			
+		try {
+			m.invoke(this, Integer.valueOf(x), Integer.valueOf(y), Float.valueOf(value));
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	
+	}
+	
 	////////////////////////////////////////////////// helper methods
 
 	private void setInternalLedValue(int x, int y, int value) {

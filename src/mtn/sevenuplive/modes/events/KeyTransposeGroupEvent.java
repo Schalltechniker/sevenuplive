@@ -29,6 +29,7 @@ public class KeyTransposeGroupEvent implements Event {
 	private int group;
 	private int key_x;
 	private int key_y;
+	private float velocity;
 	
 	public int getGroup() {
 		return group;
@@ -42,9 +43,13 @@ public class KeyTransposeGroupEvent implements Event {
 		return key_y;
 	}
 	
+	public float getVelocity() {
+		return velocity;
+	}
+	
 	public KeyTransposeGroupEvent() {}
 		
-	public KeyTransposeGroupEvent(int group, int key_x, int key_y) {
+	public KeyTransposeGroupEvent(int group, int key_x, int key_y, float velocity) {
 		this.group = group;
 		this.key_x = key_x;
 		this.key_y = key_y;

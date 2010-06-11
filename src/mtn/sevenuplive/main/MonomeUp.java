@@ -307,6 +307,40 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		targetd.getDisplay().monomePressed(x, y);
 	}
 
+	/* (non-Javadoc)
+	 * @see jklabs.monomic.MonomeOSC#monomeXPressed(int, int, float)
+	 */
+	public void monomeXPressed(int raw_x, int raw_y, float velocity)
+	{
+		// Dirty flag for any action on a patch
+		if (!isDirty()) {
+			setDirty(true);
+		}
+
+		GridCoordinateTarget targetd = Displays.translate(grids, raw_x, raw_y);
+		int x = targetd.getX_translated();
+		int y = targetd.getY_translated();
+
+		targetd.getDisplay().monomeXPressed(x, y, velocity);
+	}
+
+	/* (non-Javadoc)
+	 * @see jklabs.monomic.MonomeOSC#monomeAfterTouch(int, int, float)
+	 */
+	public void monomeAfterTouch(int raw_x, int raw_y, float value)
+	{
+		// Dirty flag for any action on a patch
+		if (!isDirty()) {
+			setDirty(true);
+		}
+
+		GridCoordinateTarget targetd = Displays.translate(grids, raw_x, raw_y);
+		int x = targetd.getX_translated();
+		int y = targetd.getY_translated();
+
+		targetd.getDisplay().monomeAfterTouch(x, y, value);
+	}
+
 	public void monomeReleased(int raw_x, int raw_y)
 	{
 		GridCoordinateTarget targetd = Displays.translate(grids, raw_x, raw_y);

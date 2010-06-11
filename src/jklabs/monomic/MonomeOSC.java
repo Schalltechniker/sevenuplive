@@ -56,6 +56,20 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	private static final String ADC_ENABLE = "adc_enable";
 	private static final String INTENSITY = "intensity";
 	
+	/** 
+	 * This is extended monome protocol for press with velocity 
+	 * xpress [x] [y] [velocity] 
+	 * velocity is float between 0...1 
+	 */
+	private static final String XBUTTON = "xpress";
+	
+	/** 
+	 * This is extended monome protocol for aftertouch 
+	 * xafter [x] [y] [value] 
+	 * value is float between 0...1 
+	 */
+	private static final String XAFTER = "xafter";
+	
 	// Address for P5Osc
 	private NetAddress myRemoteLocation;
 	private NetAddress myLocalLocation;
@@ -63,7 +77,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	private MonomeListener listener;
 	
 	// osc addresses for this instance
-	protected String led, row, col, shutdown, button, test, adc, tilt, adc_enable, intensity;
+	protected String led, row, col, shutdown, button, test, adc, tilt, adc_enable, intensity, xbutton, xafter;
 	
 	/**
 	 * Construct any monome grid in byte(8) button increments
@@ -127,6 +141,10 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		adc = prependName(ADC);
 		adc_enable = prependName(ADC_ENABLE);
 		intensity = prependName(INTENSITY);
+		
+		// Extended monome proto messages
+		xbutton = prependName(XBUTTON);
+		xafter = prependName(XAFTER);
 	}
 
 	private String prependName(String command) {
@@ -244,6 +262,20 @@ public class MonomeOSC extends Monome implements MonomeListener {
 				handleAdcInput(0, xval/255.0f);
 				handleAdcInput(1, yval/255.0f);
 			}
+		} if (oscIn.checkAddrPattern(xbutton)) {
+			if (oscIn.checkTypetag("iif")) {
+				int x = oscIn.get(0).intValue();
+				int y = oscIn.get(1).intValue();
+				float value = oscIn.get(2).floatValue();
+				handleExtendedInputEvent(x, y, value);
+			}
+		} if (oscIn.checkAddrPattern(xafter)) {
+			if (oscIn.checkTypetag("iif")) {
+				int x = oscIn.get(0).intValue();
+				int y = oscIn.get(1).intValue();
+				float value = oscIn.get(2).floatValue();
+				handleAfterTouchEvent(x, y, value);
+			}
 		} else {
 			if (debug == FINE) {
 				System.out.println("you have received an osc message "
@@ -284,6 +316,28 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	public void monomeAdc(int x, float value) {
 		if (listener != null)
 			listener.monomeAdc(x, value);
+	}
+
+	/**
+	 * Override or implement in your listener class 
+	 * @param x
+	 * @param y
+	 * @param velocity Velocity value is 0....1 
+	 */
+	public void monomeXPressed(int x, int y, float velocity) {
+		if (listener != null)
+			listener.monomeXPressed(x, y, velocity);
+	}
+	
+	/**
+	 * Override or implement in your listener class 
+	 * @param x
+	 * @param y
+	 * @param velocity Velocity value is 0....1 
+	 */
+	public void monomeAfterTouch(int x, int y, float value) {
+		if (listener != null)
+			listener.monomeAfterTouch(x, y, value);
 	}
 
 	////////////////////////////////////////////////// cleanup
