@@ -308,9 +308,9 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	}
 
 	/* (non-Javadoc)
-	 * @see jklabs.monomic.MonomeOSC#monomeXPressed(int, int, float)
+	 * @see jklabs.monomic.MonomeOSC#monomeXPressed(int, int, int)
 	 */
-	public void monomeXPressed(int raw_x, int raw_y, float velocity)
+	public void monomeXPressed(int raw_x, int raw_y, int velocity)
 	{
 		// Dirty flag for any action on a patch
 		if (!isDirty()) {

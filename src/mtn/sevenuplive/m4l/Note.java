@@ -24,13 +24,13 @@ package mtn.sevenuplive.m4l;
 
 public class Note {
 	
-	public final static float DEFAULT_VELOCITY = 100;
+	public final static int DEFAULT_VELOCITY = 100;
 	public final static int DEFAULT_DURATION = 0;
 	
 	private int pitch;
 	
-	/** Velocity is between 0...1 */ 
-	private float vel;
+	/** Velocity is between 0...127 */ 
+	private int vel;
 	
 	private int dur;
 	
@@ -44,36 +44,30 @@ public class Note {
 	 * @param pitch Midi pitch 0...127
 	 * @param vel between 0...1
 	 */
-	public Note(int pitch, float vel) {
+	public Note(int pitch, int vel) {
 		this(pitch, vel, DEFAULT_DURATION);
 	}
 	
 	/**
 	 * @param pitch Midi pitch 0...127
-	 * @param vel between 0...1
+	 * @param vel between 0...127
 	 * @param dur
 	 */
-	public Note(int pitch, float vel, int dur) {
+	public Note(int pitch, int vel, int dur) {
 		this(pitch, vel, dur, 144);
 	}
 	
 	/**
 	 * @param pitch Midi pitch 0...127
-	 * @param vel between 0...1
+	 * @param vel between 0...127
 	 * @param dur
 	 * @param status
 	 */
-	public Note(int pitch, float vel, int dur, int status) {
+	public Note(int pitch, int vel, int dur, int status) {
 		this.pitch = pitch;
 		this.vel = vel;
 		this.dur = dur;
 		this.status = status;
-		
-		// Trim to value between 0...1
-		if (vel > 1 || vel < 0) {
-			this.vel = this.vel > 1 ? 1 : this.vel;
-			this.vel = this.vel < 0 ? 0 : this.vel;
-		}
 	}
 	
 	public int getPitch(){ 
@@ -81,10 +75,10 @@ public class Note {
 	}
 	
 	/**
-	 * Range of velocity is between 0...1
+	 * Range of velocity is between 0...127
 	 * @return
 	 */
-	public float getVelocity() {
+	public int getVelocity() {
 		return vel;
 	}
 	

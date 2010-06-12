@@ -136,6 +136,7 @@ public class Monome {
 	protected void getMethods(Object parent) {
 		Class[] args = new Class[] { int.class, int.class };
 		Class[] adcArgs = new Class[] {int.class, float.class};
+		Class[] xVel = new Class[] {int.class, int.class, int.class};
 		Class[] xArgs = new Class[] {int.class, int.class, float.class};
 		try {
 			buttonPressedMethod = parent.getClass().getDeclaredMethod(
@@ -167,7 +168,7 @@ public class Monome {
 		// Extended Monome Protocol Message for Press with Velocity
 		try {
 			xbuttonPressedMethod = parent.getClass().getDeclaredMethod(
-					"monomeXPressed", xArgs);
+					"monomeXPressed", xVel);
 		} catch (NoSuchMethodException e) {
 			// not a big deal if they aren't implemented
 		}
@@ -424,7 +425,7 @@ public class Monome {
 		}		
 	}
 
-	protected synchronized void handleExtendedInputEvent(int x, int y, float value) {
+	protected synchronized void handleExtendedInputEvent(int x, int y, int value) {
 		if (x<0 || y<0) return;
 		
 		Method m = null;
@@ -435,7 +436,7 @@ public class Monome {
 			
 			// call the method passing velocity
 			try {
-				m.invoke(this, Integer.valueOf(x), Integer.valueOf(y), Float.valueOf(value));
+				m.invoke(this, Integer.valueOf(x), Integer.valueOf(y), Integer.valueOf(value));
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {

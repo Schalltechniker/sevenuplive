@@ -232,7 +232,7 @@ public class DisplayGrid {
 		monomeXPressed(x, y, Note.DEFAULT_VELOCITY);
 	}
 	
-	public void monomeXPressed(int x, int y, float velocity) {
+	public void monomeXPressed(int x, int y, int velocity) {
 		
 		// Very fast int compare here to not slow us down
 		if (curMode == StartupMode.STARTUP_MODE) {

@@ -28,7 +28,7 @@ public class PositionTransposeGroupEvent implements Event {
 
 	private int group;
 	private int position;
-	private float velocity;
+	private int velocity;
 	
 	public int getGroup() {
 		return group;
@@ -38,13 +38,13 @@ public class PositionTransposeGroupEvent implements Event {
 		return position;
 	}
 	
-	public float getVelocity() {
+	public int getVelocity() {
 		return velocity;
 	}
 	
 	public PositionTransposeGroupEvent() {}
 		
-	public PositionTransposeGroupEvent(int group, int key, float velocity) {
+	public PositionTransposeGroupEvent(int group, int key, int velocity) {
 		this.group = group;
 		this.position = key;
 	}

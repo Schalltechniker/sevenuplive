@@ -62,7 +62,7 @@ public interface MonomeListener {
 	 * @param y
 	 * @param velocity
 	 */
-	public void monomeXPressed(int x, int y, float velocity);
+	public void monomeXPressed(int x, int y, int velocity);
 	
 	/**
 	 * Implement in your listener class

@@ -263,10 +263,10 @@ public class MonomeOSC extends Monome implements MonomeListener {
 				handleAdcInput(1, yval/255.0f);
 			}
 		} if (oscIn.checkAddrPattern(xbutton)) {
-			if (oscIn.checkTypetag("iif")) {
+			if (oscIn.checkTypetag("iii")) {
 				int x = oscIn.get(0).intValue();
 				int y = oscIn.get(1).intValue();
-				float value = oscIn.get(2).floatValue();
+				int value = oscIn.get(2).intValue();
 				handleExtendedInputEvent(x, y, value);
 			}
 		} if (oscIn.checkAddrPattern(xafter)) {
@@ -322,9 +322,9 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	 * Override or implement in your listener class 
 	 * @param x
 	 * @param y
-	 * @param velocity Velocity value is 0....1 
+	 * @param velocity Velocity value is 0....127
 	 */
-	public void monomeXPressed(int x, int y, float velocity) {
+	public void monomeXPressed(int x, int y, int velocity) {
 		if (listener != null)
 			listener.monomeXPressed(x, y, velocity);
 	}

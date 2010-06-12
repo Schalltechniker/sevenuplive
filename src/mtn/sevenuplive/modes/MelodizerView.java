@@ -231,7 +231,7 @@ public class MelodizerView extends Mode {
 			navGrid[getYCoordFromSubMenu(curSeqBank)] = DisplayGrid.FASTBLINK;
 	}
 
-	public void press(int x, int y, float velocity)
+	public void press(int x, int y, int velocity)
 	{
 
 		if(x == DisplayGrid.NAVCOL)
@@ -319,7 +319,7 @@ public class MelodizerView extends Mode {
 		(y < 7 && model.currentMode == MelodizerModel.eMelodizerMode.POSITION);
 	}
 
-	private void pressDisplay(int x, int y, float velocity)
+	private void pressDisplay(int x, int y, int velocity)
 	{
 		//User is pressing a note button (as opposed to changing key)
 		if (isNote(y))
@@ -372,7 +372,7 @@ public class MelodizerView extends Mode {
 		
 	}
 	
-	private void changeKey(boolean direct, int seqbank, int x, int y, float velocity) {
+	private void changeKey(boolean direct, int seqbank, int x, int y, int velocity) {
 		// If we are already here then don't transpose further
 		if (!direct && model.key[seqbank] == model.getKeyFromCoords( x, y))
 			return;
@@ -437,7 +437,7 @@ public class MelodizerView extends Mode {
 			updateDisplayGrid();
 	}
 	
-	private void changePosition(boolean direct, int seqbank, int x, float velocity) {
+	private void changePosition(boolean direct, int seqbank, int x, int velocity) {
 		// If already here then do nothing
 		if (!direct && model.offset[seqbank] == x)
 			return;
