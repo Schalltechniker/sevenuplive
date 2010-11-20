@@ -73,4 +73,10 @@ public interface MonomeListener {
 	 */
 	public void monomeAfterTouch(int x, int y, float value);
 	
+	/**
+	 * Implement in your listener class
+	 * NOTE: This is a monome protocol unsupported extension
+	 * Tells app to redraw the entire monome surface  
+	 */
+	public void monomeRefresh();
 }

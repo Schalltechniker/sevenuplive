@@ -25,8 +25,6 @@ package mtn.sevenuplive.modes;
 import mtn.sevenuplive.m4l.M4LMidiOut;
 import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.main.MonomeUp;
-import mtn.sevenuplive.modes.events.ClearDisplayEvent;
-import mtn.sevenuplive.modes.events.ClearNavEvent;
 import mtn.sevenuplive.modes.events.Event;
 import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
 

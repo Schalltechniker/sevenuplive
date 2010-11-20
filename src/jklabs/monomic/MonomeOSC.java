@@ -53,13 +53,14 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	private static final String TEST = "test";
 	private static final String ADC = "adc";
 	private static final String TILT = "tilt";
+	private static final String REFRESH = "refresh";
 	private static final String ADC_ENABLE = "adc_enable";
 	private static final String INTENSITY = "intensity";
 	
 	/** 
 	 * This is extended monome protocol for press with velocity 
 	 * xpress [x] [y] [velocity] 
-	 * velocity is float between 0...1 
+	 * velocity is integer between 0...127 
 	 */
 	private static final String XBUTTON = "xpress";
 	
@@ -77,7 +78,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	private MonomeListener listener;
 	
 	// osc addresses for this instance
-	protected String led, row, col, shutdown, button, test, adc, tilt, adc_enable, intensity, xbutton, xafter;
+	protected String led, row, col, shutdown, button, test, adc, tilt, refresh, adc_enable, intensity, xbutton, xafter;
 	
 	/**
 	 * Construct any monome grid in byte(8) button increments
@@ -138,6 +139,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		button = prependName(BUTTON);
 		test = prependName(TEST);
 		tilt = prependName(TILT);
+		refresh = prependName(REFRESH);
 		adc = prependName(ADC);
 		adc_enable = prependName(ADC_ENABLE);
 		intensity = prependName(INTENSITY);
@@ -276,6 +278,8 @@ public class MonomeOSC extends Monome implements MonomeListener {
 				float value = oscIn.get(2).floatValue();
 				handleAfterTouchEvent(x, y, value);
 			}
+		} else if (oscIn.checkAddrPattern(refresh)) {
+			handleRefresh();
 		} else {
 			if (debug == FINE) {
 				System.out.println("you have received an osc message "
@@ -340,6 +344,13 @@ public class MonomeOSC extends Monome implements MonomeListener {
 			listener.monomeAfterTouch(x, y, value);
 	}
 
+	/* (non-Javadoc)
+	 * @see jklabs.monomic.MonomeListener#monomeRefresh()
+	 */
+	public void monomeRefresh() {
+		if (listener != null)
+			listener.monomeRefresh();
+	}
 	////////////////////////////////////////////////// cleanup
 
 	protected void finalize() throws Throwable {
@@ -372,5 +383,6 @@ public class MonomeOSC extends Monome implements MonomeListener {
 
 		public void oscStatus(OscStatus arg0) {}
 	}
+	
 
 }

@@ -23,9 +23,9 @@ package mtn.sevenuplive.modes;
 
 import jklabs.monomic.Monome;
 
-public class MultiValueDisplayGrid extends DisplayGrid {
+public class MantaV2DisplayGrid extends DisplayGrid {
 
-	public MultiValueDisplayGrid(Monome monome, AllModes allmodes,
+	public MantaV2DisplayGrid(Monome monome, AllModes allmodes,
 			int start_column, int start_row, int grid_width, int grid_height,
 			Mode defaultMode, int grid_index, int totalGrids) {
 		super(monome, allmodes, start_column, start_row, grid_width, grid_height,
@@ -51,7 +51,6 @@ public class MultiValueDisplayGrid extends DisplayGrid {
 				case 3:  
 					if(force || monome.getValue(x+start_column, y+start_row) != 1)
 						monome.setValue(x+start_column, y+start_row, 1);
-
 					break;
 
 				case 2:   
@@ -61,7 +60,7 @@ public class MultiValueDisplayGrid extends DisplayGrid {
 				case 1:
 					if(force || frmCount % SLOWBLINKFRAME == 0) 
 					{
-						monome.setValue(x+start_column, y+start_row, monome.isLit(x+start_column, y+start_row) ? 0 : 3);
+						monome.setValue(x+start_column, y+start_row, monome.isLit(x+start_column, y+start_row) ? 0 : 2);
 					}
 					break;
 				}      
@@ -90,13 +89,15 @@ public class MultiValueDisplayGrid extends DisplayGrid {
 				break;
 
 			case 2:   
-				if(force || monome.getValue(NAVCOL+start_column, y+start_row) != 2)
-					monome.setValue(NAVCOL+start_column, y+start_row, 2);
+				if(force || frmCount % FASTBLINKFRAME == 0) 
+				{
+					monome.setValue(NAVCOL+start_column, y+start_row, monome.isLit(NAVCOL+start_column, y+start_row) ? 0 : 2);
+				}
 				break;
 			case 1:
 				if(force || frmCount % SLOWBLINKFRAME == 0) 
 				{
-					monome.setValue(NAVCOL+start_column, y+start_row, monome.isLit(NAVCOL+start_column, y+start_row) ? 0 : 3);
+					monome.setValue(NAVCOL+start_column, y+start_row, monome.isLit(NAVCOL+start_column, y+start_row) ? 0 : 2);
 				}
 				break; 
 			}

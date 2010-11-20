@@ -38,6 +38,7 @@ import mtn.sevenuplive.modes.DisplayGrid;
 import mtn.sevenuplive.modes.Displays;
 import mtn.sevenuplive.modes.LoopRecorder;
 import mtn.sevenuplive.modes.Looper;
+import mtn.sevenuplive.modes.MantaV2DisplayGrid;
 import mtn.sevenuplive.modes.Masterizer;
 import mtn.sevenuplive.modes.MelodizerModel;
 import mtn.sevenuplive.modes.MelodizerView;
@@ -48,6 +49,10 @@ import mtn.sevenuplive.modes.PatternizerView;
 import mtn.sevenuplive.modes.Sequencer;
 import mtn.sevenuplive.modes.StartupMode;
 import mtn.sevenuplive.modes.Displays.GridCoordinateTarget;
+import mtn.sevenuplive.modes.events.ClearDisplayEvent;
+import mtn.sevenuplive.modes.events.ClearNavEvent;
+import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
+import mtn.sevenuplive.modes.events.UpdateNavEvent;
 import mtn.sevenuplive.scales.Scale;
 
 import org.jdom.Attribute;
@@ -83,6 +88,8 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	private static final int STARTING_CONTROLLER = 40;
 	/////////////////////////////////////
 
+	public static enum eDeviceType {Monome, Manta, MultiColorDevice}; 
+	
 	//Pitches
 	//Uh, these are probably wrong
 	public static final  int C7 = 108;
@@ -142,7 +149,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	private DisplayGrid[] grids;
 	private M4LMidi midiIO;
 
-	MonomeUp (boolean multicolor, int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, M4LMidi midiIO) {
+	MonomeUp (MonomeUp.eDeviceType deviceType, int x_grids, int y_grids, ConnectionSettings _sevenUpConnections, Scale monomeScale, M4LMidi midiIO) {
 		super(x_grids, y_grids);
 		sevenUpConnections = _sevenUpConnections;
 
@@ -221,8 +228,10 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 				startRow = i * 8;
 			}
 
-			if (multicolor)
+			if (deviceType == MonomeUp.eDeviceType.MultiColorDevice)
 				grids[i] = new MultiValueDisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
+			else if (deviceType == MonomeUp.eDeviceType.Manta)
+				grids[i] = new MantaV2DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
 			else
 			{
 				System.out.println("Creating a grid with startCol = " + startCol + " and startRow = " + startRow);
@@ -276,7 +285,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	
 	public void draw(int curFrame) {
 		for (DisplayGrid grid : grids) {
-			grid.draw();
+			grid.draw(false);
 		}
 	}
 
@@ -339,6 +348,15 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 		int y = targetd.getY_translated();
 
 		targetd.getDisplay().monomeAfterTouch(x, y, value);
+	}
+	
+	/* (non-Javadoc)
+	 * @see jklabs.monomic.MonomeListener#monomeRefresh()
+	 */
+	public void monomeRefresh() {
+		for (DisplayGrid grid : grids) {
+			grid.draw(true); // This forces display refresh
+		}
 	}
 
 	public void monomeReleased(int raw_x, int raw_y)

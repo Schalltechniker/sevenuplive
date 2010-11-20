@@ -128,7 +128,11 @@ public class DisplayGrid {
 			
 	}
 
-	protected void drawDisplay() {
+	/**
+	 * Force will draw even if internal state does not indicate needed
+	 * @param force
+	 */
+	protected void drawDisplay(boolean force) {
 		//draw the display grid
 		for (int x = 0; x<grid_width-1;x++)
 		{
@@ -137,23 +141,23 @@ public class DisplayGrid {
 				switch(curDisplayGrid[x][y])
 				{
 				case 0:
-					if(monome.isLit(x+start_column, y+start_row))
+					if(force || monome.isLit(x+start_column, y+start_row))
 						monome.setValue(x+start_column, y+start_row, 0);
 					break;
 				case 3:  
-					if(!monome.isLit(x+start_column, y+start_row))
+					if(force || !monome.isLit(x+start_column, y+start_row))
 						monome.setValue(x+start_column, y+start_row, 1);
 
 					break;
 
 				case 2:   
-					if(frmCount % FASTBLINKFRAME == 0) 
+					if(force || frmCount % FASTBLINKFRAME == 0) 
 					{
 						monome.setValue(x+start_column, y+start_row, !monome.isLit(x+start_column, y+start_row));
 					} 
 					break;
 				case 1:
-					if(frmCount % SLOWBLINKFRAME == 0) 
+					if(force || frmCount % SLOWBLINKFRAME == 0) 
 					{
 						monome.setValue(x+start_column, y+start_row, !monome.isLit(x+start_column, y+start_row));
 					} 
@@ -165,30 +169,34 @@ public class DisplayGrid {
 	
 	}
 	
-	protected void drawNav() {
+	/**
+	 * Force will draw even if internal state does not indicate needed
+	 * @param force
+	 */
+	protected void drawNav(boolean force) {
 		//Draw navbar
 		for (int y = 0; y<grid_height;y++)
 		{
 			switch(navGrid[y])
 			{
 			case 0:
-				if(monome.isLit(NAVCOL+start_column, y+start_row))
+				if(force || monome.isLit(NAVCOL+start_column, y+start_row))
 					monome.setValue(NAVCOL+start_column, y+start_row, 0);
 				break;
 			case 3:  
-				if(!monome.isLit(NAVCOL+start_column, y+start_row))
+				if(force || !monome.isLit(NAVCOL+start_column, y+start_row))
 					monome.setValue(NAVCOL+start_column, y+start_row, 1);
 
 				break;
 
 			case 2:   
-				if(frmCount % FASTBLINKFRAME == 0) 
+				if(force || frmCount % FASTBLINKFRAME == 0) 
 				{
 					monome.setValue(NAVCOL+start_column, y+start_row, !monome.isLit(NAVCOL+start_column, y+start_row));
 				} 
 				break;
 			case 1:
-				if(frmCount % SLOWBLINKFRAME == 0) 
+				if(force || frmCount % SLOWBLINKFRAME == 0) 
 				{
 					monome.setValue(NAVCOL+start_column, y+start_row, !monome.isLit(NAVCOL+start_column, y+start_row));
 				} 
@@ -197,15 +205,15 @@ public class DisplayGrid {
 		}
 	}
 	
-	public void draw()
+	public void draw(boolean force)
 	{
 		//Very fast int compare here to not slow us down
 		if (curMode == StartupMode.STARTUP_MODE)
 			checkForStartup();
 			
 		
-		drawDisplay();
-		drawNav();
+		drawDisplay(force);
+		drawNav(force);
 		
 		//Loop through pressedNotesLength and increment the number of frames each pressed note has been held
 		for(int i=0;i<grid_width;i++)

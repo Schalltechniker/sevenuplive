@@ -54,6 +54,7 @@ public class Monome {
 	private Method xafterMethod;
 	private Method xbuttonPressedMethod;
 	private Method adcInputMethod;
+	private Method refreshMethod;
 
 	int[][] ledValues;
 	boolean[][] buttonValues;
@@ -134,6 +135,7 @@ public class Monome {
 	}
 
 	protected void getMethods(Object parent) {
+		Class[] noargs = new Class[] {};
 		Class[] args = new Class[] { int.class, int.class };
 		Class[] adcArgs = new Class[] {int.class, float.class};
 		Class[] xVel = new Class[] {int.class, int.class, int.class};
@@ -169,6 +171,14 @@ public class Monome {
 		try {
 			xbuttonPressedMethod = parent.getClass().getDeclaredMethod(
 					"monomeXPressed", xVel);
+		} catch (NoSuchMethodException e) {
+			// not a big deal if they aren't implemented
+		}
+		
+		// Extended Monome Protocol Message for triggering full Refresh
+		try {
+			refreshMethod = parent.getClass().getDeclaredMethod(
+					"monomeRefresh", noargs);
 		} catch (NoSuchMethodException e) {
 			// not a big deal if they aren't implemented
 		}
@@ -477,6 +487,21 @@ public class Monome {
 		}
 	
 	}
+	
+	protected synchronized void handleRefresh() {
+		Method m = refreshMethod;
+		
+		try {
+			m.invoke(this);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	////////////////////////////////////////////////// helper methods
 

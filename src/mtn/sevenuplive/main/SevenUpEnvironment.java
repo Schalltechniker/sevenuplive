@@ -32,7 +32,7 @@ import org.jdom.Document;
 import proxml.XMLInOut;
 
 public class SevenUpEnvironment {
-
+	
 	private MonomeUp m;
 
 	private SevenUpApplet applet;
@@ -42,7 +42,7 @@ public class SevenUpEnvironment {
 	private ConnectionSettings sevenUpConnections;
 
 	private int monomeType = MonomeUp.MONOME_64;
-
+	
 	private M4LMidi midiIO;
 	
 	private XMLInOut xmlIO;
@@ -103,7 +103,7 @@ public class SevenUpEnvironment {
 		// Get the type of monome selected
 		monomeType = sevenUpConnections.monomeType;
 
-		boolean multicolor = false;
+		MonomeUp.eDeviceType deviceType = MonomeUp.eDeviceType.Monome;
 		
 		// Figure out dimensions of monome grid
 		int x_grids = 1;
@@ -150,15 +150,19 @@ public class SevenUpEnvironment {
 			break;
 		case 13: //MultiColorDevice
 			x_grids = 1; y_grids = 1;
-			multicolor = true;
+			deviceType = MonomeUp.eDeviceType.MultiColorDevice;
 			break;
 		case 14: //MultiColor256
 			x_grids = 2; y_grids = 2;
-			multicolor = true;
+			deviceType = MonomeUp.eDeviceType.MultiColorDevice;
+			break;
+		case 15: //MantaV2
+			x_grids = 1; y_grids = 1;
+			deviceType = MonomeUp.eDeviceType.Manta;
 			break;	
 		};
 
-		m = new MonomeUp(multicolor, x_grids, y_grids, sevenUpConnections, monomeScale, midiIO);
+		m = new MonomeUp(deviceType, x_grids, y_grids, sevenUpConnections, monomeScale, midiIO);
 		
 	}
 
