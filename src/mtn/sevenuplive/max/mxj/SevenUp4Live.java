@@ -25,6 +25,8 @@ package mtn.sevenuplive.max.mxj;
 import java.util.ArrayList;
 import java.util.List;
 
+import jklabs.monomic.MonomeOSC;
+
 import mtn.sevenuplive.m4l.M4LMidi;
 import mtn.sevenuplive.m4l.M4LMidiIn;
 import mtn.sevenuplive.m4l.M4LMidiOut;
@@ -64,7 +66,7 @@ public class SevenUp4Live extends MaxObject {
 	public static enum eLifecycle {started, stopped, dirty};
 	
 	private static final String[] INLET_ASSIST = new String[]{
-		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), listenport, hostport, looper, melodizer1, melodizer2, tilt)",
+		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), protocol, multilevel, listenport, hostport, looper, melodizer1, melodizer2, tilt)",
 		"Midi In",
 		"clock in (0=C4,1=D#4,2=C7,3=E7,4=F7)"
 	};
@@ -363,6 +365,38 @@ public class SevenUp4Live extends MaxObject {
 				hostport = 0;
 			post("Setting monome hostport to  [" + Integer.toString(hostport) + "]");
 			settings.oscHostPort = hostport;		
+		}
+	}
+	
+	public void protocol(Atom[] list)
+	{
+		if (list.length > 0) {
+			int ver = list[0].getInt();
+			switch (ver) {
+				case 0:
+					settings.protocolVersion = MonomeOSC.ProtocolVersion.classic;
+					break;
+				case 1:
+				default:
+					settings.protocolVersion = MonomeOSC.ProtocolVersion.serialosc;
+			}
+			post("Setting monome protocol to  [" + settings.protocolVersion.name() + "]");
+		}
+	}
+	
+	public void multilevel(Atom[] list)
+	{
+		if (list.length > 0) {
+			int level = list[0].getInt();
+			switch (level) {
+				case 0:
+					settings.multilevel = false;
+					break;
+				case 1:
+				default:
+					settings.multilevel = true;
+			}
+			post("Setting monome multilevel mode to [" + settings.multilevel + "]");
 		}
 	}
 	

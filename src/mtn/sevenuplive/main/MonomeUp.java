@@ -43,16 +43,13 @@ import mtn.sevenuplive.modes.Masterizer;
 import mtn.sevenuplive.modes.MelodizerModel;
 import mtn.sevenuplive.modes.MelodizerView;
 import mtn.sevenuplive.modes.ModeConstants;
+import mtn.sevenuplive.modes.MultiLevelDisplayGrid;
 import mtn.sevenuplive.modes.MultiValueDisplayGrid;
 import mtn.sevenuplive.modes.PatternizerModel;
 import mtn.sevenuplive.modes.PatternizerView;
 import mtn.sevenuplive.modes.Sequencer;
 import mtn.sevenuplive.modes.StartupMode;
 import mtn.sevenuplive.modes.Displays.GridCoordinateTarget;
-import mtn.sevenuplive.modes.events.ClearDisplayEvent;
-import mtn.sevenuplive.modes.events.ClearNavEvent;
-import mtn.sevenuplive.modes.events.UpdateDisplayEvent;
-import mtn.sevenuplive.modes.events.UpdateNavEvent;
 import mtn.sevenuplive.scales.Scale;
 
 import org.jdom.Attribute;
@@ -235,7 +232,13 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 			else
 			{
 				System.out.println("Creating a grid with startCol = " + startCol + " and startRow = " + startRow);
-				grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
+				
+				// Determine mode as regular blink or multi-led level support
+				if(_sevenUpConnections.multilevel)
+					grids[i] = new MultiLevelDisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
+				else
+				    grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
+				
 			}
 		}
 

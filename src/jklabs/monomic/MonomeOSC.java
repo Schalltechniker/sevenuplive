@@ -40,36 +40,50 @@ import oscP5.OscStatus;
 
 public class MonomeOSC extends Monome implements MonomeListener {
 
+	public static enum ProtocolVersion {classic, serialosc};
+	
+	Protocol protocol;
+	
+	public class Protocol {
+		
+		public Protocol(ProtocolVersion version) {
+			this.version = version;
+		}
+		
+		public ProtocolVersion version;
+		public String LED;
+		public String PER_LED_INTENSITY;
+		public String ROW;
+		public String COL;
+		public String SHUTDOWN;
+		public String BUTTON;
+		public String TEST;
+		public String ADC;
+		public String TILT;
+		public String REFRESH;
+		public String ADC_ENABLE;
+		public String INTENSITY;
+	
+		/** 
+		 * This is extended monome protocol for press with velocity 
+		 * xpress [x] [y] [velocity] 
+		 * velocity is integer between 0...127 
+		 */
+		public String XBUTTON;
+		
+		/** 
+		 * This is extended monome protocol for aftertouch 
+		 * xafter [x] [y] [value] 
+		 * value is float between 0...1 
+		 */
+		public String XAFTER;
+		
+		
+	}
+	
 	// oscP5 instance for the osc communication
 	private OscP5 oscP5;
 	private String boxName = "box";
-
-	// osc constants
-	private static final String LED = "led";
-	private static final String ROW = "led_row";
-	private static final String COL = "led_col";
-	private static final String SHUTDOWN = "shutdown";
-	private static final String BUTTON = "press";
-	private static final String TEST = "test";
-	private static final String ADC = "adc";
-	private static final String TILT = "tilt";
-	private static final String REFRESH = "refresh";
-	private static final String ADC_ENABLE = "adc_enable";
-	private static final String INTENSITY = "intensity";
-	
-	/** 
-	 * This is extended monome protocol for press with velocity 
-	 * xpress [x] [y] [velocity] 
-	 * velocity is integer between 0...127 
-	 */
-	private static final String XBUTTON = "xpress";
-	
-	/** 
-	 * This is extended monome protocol for aftertouch 
-	 * xafter [x] [y] [value] 
-	 * value is float between 0...1 
-	 */
-	private static final String XAFTER = "xafter";
 	
 	// Address for P5Osc
 	private NetAddress myRemoteLocation;
@@ -78,7 +92,43 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	private MonomeListener listener;
 	
 	// osc addresses for this instance
-	protected String led, row, col, shutdown, button, test, adc, tilt, refresh, adc_enable, intensity, xbutton, xafter;
+	protected String led, row, col, shutdown, button, test, adc, tilt, refresh, adc_enable, intensity, xbutton, xafter, per_intensity_led;
+	
+	protected void setProtocol(ProtocolVersion protocolVer) {
+		protocol = new Protocol(protocolVer);
+		
+		if (protocolVer == protocolVer.classic) {
+			protocol.LED = "led";
+			protocol.PER_LED_INTENSITY = null; // not supported
+			protocol.ROW = "led_row";
+			protocol.COL = "led_col";
+			protocol.SHUTDOWN = "shutdown";
+			protocol.BUTTON = "press";
+			protocol.TEST = "test";
+			protocol.ADC = "adc";
+			protocol.TILT = "tilt";
+			protocol.REFRESH = "refresh";
+			protocol.ADC_ENABLE = "adc_enable";
+			protocol.INTENSITY = "intensity";
+			protocol.XAFTER = "xafter";
+			protocol.XBUTTON = "xpress";
+		} else {
+			protocol.LED = "grid/led/set";
+			protocol.PER_LED_INTENSITY = "grid/led/level/set"; // x y l
+			protocol.ROW = "led_row";
+			protocol.COL = "led_col";
+			protocol.SHUTDOWN = "shutdown";
+			protocol.BUTTON = "grid/key";
+			protocol.TEST = "test";
+			protocol.ADC = "adc";
+			protocol.TILT = "tilt";
+			protocol.REFRESH = "refresh";
+			protocol.ADC_ENABLE = "adc_enable";
+			protocol.INTENSITY = "intensity";
+			protocol.XAFTER = "xafter";
+			protocol.XBUTTON = "xpress";
+		}
+	}
 	
 	/**
 	 * Construct any monome grid in byte(8) button increments
@@ -91,6 +141,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	 */
 	public MonomeOSC(int x_bytes, int y_bytes) {
 		super(x_bytes, y_bytes);
+		setProtocol(ProtocolVersion.serialosc); // default
 	}
 
 	/**
@@ -106,6 +157,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	public MonomeOSC(MonomeListener listener, int x_bytes, int y_bytes) {
 		super(x_bytes, y_bytes);
 		this.listener = listener;
+		setProtocol(ProtocolVersion.serialosc); // default
 	}
 
 	/**
@@ -115,10 +167,10 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	 * @param sendPort
 	 * @param receivePort
 	 */
-	public void startup(String boxName, String host, int sendPort, int receivePort) {
+	public void startup(String boxName, String host, int sendPort, int receivePort, ProtocolVersion protocolVer) {
 		this.boxName = boxName;
 		
-		initOsc(host, sendPort, receivePort);
+		initOsc(host, sendPort, receivePort, protocolVer);
 		setBoxName(boxName);
 		
 		super.init();
@@ -132,21 +184,27 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		this.boxName = boxName;
 
 		// set osc addresses
-		led = prependName(LED);
-		row = prependName(ROW);
-		col = prependName(COL);
-		shutdown = prependName(SHUTDOWN);
-		button = prependName(BUTTON);
-		test = prependName(TEST);
-		tilt = prependName(TILT);
-		refresh = prependName(REFRESH);
-		adc = prependName(ADC);
-		adc_enable = prependName(ADC_ENABLE);
-		intensity = prependName(INTENSITY);
+		led = prependName(protocol.LED);
+		
+		if (protocol.PER_LED_INTENSITY != null)
+			per_intensity_led = prependName(protocol.PER_LED_INTENSITY);
+		else
+			per_intensity_led = null;
+		
+		row = prependName(protocol.ROW);
+		col = prependName(protocol.COL);
+		shutdown = prependName(protocol.SHUTDOWN);
+		button = prependName(protocol.BUTTON);
+		test = prependName(protocol.TEST);
+		tilt = prependName(protocol.TILT);
+		refresh = prependName(protocol.REFRESH);
+		adc = prependName(protocol.ADC);
+		adc_enable = prependName(protocol.ADC_ENABLE);
+		intensity = prependName(protocol.INTENSITY);
 		
 		// Extended monome proto messages
-		xbutton = prependName(XBUTTON);
-		xafter = prependName(XAFTER);
+		xbutton = prependName(protocol.XBUTTON);
+		xafter = prependName(protocol.XAFTER);
 	}
 
 	private String prependName(String command) {
@@ -164,11 +222,37 @@ public class MonomeOSC extends Monome implements MonomeListener {
 
 	public void setValue(int x, int y, int value) {
 		super.setValue(x, y, value);
-		OscMessage oscMsg = makeMessage(led);
-		oscMsg.add(x);
-		oscMsg.add(y);
-		oscMsg.add(value);
-		send(oscMsg);
+		
+		if (protocol.version == ProtocolVersion.serialosc) {
+			
+			if (value > 0) {
+				OscMessage oscMsgLevel = makeMessage(per_intensity_led);
+				oscMsgLevel.add(x);
+				oscMsgLevel.add(y);
+				oscMsgLevel.add(value);
+				send(oscMsgLevel);
+				
+				OscMessage oscMsg = makeMessage(led);
+				oscMsg.add(x);
+				oscMsg.add(y);
+				oscMsg.add(1);
+				send(oscMsg);
+			} else {
+				
+				OscMessage oscMsg = makeMessage(led);
+				oscMsg.add(x);
+				oscMsg.add(y);
+				oscMsg.add(0);
+				send(oscMsg);
+			}
+		
+		} else {
+			OscMessage oscMsg = makeMessage(led);
+			oscMsg.add(x);
+			oscMsg.add(y);
+			oscMsg.add(value);
+			send(oscMsg);
+		}
 	}
 
 	public void setRow(int i, byte[] bitVals) {
@@ -223,10 +307,11 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		oscP5.send(m, myRemoteLocation);
 	}
 
-	public void initOsc(String host, int sendPort, int receivePort) {
+	public void initOsc(String host, int sendPort, int receivePort, ProtocolVersion protocolVer) {
 		myRemoteLocation = new NetAddress(host, sendPort);
 		myLocalLocation = new NetAddress(host, receivePort);
 		oscP5 = new OscP5(new OSCReceiver(this), receivePort);
+		this.setProtocol(protocolVer);
 	}
 	
 	public void oscEvent(OscMessage oscIn) {
