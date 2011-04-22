@@ -32,7 +32,7 @@ public class ConnectionSettings {
 	public int oscHostPort = 8080;
 	public int oscListenPort = 8000;
 	public MonomeOSC.ProtocolVersion protocolVersion = MonomeOSC.ProtocolVersion.serialosc; /** classic is v1 protocol, serialosc is v2 protocol */
-	public boolean multilevel = false; // use multiple led levels rather than multiple blink modes
+	public boolean multilevel = true; // use multiple led levels rather than multiple blink modes
 	public String oscHostAddress = "127.0.0.1";
 	public String midiInputDeviceName = M4LMidiSystem.eSevenUp4InputDevices.SevenUpMidiControl.toString();
 	public String controllerOutputDeviceName = M4LMidiSystem.eSevenUp4OutputDevices.Controller.toString();

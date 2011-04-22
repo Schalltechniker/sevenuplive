@@ -234,7 +234,7 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 				System.out.println("Creating a grid with startCol = " + startCol + " and startRow = " + startRow);
 				
 				// Determine mode as regular blink or multi-led level support
-				if(_sevenUpConnections.multilevel)
+				if(sevenUpConnections.multilevel)
 					grids[i] = new MultiLevelDisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
 				else
 				    grids[i] = new DisplayGrid(this, allmodes, startCol, startRow, 8, 8, allmodes.getPatternizerView(i), i, totalGrids);
