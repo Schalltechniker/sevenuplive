@@ -143,6 +143,17 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 		adcCalibrateMode = on;
 	}
 	
+	/**
+	 * If we are either calibrating OR in ADC On mode then yes ADC should be on 
+	 * @return
+	 */
+	public boolean shouldADCBeOn() {
+		if (adcCalibrateMode|| adcActive)
+			return true;
+		else
+			return false;
+	}
+	
 	public void setADCActive(boolean on) {
 		adcActive = on;
 	}

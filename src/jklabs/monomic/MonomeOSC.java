@@ -42,7 +42,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 
 	public static enum ProtocolVersion {classic, serialosc};
 	
-	Protocol protocol;
+	public Protocol protocol;
 	
 	public class Protocol {
 		
@@ -127,15 +127,15 @@ public class MonomeOSC extends Monome implements MonomeListener {
 			protocol.BUTTON = "grid/key";
 			protocol.TEST = "test"; // @TODO for v2
 			protocol.ADC = "adc"; // @TODO for v2
-			protocol.TILT = "tilt"; // @TODO for v2
-			protocol.ADC_ENABLE = "adc_enable";
+			protocol.TILT = "tilt"; //  /tilt/tilt n x y z
+			protocol.ADC_ENABLE = "tilt/set"; //  /tilt/set x y turns tilt on or off
 			protocol.INTENSITY = "intensity"; 
 			
 			protocol.ALL = "grid/led/all";
 			
-			protocol.REFRESH = "refresh"; // custom protocol
-			protocol.XAFTER = "xafter"; // custom protocol
-			protocol.XBUTTON = "xpress"; // custom protocol
+			protocol.REFRESH = "grid/refresh"; // custom protocol
+			protocol.XAFTER = "grid/xafter"; // custom protocol
+			protocol.XBUTTON = "grid/xkey"; // custom protocol
 		}
 	}
 	
@@ -361,6 +361,19 @@ public class MonomeOSC extends Monome implements MonomeListener {
 				float yval = oscIn.get(1).floatValue();
 				handleAdcInput(0, xval/255.0f);
 				handleAdcInput(1, yval/255.0f);
+			} else if (oscIn.checkTypetag("ii")) { // For some reason gs128 uses this protocol with monomeserial
+				int xval = oscIn.get(0).intValue();
+				int yval = oscIn.get(1).intValue();
+				handleAdcInput(0, xval/255.0f);
+				handleAdcInput(1, yval/255.0f);
+			} else if (oscIn.checkTypetag("iiii")) { // This is v2 protocol x y z
+				int n = oscIn.get(0).intValue();
+				int xval = oscIn.get(1).intValue();
+				int yval = oscIn.get(2).intValue();
+				int zval = oscIn.get(3).intValue();  
+				handleAdcInput(0 + (n * 3), xval/255.0f);
+				handleAdcInput(1 + (n * 3), yval/255.0f);
+				handleAdcInput(2 + (n * 3), zval/255.0f);
 			}
 		} if (oscIn.checkAddrPattern(xbutton)) {
 			if (oscIn.checkTypetag("iii")) {
@@ -379,6 +392,13 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		} else if (oscIn.checkAddrPattern(refresh)) {
 			handleRefresh();
 		} else {
+			if (oscIn.checkTypetag("iii")) { // This is v2 protocol x y n
+				int n = oscIn.get(2).intValue();
+				int xval = oscIn.get(0).intValue();
+				int yval = oscIn.get(1).intValue();
+				handleAdcInput(0 + n, xval/255.0f);
+				handleAdcInput(1 + n, yval/255.0f);
+			}
 			if (debug == FINE) {
 				System.out.println("you have received an osc message "
 						+ oscIn.getAddrPattern() + "   " + oscIn.getTypetag());

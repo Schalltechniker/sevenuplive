@@ -1,0 +1,44 @@
+v2.0.5
+
+- Added velocity support to Melodizers
+On melodizer 1, midi input to ch9 on track that SevenUpCore is in will record 
+notes to pattern recorders. Velocity will now be recorded as well. 
+
+There are three custom OSC protocol messages specific to 7up and not included 
+in the monome osc protocol.
+
+For v1 classic protocol these are
+
+/refresh - Force 7up to redraw the entire surface, rather than the 
+standard draw mode that only redraws what has changed. This was needed for 
+manta support, because we move the draw window and need a way to force a full
+redraw.
+
+Multi-level led support for v2 monomes. Monomes that support multi-intensity leds 
+can use this mode which is very friendly on the bandwidth since it trades fast
+blinks for led levels. Current pattern still fast blinks. Record enable still 
+slow binks.
+
+Tilt support added for serialosc
+
+/xpress x y v - Same as /press but with extra param for velocity.
+if you send osc button press messages to SevenUp and add an extra integer OSC 
+param at the end, SevenUp will interpret this as velocity input. 
+This is how the manta patch works, an app could also use an ARC or encoder 
+to modify the velocity range and send this with button presses.
+
+The messages are slightly different when using v2 serialosc protocol since the 
+path look slightly different in v2 messages.
+ 
+/grid/refresh
+/grid/xkey x y v 
+
+BUG FIXES
+
+Fixed tilt support for gs128. For some reason the protocol type tags were 
+different for the gs128. Anyway, it works now.
+
+
+ 
+
+

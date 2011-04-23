@@ -742,6 +742,12 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	 */
 	public void setADCCalibrateMode(boolean on) {
 		allmodes.getControllerModel().setADCCalibrationMode(on);
+		
+		if (protocol.version == ProtocolVersion.serialosc) { // for serialosc we need to turn on automagically
+			this.setADC(0, allmodes.getControllerModel().shouldADCBeOn());
+			this.setADC(1, allmodes.getControllerModel().shouldADCBeOn());
+			this.setADC(2, allmodes.getControllerModel().shouldADCBeOn());
+		}
 	}
 	
 	/**
@@ -750,6 +756,12 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 	 */
 	public void setADCActive(boolean on) {
 		allmodes.getControllerModel().setADCActive(on);
+		
+		if (protocol.version == ProtocolVersion.serialosc) { // for serialosc we need to turn on automagically
+			this.setADC(0, allmodes.getControllerModel().shouldADCBeOn());
+			this.setADC(1, allmodes.getControllerModel().shouldADCBeOn());
+			this.setADC(2, allmodes.getControllerModel().shouldADCBeOn());
+		}
 	}
 	
 	public void reset() {
