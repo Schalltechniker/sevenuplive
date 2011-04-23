@@ -54,6 +54,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		public String LED;
 		public String PER_LED_INTENSITY;
 		public String ROW;
+		public String ALL;
 		public String COL;
 		public String SHUTDOWN;
 		public String BUTTON;
@@ -92,7 +93,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	private MonomeListener listener;
 	
 	// osc addresses for this instance
-	protected String led, row, col, shutdown, button, test, adc, tilt, refresh, adc_enable, intensity, xbutton, xafter, per_intensity_led;
+	protected String led, row, col, shutdown, button, test, adc, tilt, refresh, adc_enable, intensity, all, xbutton, xafter, per_intensity_led;
 	
 	protected void setProtocol(ProtocolVersion protocolVer) {
 		protocol = new Protocol(protocolVer);
@@ -107,26 +108,34 @@ public class MonomeOSC extends Monome implements MonomeListener {
 			protocol.TEST = "test";
 			protocol.ADC = "adc";
 			protocol.TILT = "tilt";
-			protocol.REFRESH = "refresh";
+			
 			protocol.ADC_ENABLE = "adc_enable";
 			protocol.INTENSITY = "intensity";
-			protocol.XAFTER = "xafter";
-			protocol.XBUTTON = "xpress";
+			
+			// serialosc only
+			protocol.ALL = null;
+			
+			protocol.REFRESH = "refresh"; // custom protocol
+			protocol.XAFTER = "xafter"; // custom protocol
+			protocol.XBUTTON = "xpress"; // custom protocol
 		} else {
 			protocol.LED = "grid/led/set";
 			protocol.PER_LED_INTENSITY = "grid/led/level/set"; // x y l
-			protocol.ROW = "led_row";
-			protocol.COL = "led_col";
-			protocol.SHUTDOWN = "shutdown";
+			protocol.ROW = "grid/led/row";
+			protocol.COL = "grid/led/col";
+			protocol.SHUTDOWN = "shutdown"; // @TODO for v2
 			protocol.BUTTON = "grid/key";
-			protocol.TEST = "test";
-			protocol.ADC = "adc";
-			protocol.TILT = "tilt";
-			protocol.REFRESH = "refresh";
+			protocol.TEST = "test"; // @TODO for v2
+			protocol.ADC = "adc"; // @TODO for v2
+			protocol.TILT = "tilt"; // @TODO for v2
 			protocol.ADC_ENABLE = "adc_enable";
-			protocol.INTENSITY = "intensity";
-			protocol.XAFTER = "xafter";
-			protocol.XBUTTON = "xpress";
+			protocol.INTENSITY = "intensity"; 
+			
+			protocol.ALL = "grid/led/all";
+			
+			protocol.REFRESH = "refresh"; // custom protocol
+			protocol.XAFTER = "xafter"; // custom protocol
+			protocol.XBUTTON = "xpress"; // custom protocol
 		}
 	}
 	
@@ -155,9 +164,8 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	 * @param receivePort port to receive on
 	 */
 	public MonomeOSC(MonomeListener listener, int x_bytes, int y_bytes) {
-		super(x_bytes, y_bytes);
+		this(x_bytes, y_bytes);
 		this.listener = listener;
-		setProtocol(ProtocolVersion.serialosc); // default
 	}
 
 	/**
@@ -185,6 +193,11 @@ public class MonomeOSC extends Monome implements MonomeListener {
 
 		// set osc addresses
 		led = prependName(protocol.LED);
+		
+		if (protocol.ALL != null)
+			all = prependName(protocol.ALL);
+		else
+			all = null;
 		
 		if (protocol.PER_LED_INTENSITY != null)
 			per_intensity_led = prependName(protocol.PER_LED_INTENSITY);

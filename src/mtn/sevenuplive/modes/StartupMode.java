@@ -65,7 +65,7 @@ public class StartupMode extends Mode {
 		
 		displayGrid = new int[8][8];
 	}
-	
+
 	protected boolean isFinished() {
 		return finished;
 	}
