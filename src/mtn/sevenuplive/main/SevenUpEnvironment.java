@@ -64,18 +64,27 @@ public class SevenUpEnvironment {
 		return m;
 	}
 	
-	public boolean startSevenUp() {
+	public boolean isStarted() {
 		if (applet != null) {
 			if (applet.isRunning()) {
+				return true;
+			} else {
 				return false;
 			}
 		} else {
-			// @TODO need to pull all the settings at this time
-			newMonome();
-			applet = new SevenUpApplet(m, sevenUpConnections, midiIO);
-			applet.setVisible(false);
-			xmlIO = new XMLInOut(applet);
+			return false;
 		}
+	}
+	
+	public boolean startSevenUp() {
+		if (isStarted()) 
+			return false;
+	
+		newMonome();
+		applet = new SevenUpApplet(m, sevenUpConnections, midiIO);
+		applet.setVisible(false);
+		xmlIO = new XMLInOut(applet);
+	
 		return true;
 	}
 

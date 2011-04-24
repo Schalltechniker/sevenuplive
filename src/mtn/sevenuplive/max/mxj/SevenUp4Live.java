@@ -298,7 +298,11 @@ public class SevenUp4Live extends MaxObject {
 	
 	public void tilt(Atom[] list)
 	{
-		MonomeUp m = environment.getMonome(); 
+		if (!environment.isStarted())
+			return; // We can't send OSC is nt started
+			
+		MonomeUp m = environment.getMonome();
+		
 		if (m == null) // Nothing to do
 			return;
 		
