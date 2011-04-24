@@ -117,60 +117,65 @@ public class SevenUpEnvironment {
 		// Figure out dimensions of monome grid
 		int x_grids = 1;
 		int y_grids = 1;
-		switch (monomeType) {
-		case 0: //1 x 64
-			x_grids=1; y_grids=1;
-			break;
-		case 1: //128H
-			x_grids=2; y_grids=1;
-			break;
-		case 2: //128V
-			x_grids=1; y_grids=2;
-			break;
-		case 3: //3 x 64's
-			x_grids=1; y_grids=3;
-			break;
-		case 4: //256
-			x_grids=2; y_grids=2;
-			break;
-		case 5: //2x256
-			x_grids=4; y_grids=2;
-			break;
-		case 6: //3x256
-			x_grids=6; y_grids=2;
-			break;	   
-		case 7:
-			x_grids = 1; y_grids = 5;
-			break;
-		case 8:
-			x_grids = 1; y_grids = 6;
-			break;
-		case 9:
-			x_grids = 1; y_grids = 7;
-			break;
-		case 10:
-			x_grids = 1; y_grids = 8;
-			break;
-		case 11:
-			x_grids = 1; y_grids = 9;
-			break;
-		case 12: //10 x 64's
-			x_grids = 1; y_grids = 10;
-			break;
-		case 13: //MultiColorDevice
-			x_grids = 1; y_grids = 1;
-			deviceType = MonomeUp.eDeviceType.MultiColorDevice;
-			break;
-		case 14: //MultiColor256
-			x_grids = 2; y_grids = 2;
-			deviceType = MonomeUp.eDeviceType.MultiColorDevice;
-			break;
-		case 15: //MantaV2
-			x_grids = 1; y_grids = 1;
-			deviceType = MonomeUp.eDeviceType.Manta;
-			break;	
-		};
-
+		
+		if (sevenUpConnections.gridx > 0 && sevenUpConnections.gridy > 0) {
+			x_grids = sevenUpConnections.gridx;
+			y_grids = sevenUpConnections.gridy;
+		} else {
+			switch (monomeType) {
+			case 0: //1 x 64
+				x_grids=1; y_grids=1;
+				break;
+			case 1: //128H
+				x_grids=2; y_grids=1;
+				break;
+			case 2: //128V
+				x_grids=1; y_grids=2;
+				break;
+			case 3: //3 x 64's
+				x_grids=1; y_grids=3;
+				break;
+			case 4: //256
+				x_grids=2; y_grids=2;
+				break;
+			case 5: //2x256
+				x_grids=4; y_grids=2;
+				break;
+			case 6: //3x256
+				x_grids=6; y_grids=2;
+				break;	   
+			case 7:
+				x_grids = 1; y_grids = 5;
+				break;
+			case 8:
+				x_grids = 1; y_grids = 6;
+				break;
+			case 9:
+				x_grids = 1; y_grids = 7;
+				break;
+			case 10:
+				x_grids = 1; y_grids = 8;
+				break;
+			case 11:
+				x_grids = 1; y_grids = 9;
+				break;
+			case 12: //10 x 64's
+				x_grids = 1; y_grids = 10;
+				break;
+			case 13: //MultiColorDevice
+				x_grids = 1; y_grids = 1;
+				deviceType = MonomeUp.eDeviceType.MultiColorDevice;
+				break;
+			case 14: //MultiColor256
+				x_grids = 2; y_grids = 2;
+				deviceType = MonomeUp.eDeviceType.MultiColorDevice;
+				break;
+			case 15: //MantaV2
+				x_grids = 1; y_grids = 1;
+				deviceType = MonomeUp.eDeviceType.Manta;
+				break;	
+			};
+		}
 		m = new MonomeUp(deviceType, x_grids, y_grids, sevenUpConnections, monomeScale, midiIO);
 		
 	}

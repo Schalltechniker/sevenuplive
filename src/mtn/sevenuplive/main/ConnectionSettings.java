@@ -27,11 +27,13 @@ import mtn.sevenuplive.m4l.M4LMidiSystem;
 
 public class ConnectionSettings {
 	
-	public int monomeType=0; // 64 default
+	public int monomeType=0; // look at SevenUp4Live eMonomeType
+	public int gridx=-1; // if set > 0 then monome will be sized by this value x 8. This overrides monomeType 
+	public int gridy=-1; // if set > 0 then monome will be sized by this value x 8. This overrides monomeType 
 	public String oscPrefix = "7up";
 	public int oscHostPort = 8080;
 	public int oscListenPort = 8000;
-	public MonomeOSC.ProtocolVersion protocolVersion = MonomeOSC.ProtocolVersion.serialosc; /** classic is v1 protocol, serialosc is v2 protocol */
+	public MonomeOSC.ProtocolVersion protocolVersion = MonomeOSC.ProtocolVersion.classic; /** classic is v1 protocol, serialosc is v2 protocol */
 	public boolean multilevel = true; // use multiple led levels rather than multiple blink modes
 	public String oscHostAddress = "127.0.0.1";
 	public String midiInputDeviceName = M4LMidiSystem.eSevenUp4InputDevices.SevenUpMidiControl.toString();

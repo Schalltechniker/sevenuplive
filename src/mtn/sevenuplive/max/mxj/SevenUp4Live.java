@@ -66,7 +66,7 @@ public class SevenUp4Live extends MaxObject {
 	public static enum eLifecycle {started, stopped, dirty};
 	
 	private static final String[] INLET_ASSIST = new String[]{
-		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), protocol, multilevel, listenport, hostport, looper, melodizer1, melodizer2, tilt)",
+		"messages (initialize, shutdown, monome (0,1,2..etc), oscprefix, hostaddress (127.0.0.1), protocol, multilevel, grid, listenport, hostport, looper, melodizer1, melodizer2, tilt)",
 		"Midi In",
 		"clock in (0=C4,1=D#4,2=C7,3=E7,4=F7)"
 	};
@@ -401,6 +401,17 @@ public class SevenUp4Live extends MaxObject {
 					settings.multilevel = true;
 			}
 			post("Setting monome multilevel mode to [" + settings.multilevel + "]");
+		}
+	}
+	
+	public void grid(Atom[] list)
+	{
+		if (list.length > 0) {
+			int xgrid = list[0].getInt();
+			int ygrid = list[1].getInt();
+			post("Setting gridsize to [" + xgrid + " x " + ygrid + "]");
+			settings.gridx = Math.abs(xgrid / 8);
+			settings.gridy = Math.abs(ygrid / 8);
 		}
 	}
 	
