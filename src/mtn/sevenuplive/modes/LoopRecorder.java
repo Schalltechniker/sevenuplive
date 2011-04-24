@@ -35,7 +35,6 @@ import org.jdom.Element;
 public class LoopRecorder extends Mode {
 
 	private CtrlSequence loopSequences[];
-	private Boolean gateLoopChokes = true;
 	private int curSequence = 0;
 	private int tick = 0;
 	private boolean prestepfired = false;
@@ -113,7 +112,7 @@ public class LoopRecorder extends Mode {
 			{
 				if(k!=x && AllModes.getInstance().getLooper().getLoop(k).getChokeGroup() == curChokeGroup)
 				{
-					if(gateLoopChokes)
+					if(AllModes.getInstance().getLooper().getGateLoopChokes())
 						AllModes.getInstance().getLooper().stopLoop(k);
 					else
 						AllModes.getInstance().getLooper().stopLoopsOnNextStep[k] = true;
@@ -187,7 +186,7 @@ public class LoopRecorder extends Mode {
 		tick = 0;
 		
 		//If a loop sequence is playing, call heartbeat
-		for(int i=0;i<7;i++)
+		for(int i=0;i<loopSequences.length;i++)
 		{
 			step(i);
 		}
@@ -197,49 +196,29 @@ public class LoopRecorder extends Mode {
 	
 	/**
 	 * Take the loop step
-	 * @param loopIndex
+	 * @param loopSequenceIndex
 	 */
-	public synchronized void step(int loopIndex)
+	public synchronized void step(int loopSequenceIndex)
 	{
 		// Skip a step if sequence was fired too late.
 		if (!prestepfired)
 			return;
 			
-		int curChokeGroup;
-		int i = loopIndex;
+		int i = loopSequenceIndex;
 		ArrayList<ControlValue> sequencedControlValues = loopSequences[i].heartbeat();
-		
-		if(sequencedControlValues != null)
-		{
-			for(ControlValue cv : sequencedControlValues)
-			{
-				if(cv != null && cv.getValue() > -1)
-				{
-					curChokeGroup = AllModes.getInstance().getLooper().getLoop(i).getChokeGroup();
-					if(curChokeGroup > -1)
-					{
-						for(int k=0;k<7;k++)
-						{
-							if(k!=i && AllModes.getInstance().getLooper().getLoop(k).getChokeGroup() == curChokeGroup)
-								AllModes.getInstance().getLooper().setLoopStopOnNextStep(k);
-						}
-						
-					}
-				}
-			}
-		}
-		
-
 	}
 	
 	/**
 	 * Setup the next step before taking it.
-	 * @param loopIndex
+	 * @param loopSequenceIndex
 	 */
-	public void prestep(int loopIndex)
+	public void prestep(int loopSequenceIndex)
 	{
-		int i = loopIndex;
-		ArrayList<ControlValue> sequencedControlValues = loopSequences[i].peekstep();
+		int i = loopSequenceIndex;
+		int curChokeGroup;
+		int curLoop;
+		boolean isFirstLoop = true;
+		ArrayList<ControlValue> sequencedControlValues = loopSequences[i].getNextEvent();
 		
 		if(sequencedControlValues != null)
 		{
@@ -247,8 +226,24 @@ public class LoopRecorder extends Mode {
 			{
 				if(cv != null && cv.getValue() > -1)
 				{
-					AllModes.getInstance().getLooper().playLoop(cv.getId(), cv.getValue());
+					curLoop = cv.getId();
+					AllModes.getInstance().getLooper().playLoop(curLoop, cv.getValue());
+					//If the first loop played during this event is in the same choke group with out loops, cut out 
+					if(isFirstLoop)
+					{
+						curChokeGroup = AllModes.getInstance().getLooper().getLoop(curLoop).getChokeGroup();
+						if(curChokeGroup > -1)
+						{
+							for(int k=0;k<7;k++)
+							{
+								if(k!=curLoop && AllModes.getInstance().getLooper().getLoop(k).getChokeGroup() == curChokeGroup)
+									AllModes.getInstance().getLooper().setLoopStopOnNextStep(k);
+							}
+						}
+					}
+					isFirstLoop = false;
 				}
+				
 			}
 		}
 		
@@ -256,7 +251,7 @@ public class LoopRecorder extends Mode {
 	
 	public boolean isLoopSequencePlaying(int loopIndex)
 	{
-		return loopSequences[loopIndex].getStatus() == 1;
+		return loopSequences[loopIndex].getStatus() == MonomeUp.PLAYING;
 	}
 	
 	public boolean loopSequenceExists(int loopIndex)
@@ -277,11 +272,12 @@ public class LoopRecorder extends Mode {
 	
 	public void stopLoopSequence(int loopIndex)
 	{
+		//Search through the sequence for any loops that might be playing and stop them. 
 		for(Integer loopId : loopSequences[loopIndex].getUniqueCtrlIds())
 			AllModes.getInstance().getLooper().stopLoop(loopId);
+		//Then stop the sequence itself
 		loopSequences[loopIndex].stop();
 	}
-	
 	
 	public Element toJDOMXMLElement()
 	{
@@ -322,10 +318,7 @@ public class LoopRecorder extends Mode {
 		}
 	}
 	
-	public void setGateLoopChokes(boolean _gateLoopChokes)
-	{
-		gateLoopChokes = _gateLoopChokes;
-	}
+
 	
 	
 }

@@ -214,30 +214,6 @@ public class Looper extends Mode {
 			playLoop(x, y);
 	}
 	
-	// NOTE: Not used
-	/*private int getSizeOfStoppedLoopsInChokeGroup(int chokeGroup)
-	{
-		int size = 0;
-		for(int i=0;i<7;i++)
-		{
-			if(stopLoopsOnNextStep[i])
-				if(loops[i].getChokeGroup() == chokeGroup)
-					size++;
-		}
-		return size;
-	}
-	
-	private int getChokeGroupSize(int chokeGroup)
-	{
-		int size = 0;
-		for(int i=0; i<7;i++)
-		{
-			if(loops[i].getChokeGroup() == chokeGroup)
-				size++;
-		}
-		return size;
-	}*/
-	
 	public void release(int x, int y)
 	{
 		if (loops[x].isPlaying() && loops[x].getType() == Loop.MOMENTARY && loops[x].getLastTriggedStep() == y) {

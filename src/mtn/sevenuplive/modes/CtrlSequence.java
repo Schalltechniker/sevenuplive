@@ -80,7 +80,7 @@ public class CtrlSequence {
 	 * Give us the events on the next step without actually advancing there
 	 * @return
 	 */
-	public ArrayList<ControlValue> peekstep()
+	public ArrayList<ControlValue> getNextEvent()
 	{
 		int peekcounter = counter + 1;
 		

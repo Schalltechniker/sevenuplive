@@ -591,13 +591,12 @@ public final class MonomeUp extends MonomeOSC implements MonomeListener, SevenUp
 
 	public void setGateLoopChokes(boolean _gateLoopChokes) {
 		allmodes.getLooper().setGateLoopChokes(_gateLoopChokes);
-		allmodes.getLoopRecorder().setGateLoopChokes(_gateLoopChokes);
+		System.out.println("mtn: gated loops set to " + _gateLoopChokes);
 	}
 
 	public boolean getGateLoopChokes()
 	{
 		// @TODO this looks hackish, why are we setting in a getter?
-		allmodes.getLoopRecorder().setGateLoopChokes(allmodes.getLooper().getGateLoopChokes());
 		return allmodes.getLooper().getGateLoopChokes();
 	}
 
