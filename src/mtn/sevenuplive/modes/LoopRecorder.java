@@ -227,8 +227,9 @@ public class LoopRecorder extends Mode {
 				if(cv != null && cv.getValue() > -1)
 				{
 					curLoop = cv.getId();
+					//Play the loop associated with this event
 					AllModes.getInstance().getLooper().playLoop(curLoop, cv.getValue());
-					//If the first loop played during this event is in the same choke group with out loops, cut out 
+					//If the first loop played during this event is in the same choke group with other loops, stop the other loops
 					if(isFirstLoop)
 					{
 						curChokeGroup = AllModes.getInstance().getLooper().getLoop(curLoop).getChokeGroup();
