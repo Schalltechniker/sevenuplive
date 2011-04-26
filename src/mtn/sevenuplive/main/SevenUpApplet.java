@@ -24,6 +24,7 @@ package mtn.sevenuplive.main;
 import mtn.sevenuplive.m4l.M4LMidi;
 import mtn.sevenuplive.m4l.Note;
 import mtn.sevenuplive.max.mxj.SevenUpClock;
+import mtn.sevenuplive.modes.DisplayGrid;
 
 public class SevenUpApplet extends processing.core.PApplet implements SevenUpClock
 {
@@ -107,25 +108,25 @@ public class SevenUpApplet extends processing.core.PApplet implements SevenUpClo
 	}
 	
 	public void noteOnCh1(Note note){
-		m.clipLaunch(note.getPitch(), 100 , 0);
+		m.clipLaunch(note.getPitch(), note.getVelocity() , 0);
 	}
 	public void noteOnCh2(Note note){
-		m.clipLaunch(note.getPitch(), 100, 1);
+		m.clipLaunch(note.getPitch(), note.getVelocity(), 1);
 	}
 	public void noteOnCh3(Note note){
-		m.clipLaunch(note.getPitch(), 100, 2);
+		m.clipLaunch(note.getPitch(), note.getVelocity(), 2);
 	}
 	public void noteOnCh4(Note note){
-		m.clipLaunch(note.getPitch(), 100, 3);
+		m.clipLaunch(note.getPitch(), note.getVelocity(), 3);
 	}
 	public void noteOnCh5(Note note){
-		m.clipLaunch(note.getPitch(), 100, 4);
+		m.clipLaunch(note.getPitch(), note.getVelocity(), 4);
 	}
 	public void noteOnCh6(Note note){
-		m.clipLaunch(note.getPitch(), 100, 5);
+		m.clipLaunch(note.getPitch(), note.getVelocity(), 5);
 	}
 	public void noteOnCh7(Note note){
-		m.clipLaunch(note.getPitch(), 100, 6);
+		m.clipLaunch(note.getPitch(), note.getVelocity(), 6);
 	}
 	
 	public void noteOnCh9(Note note){
