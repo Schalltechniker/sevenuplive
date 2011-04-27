@@ -1,6 +1,6 @@
 v2.0.5
 
-- Two versions of SevenUpCore. SevenUpCore from 2.0.4 is now SevenUpCoreClassic 
+- Two versions of SevenUpCore. SevenUpCore from 2.0.4 is now SevenUpCoreClassic
 and has old style connection dialog. This version support use with Monomeserial,
 and all routers that were designed to work with v1 protocol. New SevenUpCore is 
 designed to work with serialosc and v2 protocol. You need to install zeroconf MAX
@@ -55,6 +55,14 @@ recorded.
 
 Fixed SevenUpCoreClass host/listen port configuration did not allow for ports 
 above 9999. Now can go up to 400000.
+
+Fixed clip launcher being a resource hog by not polling anymore but using 
+observers instead.
+
+
+
+
+
 
 
 
