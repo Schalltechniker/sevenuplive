@@ -829,22 +829,18 @@ public class MelodizerModel extends EventDispatcherImpl implements PlayContext, 
 		if(vel == 0 ||vel == 64) //STOP or OFF
 		{
 			clipNotes[channel][pitch] = DisplayGrid.OFF;
-			//System.out.println("Setting " + pitch + " OFF for channel " + channel);
 		}
 		else if (vel == 125)//Clip present
 		{
-			clipNotes[channel][pitch] = DisplayGrid.FASTBLINK;
-			//System.out.println("Setting " + pitch + " SLOWBLINK");
+			clipNotes[channel][pitch] = DisplayGrid.SOLID;
 		}
 		else if(vel == 126)//CUE
 		{
 			clipNotes[channel][pitch] = DisplayGrid.SLOWBLINK;
-			//System.out.println("Setting " + pitch + " SLOWBLINK");
 		}	
 		else if(vel == 127 || vel == 1)//PLAY or continue
 		{
-			//Turn on the note that actually plays
-			clipNotes[channel][pitch] = DisplayGrid.SOLID;
+			clipNotes[channel][pitch] = DisplayGrid.FASTBLINK;
 		}
 		updateDisplayGrid(channel);
 	}
