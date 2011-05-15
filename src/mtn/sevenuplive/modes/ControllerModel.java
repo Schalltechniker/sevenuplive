@@ -37,6 +37,7 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 	private boolean adcCalibrateMode = false;
 	private boolean adcActive = false;
 	
+	boolean resetADCCalibration = true;
 	private float[] adcScalar = new float[8];
 	private float[] adcCenterOffset = new float[8];
 	private float[] adcMin = new float[8];
@@ -181,6 +182,7 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 		// We work in the range of 0 - 127
 		float scaledValue = value * 127;
 		scaledValue = Math.min(127, scaledValue);
+		scaledValue = Math.max(0, scaledValue);
 		
 		if (adcCalibrateMode) {
 			calibrate(x, scaledValue); // provide input for calibration 
@@ -201,6 +203,17 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 	 * @param value
 	 */
 	private void calibrate(int x, float value) {
+		// This is a crazy gs128 firmware bug (tested both serialosc and monomeserial).
+		// There is one spurious value that messes up the actual tilt range.
+		// Here we simply filter it out.
+		if ((value - 3.4862745) < .1) {
+			return;
+		}
+		
+		if (resetADCCalibration) {
+			resetADCCalibration();
+			resetADCCalibration = false;
+		}
 			
 		// Get new minimum
 		if (adcMin[x] == -1f || adcMin[x] > value) {
@@ -221,19 +234,22 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 	private void finalizeCalibration() {
 		float center = new Float(63.5);
 		float rawCenter;
-		float centeredMax;
 		
 		for (int i = 0; i < 8; i++) {
 			// Only calibrate if we have observed Min and Max values
 			if (adcMin[i] != -1f && adcMax[i] != -1f) {
 				rawCenter =  ((adcMax[i] - adcMin[i]) / 2) + adcMin[i]; // Find the center of the unscaled values
 				adcCenterOffset[i] =  rawCenter - center;
-				centeredMax = adcMax[i] - adcCenterOffset[i];
 				
 				// Compute proper scalar for full range scaling
-				adcScalar[i] = center / (centeredMax - center); 
+				adcScalar[i] = 127 / (adcMax[i] - adcMin[i]); 
+				System.out.println("center offset " + adcCenterOffset[i]);
+				System.out.println("min " + adcMin[i]);
+				System.out.println("max " + adcMax[i]);
+				System.out.println("scalar " + adcScalar[i]);
  			}
 		}
+		resetADCCalibration = true;
 	}
 	
 	private int normalizeADC(int i, float value) {
@@ -241,21 +257,13 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 		float scaledValue;
 		
 		if (adcMin[i] != -1f && adcMax[i] != -1f) {
-			scaledValue = value - adcCenterOffset[i];
+			scaledValue = value + adcCenterOffset[i];
 				
-			// Find offset from center
-			scaledValue = scaledValue - center;
-			
 			// Scale offset from center
-			scaledValue = scaledValue * adcScalar[i];
+			scaledValue = ((scaledValue - center) * adcScalar[i]) + center;
 			
-			// Apply computed new offset from center
-			scaledValue = Math.abs(center + scaledValue);
-			
-			if (scaledValue > 127)
-				scaledValue = 127;
-			else if (scaledValue < 0)
-				scaledValue = 0;
+			scaledValue = Math.min(scaledValue, 127);
+			scaledValue = Math.max(scaledValue, 0);
 			
 			return new Float(scaledValue).intValue();
  		}
@@ -269,7 +277,7 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 	 */
 	private void resetADCCalibration() {
 		for (int i = 0; i < 8; i++) {
-			adcScalar[i] = 127;
+			adcScalar[i] = 1;
 			adcCenterOffset[i] = 0;
 			adcMin[i] = -1f; // not set
 			adcMax[i] = -1f; // not set

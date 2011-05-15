@@ -414,7 +414,7 @@ public class Monome {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			// do nothing
 		}
 	}
 	
@@ -431,7 +431,7 @@ public class Monome {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			// do nothing
 		}		
 	}
 
@@ -452,7 +452,7 @@ public class Monome {
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				// do nothing
 			}
 		} else {
 			setInternalButtonValue(x, y, 0);
@@ -465,7 +465,7 @@ public class Monome {
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				// do nothing
 			}
 		}
 				
@@ -483,7 +483,7 @@ public class Monome {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			// do nothing
 		}
 	
 	}
@@ -498,7 +498,7 @@ public class Monome {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			// Do nothing
 		}
 	}
 	
