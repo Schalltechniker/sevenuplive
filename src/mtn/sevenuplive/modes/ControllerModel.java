@@ -243,10 +243,10 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 				
 				// Compute proper scalar for full range scaling
 				adcScalar[i] = 127 / (adcMax[i] - adcMin[i]); 
-				System.out.println("center offset " + adcCenterOffset[i]);
+				/*System.out.println("center offset " + adcCenterOffset[i]);
 				System.out.println("min " + adcMin[i]);
 				System.out.println("max " + adcMax[i]);
-				System.out.println("scalar " + adcScalar[i]);
+				System.out.println("scalar " + adcScalar[i]);*/
  			}
 		}
 		resetADCCalibration = true;

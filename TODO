@@ -21,6 +21,7 @@ which where new notes are triggered or not depending on loop mode. - Fixed 2.0.5
 - Bug reported where pattern slots in Masterizer are not clearer when the pattern is dropped (recorded as empty) in a Melodizer. - FIXED 1.4 beta 4
 - Send note OFFS when switching patches mid-stride
 - Tilt not working with gs128 - Fixed 2.0.5
+
 ===
 
 v2.0 MFL Specific
