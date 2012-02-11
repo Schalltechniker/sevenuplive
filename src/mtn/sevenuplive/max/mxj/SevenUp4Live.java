@@ -103,13 +103,16 @@ public class SevenUp4Live extends MaxObject {
 		// point to the new one, and shutdown old one
 		if (instance != null) {
 			post("7up instance already exists...transferring control to new instance");
-			post("Shutting down old instance...");
+			/*post("Shutting down old instance...");
 			try {
 				instance.shutdown();
 			} catch (Throwable t) {
 				post(t.toString());
 			} 
-			post("Old instance shutdown");
+			post("Old instance shutdown");*/
+			
+			post("Transferring environment to new instance...");
+			this.environment = instance.getEnvironment();
 		}
 		
 		declareInlets(new int[]{DataTypes.ALL, DataTypes.MESSAGE, DataTypes.INT});
@@ -128,10 +131,14 @@ public class SevenUp4Live extends MaxObject {
 		
 		midiIO = new M4LMidiSystem(this); 
 		init();
-		environment = new SevenUpEnvironment(midiIO, settings);
 		
+		// Only create a new environment if there isn't already one
+		if (environment == null)
+			environment = new SevenUpEnvironment(midiIO, settings);
+		
+		// Switch instance to this
 		instance = this;
-		post("New 7up instance created");
+		post("New 7up instance creation complete");
 	}
 	
 	protected void bang() {
@@ -162,7 +169,6 @@ public class SevenUp4Live extends MaxObject {
 			looper[i] = new SevenUp4LiveLooperClient(this, 1, i);
 			controller[i] = new SevenUp4LiveControllerClient(this, 1, i);
 		}
-		
 	}
 	
 	public SevenUpEnvironment getEnvironment() {
@@ -208,7 +214,8 @@ public class SevenUp4Live extends MaxObject {
 	 * Initializes SevenUp with the current connection settings and starts it's heart 
 	 */
 	public void initialize() {
-		environment.startSevenUp();
+		if (!environment.isStarted())
+			environment.startSevenUp();
 		
 		// You can only push UI settings back to Seven Up after it has started, so these events are critical
 		// For the UI to be able to know when it can configure 7up
