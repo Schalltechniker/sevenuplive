@@ -1,5 +1,7 @@
 v2.0.5
 
+7up supports MAX5 and MAX6 now.
+
 - Two versions of SevenUpCore. SevenUpCore from 2.0.4 is now SevenUpCoreClassic
 and has old style connection dialog. This version support use with Monomeserial,
 and all routers that were designed to work with v1 protocol. New SevenUpCore is 

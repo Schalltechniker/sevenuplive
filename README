@@ -23,7 +23,8 @@
 
 Installing SevenUpLive
 
-1. You MUST have Live 8.2.2 and Max For Live (MAX ver 5.1.8) to run SevenUp 2.0.5 and greater.
+1. You MUST have Live 8.2.2+ and Max For Live (MAX ver 5.1.8+) to run SevenUp 2.0.5 and greater.
+2.0.5 is compatible with MAX6 now as well.
 
 2. Copy all jar files in the ./supporting folder into your MAX Java classpath.
 The easiest way to do this is to copy them directly into the MAX distribution. 
