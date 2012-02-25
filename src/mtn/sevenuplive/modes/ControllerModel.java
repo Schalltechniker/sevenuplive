@@ -247,7 +247,9 @@ public class ControllerModel extends Mode implements EventListener, EventDispatc
 				System.out.println("min " + adcMin[i]);
 				System.out.println("max " + adcMax[i]);
 				System.out.println("scalar " + adcScalar[i]);*/
- 			}
+			} else {
+				enabledADCports[i] = false; // Turn off this port
+			}
 		}
 		resetADCCalibration = true;
 	}
