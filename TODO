@@ -33,6 +33,3 @@ FEATURES
 - SevenUpClip very inefficient as polls live set for new or moved clips. Must instead use observers or other mechanism to use less resources. - Fixed 2.0.5
 -Add a check to make sure user installed the java classes correctly and provide output in either the max window or in the UI to notify the user 
 
-BEFORE 2.0.5
-Have horizontal / vertical options
-Fix bug with griddle and arbitrary sizes 
