@@ -24,7 +24,7 @@ import jklabs.monomic.Monome;
 public class MultiLevelDisplayGrid extends DisplayGrid {
 
 	public final static int LOW_INTENSITY = 2;
-	public final static int MED_INTENSITY = 10;
+	public final static int MED_INTENSITY = 8;
 	public final static int HIGH_INTENSITY = 15;
 	
 	public MultiLevelDisplayGrid(Monome monome, AllModes allmodes,

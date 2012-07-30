@@ -245,11 +245,12 @@ public class MonomeOSC extends Monome implements MonomeListener {
 				oscMsgLevel.add(value);
 				send(oscMsgLevel);
 				
-				OscMessage oscMsg = makeMessage(led);
+				// This was necessary older versions of serialosc but need to be removed now
+				/*OscMessage oscMsg = makeMessage(led);
 				oscMsg.add(x);
 				oscMsg.add(y);
 				oscMsg.add(1);
-				send(oscMsg);
+				send(oscMsg);*/
 			} else {
 				
 				OscMessage oscMsg = makeMessage(led);
