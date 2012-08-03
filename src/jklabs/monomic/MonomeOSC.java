@@ -42,15 +42,18 @@ public class MonomeOSC extends Monome implements MonomeListener {
 
 	public static enum ProtocolVersion {classic, serialosc};
 	
+	
 	public Protocol protocol;
 	
 	public class Protocol {
 		
-		public Protocol(ProtocolVersion version) {
+		public Protocol(ProtocolVersion version, boolean multilevel) {
 			this.version = version;
+			this.multilevel = multilevel;
 		}
 		
 		public ProtocolVersion version;
+		boolean multilevel;
 		public String LED;
 		public String PER_LED_INTENSITY;
 		public String ROW;
@@ -95,8 +98,8 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	// osc addresses for this instance
 	protected String led, row, col, shutdown, button, test, adc, tilt, refresh, adc_enable, intensity, all, xbutton, xafter, per_intensity_led;
 	
-	protected void setProtocol(ProtocolVersion protocolVer) {
-		protocol = new Protocol(protocolVer);
+	protected void setProtocol(ProtocolVersion protocolVer, boolean multilevel) {
+		protocol = new Protocol(protocolVer, multilevel);
 		
 		if (protocolVer == protocolVer.classic) {
 			protocol.LED = "led";
@@ -150,7 +153,7 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	 */
 	public MonomeOSC(int x_bytes, int y_bytes) {
 		super(x_bytes, y_bytes);
-		setProtocol(ProtocolVersion.serialosc); // default
+		setProtocol(ProtocolVersion.serialosc, false); // default
 	}
 
 	/**
@@ -175,10 +178,10 @@ public class MonomeOSC extends Monome implements MonomeListener {
 	 * @param sendPort
 	 * @param receivePort
 	 */
-	public void startup(String boxName, String host, int sendPort, int receivePort, ProtocolVersion protocolVer) {
+	public void startup(String boxName, String host, int sendPort, int receivePort, ProtocolVersion protocolVer, boolean multilevel) {
 		this.boxName = boxName;
 		
-		initOsc(host, sendPort, receivePort, protocolVer);
+		initOsc(host, sendPort, receivePort, protocolVer, multilevel);
 		setBoxName(boxName);
 		
 		super.init();
@@ -239,18 +242,19 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		if (protocol.version == ProtocolVersion.serialosc) {
 			
 			if (value > 0) {
-				OscMessage oscMsgLevel = makeMessage(per_intensity_led);
-				oscMsgLevel.add(x);
-				oscMsgLevel.add(y);
-				oscMsgLevel.add(value);
-				send(oscMsgLevel);
-				
-				// This was necessary older versions of serialosc but need to be removed now
-				/*OscMessage oscMsg = makeMessage(led);
-				oscMsg.add(x);
-				oscMsg.add(y);
-				oscMsg.add(1);
-				send(oscMsg);*/
+				if (protocol.multilevel) {
+					OscMessage oscMsgLevel = makeMessage(per_intensity_led);
+					oscMsgLevel.add(x);
+					oscMsgLevel.add(y);
+					oscMsgLevel.add(value);
+					send(oscMsgLevel);
+				} else {
+					OscMessage oscMsg = makeMessage(led);
+					oscMsg.add(x);
+					oscMsg.add(y);
+					oscMsg.add(1);
+					send(oscMsg);
+				}	
 			} else {
 				
 				OscMessage oscMsg = makeMessage(led);
@@ -321,11 +325,11 @@ public class MonomeOSC extends Monome implements MonomeListener {
 		oscP5.send(m, myRemoteLocation);
 	}
 
-	public void initOsc(String host, int sendPort, int receivePort, ProtocolVersion protocolVer) {
+	public void initOsc(String host, int sendPort, int receivePort, ProtocolVersion protocolVer, boolean multilevel) {
 		myRemoteLocation = new NetAddress(host, sendPort);
 		myLocalLocation = new NetAddress(host, receivePort);
 		oscP5 = new OscP5(new OSCReceiver(this), receivePort);
-		this.setProtocol(protocolVer);
+		this.setProtocol(protocolVer, multilevel);
 	}
 	
 	public void oscEvent(OscMessage oscIn) {
